@@ -5,193 +5,475 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admissions Dashboard 2026 · St George's College</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --red:#DC1E33; --blue:#213669; --blue-mid:#2d4a8a; --blue-lt:#e8edf5;
-      --cream:#faf8f5; --ink:#1a1a2e; --muted:#6b7280; --border:#dde1e9;
-      --card:#ffffff; --green:#16a34a; --radius:6px; --shadow:0 2px 12px rgba(33,54,105,.08);
+      --red: #DC1E33;
+      --red-dark: #a8101f;
+      --blue: #213669;
+      --blue-mid: #2d4a8a;
+      --blue-lt: #eef1f8;
+      --cream: #f8f6f2;
+      --ink: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e2e5ee;
+      --card: #ffffff;
+      --green: #15803d;
+      --green-lt: #dcfce7;
+      --amber: #b45309;
+      --amber-lt: #fef3c7;
+      --radius: 4px;
+      --shadow-sm: 0 1px 4px rgba(33,54,105,.06);
+      --shadow: 0 2px 16px rgba(33,54,105,.10);
+      --shadow-lg: 0 8px 32px rgba(33,54,105,.14);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
 
-    /* LOGIN */
-    #login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--blue);gap:32px;}
-    .logo-text{font-family:'Cormorant Garamond',serif;color:#fff;font-size:2.2rem;font-weight:600;letter-spacing:.04em;text-align:center;}
-    .logo-sub{font-size:.85rem;color:rgba(255,255,255,.55);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-top:4px;}
-    .divider{width:40px;height:2px;background:var(--red);}
-    .btn-google{display:flex;align-items:center;gap:12px;background:#fff;border:none;border-radius:4px;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;color:var(--ink);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s;}
-    .btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
-    .login-note{font-size:.78rem;color:rgba(255,255,255,.4);text-align:center;}
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue);
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(220,30,51,.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(255,255,255,.04) 0%, transparent 50%);
+    }
+    .login-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      padding: 60px 48px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .login-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .login-logo svg { width: 64px; height: 64px; opacity: .9; }
+    .login-title {
+      font-family: 'Cormorant Garamond', serif;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-align: center;
+      line-height: 1.1;
+    }
+    .login-subtitle {
+      font-size: .75rem;
+      color: rgba(255,255,255,.4);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .login-divider { width: 32px; height: 1px; background: var(--red); opacity: .8; }
+    .btn-google {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,.97);
+      border: none; border-radius: 3px;
+      padding: 13px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+      transition: transform .15s, box-shadow .15s;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .login-note { font-size: .72rem; color: rgba(255,255,255,.3); text-align: center; letter-spacing: .04em; }
 
-    /* APP */
-    #app{display:none;flex-direction:column;min-height:100vh;}
-    header{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.18);}
-    .header-brand{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;letter-spacing:.03em;display:flex;align-items:center;gap:10px;}
-    .header-brand .badge{background:var(--red);color:#fff;font-family:'DM Mono',monospace;font-size:.65rem;padding:2px 7px;border-radius:3px;letter-spacing:.08em;}
-    .header-right{display:flex;align-items:center;gap:16px;}
-    .last-updated{font-size:.75rem;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace;}
-    .btn-admin{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:4px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;}
-    .btn-admin:hover{background:rgba(255,255,255,.2);}
-    .btn-signout{background:none;border:none;color:rgba(255,255,255,.5);font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .btn-signout:hover{color:#fff;}
+    /* ── APP SHELL ── */
+    #app { display: none; flex-direction: column; min-height: 100vh; }
 
-    /* ADMIN */
-    #admin-panel{display:none;background:var(--blue);border-bottom:2px solid var(--red);padding:20px 32px;gap:24px;flex-wrap:wrap;}
-    #admin-panel.open{display:flex;}
-    .admin-group{display:flex;flex-direction:column;gap:8px;}
-    .admin-group-label{font-size:.7rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;}
-    .admin-toggles{display:flex;flex-wrap:wrap;gap:8px;}
-    .toggle-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 12px;cursor:pointer;user-select:none;transition:all .15s;font-size:.8rem;color:rgba(255,255,255,.7);}
-    .toggle-pill.active{background:var(--red);border-color:var(--red);color:#fff;}
-    .toggle-pill .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;}
-    .toggle-pill.active .dot{background:rgba(255,255,255,.9);}
+    /* ── HEADER ── */
+    header {
+      background: var(--blue);
+      color: #fff;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-logo svg { width: 32px; height: 32px; display: block; }
+    .header-brand {
+      display: flex; flex-direction: column; gap: 1px;
+    }
+    .header-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 600;
+      letter-spacing: .04em; color: #fff;
+      line-height: 1;
+    }
+    .header-sub {
+      font-size: .6rem; color: rgba(255,255,255,.45);
+      letter-spacing: .14em; text-transform: uppercase;
+    }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .header-time {
+      font-size: .68rem; color: rgba(255,255,255,.4);
+      font-family: 'DM Mono', monospace;
+    }
+    .btn-sm {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.8);
+      padding: 5px 12px; border-radius: 3px;
+      font-size: .75rem; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background .15s;
+    }
+    .btn-sm:hover { background: rgba(255,255,255,.16); }
+    .btn-signout {
+      background: none; border: none;
+      color: rgba(255,255,255,.35);
+      font-size: .72rem; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: color .15s;
+    }
+    .btn-signout:hover { color: rgba(255,255,255,.7); }
 
-    /* MAIN */
-    main{flex:1;padding:32px;max-width:1400px;margin:0 auto;width:100%;}
-    .section{margin-bottom:40px;}
-    .section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-    .section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--blue);}
-    .section-sub{font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;}
+    /* ── CAMPUS TOGGLE BAR ── */
+    .campus-bar {
+      background: var(--blue);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .campus-toggle { display: flex; gap: 0; }
+    .campus-btn {
+      padding: 10px 24px;
+      background: none; border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem; font-weight: 500;
+      color: rgba(255,255,255,.45);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+      letter-spacing: .04em;
+    }
+    .campus-btn:hover { color: rgba(255,255,255,.8); }
+    .campus-btn.active {
+      color: #fff;
+      border-bottom-color: var(--red);
+    }
+    .nav-tabs { display: flex; gap: 0; }
+    .nav-tab {
+      padding: 10px 18px;
+      background: none; border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .75rem; font-weight: 400;
+      color: rgba(255,255,255,.35);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .nav-tab:hover { color: rgba(255,255,255,.65); }
+    .nav-tab.active { color: rgba(255,255,255,.85); border-bottom-color: rgba(255,255,255,.3); }
 
-    /* KPI CARDS */
-    .headline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;}
-    .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);transition:box-shadow .15s;position:relative;overflow:hidden;}
-    .kpi-card:hover{box-shadow:0 4px 24px rgba(33,54,105,.13);}
-    .kpi-card.accent::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);}
-    .kpi-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-    .kpi-value{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--blue);line-height:1;}
-    .kpi-value.red{color:var(--red);}
-    .kpi-value.green{color:var(--green);}
-    .kpi-sub{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;}
+    /* ── ADMIN PANEL ── */
+    #admin-panel {
+      display: none;
+      background: #1a2d55;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 16px 28px;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+    #admin-panel.open { display: flex; }
+    .admin-label { font-size: .65rem; color: rgba(255,255,255,.35); letter-spacing: .12em; text-transform: uppercase; margin-right: 4px; }
+    .toggle-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer; user-select: none;
+      font-size: .75rem; color: rgba(255,255,255,.5);
+      transition: all .15s;
+    }
+    .toggle-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .toggle-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .6; flex-shrink: 0; }
 
-    /* TABLES */
-    .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
-    table{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);}
-    thead th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-weight:500;font-size:.75rem;letter-spacing:.05em;white-space:nowrap;}
-    thead th.r{text-align:right;}
-    tbody tr{border-bottom:1px solid var(--border);}
-    tbody tr:last-child{border-bottom:none;}
-    tbody tr.group-row td{background:var(--blue-lt);font-weight:600;color:var(--blue);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;}
-    tbody tr.total-row td{font-weight:600;background:#f7f8fb;}
-    tbody tr:hover:not(.group-row):not(.total-row){background:#f7f8fb;}
-    td{padding:9px 14px;color:var(--ink);}
-    td.r{text-align:right;font-family:'DM Mono',monospace;font-size:.8rem;}
-    .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;font-weight:600;font-family:'DM Mono',monospace;}
-    .tag.natural{background:#dcfce7;color:#15803d;}
-    .tag.exogena{background:#fef3c7;color:#92400e;}
-    .tag.accionable{background:#fee2e2;color:#b91c1c;}
+    /* ── MAIN ── */
+    main { flex: 1; }
+    .tab-panel { display: none; padding: 28px; max-width: 1440px; margin: 0 auto; }
+    .tab-panel.active { display: block; }
 
-    /* TWO COL */
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-    @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+    /* ── SECTION ── */
+    .section { margin-bottom: 36px; }
+    .section-hd {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 600; color: var(--blue);
+    }
+    .section-meta { font-size: .7rem; color: var(--muted); font-family: 'DM Mono', monospace; }
 
-    /* CHART */
-    .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
-    .chart-title{font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
-    .chart-card canvas{max-height:260px;}
+    /* ── HEADLINE CARDS ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 18px 14px;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .kpi-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+    .kpi-card.accent::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: var(--red);
+    }
+    .kpi-card .kpi-label {
+      font-size: .62rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .kpi-card .kpi-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 700;
+      color: var(--blue); line-height: 1;
+      margin-bottom: 6px;
+    }
+    .kpi-card .kpi-val.neg { color: var(--red); }
+    .kpi-card .kpi-val.pos { color: var(--green); }
+    .kpi-card .kpi-foot {
+      font-size: .66rem; color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
 
-    /* FUNNEL */
-    .funnel-wrap{display:flex;flex-direction:column;gap:6px;}
-    .funnel-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;}
-    .funnel-stage{font-size:.82rem;font-weight:500;min-width:200px;}
-    .funnel-bar-wrap{flex:1;height:8px;background:var(--blue-lt);border-radius:4px;overflow:hidden;}
-    .funnel-bar{height:100%;background:var(--blue);border-radius:4px;}
-    .funnel-row.won .funnel-bar{background:var(--green);}
-    .funnel-nums{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);min-width:160px;text-align:right;}
+    /* ── TABLES ── */
+    .tbl-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; background: var(--card); }
+    thead th {
+      background: var(--blue); color: #fff;
+      padding: 9px 14px; text-align: left;
+      font-weight: 500; font-size: .68rem;
+      letter-spacing: .06em; white-space: nowrap;
+    }
+    thead th.r { text-align: right; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr.grp td {
+      background: var(--blue-lt); color: var(--blue);
+      font-weight: 600; font-size: .7rem;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 7px 14px;
+    }
+    tbody tr.tot td { font-weight: 600; background: #f5f7fc; }
+    tbody tr.campus-tot td { font-weight: 700; background: var(--blue-lt); color: var(--blue); border-top: 2px solid var(--blue); }
+    tbody tr:hover:not(.grp):not(.tot):not(.campus-tot) { background: #f9fafc; }
+    td { padding: 8px 14px; }
+    td.r { text-align: right; font-family: 'DM Mono', monospace; font-size: .75rem; }
+    .tag {
+      display: inline-block; padding: 2px 7px;
+      border-radius: 2px; font-size: .65rem; font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+    .tag.nat { background: var(--green-lt); color: var(--green); }
+    .tag.exo { background: var(--amber-lt); color: var(--amber); }
+    .tag.act { background: #fee2e2; color: #b91c1c; }
+    .tag.won { background: var(--green-lt); color: var(--green); }
 
-    /* CAMPUS TABS */
-    .campus-tabs{display:flex;gap:8px;margin-bottom:16px;}
-    .campus-tab{padding:7px 18px;border-radius:4px;border:1px solid var(--border);background:var(--card);font-size:.8rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;}
-    .campus-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+    /* ── TWO COL ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
 
-    /* LOADING */
-    #loading-overlay{position:fixed;inset:0;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:200;transition:opacity .4s;}
-    #loading-overlay.hidden{opacity:0;pointer-events:none;}
-    .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    #loading-overlay p{color:rgba(255,255,255,.6);font-size:.85rem;font-family:'DM Mono',monospace;}
+    /* ── CHART CARD ── */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+    }
+    .chart-ttl { font-size: .68rem; font-weight: 600; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 14px; }
+    canvas { max-height: 240px; }
 
-    footer{text-align:center;padding:20px 32px;font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;border-top:1px solid var(--border);}
+    /* ── FUNNEL ── */
+    .funnel { display: flex; flex-direction: column; gap: 5px; }
+    .funnel-row {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 9px 14px;
+    }
+    .funnel-label { font-size: .8rem; font-weight: 500; min-width: 190px; }
+    .funnel-track { flex: 1; height: 6px; background: var(--blue-lt); border-radius: 3px; overflow: hidden; }
+    .funnel-fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width .6s ease; }
+    .funnel-row.won .funnel-fill { background: var(--green); }
+    .funnel-nums { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); min-width: 160px; text-align: right; }
+
+    /* ── LOADING ── */
+    #loading {
+      position: fixed; inset: 0;
+      background: var(--blue);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 18px; z-index: 300;
+      transition: opacity .4s;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+    .spin {
+      width: 36px; height: 36px;
+      border: 2px solid rgba(255,255,255,.15);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p { color: rgba(255,255,255,.5); font-size: .78rem; font-family: 'DM Mono', monospace; }
+
+    footer {
+      text-align: center; padding: 18px 28px;
+      font-size: .65rem; color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-tabs { display: none; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .tab-panel { padding: 16px; }
+    }
   </style>
 </head>
 <body>
 
-<div id="loading-overlay"><div class="spinner"></div><p>Cargando…</p></div>
+<div id="loading"><div class="spin"></div><p>Cargando…</p></div>
 
+<!-- LOGIN -->
 <div id="login-screen">
-  <div><div class="logo-text">St George's College</div><div class="logo-sub">Admissions Dashboard · 2026</div></div>
-  <div class="divider"></div>
-  <button class="btn-google" id="btn-login">
-    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-    Ingresar con Google
-  </button>
-  <div class="login-note">Solo cuentas autorizadas de St George's College</div>
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 8C50 8 38 16 30 28C26 34 24 42 26 50C28 58 34 64 42 68C38 74 34 82 36 90C40 88 46 84 50 80C54 84 60 88 64 90C66 82 62 74 58 68C66 64 72 58 74 50C76 42 74 34 70 28C62 16 50 8 50 8Z" fill="#DC1E33" opacity=".9"/>
+        <path d="M42 46C42 46 38 52 40 58C42 64 50 66 50 66C50 66 58 64 60 58C62 52 58 46 58 46C54 50 50 52 50 52C50 52 46 50 42 46Z" fill="white" opacity=".8"/>
+        <path d="M28 42C32 36 40 32 50 32C60 32 68 36 72 42" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".4"/>
+        <path d="M32 70C36 72 42 74 50 74C58 74 64 72 68 70" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".3"/>
+      </svg>
+      <div>
+        <div class="login-title">St George's College</div>
+        <div class="login-subtitle">Admissions Dashboard · 2026</div>
+      </div>
+    </div>
+    <div class="login-divider"></div>
+    <button class="btn-google" id="btn-login">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Ingresar con Google
+    </button>
+    <div class="login-note">Acceso restringido · Cuentas autorizadas de St George's College</div>
+  </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <header>
-    <div class="header-brand">St George's College <span class="badge">ADMISSIONS 2026</span></div>
+    <div class="header-left">
+      <div class="header-logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 8C50 8 38 16 30 28C26 34 24 42 26 50C28 58 34 64 42 68C38 74 34 82 36 90C40 88 46 84 50 80C54 84 60 88 64 90C66 82 62 74 58 68C66 64 72 58 74 50C76 42 74 34 70 28C62 16 50 8 50 8Z" fill="#DC1E33" opacity=".9"/>
+          <path d="M42 46C42 46 38 52 40 58C42 64 50 66 50 66C50 66 58 64 60 58C62 52 58 46 58 46C54 50 50 52 50 52C50 52 46 50 42 46Z" fill="white" opacity=".8"/>
+        </svg>
+      </div>
+      <div class="header-brand">
+        <div class="header-name">St George's College</div>
+        <div class="header-sub">Admissions Analytics · 2026</div>
+      </div>
+    </div>
     <div class="header-right">
-      <span class="last-updated" id="last-updated-label">—</span>
-      <button class="btn-admin" id="btn-toggle-admin">⚙ Admin</button>
+      <span class="header-time" id="header-time">—</span>
+      <button class="btn-sm" id="btn-admin">⚙ Admin</button>
       <button class="btn-signout" id="btn-signout">Salir</button>
     </div>
   </header>
 
-  <div id="admin-panel">
-    <div class="admin-group">
-      <div class="admin-group-label">Secciones visibles</div>
-      <div class="admin-toggles" id="section-toggles"></div>
+  <!-- CAMPUS BAR -->
+  <div class="campus-bar">
+    <div class="campus-toggle">
+      <button class="campus-btn active" data-campus="os">One School</button>
+      <button class="campus-btn" data-campus="q">Quilmes</button>
+      <button class="campus-btn" data-campus="n">North</button>
     </div>
+    <div class="nav-tabs" id="nav-tabs"></div>
   </div>
 
-  <main id="main-content"></main>
-  <footer>Dashboard de Admisiones · St George's College · Datos en tiempo real desde Google Sheets</footer>
+  <!-- ADMIN -->
+  <div id="admin-panel">
+    <span class="admin-label">Secciones</span>
+    <div id="section-toggles" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+
+  <main id="main"></main>
+
+  <footer>Dashboard de Admisiones · St George's College · Datos en tiempo real desde Google Sheets · Actualizado <span id="footer-time">—</span></footer>
 </div>
 
 <script>
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
 //  CONFIG
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
 const CLIENT_ID = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
 const API_URL   = 'https://script.google.com/macros/s/AKfycbyJDI5osYSQ4JpPB9ahuSz8EqU84HpQvoPDSkZo97FEuE2_s0avu4iSVQ1kfxVmrJODlg/exec';
 
-const SECTIONS = [
-  { id:'headline',    label:'Indicadores Headline' },
-  { id:'kpis-campus', label:'KPIs por Campus' },
-  { id:'pipeline',    label:'Pipeline Activo 2027' },
-  { id:'winrate',     label:'Win Rate Histórico' },
-  { id:'funnel',      label:'Funnel de Conversión' },
-  { id:'withdrawals', label:'Withdrawals' },
-  { id:'cohort',      label:'Cohort Retention' },
+const TABS = [
+  { id: 'kpis',        label: 'KPIs 2026' },
+  { id: 'pipeline',    label: 'Pipeline' },
+  { id: 'winrate',     label: 'Win Rate' },
+  { id: 'funnel',      label: 'Funnel' },
+  { id: 'withdrawals', label: 'Withdrawals' },
+  { id: 'cohort',      label: 'Cohort Retention' },
 ];
 
-let sectionVisibility = Object.fromEntries(SECTIONS.map(s=>[s.id,true]));
-let tokenClient, accessToken, charts = {}, D = {};
+let tokenClient, accessToken;
+let D = {};
+let campus = 'os'; // os | q | n
+let activeTab = 'kpis';
+let sectionVis = Object.fromEntries(TABS.map(t => [t.id, true]));
+let charts = {};
 
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
 //  AUTH
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
 function initGoogleAuth() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
     callback: resp => {
-      if (resp.error) { alert('Error auth: '+resp.error); return; }
+      if (resp.error) { alert('Error: ' + resp.error); return; }
       accessToken = resp.access_token;
       showApp();
       fetchData();
     },
   });
-  hideOverlay();
+  hideLoading();
 }
 
-document.getElementById('btn-login').addEventListener('click', () => {
-  tokenClient.requestAccessToken({ prompt:'select_account' });
-});
-
+document.getElementById('btn-login').addEventListener('click', () => tokenClient.requestAccessToken({ prompt: 'select_account' }));
 document.getElementById('btn-signout').addEventListener('click', () => {
   google.accounts.oauth2.revoke(accessToken, () => {
     accessToken = null;
@@ -200,83 +482,138 @@ document.getElementById('btn-signout').addEventListener('click', () => {
   });
 });
 
-// ═══════════════════════════════
-//  FETCH — App Script API
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════
 function fetchData() {
-  showOverlay('Leyendo datos…');
-  // Usar JSONP para evitar CORS con App Script
-  const callbackName = 'sgcDashboardCallback';
-  window[callbackName] = function(data) {
+  showLoading('Leyendo datos del dashboard…');
+  const cb = 'sgcCb_' + Date.now();
+  window[cb] = data => {
     D = data;
-    document.getElementById('last-updated-label').textContent =
-      'Actualizado: ' + new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleString('es-AR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    document.getElementById('header-time').textContent = 'Actualizado: ' + now;
+    document.getElementById('footer-time').textContent = now;
     render();
-    delete window[callbackName];
-    document.getElementById('jsonp-script').remove();
+    delete window[cb];
+    const s = document.getElementById('_jsonp'); if (s) s.remove();
   };
-  const script = document.createElement('script');
-  script.id = 'jsonp-script';
-  script.src = API_URL + '?callback=' + callbackName;
-  script.onerror = () => {
-    hideOverlay();
-    alert('Error al cargar datos del dashboard.');
-  };
-  document.head.appendChild(script);
+  const s = document.createElement('script');
+  s.id = '_jsonp';
+  s.src = API_URL + '?callback=' + cb;
+  s.onerror = () => { hideLoading(); alert('Error al cargar datos.'); };
+  document.head.appendChild(s);
 }
 
-// ═══════════════════════════════
-//  FORMAT HELPERS
-// ═══════════════════════════════
-function fmtN(v) {
-  if (v === '—' || v === null || v === undefined || v === '') return '—';
+// ═══════════════════════════════════════════════════
+//  FORMAT
+// ═══════════════════════════════════════════════════
+const fN = v => {
+  if (v === '—' || v == null || v === '') return '—';
   const n = parseFloat(v);
   if (isNaN(n)) return String(v);
   return Math.round(n).toLocaleString('es-AR');
-}
-function fmtPct(v) {
-  if (v === '—' || v === null || v === undefined || v === '') return '—';
+};
+const fP = v => {
+  if (v === '—' || v == null || v === '') return '—';
   const n = parseFloat(v);
   if (isNaN(n)) return String(v);
   return (n * 100).toFixed(1) + '%';
-}
-function fmtVal(v) {
-  if (v === '—' || v === null || v === undefined || v === '') return '—';
+};
+const fV = v => {
+  if (v === '—' || v == null || v === '') return '—';
   const n = parseFloat(v);
   if (isNaN(n)) return String(v);
-  if (n > -2 && n < 2 && String(v).includes('.')) return fmtPct(n);
-  return fmtN(n);
+  if (n > -2 && n < 2 && String(v).includes('.')) return fP(n);
+  return fN(n);
+};
+
+// ═══════════════════════════════════════════════════
+//  CAMPUS SELECTOR
+// ═══════════════════════════════════════════════════
+function getCampusData() {
+  if (campus === 'q') return D.quilmes;
+  if (campus === 'n') return D.north;
+  // One School: merge
+  return {
+    total: {
+      matricula:    (D.quilmes?.total?.matricula || 0) + (D.north?.total?.matricula || 0),
+      ocupacion:    D.headline?.retencion_quilmes, // placeholder
+      vacantes:     (D.quilmes?.total?.vacantes || 0) + (D.north?.total?.vacantes || 0),
+      retencion:    null,
+      new_students: (D.quilmes?.total?.new_students || 0) + (D.north?.total?.new_students || 0),
+      withdrawals:  (D.quilmes?.total?.withdrawals || 0) + (D.north?.total?.withdrawals || 0),
+      prospectos:   (D.quilmes?.total?.prospectos || 0) + (D.north?.total?.prospectos || 0),
+    },
+    kinder: mergeSection('kinder', ['K1','K2','K3','K4','K5']),
+    prep:   mergeSection('prep',   ['P1','P2','P3','P4','P5','P6']),
+    college:mergeSection('college',['C1','C2','C3','C4','C5','C6']),
+  };
 }
 
-// ═══════════════════════════════
-//  RENDER
-// ═══════════════════════════════
-function render() {
-  Object.values(charts).forEach(c=>c.destroy());
-  charts = {};
-  const main = document.getElementById('main-content');
-  main.innerHTML = '';
-  SECTIONS.forEach(s => {
-    if (!sectionVisibility[s.id]) return;
-    const el = buildSection(s.id);
-    if (el) main.appendChild(el);
+function mergeSection(sec, grades) {
+  const q = D.quilmes?.[sec] || {};
+  const n = D.north?.[sec] || {};
+  const merge = (a, b) => ({
+    matricula:    (parseFloat(a?.matricula)||0) + (parseFloat(b?.matricula)||0),
+    ocupacion:    null,
+    vacantes:     (parseFloat(a?.vacantes)||0)  + (parseFloat(b?.vacantes)||0),
+    retencion:    null,
+    new_students: (parseFloat(a?.new_students)||0) + (parseFloat(b?.new_students)||0),
+    withdrawals:  (parseFloat(a?.withdrawals)||0) + (parseFloat(b?.withdrawals)||0),
+    prospectos:   (parseFloat(a?.prospectos)||0)  + (parseFloat(b?.prospectos)||0),
   });
+  const result = { total: merge(q.total, n.total) };
+  grades.forEach(g => { result[g] = merge(q[g], n[g]); });
+  return result;
+}
+
+function getPipelineField(p, field) {
+  if (campus === 'q') return p['q' + field] ?? p['qT'] ?? '—';
+  if (campus === 'n') return p['n' + field] ?? p['nT'] ?? '—';
+  return p.total;
+}
+
+function getWinRateField(r) {
+  if (campus === 'q') return { pipeline: r.qPipeline, won: r.qWon, wr: r.qWR };
+  if (campus === 'n') return { pipeline: r.nPipeline, won: r.nWon, wr: r.nWR };
+  return { pipeline: r.osPipeline, won: r.osWon, wr: r.osWR };
+}
+
+function getCohortField(r) {
+  if (campus === 'q') return { ingresaron: r.qIngresaron, activos: r.qActivos, ret: r.qRet };
+  if (campus === 'n') return { ingresaron: r.nIngresaron, activos: r.nActivos, ret: r.nRet };
+  const ing = (parseFloat(r.qIngresaron)||0) + (parseFloat(r.nIngresaron)||0);
+  const act = (parseFloat(r.qActivos)||0) + (parseFloat(r.nActivos)||0);
+  return { ingresaron: ing, activos: act, ret: ing > 0 ? act/ing : null };
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════
+function render() {
+  Object.values(charts).forEach(c => c.destroy());
+  charts = {};
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+
+  TABS.forEach(t => {
+    if (!sectionVis[t.id]) return;
+    const panel = document.createElement('div');
+    panel.className = 'tab-panel' + (t.id === activeTab ? ' active' : '');
+    panel.id = 'panel-' + t.id;
+    const content = buildPanel(t.id);
+    if (content) panel.appendChild(content);
+    main.appendChild(panel);
+  });
+
   drawCharts();
-  hideOverlay();
+  updateTabNav();
+  hideLoading();
 }
 
-function sec(id, title, sub, content) {
-  const s = document.createElement('div');
-  s.className = 'section'; s.id = 'sec-'+id;
-  s.innerHTML = `<div class="section-header"><span class="section-title">${title}</span>${sub?`<span class="section-sub">${sub}</span>`:''}</div>`;
-  s.appendChild(content);
-  return s;
-}
-
-function buildSection(id) {
+function buildPanel(id) {
   switch(id) {
-    case 'headline':    return buildHeadline();
-    case 'kpis-campus': return buildKpiCampus();
+    case 'kpis':        return buildKpis();
     case 'pipeline':    return buildPipeline();
     case 'winrate':     return buildWinRate();
     case 'funnel':      return buildFunnel();
@@ -285,274 +622,348 @@ function buildSection(id) {
   }
 }
 
-// ── HEADLINE ──
-function buildHeadline() {
-  const h = D.headline;
-  const varN = parseFloat(h.variacion_anual)*100;
+function sec(id, title, meta, content) {
+  const s = document.createElement('div');
+  s.className = 'section';
+  s.innerHTML = `<div class="section-hd"><span class="section-title">${title}</span>${meta ? `<span class="section-meta">${meta}</span>` : ''}</div>`;
+  s.appendChild(content);
+  return s;
+}
+
+// ── KPIs ──
+function buildKpis() {
+  const wrap = document.createElement('div');
+  const h = D.headline || {};
+  const varN = parseFloat(h.variacion_anual) * 100;
+
+  // Headline
   const cards = [
-    { label:'Total Alumnos',      value:fmtN(h.total_alumnos),              sub:'One School 2026',            accent:true },
-    { label:'Variación Anual',    value:(varN).toFixed(2)+'%',              sub:'2025 vs 2026',               color: varN<0?'red':'green' },
-    { label:'Retención Quilmes',  value:fmtPct(h.retencion_quilmes),        sub:'Promedio ponderado' },
-    { label:'Retención North',    value:fmtPct(h.retencion_north),          sub:'Promedio ponderado' },
-    { label:'New Students 2026',  value:fmtN(h.new_students),               sub:'Quilmes + North' },
-    { label:'Win Rate 2026',      value:fmtPct(h.win_rate),                 sub:'Won / (Won + Lost)' },
-    { label:'Prospectos Activos', value:fmtN(h.prospectos),                 sub:'Pipeline 2026 abierto' },
+    { label:'Total Alumnos', val: fN(h.total_alumnos), foot:'One School 2026', accent:true },
+    { label:'Variación Anual', val: varN.toFixed(2)+'%', foot:'2025 vs 2026', cls: varN<0?'neg':'pos' },
+    { label:'Retención '+(campus==='n'?'North':campus==='q'?'Quilmes':'One School'),
+      val: fP(campus==='n'?h.retencion_north:h.retencion_quilmes), foot:'Promedio ponderado' },
+    { label:'New Students 2026', val: fN(h.new_students), foot:'Quilmes + North' },
+    { label:'Win Rate 2026', val: fP(h.win_rate), foot:'Won / (Won + Lost)' },
+    { label:'Prospectos Activos', val: fN(h.prospectos), foot:'Pipeline 2026 abierto' },
   ];
+  if (campus === 'os') {
+    cards.splice(2, 1,
+      { label:'Retención Quilmes', val: fP(h.retencion_quilmes), foot:'Prom. ponderado' },
+      { label:'Retención North', val: fP(h.retencion_north), foot:'Prom. ponderado' }
+    );
+  }
+
   const grid = document.createElement('div');
-  grid.className = 'headline-grid';
+  grid.className = 'kpi-grid';
   cards.forEach(c => {
     grid.innerHTML += `<div class="kpi-card${c.accent?' accent':''}">
       <div class="kpi-label">${c.label}</div>
-      <div class="kpi-value ${c.color||''}">${c.value}</div>
-      <div class="kpi-sub">${c.sub}</div>
+      <div class="kpi-val ${c.cls||''}">${c.val}</div>
+      <div class="kpi-foot">${c.foot}</div>
     </div>`;
   });
-  return sec('headline','Indicadores Headline','One School · 2026',grid);
+  wrap.appendChild(sec('headline', 'Indicadores Headline', 'One School · 2026', grid));
+
+  // KPI Table
+  const cd = getCampusData();
+  if (!cd) return wrap;
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'tbl-wrap';
+  tableWrap.innerHTML = buildKpiTable(cd);
+  wrap.appendChild(sec('kpis-table', 'KPIs por Sección', 'Matrícula · Ocupación · Retención', tableWrap));
+  return wrap;
 }
 
-// ── KPIs CAMPUS ──
-function buildKpiCampus() {
-  const wrap = document.createElement('div');
-  const tabs = document.createElement('div'); tabs.className='campus-tabs';
-  const tableWrap = document.createElement('div'); tableWrap.className='table-wrap';
-
-  ['Quilmes','North'].forEach((name,i) => {
-    const t = document.createElement('button');
-    t.className = 'campus-tab'+(i===0?' active':'');
-    t.textContent = name;
-    t.onclick = () => {
-      tabs.querySelectorAll('.campus-tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      tableWrap.innerHTML = buildKpiTable(i===0 ? D.quilmes : D.north);
-    };
-    tabs.appendChild(t);
-  });
-
-  tableWrap.innerHTML = buildKpiTable(D.quilmes);
-  wrap.appendChild(tabs);
-  wrap.appendChild(tableWrap);
-  return sec('kpis-campus','KPIs por Sección y Campus','Matrícula · Ocupación · Retención',wrap);
-}
-
-function buildKpiTable(campus) {
-  const secciones = [
-    { label:'KINDER',  total: campus.kinder.total,  rows: ['K1','K2','K3','K4','K5'].map(k=>({label:k, data:campus.kinder[k]})) },
-    { label:'PREP',    total: campus.prep.total,     rows: ['P1','P2','P3','P4','P5','P6'].map(k=>({label:k, data:campus.prep[k]})) },
-    { label:'COLLEGE', total: campus.college.total,  rows: ['C1','C2','C3','C4','C5','C6'].map(k=>({label:k, data:campus.college[k]})) },
+function buildKpiTable(cd) {
+  const secs = [
+    { label:'KINDER',  total: cd.kinder?.total,  rows: ['K1','K2','K3','K4','K5'].map(k=>({k, d:cd.kinder?.[k]})) },
+    { label:'PREP',    total: cd.prep?.total,     rows: ['P1','P2','P3','P4','P5','P6'].map(k=>({k, d:cd.prep?.[k]})) },
+    { label:'COLLEGE', total: cd.college?.total,  rows: ['C1','C2','C3','C4','C5','C6'].map(k=>({k, d:cd.college?.[k]})) },
   ];
-
   let html = `<table><thead><tr>
     <th>Nivel</th><th>Grado</th>
     <th class="r">Matrícula</th><th class="r">Ocupación</th><th class="r">Vacantes</th>
     <th class="r">Retención</th><th class="r">New Students</th><th class="r">Withdrawals</th><th class="r">Prospectos</th>
   </tr></thead><tbody>`;
-
-  secciones.forEach(s => {
-    html += `<tr class="group-row"><td colspan="9">${s.label}</td></tr>`;
-    const t = s.total;
-    html += `<tr class="total-row"><td></td><td>TOTAL ${s.label}</td>
-      <td class="r">${fmtN(t.matricula)}</td><td class="r">${fmtPct(t.ocupacion)}</td><td class="r">${fmtN(t.vacantes)}</td>
-      <td class="r">${fmtPct(t.retencion)}</td><td class="r">${fmtN(t.new_students)}</td><td class="r">${fmtN(t.withdrawals)}</td><td class="r">${fmtN(t.prospectos)}</td>
+  secs.forEach(s => {
+    html += `<tr class="grp"><td colspan="9">${s.label}</td></tr>`;
+    const t = s.total || {};
+    html += `<tr class="tot"><td></td><td>TOTAL ${s.label}</td>
+      <td class="r">${fN(t.matricula)}</td><td class="r">${fV(t.ocupacion)}</td><td class="r">${fN(t.vacantes)}</td>
+      <td class="r">${fV(t.retencion)}</td><td class="r">${fN(t.new_students)}</td><td class="r">${fN(t.withdrawals)}</td><td class="r">${fN(t.prospectos)}</td>
     </tr>`;
-    s.rows.forEach(r => {
-      const d = r.data;
-      html += `<tr><td></td><td>${r.label}</td>
-        <td class="r">${fmtVal(d.matricula)}</td><td class="r">${fmtVal(d.ocupacion)}</td><td class="r">${fmtVal(d.vacantes)}</td>
-        <td class="r">${fmtVal(d.retencion)}</td><td class="r">${fmtVal(d.new_students)}</td><td class="r">${fmtVal(d.withdrawals)}</td><td class="r">${fmtVal(d.prospectos)}</td>
+    s.rows.forEach(({k, d}) => {
+      d = d || {};
+      html += `<tr><td></td><td>${k}</td>
+        <td class="r">${fV(d.matricula)}</td><td class="r">${fV(d.ocupacion)}</td><td class="r">${fV(d.vacantes)}</td>
+        <td class="r">${fV(d.retencion)}</td><td class="r">${fV(d.new_students)}</td><td class="r">${fV(d.withdrawals)}</td><td class="r">${fV(d.prospectos)}</td>
       </tr>`;
     });
   });
-
-  html += `<tr class="total-row" style="border-top:2px solid var(--blue)">
-    <td colspan="2" style="font-weight:700;color:var(--blue)">TOTAL CAMPUS</td>
-    <td class="r">${fmtN(campus.total.matricula)}</td><td class="r">${fmtPct(campus.total.ocupacion)}</td><td class="r">${fmtN(campus.total.vacantes)}</td>
-    <td class="r">${fmtPct(campus.total.retencion)}</td><td class="r">${fmtN(campus.total.new_students)}</td><td class="r">${fmtN(campus.total.withdrawals)}</td><td class="r">${fmtN(campus.total.prospectos)}</td>
+  const ct = cd.total || {};
+  html += `<tr class="campus-tot"><td colspan="2">TOTAL CAMPUS</td>
+    <td class="r">${fN(ct.matricula)}</td><td class="r">${fV(ct.ocupacion)}</td><td class="r">${fN(ct.vacantes)}</td>
+    <td class="r">${fV(ct.retencion)}</td><td class="r">${fN(ct.new_students)}</td><td class="r">${fN(ct.withdrawals)}</td><td class="r">${fN(ct.prospectos)}</td>
   </tr>`;
-
   html += '</tbody></table>';
   return html;
 }
 
 // ── PIPELINE ──
 function buildPipeline() {
-  const wrap = document.createElement('div'); wrap.className='table-wrap';
+  const wrap = document.createElement('div');
+  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
   let html = `<table><thead><tr>
-    <th>Etapa</th>
-    <th class="r">Q·Kinder</th><th class="r">Q·Prep</th><th class="r">Q·College</th><th class="r">Q·Total</th>
-    <th class="r">N·Kinder</th><th class="r">N·Prep</th><th class="r">N·College</th><th class="r">N·Total</th>
-    <th class="r">Total</th>
-  </tr></thead><tbody>`;
-  D.pipeline.forEach(p => {
+    <th>Etapa</th>`;
+  if (campus === 'os') {
+    html += `<th class="r">Q·Kinder</th><th class="r">Q·Prep</th><th class="r">Q·College</th><th class="r">Q·Total</th>
+             <th class="r">N·Kinder</th><th class="r">N·Prep</th><th class="r">N·College</th><th class="r">N·Total</th>
+             <th class="r">One School</th>`;
+  } else if (campus === 'q') {
+    html += `<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
+  } else {
+    html += `<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
+  }
+  html += `</tr></thead><tbody>`;
+  (D.pipeline || []).forEach(p => {
     const won = p.isWon;
-    html += `<tr style="${won?'background:#f0fdf4;font-weight:600':''}">
-      <td>${p.etapa}</td>
-      <td class="r">${fmtN(p.qK)}</td><td class="r">${fmtN(p.qP)}</td><td class="r">${fmtN(p.qC)}</td><td class="r">${fmtN(p.qT)}</td>
-      <td class="r">${fmtN(p.nK)}</td><td class="r">${fmtN(p.nP)}</td><td class="r">${fmtN(p.nC)}</td><td class="r">${fmtN(p.nT)}</td>
-      <td class="r">${fmtN(p.total)}</td>
-    </tr>`;
+    html += `<tr style="${won?'background:#f0fdf4;font-weight:600':''}"><td>${p.etapa}</td>`;
+    if (campus === 'os') {
+      html += `<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td>
+               <td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td>
+               <td class="r">${fN(p.total)}</td>`;
+    } else if (campus === 'q') {
+      html += `<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td>`;
+    } else {
+      html += `<td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td>`;
+    }
+    html += `</tr>`;
   });
   html += '</tbody></table>';
-  wrap.innerHTML = html;
-  return sec('pipeline','Pipeline Activo 2027','Foto del funnel en curso · Insightly',wrap);
+  tw.innerHTML = html;
+  wrap.appendChild(sec('pipeline', 'Pipeline Activo 2027', 'Foto del funnel en curso · Insightly', tw));
+  return wrap;
 }
 
 // ── WIN RATE ──
 function buildWinRate() {
-  const wrap = document.createElement('div'); wrap.className='two-col';
-  const tableCard = document.createElement('div'); tableCard.className='table-wrap';
-  let html = `<table><thead><tr>
-    <th>Año</th><th class="r">Q·Pipeline</th><th class="r">Q·Won</th><th class="r">Q·Win Rate</th>
-    <th class="r">N·Pipeline</th><th class="r">N·Won</th><th class="r">N·Win Rate</th>
-    <th class="r">OS·Win Rate</th>
-  </tr></thead><tbody>`;
-  D.winrate.forEach(r => {
-    html += `<tr>
-      <td style="font-weight:600">${r.año}</td>
-      <td class="r">${fmtN(r.qPipeline)}</td><td class="r">${fmtN(r.qWon)}</td><td class="r">${fmtPct(r.qWR)}</td>
-      <td class="r">${fmtN(r.nPipeline)}</td><td class="r">${fmtN(r.nWon)}</td><td class="r">${fmtPct(r.nWR)}</td>
-      <td class="r">${fmtPct(r.osWR)}</td>
-    </tr>`;
+  const wrap = document.createElement('div');
+  const two = document.createElement('div'); two.className = 'two-col';
+  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
+  let html = `<table><thead><tr><th>Año</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>`;
+  (D.winrate || []).forEach(r => {
+    const f = getWinRateField(r);
+    html += `<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.pipeline)}</td><td class="r">${fN(f.won)}</td><td class="r">${fP(f.wr)}</td></tr>`;
   });
   html += '</tbody></table>';
-  tableCard.innerHTML = html;
-  const chartCard = document.createElement('div'); chartCard.className='chart-card';
-  chartCard.innerHTML = '<div class="chart-title">Evolución Win Rate %</div><canvas id="chart-winrate"></canvas>';
-  wrap.appendChild(tableCard); wrap.appendChild(chartCard);
-  return sec('winrate','Win Rate Histórico','2021–2026 · Quilmes vs North',wrap);
+  tw.innerHTML = html;
+  const cc = document.createElement('div'); cc.className = 'chart-card';
+  cc.innerHTML = '<div class="chart-ttl">Evolución Win Rate %</div><canvas id="chart-wr"></canvas>';
+  two.appendChild(tw); two.appendChild(cc);
+  wrap.appendChild(sec('winrate', 'Win Rate Histórico', '2021–2026', two));
+  return wrap;
 }
 
 // ── FUNNEL ──
 function buildFunnel() {
-  const wrap = document.createElement('div'); wrap.className='funnel-wrap';
-  const max = Math.max(...D.funnel.map(f=>f.llegaron));
-  D.funnel.forEach(f => {
-    const pct = max>0 ? (f.llegaron/max*100) : 0;
-    const pctPerd = (parseFloat(f.pctPerd)*100).toFixed(0);
+  const wrap = document.createElement('div');
+  const f = document.createElement('div'); f.className = 'funnel';
+  const max = Math.max(...(D.funnel || []).map(x => x.llegaron));
+  (D.funnel || []).forEach(item => {
+    const pct = max > 0 ? (item.llegaron / max * 100) : 0;
+    const lossP = (parseFloat(item.pctPerd) * 100).toFixed(0);
     const div = document.createElement('div');
-    div.className = 'funnel-row'+(f.isWon?' won':'');
+    div.className = 'funnel-row' + (item.isWon ? ' won' : '');
     div.innerHTML = `
-      <div class="funnel-stage">${f.etapa}</div>
-      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%"></div></div>
-      <div class="funnel-nums">${fmtN(f.llegaron)} llegaron · ${pctPerd}% baja</div>`;
-    wrap.appendChild(div);
+      <div class="funnel-label">${item.etapa}</div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:${pct}%"></div></div>
+      <div class="funnel-nums">${fN(item.llegaron)} · ${lossP}% baja</div>`;
+    f.appendChild(div);
   });
-  return sec('funnel','Funnel de Conversión','Histórico 2021–2026',wrap);
+  wrap.appendChild(sec('funnel', 'Funnel de Conversión', 'Histórico 2021–2026', f));
+  return wrap;
 }
 
 // ── WITHDRAWALS ──
 function buildWithdrawals() {
-  const wrap = document.createElement('div'); wrap.className='table-wrap';
+  const wrap = document.createElement('div');
+  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
   let html = `<table><thead><tr>
-    <th>Causa</th><th>Tipo</th>
-    <th class="r">Q 2025</th><th class="r">Q 2026</th>
-    <th class="r">N 2025</th><th class="r">N 2026</th>
-    <th class="r">Total 2025</th><th class="r">Total 2026</th>
-  </tr></thead><tbody>`;
-  D.withdrawals.forEach(w => {
-    const tag = w.tipo.toLowerCase().includes('natural')?'natural':w.tipo.toLowerCase().includes('exógena')?'exogena':'accionable';
-    html += `<tr><td>${w.causa}</td><td><span class="tag ${tag}">${w.tipo}</span></td>
-      <td class="r">${fmtN(w.q2025)}</td><td class="r">${fmtN(w.q2026)}</td>
-      <td class="r">${fmtN(w.n2025)}</td><td class="r">${fmtN(w.n2026)}</td>
-      <td class="r">${fmtN(w.tot2025)}</td><td class="r">${fmtN(w.tot2026)}</td>
-    </tr>`;
+    <th>Causa</th><th>Tipo</th>`;
+  if (campus === 'os') {
+    html += `<th class="r">Q 2025</th><th class="r">Q 2026</th><th class="r">N 2025</th><th class="r">N 2026</th><th class="r">Total 2025</th><th class="r">Total 2026</th>`;
+  } else if (campus === 'q') {
+    html += `<th class="r">2025</th><th class="r">2026</th>`;
+  } else {
+    html += `<th class="r">2025</th><th class="r">2026</th>`;
+  }
+  html += `</tr></thead><tbody>`;
+  (D.withdrawals || []).forEach(w => {
+    const tagC = w.tipo.includes('Natural')?'nat':w.tipo.includes('Exóg')?'exo':'act';
+    html += `<tr><td>${w.causa}</td><td><span class="tag ${tagC}">${w.tipo}</span></td>`;
+    if (campus === 'os') {
+      html += `<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td><td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td><td class="r">${fN(w.tot2025)}</td><td class="r">${fN(w.tot2026)}</td>`;
+    } else if (campus === 'q') {
+      html += `<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td>`;
+    } else {
+      html += `<td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td>`;
+    }
+    html += `</tr>`;
   });
   html += '</tbody></table>';
-  wrap.innerHTML = html;
-  return sec('withdrawals','Withdrawals por Causa','Análisis de bajas 2025 vs 2026',wrap);
+  tw.innerHTML = html;
+  wrap.appendChild(sec('withdrawals', 'Withdrawals por Causa', 'Análisis de bajas 2025 vs 2026', tw));
+  return wrap;
 }
 
 // ── COHORT ──
 function buildCohort() {
-  const wrap = document.createElement('div'); wrap.className='two-col';
-  const tableCard = document.createElement('div'); tableCard.className='table-wrap';
-  let html = `<table><thead><tr>
-    <th>Cohorte</th>
-    <th class="r">Q·Ingresaron</th><th class="r">Q·Activos</th><th class="r">Q·Ret%</th>
-    <th class="r">N·Ingresaron</th><th class="r">N·Activos</th><th class="r">N·Ret%</th>
-  </tr></thead><tbody>`;
-  D.cohort.forEach(r => {
-    html += `<tr><td style="font-weight:600">${r.año}</td>
-      <td class="r">${fmtN(r.qIngresaron)}</td><td class="r">${fmtN(r.qActivos)}</td><td class="r">${fmtPct(r.qRet)}</td>
-      <td class="r">${fmtN(r.nIngresaron)}</td><td class="r">${fmtN(r.nActivos)}</td><td class="r">${fmtPct(r.nRet)}</td>
-    </tr>`;
+  const wrap = document.createElement('div');
+  const two = document.createElement('div'); two.className = 'two-col';
+  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
+  let html = `<table><thead><tr><th>Cohorte</th><th class="r">Ingresaron</th><th class="r">Activos</th><th class="r">Retención</th></tr></thead><tbody>`;
+  (D.cohort || []).forEach(r => {
+    const f = getCohortField(r);
+    html += `<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.ingresaron)}</td><td class="r">${fN(f.activos)}</td><td class="r">${fP(f.ret)}</td></tr>`;
   });
   html += '</tbody></table>';
-  tableCard.innerHTML = html;
-  const chartCard = document.createElement('div'); chartCard.className='chart-card';
-  chartCard.innerHTML = '<div class="chart-title">Retención por Cohorte</div><canvas id="chart-cohort"></canvas>';
-  wrap.appendChild(tableCard); wrap.appendChild(chartCard);
-  return sec('cohort','Cohort Retention','Fidelización generacional · ISAMS',wrap);
+  tw.innerHTML = html;
+  const cc = document.createElement('div'); cc.className = 'chart-card';
+  cc.innerHTML = '<div class="chart-ttl">Retención por Cohorte</div><canvas id="chart-cohort"></canvas>';
+  two.appendChild(tw); two.appendChild(cc);
+  wrap.appendChild(sec('cohort', 'Cohort Retention', 'Fidelización generacional · ISAMS', two));
+  return wrap;
 }
 
 // ── CHARTS ──
 function drawCharts() {
-  const wr = D.winrate;
-  const wrCanvas = document.getElementById('chart-winrate');
-  if (wrCanvas && wr) {
-    charts.winrate = new Chart(wrCanvas, {
-      type:'line',
-      data:{
-        labels: wr.map(r=>r.año),
-        datasets:[
-          { label:'Quilmes', data:wr.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)), borderColor:'#213669', backgroundColor:'rgba(33,54,105,.1)', tension:.35, fill:true },
-          { label:'North',   data:wr.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)), borderColor:'#DC1E33', backgroundColor:'rgba(220,30,51,.07)', tension:.35, fill:true },
-        ]
-      },
-      options:{ responsive:true, plugins:{legend:{position:'bottom'}}, scales:{ y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
+  // Win Rate
+  const wrCanvas = document.getElementById('chart-wr');
+  if (wrCanvas && D.winrate) {
+    const labels = D.winrate.map(r => r.año);
+    const getWR = (r, camp) => {
+      if (camp === 'q') return +(parseFloat(r.qWR)*100).toFixed(1);
+      if (camp === 'n') return +(parseFloat(r.nWR)*100).toFixed(1);
+      return +(parseFloat(r.osWR)*100).toFixed(1);
+    };
+    const datasets = campus === 'os' ? [
+      { label:'Quilmes', data: D.winrate.map(r=>getWR(r,'q')), borderColor:'#213669', backgroundColor:'rgba(33,54,105,.08)', tension:.35, fill:true },
+      { label:'North',   data: D.winrate.map(r=>getWR(r,'n')), borderColor:'#DC1E33', backgroundColor:'rgba(220,30,51,.06)', tension:.35, fill:true },
+    ] : [
+      { label: campus==='q'?'Quilmes':'North', data: D.winrate.map(r=>getWR(r,campus)), borderColor: campus==='q'?'#213669':'#DC1E33', backgroundColor: campus==='q'?'rgba(33,54,105,.08)':'rgba(220,30,51,.06)', tension:.35, fill:true }
+    ];
+    charts.wr = new Chart(wrCanvas, {
+      type: 'line',
+      data: { labels, datasets },
+      options: { responsive:true, plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}}, scales:{ y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
     });
   }
 
-  const co = D.cohort;
+  // Cohort
   const coCanvas = document.getElementById('chart-cohort');
-  if (coCanvas && co) {
+  if (coCanvas && D.cohort) {
+    const labels = D.cohort.map(r => r.año);
+    const datasets = campus === 'os' ? [
+      { label:'Quilmes', data: D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)), backgroundColor:'rgba(33,54,105,.75)', borderRadius:3 },
+      { label:'North',   data: D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)), backgroundColor:'rgba(220,30,51,.7)', borderRadius:3 },
+    ] : [
+      {
+        label: campus==='q'?'Quilmes':'North',
+        data: D.cohort.map(r => campus==='q' ? +(parseFloat(r.qRet)*100).toFixed(1) : +(parseFloat(r.nRet)*100).toFixed(1)),
+        backgroundColor: campus==='q'?'rgba(33,54,105,.75)':'rgba(220,30,51,.7)',
+        borderRadius:3
+      }
+    ];
     charts.cohort = new Chart(coCanvas, {
-      type:'bar',
-      data:{
-        labels: co.map(r=>r.año),
-        datasets:[
-          { label:'Quilmes', data:co.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)), backgroundColor:'rgba(33,54,105,.75)', borderRadius:3 },
-          { label:'North',   data:co.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)), backgroundColor:'rgba(220,30,51,.7)',  borderRadius:3 },
-        ]
-      },
-      options:{ responsive:true, plugins:{legend:{position:'bottom'}}, scales:{ y:{min:70,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
+      type: 'bar',
+      data: { labels, datasets },
+      options: { responsive:true, plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}}, scales:{ y:{min:70,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
     });
   }
 }
 
-// ── ADMIN ──
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+function buildNavTabs() {
+  const container = document.getElementById('nav-tabs');
+  container.innerHTML = '';
+  TABS.forEach(t => {
+    if (!sectionVis[t.id]) return;
+    const btn = document.createElement('button');
+    btn.className = 'nav-tab' + (t.id === activeTab ? ' active' : '');
+    btn.textContent = t.label;
+    btn.onclick = () => {
+      activeTab = t.id;
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('panel-' + t.id);
+      if (panel) panel.classList.add('active');
+    };
+    container.appendChild(btn);
+  });
+}
+
+function updateTabNav() {
+  buildNavTabs();
+}
+
+// Campus toggle
+document.querySelectorAll('.campus-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    campus = btn.dataset.campus;
+    document.querySelectorAll('.campus-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+
+// Admin
 function buildAdminPanel() {
   const container = document.getElementById('section-toggles');
-  SECTIONS.forEach(s => {
+  TABS.forEach(t => {
     const pill = document.createElement('div');
     pill.className = 'toggle-pill active';
-    pill.innerHTML = `<span class="dot"></span>${s.label}`;
+    pill.innerHTML = `<span class="dot"></span>${t.label}`;
     pill.onclick = () => {
-      sectionVisibility[s.id] = !sectionVisibility[s.id];
-      pill.classList.toggle('active', sectionVisibility[s.id]);
+      sectionVis[t.id] = !sectionVis[t.id];
+      pill.classList.toggle('active', sectionVis[t.id]);
+      if (!sectionVis[t.id] && activeTab === t.id) {
+        activeTab = TABS.find(x => sectionVis[x.id])?.id || TABS[0].id;
+      }
       render();
     };
     container.appendChild(pill);
   });
 }
-document.getElementById('btn-toggle-admin').addEventListener('click', () => {
+
+document.getElementById('btn-admin').addEventListener('click', () => {
   document.getElementById('admin-panel').classList.toggle('open');
 });
 
-// ── UI ──
+// ═══════════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════════
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   const app = document.getElementById('app');
-  app.style.display = 'flex'; app.style.flexDirection = 'column';
+  app.style.display = 'flex';
+  app.style.flexDirection = 'column';
 }
-function showOverlay(msg) {
-  const el = document.getElementById('loading-overlay');
-  el.querySelector('p').textContent = msg||'Cargando…';
+function showLoading(msg) {
+  const el = document.getElementById('loading');
+  el.querySelector('p').textContent = msg || 'Cargando…';
   el.classList.remove('hidden');
 }
-function hideOverlay() { document.getElementById('loading-overlay').classList.add('hidden'); }
+function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
 
-// ── INIT ──
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
 buildAdminPanel();
+buildNavTabs();
+
 window.onload = () => {
   const script = document.createElement('script');
   script.src = 'https://accounts.google.com/gsi/client';
