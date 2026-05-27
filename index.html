@@ -560,7 +560,7 @@ async function fetchSheetData() {
     `'KPIs 2026'!A1:Z120`,
   ].join('&ranges=');
 
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values:batchGet?ranges=${encodeURIComponent("'KPIs 2026'!A1:Z120")}&valueRenderOption=FORMATTED_VALUE`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values:batchGet?ranges=${encodeURIComponent("'KPIs 2026'!A1:Z200")}&valueRenderOption=FORMATTED_VALUE`;
 
   try {
     const res = await fetch(url, {
@@ -580,42 +580,44 @@ async function fetchSheetData() {
 //  PARSER DE DATOS
 // ═══════════════════════════════════════════════════════
 function parseAndRender(rows) {
+  // rows es array de arrays de strings — cada rows[i] es una fila, rows[i][j] es la celda
   const d = {};
 
-  // ── HEADLINE (fila 5-9 = índices 4-8) ──
+  // ── HEADLINE — Row 7 (índice 7) ──
+  // Col: 0=TotalAlumnos, 2=Variacion, 4=RetQ, 6=RetN, 8=NewStudents, 10=WinRate, 12=Prospectos
+  const hr = rows[7] || [];
   d.headline = {
-    totalAlumnos:    safeNum(rows, 7, 0),
-    variacion:       safeRaw(rows, 7, 2),
-    retencionQ:      safeRaw(rows, 7, 4),
-    retencionN:      safeRaw(rows, 7, 6),
-    newStudents:     safeNum(rows, 7, 8),
-    winRate:         safeRaw(rows, 7, 10),
-    prospectos:      safeNum(rows, 7, 12),
+    totalAlumnos: hr[0] || '0',
+    variacion:    hr[2] || '—',
+    retencionQ:   hr[4] || '—',
+    retencionN:   hr[6] || '—',
+    newStudents:  hr[8] || '0',
+    winRate:      hr[10] || '—',
+    prospectos:   hr[12] || '0',
   };
 
-  // ── KPIs POR SECCIÓN (filas 15-35 aprox) ──
+  // ── KPIs POR SECCIÓN — Rows 15-38 ──
+  // Row 15=KINDER, 17=TotalKinder, 18-22=K1-K5
+  // Row 23=PREP, 24=TotalPrep, 25-30=P1-P6
+  // Row 31=COLLEGE, 32=TotalCollege, 33-38=C1-C6
   d.kpiSecciones = {
-    quilmes: parseKpiBlock(rows, 15, 38, 'Q'),
-    north:   parseKpiBlock(rows, 15, 38, 'N'),
+    quilmes: parseKpiBlockDirect(rows, 'Q'),
+    north:   parseKpiBlockDirect(rows, 'N'),
   };
 
-  // ── PIPELINE ACTIVO 2027 (buscar por cabecera) ──
+  // ── PIPELINE, WIN RATE, etc. — buscar por keyword ──
   const pipelineStart = findRow(rows, 'PIPELINE ACTIVO 2027');
   d.pipeline = parsePipeline(rows, pipelineStart);
 
-  // ── WIN RATE HISTÓRICO ──
-  const winStart = findRow(rows, 'WIN RATE HISTÓRICO');
+  const winStart = findRow(rows, 'WIN RATE HIST');
   d.winRate = parseWinRate(rows, winStart);
 
-  // ── FUNNEL CONVERSIÓN ──
   const funnelStart = findRow(rows, 'CONVERSIÓN POR ETAPA');
   d.funnel = parseFunnel(rows, funnelStart);
 
-  // ── WITHDRAWALS ──
   const wdStart = findRow(rows, 'WITHDRAWALS POR CAUSA');
   d.withdrawals = parseWithdrawals(rows, wdStart);
 
-  // ── COHORT RETENTION ──
   const cohortStart = findRow(rows, 'COHORT RETENTION');
   d.cohort = parseCohort(rows, cohortStart);
 
@@ -648,52 +650,46 @@ function findRow(rows, keyword) {
   return -1;
 }
 
-function parseKpiBlock(rows, start, end, campus) {
-  // Col layout: 0=Nivel, 1=Detalle, 2=MatQ, 3=OcQ, 4=VacQ, 5=RetQ, 6=NewQ, 7=WdQ, 8=ProsQ
-  //             9=MatN, 10=OcN, 11=VacN, 12=RetN, 13=NewN, 14=WdN, 15=ProsN
-  const secciones = [];
-  let currentLevel = null;
+function parseKpiBlockDirect(rows, campus) {
   const isQ = campus === 'Q';
+  // Posiciones exactas mapeadas del sheet:
+  // Col Q: 2=Mat, 3=Oc, 4=Vac, 5=Ret, 6=New, 7=Wd, 8=Pros
+  // Col N: 9=Mat, 10=Oc, 11=Vac, 12=Ret, 13=New, 14=Wd, 15=Pros
+  const mc = isQ ? 2 : 9;
+  const oc = isQ ? 3 : 10;
+  const vc = isQ ? 4 : 11;
+  const rc = isQ ? 5 : 12;
+  const nc = isQ ? 6 : 13;
+  const wc = isQ ? 7 : 14;
+  const pc = isQ ? 8 : 15;
 
-  for (let i = start; i < Math.min(end, rows.length); i++) {
-    const r = rows[i];
-    if (!r || r.length < 3) continue;
-    const col0 = String(r[0] || '').trim();
-    const col1 = String(r[1] || '').trim();
+  const g = (row, col) => (rows[row] && rows[row][col]) ? rows[row][col] : '—';
 
-    if (['KINDER','PREP','COLLEGE'].includes(col0)) {
-      currentLevel = col0;
-      continue;
-    }
-    if (col0.startsWith('Total') && currentLevel) {
-      secciones.push({
-        nivel: currentLevel,
-        detalle: 'TOTAL',
-        matricula: r[isQ ? 2 : 9]  || '—',
-        ocupacion: r[isQ ? 3 : 10] || '—',
-        vacantes:  r[isQ ? 4 : 11] || '—',
-        retencion: r[isQ ? 5 : 12] || '—',
-        newStudents: r[isQ ? 6 : 13] || '—',
-        withdrawals: r[isQ ? 7 : 14] || '—',
-        prospectos:  r[isQ ? 8 : 15] || '—',
-        isTotal: true,
-      });
-    } else if (col1 && col1.match(/^[KPC]\d/)) {
-      secciones.push({
-        nivel: currentLevel,
-        detalle: col1,
-        matricula: r[isQ ? 2 : 9]  || '—',
-        ocupacion: r[isQ ? 3 : 10] || '—',
-        vacantes:  r[isQ ? 4 : 11] || '—',
-        retencion: r[isQ ? 5 : 12] || '—',
-        newStudents: r[isQ ? 6 : 13] || '—',
-        withdrawals: r[isQ ? 7 : 14] || '—',
-        prospectos:  r[isQ ? 8 : 15] || '—',
-        isTotal: false,
-      });
-    }
-  }
-  return secciones;
+  return [
+    // KINDER
+    { nivel:'KINDER', detalle:'TOTAL', matricula:g(17,mc), ocupacion:g(17,oc), vacantes:g(17,vc), retencion:g(17,rc), newStudents:g(17,nc), withdrawals:g(17,wc), prospectos:g(17,pc), isTotal:true },
+    { nivel:'KINDER', detalle:'K1', matricula:g(18,mc), ocupacion:g(18,oc), vacantes:g(18,vc), retencion:g(18,rc), newStudents:g(18,nc), withdrawals:g(18,wc), prospectos:g(18,pc), isTotal:false },
+    { nivel:'KINDER', detalle:'K2', matricula:g(19,mc), ocupacion:g(19,oc), vacantes:g(19,vc), retencion:g(19,rc), newStudents:g(19,nc), withdrawals:g(19,wc), prospectos:g(19,pc), isTotal:false },
+    { nivel:'KINDER', detalle:'K3', matricula:g(20,mc), ocupacion:g(20,oc), vacantes:g(20,vc), retencion:g(20,rc), newStudents:g(20,nc), withdrawals:g(20,wc), prospectos:g(20,pc), isTotal:false },
+    { nivel:'KINDER', detalle:'K4', matricula:g(21,mc), ocupacion:g(21,oc), vacantes:g(21,vc), retencion:g(21,rc), newStudents:g(21,nc), withdrawals:g(21,wc), prospectos:g(21,pc), isTotal:false },
+    { nivel:'KINDER', detalle:'K5', matricula:g(22,mc), ocupacion:g(22,oc), vacantes:g(22,vc), retencion:g(22,rc), newStudents:g(22,nc), withdrawals:g(22,wc), prospectos:g(22,pc), isTotal:false },
+    // PREP
+    { nivel:'PREP', detalle:'TOTAL', matricula:g(24,mc), ocupacion:g(24,oc), vacantes:g(24,vc), retencion:g(24,rc), newStudents:g(24,nc), withdrawals:g(24,wc), prospectos:g(24,pc), isTotal:true },
+    { nivel:'PREP', detalle:'P1', matricula:g(25,mc), ocupacion:g(25,oc), vacantes:g(25,vc), retencion:g(25,rc), newStudents:g(25,nc), withdrawals:g(25,wc), prospectos:g(25,pc), isTotal:false },
+    { nivel:'PREP', detalle:'P2', matricula:g(26,mc), ocupacion:g(26,oc), vacantes:g(26,vc), retencion:g(26,rc), newStudents:g(26,nc), withdrawals:g(26,wc), prospectos:g(26,pc), isTotal:false },
+    { nivel:'PREP', detalle:'P3', matricula:g(27,mc), ocupacion:g(27,oc), vacantes:g(27,vc), retencion:g(27,rc), newStudents:g(27,nc), withdrawals:g(27,wc), prospectos:g(27,pc), isTotal:false },
+    { nivel:'PREP', detalle:'P4', matricula:g(28,mc), ocupacion:g(28,oc), vacantes:g(28,vc), retencion:g(28,rc), newStudents:g(28,nc), withdrawals:g(28,wc), prospectos:g(28,pc), isTotal:false },
+    { nivel:'PREP', detalle:'P5', matricula:g(29,mc), ocupacion:g(29,oc), vacantes:g(29,vc), retencion:g(29,rc), newStudents:g(29,nc), withdrawals:g(29,wc), prospectos:g(29,pc), isTotal:false },
+    { nivel:'PREP', detalle:'P6', matricula:g(30,mc), ocupacion:g(30,oc), vacantes:g(30,vc), retencion:g(30,rc), newStudents:g(30,nc), withdrawals:g(30,wc), prospectos:g(30,pc), isTotal:false },
+    // COLLEGE
+    { nivel:'COLLEGE', detalle:'TOTAL', matricula:g(32,mc), ocupacion:g(32,oc), vacantes:g(32,vc), retencion:g(32,rc), newStudents:g(32,nc), withdrawals:g(32,wc), prospectos:g(32,pc), isTotal:true },
+    { nivel:'COLLEGE', detalle:'C1', matricula:g(33,mc), ocupacion:g(33,oc), vacantes:g(33,vc), retencion:g(33,rc), newStudents:g(33,nc), withdrawals:g(33,wc), prospectos:g(33,pc), isTotal:false },
+    { nivel:'COLLEGE', detalle:'C2', matricula:g(34,mc), ocupacion:g(34,oc), vacantes:g(34,vc), retencion:g(34,rc), newStudents:g(34,nc), withdrawals:g(34,wc), prospectos:g(34,pc), isTotal:false },
+    { nivel:'COLLEGE', detalle:'C3', matricula:g(35,mc), ocupacion:g(35,oc), vacantes:g(35,vc), retencion:g(35,rc), newStudents:g(35,nc), withdrawals:g(35,wc), prospectos:g(35,pc), isTotal:false },
+    { nivel:'COLLEGE', detalle:'C4', matricula:g(36,mc), ocupacion:g(36,oc), vacantes:g(36,vc), retencion:g(36,rc), newStudents:g(36,nc), withdrawals:g(36,wc), prospectos:g(36,pc), isTotal:false },
+    { nivel:'COLLEGE', detalle:'C5', matricula:g(37,mc), ocupacion:g(37,oc), vacantes:g(37,vc), retencion:g(37,rc), newStudents:g(37,nc), withdrawals:g(37,wc), prospectos:g(37,pc), isTotal:false },
+    { nivel:'COLLEGE', detalle:'C6', matricula:g(38,mc), ocupacion:g(38,oc), vacantes:g(38,vc), retencion:g(38,rc), newStudents:g(38,nc), withdrawals:g(38,wc), prospectos:g(38,pc), isTotal:false },
+  ];
 }
 
 function parsePipeline(rows, start) {
