@@ -203,19 +203,26 @@ document.getElementById('btn-signout').addEventListener('click', () => {
 // ═══════════════════════════════
 //  FETCH — App Script API
 // ═══════════════════════════════
-async function fetchData() {
+function fetchData() {
   showOverlay('Leyendo datos…');
-  try {
-    const res = await fetch(API_URL, { redirect: 'follow' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    D = await res.json();
+  // Usar JSONP para evitar CORS con App Script
+  const callbackName = 'sgcDashboardCallback';
+  window[callbackName] = function(data) {
+    D = data;
     document.getElementById('last-updated-label').textContent =
       'Actualizado: ' + new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     render();
-  } catch(e) {
+    delete window[callbackName];
+    document.getElementById('jsonp-script').remove();
+  };
+  const script = document.createElement('script');
+  script.id = 'jsonp-script';
+  script.src = API_URL + '?callback=' + callbackName;
+  script.onerror = () => {
     hideOverlay();
-    alert('Error al cargar datos: ' + e.message);
-  }
+    alert('Error al cargar datos del dashboard.');
+  };
+  document.head.appendChild(script);
 }
 
 // ═══════════════════════════════
