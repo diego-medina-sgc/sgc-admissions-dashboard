@@ -206,7 +206,7 @@ document.getElementById('btn-signout').addEventListener('click', () => {
 async function fetchData() {
   showOverlay('Leyendo datos…');
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, { redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     D = await res.json();
     document.getElementById('last-updated-label').textContent =
@@ -222,21 +222,22 @@ async function fetchData() {
 //  FORMAT HELPERS
 // ═══════════════════════════════
 function fmtN(v) {
+  if (v === '—' || v === null || v === undefined || v === '') return '—';
   const n = parseFloat(v);
-  if (isNaN(n)) return v || '—';
+  if (isNaN(n)) return String(v);
   return Math.round(n).toLocaleString('es-AR');
 }
 function fmtPct(v) {
+  if (v === '—' || v === null || v === undefined || v === '') return '—';
   const n = parseFloat(v);
-  if (isNaN(n)) return v || '—';
-  if (Math.abs(n) <= 1.5) return (n*100).toFixed(1)+'%';
-  return n.toFixed(1)+'%';
+  if (isNaN(n)) return String(v);
+  return (n * 100).toFixed(1) + '%';
 }
 function fmtVal(v) {
   if (v === '—' || v === null || v === undefined || v === '') return '—';
   const n = parseFloat(v);
-  if (isNaN(n)) return v;
-  if (Math.abs(n) < 2 && n !== 0 && String(v).includes('.')) return fmtPct(n);
+  if (isNaN(n)) return String(v);
+  if (n > -2 && n < 2 && String(v).includes('.')) return fmtPct(n);
   return fmtN(n);
 }
 
