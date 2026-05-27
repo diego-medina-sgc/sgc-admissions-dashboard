@@ -493,8 +493,8 @@
 //  CONFIGURACIÓN — COMPLETAR ANTES DE SUBIR A GITHUB
 // ═══════════════════════════════════════════════════════
 const CONFIG = {
-  CLIENT_ID:  '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com',
-  SHEET_ID:   '1bBccoZlaPTKVwNXDVd3gLJe3AATuz2tuh9c9ZHi55Vc',
+  CLIENT_ID:  'TU_CLIENT_ID_AQUI.apps.googleusercontent.com',
+  SHEET_ID:   '1C86amVWQr_zjBCje2bWY2cM9c2xfxb-p',
   SHEET_NAME: 'KPIs 2026',
   SCOPES:     'https://www.googleapis.com/auth/spreadsheets.readonly',
 };
@@ -593,10 +593,10 @@ function parseAndRender(rows) {
     prospectos:      safeNum(rows, 7, 12),
   };
 
-  // ── KPIs POR SECCIÓN (filas 10-35 aprox) ──
+  // ── KPIs POR SECCIÓN (filas 15-35 aprox) ──
   d.kpiSecciones = {
-    quilmes: parseKpiBlock(rows, 10, 36, 'Q'),
-    north:   parseKpiBlock(rows, 10, 36, 'N'),
+    quilmes: parseKpiBlock(rows, 15, 38, 'Q'),
+    north:   parseKpiBlock(rows, 15, 38, 'N'),
   };
 
   // ── PIPELINE ACTIVO 2027 (buscar por cabecera) ──
@@ -631,10 +631,15 @@ function parseAndRender(rows) {
 
 // ── helpers de parsing ──
 function safeNum(rows, r, c) {
-  try { return parseFloat(String(rows[r][c]).replace('%','').replace(',','.')) || 0; } catch { return 0; }
+  try {
+    const val = Array.isArray(rows[0]) ? rows[r][c] : rows[r];
+    return parseFloat(String(val).replace('%','').replace(',','.')) || 0;
+  } catch { return 0; }
 }
 function safeRaw(rows, r, c) {
-  try { return rows[r][c] || '—'; } catch { return '—'; }
+  try {
+    return (Array.isArray(rows[0]) ? rows[r][c] : rows[r]) || '—';
+  } catch { return '—'; }
 }
 function findRow(rows, keyword) {
   for (let i = 0; i < rows.length; i++) {
@@ -644,47 +649,46 @@ function findRow(rows, keyword) {
 }
 
 function parseKpiBlock(rows, start, end, campus) {
-  // Estructura: nivel|detalle|matQ|ocQ|vacQ|retQ|newQ|wdQ|prosQ|matN|ocN|vacN|retN|newN|wdN|prosN
+  // Col layout: 0=Nivel, 1=Detalle, 2=MatQ, 3=OcQ, 4=VacQ, 5=RetQ, 6=NewQ, 7=WdQ, 8=ProsQ
+  //             9=MatN, 10=OcN, 11=VacN, 12=RetN, 13=NewN, 14=WdN, 15=ProsN
   const secciones = [];
   let currentLevel = null;
+  const isQ = campus === 'Q';
 
   for (let i = start; i < Math.min(end, rows.length); i++) {
     const r = rows[i];
     if (!r || r.length < 3) continue;
-    const col0 = String(r[0] || '');
-    const col1 = String(r[1] || '');
+    const col0 = String(r[0] || '').trim();
+    const col1 = String(r[1] || '').trim();
 
     if (['KINDER','PREP','COLLEGE'].includes(col0)) {
       currentLevel = col0;
       continue;
     }
-    if (col0.startsWith('Total') || col0.startsWith('TOTAL')) {
-      // fila de total de sección
-      const isQ = campus === 'Q';
+    if (col0.startsWith('Total') && currentLevel) {
       secciones.push({
         nivel: currentLevel,
         detalle: 'TOTAL',
-        matricula: safeNum(r, 0, isQ ? 2 : 9),
-        ocupacion: safeRaw(r, 0, isQ ? 3 : 10),
-        vacantes:  safeRaw(r, 0, isQ ? 4 : 11),
-        retencion: safeRaw(r, 0, isQ ? 5 : 12),
-        newStudents: safeRaw(r, 0, isQ ? 6 : 13),
-        withdrawals: safeRaw(r, 0, isQ ? 7 : 14),
-        prospectos:  safeRaw(r, 0, isQ ? 8 : 15),
+        matricula: r[isQ ? 2 : 9]  || '—',
+        ocupacion: r[isQ ? 3 : 10] || '—',
+        vacantes:  r[isQ ? 4 : 11] || '—',
+        retencion: r[isQ ? 5 : 12] || '—',
+        newStudents: r[isQ ? 6 : 13] || '—',
+        withdrawals: r[isQ ? 7 : 14] || '—',
+        prospectos:  r[isQ ? 8 : 15] || '—',
         isTotal: true,
       });
     } else if (col1 && col1.match(/^[KPC]\d/)) {
-      const isQ = campus === 'Q';
       secciones.push({
         nivel: currentLevel,
         detalle: col1,
-        matricula: safeRaw(r, 0, isQ ? 2 : 9),
-        ocupacion: safeRaw(r, 0, isQ ? 3 : 10),
-        vacantes:  safeRaw(r, 0, isQ ? 4 : 11),
-        retencion: safeRaw(r, 0, isQ ? 5 : 12),
-        newStudents: safeRaw(r, 0, isQ ? 6 : 13),
-        withdrawals: safeRaw(r, 0, isQ ? 7 : 14),
-        prospectos:  safeRaw(r, 0, isQ ? 8 : 15),
+        matricula: r[isQ ? 2 : 9]  || '—',
+        ocupacion: r[isQ ? 3 : 10] || '—',
+        vacantes:  r[isQ ? 4 : 11] || '—',
+        retencion: r[isQ ? 5 : 12] || '—',
+        newStudents: r[isQ ? 6 : 13] || '—',
+        withdrawals: r[isQ ? 7 : 14] || '—',
+        prospectos:  r[isQ ? 8 : 15] || '—',
         isTotal: false,
       });
     }
