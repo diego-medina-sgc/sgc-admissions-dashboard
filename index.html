@@ -5,361 +5,179 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admissions Dashboard 2026 · St George's College</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --red: #DC1E33;
-      --red-dark: #a8101f;
-      --blue: #213669;
-      --blue-mid: #2d4a8a;
-      --blue-lt: #eef1f8;
-      --cream: #f8f6f2;
-      --ink: #1a1a2e;
-      --muted: #6b7280;
-      --border: #e2e5ee;
-      --card: #ffffff;
-      --green: #15803d;
-      --green-lt: #dcfce7;
-      --amber: #b45309;
-      --amber-lt: #fef3c7;
-      --radius: 4px;
-      --shadow-sm: 0 1px 4px rgba(33,54,105,.06);
-      --shadow: 0 2px 16px rgba(33,54,105,.10);
-      --shadow-lg: 0 8px 32px rgba(33,54,105,.14);
+      --red:#DC1E33; --blue:#213669; --blue-mid:#2d4a8a; --blue-lt:#eef1f8;
+      --cream:#f5f3ef; --ink:#1c1c2e; --muted:#64748b; --border:#e2e5ee;
+      --card:#ffffff; --green:#15803d; --green-lt:#dcfce7;
+      --amber:#b45309; --amber-lt:#fef3c7;
+      --r:4px; --sh:0 1px 6px rgba(33,54,105,.07); --sh2:0 4px 20px rgba(33,54,105,.11);
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
 
-    /* ── LOGIN ── */
-    #login-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--blue);
-      background-image: radial-gradient(ellipse at 20% 50%, rgba(220,30,51,.15) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 20%, rgba(255,255,255,.04) 0%, transparent 50%);
+    /* LOGIN */
+    #login-screen{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:var(--blue);
+      background-image:
+        radial-gradient(ellipse 60% 80% at 15% 60%, rgba(220,30,51,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(255,255,255,.04) 0%, transparent 60%);
     }
-    .login-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 36px;
-      padding: 60px 48px;
-      max-width: 420px;
-      width: 100%;
+    .login-box{display:flex;flex-direction:column;align-items:center;gap:32px;padding:56px 48px;max-width:400px;width:100%;}
+    .login-isotipo{width:72px;height:72px;object-fit:contain;filter:brightness(0) invert(1);opacity:.9;}
+    .login-title{font-family:'Cormorant Garamond',serif;color:#fff;font-size:1.9rem;font-weight:600;letter-spacing:.04em;text-align:center;line-height:1.15;}
+    .login-sub{font-size:.68rem;color:rgba(255,255,255,.38);letter-spacing:.2em;text-transform:uppercase;text-align:center;}
+    .login-rule{width:28px;height:1px;background:var(--red);}
+    .btn-google{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      background:#fff;border:none;border-radius:3px;padding:13px 28px;
+      font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--ink);
+      cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,.28);
+      transition:transform .15s,box-shadow .15s;width:100%;
     }
-    .login-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .login-logo svg { width: 64px; height: 64px; opacity: .9; }
-    .login-title {
-      font-family: 'Cormorant Garamond', serif;
-      color: #fff;
-      font-size: 2rem;
-      font-weight: 600;
-      letter-spacing: .04em;
-      text-align: center;
-      line-height: 1.1;
-    }
-    .login-subtitle {
-      font-size: .75rem;
-      color: rgba(255,255,255,.4);
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-    .login-divider { width: 32px; height: 1px; background: var(--red); opacity: .8; }
-    .btn-google {
-      display: flex; align-items: center; gap: 12px;
-      background: rgba(255,255,255,.97);
-      border: none; border-radius: 3px;
-      padding: 13px 32px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .9rem; font-weight: 500;
-      color: var(--ink);
-      cursor: pointer;
-      box-shadow: 0 4px 24px rgba(0,0,0,.3);
-      transition: transform .15s, box-shadow .15s;
-      width: 100%;
-      justify-content: center;
-    }
-    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
-    .login-note { font-size: .72rem; color: rgba(255,255,255,.3); text-align: center; letter-spacing: .04em; }
+    .btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.36);}
+    .login-note{font-size:.68rem;color:rgba(255,255,255,.28);text-align:center;letter-spacing:.03em;}
 
-    /* ── APP SHELL ── */
-    #app { display: none; flex-direction: column; min-height: 100vh; }
+    /* APP */
+    #app{display:none;flex-direction:column;min-height:100vh;}
 
-    /* ── HEADER ── */
-    header {
-      background: var(--blue);
-      color: #fff;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      position: sticky; top: 0; z-index: 200;
-      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    /* HEADER */
+    header{
+      background:var(--blue);height:56px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 28px;position:sticky;top:0;z-index:200;
+      box-shadow:0 2px 12px rgba(0,0,0,.18);
     }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-logo svg { width: 32px; height: 32px; display: block; }
-    .header-brand {
-      display: flex; flex-direction: column; gap: 1px;
-    }
-    .header-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem; font-weight: 600;
-      letter-spacing: .04em; color: #fff;
-      line-height: 1;
-    }
-    .header-sub {
-      font-size: .6rem; color: rgba(255,255,255,.45);
-      letter-spacing: .14em; text-transform: uppercase;
-    }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .header-time {
-      font-size: .68rem; color: rgba(255,255,255,.4);
-      font-family: 'DM Mono', monospace;
-    }
-    .btn-sm {
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.15);
-      color: rgba(255,255,255,.8);
-      padding: 5px 12px; border-radius: 3px;
-      font-size: .75rem; cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: background .15s;
-    }
-    .btn-sm:hover { background: rgba(255,255,255,.16); }
-    .btn-signout {
-      background: none; border: none;
-      color: rgba(255,255,255,.35);
-      font-size: .72rem; cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: color .15s;
-    }
-    .btn-signout:hover { color: rgba(255,255,255,.7); }
+    .h-left{display:flex;align-items:center;gap:12px;}
+    .h-logo{width:30px;height:30px;object-fit:contain;filter:brightness(0) invert(1);opacity:.85;}
+    .h-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;letter-spacing:.04em;color:#fff;line-height:1;}
+    .h-sub{font-size:.58rem;color:rgba(255,255,255,.38);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;}
+    .h-right{display:flex;align-items:center;gap:10px;}
+    .h-time{font-size:.65rem;color:rgba(255,255,255,.38);font-family:'DM Mono',monospace;}
+    .btn-sm{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75);padding:5px 11px;border-radius:3px;font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;}
+    .btn-sm:hover{background:rgba(255,255,255,.16);}
+    .btn-out{background:none;border:none;color:rgba(255,255,255,.3);font-size:.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .15s;}
+    .btn-out:hover{color:rgba(255,255,255,.65);}
 
-    /* ── CAMPUS TOGGLE BAR ── */
-    .campus-bar {
-      background: var(--blue);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      padding: 0 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    /* NAV BAR */
+    .nav-bar{
+      background:var(--blue);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      padding:0 28px;
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:0;
     }
-    .campus-toggle { display: flex; gap: 0; }
-    .campus-btn {
-      padding: 10px 24px;
-      background: none; border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .78rem; font-weight: 500;
-      color: rgba(255,255,255,.45);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all .2s;
-      letter-spacing: .04em;
+    .campus-group{display:flex;}
+    .campus-btn{
+      padding:11px 22px;background:none;border:none;
+      font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;
+      color:rgba(255,255,255,.42);cursor:pointer;
+      border-bottom:2px solid transparent;
+      transition:all .2s;letter-spacing:.03em;
     }
-    .campus-btn:hover { color: rgba(255,255,255,.8); }
-    .campus-btn.active {
-      color: #fff;
-      border-bottom-color: var(--red);
+    .campus-btn:hover{color:rgba(255,255,255,.75);}
+    .campus-btn.active{color:#fff;border-bottom-color:var(--red);}
+    .tab-group{display:flex;}
+    .tab-btn{
+      padding:11px 16px;background:none;border:none;
+      font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;
+      color:rgba(255,255,255,.32);cursor:pointer;
+      border-bottom:2px solid transparent;
+      transition:all .2s;white-space:nowrap;
     }
-    .nav-tabs { display: flex; gap: 0; }
-    .nav-tab {
-      padding: 10px 18px;
-      background: none; border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .75rem; font-weight: 400;
-      color: rgba(255,255,255,.35);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all .2s;
-      white-space: nowrap;
-    }
-    .nav-tab:hover { color: rgba(255,255,255,.65); }
-    .nav-tab.active { color: rgba(255,255,255,.85); border-bottom-color: rgba(255,255,255,.3); }
+    .tab-btn:hover{color:rgba(255,255,255,.6);}
+    .tab-btn.active{color:rgba(255,255,255,.88);border-bottom-color:rgba(255,255,255,.28);}
 
-    /* ── ADMIN PANEL ── */
-    #admin-panel {
-      display: none;
-      background: #1a2d55;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      padding: 16px 28px;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: center;
-    }
-    #admin-panel.open { display: flex; }
-    .admin-label { font-size: .65rem; color: rgba(255,255,255,.35); letter-spacing: .12em; text-transform: uppercase; margin-right: 4px; }
-    .toggle-pill {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 20px;
-      padding: 4px 12px;
-      cursor: pointer; user-select: none;
-      font-size: .75rem; color: rgba(255,255,255,.5);
-      transition: all .15s;
-    }
-    .toggle-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
-    .toggle-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .6; flex-shrink: 0; }
+    /* ADMIN */
+    #admin-panel{display:none;background:#1a2d55;border-bottom:1px solid rgba(255,255,255,.07);padding:14px 28px;flex-wrap:wrap;gap:8px;align-items:center;}
+    #admin-panel.open{display:flex;}
+    .adm-lbl{font-size:.62rem;color:rgba(255,255,255,.32);letter-spacing:.12em;text-transform:uppercase;margin-right:4px;}
+    .pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;font-size:.72rem;color:rgba(255,255,255,.45);transition:all .15s;}
+    .pill.active{background:var(--red);border-color:var(--red);color:#fff;}
+    .pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;flex-shrink:0;}
 
-    /* ── MAIN ── */
-    main { flex: 1; }
-    .tab-panel { display: none; padding: 28px; max-width: 1440px; margin: 0 auto; }
-    .tab-panel.active { display: block; }
+    /* CONTENT */
+    main{flex:1;}
+    .tab-panel{display:none;padding:28px 32px;max-width:1440px;margin:0 auto;}
+    .tab-panel.active{display:block;}
 
-    /* ── SECTION ── */
-    .section { margin-bottom: 36px; }
-    .section-hd {
-      display: flex; align-items: baseline; gap: 10px;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem; font-weight: 600; color: var(--blue);
-    }
-    .section-meta { font-size: .7rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+    /* SECTION */
+    .sec{margin-bottom:36px;}
+    .sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+    .sec-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--blue);}
+    .sec-meta{font-size:.67rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
-    /* ── HEADLINE CARDS ── */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
-    .kpi-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 18px 14px;
-      position: relative; overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: box-shadow .2s, transform .2s;
+    /* KPI CARDS */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+    .kpi-card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+      padding:16px 18px 14px;position:relative;overflow:hidden;
+      box-shadow:var(--sh);transition:box-shadow .2s,transform .2s;
     }
-    .kpi-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-    .kpi-card.accent::after {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: var(--red);
-    }
-    .kpi-card .kpi-label {
-      font-size: .62rem; font-weight: 600;
-      letter-spacing: .1em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 8px;
-    }
-    .kpi-card .kpi-val {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem; font-weight: 700;
-      color: var(--blue); line-height: 1;
-      margin-bottom: 6px;
-    }
-    .kpi-card .kpi-val.neg { color: var(--red); }
-    .kpi-card .kpi-val.pos { color: var(--green); }
-    .kpi-card .kpi-foot {
-      font-size: .66rem; color: var(--muted);
-      font-family: 'DM Mono', monospace;
-    }
+    .kpi-card:hover{box-shadow:var(--sh2);transform:translateY(-1px);}
+    .kpi-card.accent::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);}
+    .kpi-lbl{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+    .kpi-val{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;color:var(--blue);line-height:1;margin-bottom:5px;}
+    .kpi-val.neg{color:var(--red);}
+    .kpi-val.pos{color:var(--green);}
+    .kpi-foot{font-size:.63rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
-    /* ── TABLES ── */
-    .tbl-wrap {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-    table { width: 100%; border-collapse: collapse; font-size: .8rem; background: var(--card); }
-    thead th {
-      background: var(--blue); color: #fff;
-      padding: 9px 14px; text-align: left;
-      font-weight: 500; font-size: .68rem;
-      letter-spacing: .06em; white-space: nowrap;
-    }
-    thead th.r { text-align: right; }
-    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr.grp td {
-      background: var(--blue-lt); color: var(--blue);
-      font-weight: 600; font-size: .7rem;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: 7px 14px;
-    }
-    tbody tr.tot td { font-weight: 600; background: #f5f7fc; }
-    tbody tr.campus-tot td { font-weight: 700; background: var(--blue-lt); color: var(--blue); border-top: 2px solid var(--blue); }
-    tbody tr:hover:not(.grp):not(.tot):not(.campus-tot) { background: #f9fafc; }
-    td { padding: 8px 14px; }
-    td.r { text-align: right; font-family: 'DM Mono', monospace; font-size: .75rem; }
-    .tag {
-      display: inline-block; padding: 2px 7px;
-      border-radius: 2px; font-size: .65rem; font-weight: 600;
-      font-family: 'DM Mono', monospace;
-    }
-    .tag.nat { background: var(--green-lt); color: var(--green); }
-    .tag.exo { background: var(--amber-lt); color: var(--amber); }
-    .tag.act { background: #fee2e2; color: #b91c1c; }
-    .tag.won { background: var(--green-lt); color: var(--green); }
+    /* TABLES */
+    .tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);}
+    table{width:100%;border-collapse:collapse;font-size:.78rem;background:var(--card);}
+    thead th{background:var(--blue);color:#fff;padding:9px 13px;text-align:left;font-weight:500;font-size:.66rem;letter-spacing:.06em;white-space:nowrap;}
+    thead th.r{text-align:right;}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr.grp td{background:var(--blue-lt);color:var(--blue);font-weight:600;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;}
+    tbody tr.tot td{font-weight:600;background:#f4f6fb;}
+    tbody tr.ctot td{font-weight:700;background:var(--blue-lt);color:var(--blue);border-top:2px solid var(--blue);}
+    tbody tr.won-row td{background:#f0fdf4;font-weight:600;}
+    tbody tr:hover:not(.grp):not(.tot):not(.ctot):not(.won-row){background:#f8f9fc;}
+    td{padding:8px 13px;}
+    td.r{text-align:right;font-family:'DM Mono',monospace;font-size:.73rem;}
+    .tag{display:inline-block;padding:2px 7px;border-radius:2px;font-size:.62rem;font-weight:600;font-family:'DM Mono',monospace;}
+    .tag.nat{background:var(--green-lt);color:var(--green);}
+    .tag.exo{background:var(--amber-lt);color:var(--amber);}
+    .tag.act{background:#fee2e2;color:#b91c1c;}
 
-    /* ── TWO COL ── */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+    /* TWO COL */
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:860px){.two{grid-template-columns:1fr;}}
 
-    /* ── CHART CARD ── */
-    .chart-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      box-shadow: var(--shadow-sm);
-    }
-    .chart-ttl { font-size: .68rem; font-weight: 600; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 14px; }
-    canvas { max-height: 240px; }
+    /* CHART */
+    .cc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--sh);}
+    .cc-ttl{font-size:.66rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+    canvas{max-height:240px;}
 
-    /* ── FUNNEL ── */
-    .funnel { display: flex; flex-direction: column; gap: 5px; }
-    .funnel-row {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 9px 14px;
-    }
-    .funnel-label { font-size: .8rem; font-weight: 500; min-width: 190px; }
-    .funnel-track { flex: 1; height: 6px; background: var(--blue-lt); border-radius: 3px; overflow: hidden; }
-    .funnel-fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width .6s ease; }
-    .funnel-row.won .funnel-fill { background: var(--green); }
-    .funnel-nums { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); min-width: 160px; text-align: right; }
+    /* FUNNEL */
+    .funnel{display:flex;flex-direction:column;gap:5px;}
+    .f-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;}
+    .f-lbl{font-size:.78rem;font-weight:500;min-width:185px;}
+    .f-track{flex:1;height:6px;background:var(--blue-lt);border-radius:3px;overflow:hidden;}
+    .f-fill{height:100%;background:var(--blue);border-radius:3px;}
+    .f-row.won .f-fill{background:var(--green);}
+    .f-nums{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);min-width:160px;text-align:right;}
 
-    /* ── LOADING ── */
-    #loading {
-      position: fixed; inset: 0;
-      background: var(--blue);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 18px; z-index: 300;
-      transition: opacity .4s;
-    }
-    #loading.hidden { opacity: 0; pointer-events: none; }
-    .spin {
-      width: 36px; height: 36px;
-      border: 2px solid rgba(255,255,255,.15);
-      border-top-color: var(--red);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loading p { color: rgba(255,255,255,.5); font-size: .78rem; font-family: 'DM Mono', monospace; }
+    /* ENROLMENT TABLE */
+    .enrol-badge{display:inline-block;padding:1px 6px;border-radius:2px;font-size:.62rem;font-family:'DM Mono',monospace;font-weight:600;}
+    .enrol-badge.proj{background:#fef3c7;color:#92400e;}
+    .pos-small{color:var(--green);font-weight:600;}
+    .neg-small{color:var(--red);font-weight:600;}
 
-    footer {
-      text-align: center; padding: 18px 28px;
-      font-size: .65rem; color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      border-top: 1px solid var(--border);
-    }
+    /* LOADING */
+    #loading{position:fixed;inset:0;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .4s;}
+    #loading.hidden{opacity:0;pointer-events:none;}
+    .spin{width:34px;height:34px;border:2px solid rgba(255,255,255,.14);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #loading p{color:rgba(255,255,255,.45);font-size:.75rem;font-family:'DM Mono',monospace;}
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      .nav-tabs { display: none; }
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .tab-panel { padding: 16px; }
-    }
+    footer{text-align:center;padding:16px 28px;font-size:.62rem;color:var(--muted);font-family:'DM Mono',monospace;border-top:1px solid var(--border);}
+    @media(max-width:640px){.tab-group{display:none;}.kpi-grid{grid-template-columns:repeat(2,1fr);}.tab-panel{padding:16px;}}
   </style>
 </head>
 <body>
@@ -369,19 +187,12 @@
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">
-      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 8C50 8 38 16 30 28C26 34 24 42 26 50C28 58 34 64 42 68C38 74 34 82 36 90C40 88 46 84 50 80C54 84 60 88 64 90C66 82 62 74 58 68C66 64 72 58 74 50C76 42 74 34 70 28C62 16 50 8 50 8Z" fill="#DC1E33" opacity=".9"/>
-        <path d="M42 46C42 46 38 52 40 58C42 64 50 66 50 66C50 66 58 64 60 58C62 52 58 46 58 46C54 50 50 52 50 52C50 52 46 50 42 46Z" fill="white" opacity=".8"/>
-        <path d="M28 42C32 36 40 32 50 32C60 32 68 36 72 42" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".4"/>
-        <path d="M32 70C36 72 42 74 50 74C58 74 64 72 68 70" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".3"/>
-      </svg>
-      <div>
-        <div class="login-title">St George's College</div>
-        <div class="login-subtitle">Admissions Dashboard · 2026</div>
-      </div>
+    <img class="login-isotipo" src="data:image/png;base64,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" alt="SGC" />
+    <div>
+      <div class="login-title">St George's College</div>
+      <div class="login-sub">Admissions Dashboard · 2026</div>
     </div>
-    <div class="login-divider"></div>
+    <div class="login-rule"></div>
     <button class="btn-google" id="btn-login">
       <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Ingresar con Google
@@ -393,582 +204,556 @@
 <!-- APP -->
 <div id="app">
   <header>
-    <div class="header-left">
-      <div class="header-logo">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 8C50 8 38 16 30 28C26 34 24 42 26 50C28 58 34 64 42 68C38 74 34 82 36 90C40 88 46 84 50 80C54 84 60 88 64 90C66 82 62 74 58 68C66 64 72 58 74 50C76 42 74 34 70 28C62 16 50 8 50 8Z" fill="#DC1E33" opacity=".9"/>
-          <path d="M42 46C42 46 38 52 40 58C42 64 50 66 50 66C50 66 58 64 60 58C62 52 58 46 58 46C54 50 50 52 50 52C50 52 46 50 42 46Z" fill="white" opacity=".8"/>
-        </svg>
-      </div>
-      <div class="header-brand">
-        <div class="header-name">St George's College</div>
-        <div class="header-sub">Admissions Analytics · 2026</div>
+    <div class="h-left">
+      <img class="h-logo" src="data:image/png;base64,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" alt="SGC" />
+      <div>
+        <div class="h-name">St George's College</div>
+        <div class="h-sub">Admissions Analytics · 2026</div>
       </div>
     </div>
-    <div class="header-right">
-      <span class="header-time" id="header-time">—</span>
+    <div class="h-right">
+      <span class="h-time" id="h-time">—</span>
       <button class="btn-sm" id="btn-admin">⚙ Admin</button>
-      <button class="btn-signout" id="btn-signout">Salir</button>
+      <button class="btn-out" id="btn-out">Salir</button>
     </div>
   </header>
 
-  <!-- CAMPUS BAR -->
-  <div class="campus-bar">
-    <div class="campus-toggle">
-      <button class="campus-btn active" data-campus="os">One School</button>
-      <button class="campus-btn" data-campus="q">Quilmes</button>
-      <button class="campus-btn" data-campus="n">North</button>
+  <div class="nav-bar">
+    <div class="campus-group">
+      <button class="campus-btn active" data-c="os">One School</button>
+      <button class="campus-btn" data-c="q">Quilmes</button>
+      <button class="campus-btn" data-c="n">North</button>
     </div>
-    <div class="nav-tabs" id="nav-tabs"></div>
+    <div class="tab-group" id="tab-group"></div>
   </div>
 
-  <!-- ADMIN -->
   <div id="admin-panel">
-    <span class="admin-label">Secciones</span>
-    <div id="section-toggles" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    <span class="adm-lbl">Secciones</span>
+    <div id="sec-toggles" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
   </div>
 
   <main id="main"></main>
 
-  <footer>Dashboard de Admisiones · St George's College · Datos en tiempo real desde Google Sheets · Actualizado <span id="footer-time">—</span></footer>
+  <footer>Dashboard de Admisiones · St George's College · Datos en tiempo real desde Google Sheets · <span id="f-time">—</span></footer>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════════════════
 const CLIENT_ID = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
 const API_URL   = 'https://script.google.com/macros/s/AKfycbyJDI5osYSQ4JpPB9ahuSz8EqU84HpQvoPDSkZo97FEuE2_s0avu4iSVQ1kfxVmrJODlg/exec';
 
 const TABS = [
-  { id: 'kpis',        label: 'KPIs 2026' },
-  { id: 'pipeline',    label: 'Pipeline' },
-  { id: 'winrate',     label: 'Win Rate' },
-  { id: 'funnel',      label: 'Funnel' },
-  { id: 'withdrawals', label: 'Withdrawals' },
-  { id: 'cohort',      label: 'Cohort Retention' },
+  {id:'resumen',    label:'Resumen Ejecutivo'},
+  {id:'kpis',       label:'KPIs 2026'},
+  {id:'pipeline',   label:'Pipeline'},
+  {id:'winrate',    label:'Win Rate'},
+  {id:'funnel',     label:'Funnel'},
+  {id:'withdrawals',label:'Withdrawals'},
+  {id:'cohort',     label:'Cohort Retention'},
 ];
 
-let tokenClient, accessToken;
-let D = {};
-let campus = 'os'; // os | q | n
-let activeTab = 'kpis';
-let sectionVis = Object.fromEntries(TABS.map(t => [t.id, true]));
-let charts = {};
+let tokenClient, accessToken, D={}, campus='os', activeTab='resumen';
+let sVis=Object.fromEntries(TABS.map(t=>[t.id,true]));
+let charts={};
 
-// ═══════════════════════════════════════════════════
-//  AUTH
-// ═══════════════════════════════════════════════════
-function initGoogleAuth() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
-    callback: resp => {
-      if (resp.error) { alert('Error: ' + resp.error); return; }
-      accessToken = resp.access_token;
-      showApp();
-      fetchData();
-    },
+// AUTH
+function initAuth(){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,
+    scope:'https://www.googleapis.com/auth/spreadsheets.readonly',
+    callback:r=>{
+      if(r.error){alert('Error: '+r.error);return;}
+      accessToken=r.access_token;
+      showApp();fetchData();
+    }
   });
-  hideLoading();
+  hideLoad();
 }
-
-document.getElementById('btn-login').addEventListener('click', () => tokenClient.requestAccessToken({ prompt: 'select_account' }));
-document.getElementById('btn-signout').addEventListener('click', () => {
-  google.accounts.oauth2.revoke(accessToken, () => {
-    accessToken = null;
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
+document.getElementById('btn-login').addEventListener('click',()=>tokenClient.requestAccessToken({prompt:'select_account'}));
+document.getElementById('btn-out').addEventListener('click',()=>{
+  google.accounts.oauth2.revoke(accessToken,()=>{
+    accessToken=null;
+    document.getElementById('app').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
   });
 });
 
-// ═══════════════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════════════
-function fetchData() {
-  showLoading('Leyendo datos del dashboard…');
-  const cb = 'sgcCb_' + Date.now();
-  window[cb] = data => {
-    D = data;
-    const now = new Date().toLocaleString('es-AR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-    document.getElementById('header-time').textContent = 'Actualizado: ' + now;
-    document.getElementById('footer-time').textContent = now;
+// DATA
+function fetchData(){
+  showLoad('Leyendo datos del dashboard…');
+  const cb='sgcCb_'+Date.now();
+  window[cb]=data=>{
+    D=data;
+    const now=new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('h-time').textContent='Actualizado: '+now;
+    document.getElementById('f-time').textContent=now;
     render();
     delete window[cb];
-    const s = document.getElementById('_jsonp'); if (s) s.remove();
+    const s=document.getElementById('_jp');if(s)s.remove();
   };
-  const s = document.createElement('script');
-  s.id = '_jsonp';
-  s.src = API_URL + '?callback=' + cb;
-  s.onerror = () => { hideLoading(); alert('Error al cargar datos.'); };
+  const s=document.createElement('script');
+  s.id='_jp';s.src=API_URL+'?callback='+cb;
+  s.onerror=()=>{hideLoad();alert('Error al cargar datos.');};
   document.head.appendChild(s);
 }
 
-// ═══════════════════════════════════════════════════
-//  FORMAT
-// ═══════════════════════════════════════════════════
-const fN = v => {
-  if (v === '—' || v == null || v === '') return '—';
-  const n = parseFloat(v);
-  if (isNaN(n)) return String(v);
+// FORMAT
+const fN=v=>{
+  if(v==='—'||v==null||v==='')return'—';
+  const n=parseFloat(v);if(isNaN(n))return String(v);
   return Math.round(n).toLocaleString('es-AR');
 };
-const fP = v => {
-  if (v === '—' || v == null || v === '') return '—';
-  const n = parseFloat(v);
-  if (isNaN(n)) return String(v);
-  return (n * 100).toFixed(1) + '%';
+const fP=v=>{
+  if(v==='—'||v==null||v==='')return'—';
+  const n=parseFloat(v);if(isNaN(n))return String(v);
+  return(n*100).toFixed(1)+'%';
 };
-const fV = v => {
-  if (v === '—' || v == null || v === '') return '—';
-  const n = parseFloat(v);
-  if (isNaN(n)) return String(v);
-  if (n > -2 && n < 2 && String(v).includes('.')) return fP(n);
+const fV=v=>{
+  if(v==='—'||v==null||v==='')return'—';
+  const n=parseFloat(v);if(isNaN(n))return String(v);
+  if(n>-2&&n<2&&String(v).includes('.'))return fP(n);
   return fN(n);
 };
+const fPctRaw=v=>{
+  if(v==='—'||v==null||v==='')return'—';
+  const n=parseFloat(v);if(isNaN(n))return String(v);
+  return(n*100).toFixed(2)+'%';
+};
 
-// ═══════════════════════════════════════════════════
-//  CAMPUS SELECTOR
-// ═══════════════════════════════════════════════════
-function getCampusData() {
-  if (campus === 'q') return D.quilmes;
-  if (campus === 'n') return D.north;
-  // One School: merge
-  return {
-    total: {
-      matricula:    (D.quilmes?.total?.matricula || 0) + (D.north?.total?.matricula || 0),
-      ocupacion:    D.headline?.retencion_quilmes, // placeholder
-      vacantes:     (D.quilmes?.total?.vacantes || 0) + (D.north?.total?.vacantes || 0),
-      retencion:    null,
-      new_students: (D.quilmes?.total?.new_students || 0) + (D.north?.total?.new_students || 0),
-      withdrawals:  (D.quilmes?.total?.withdrawals || 0) + (D.north?.total?.withdrawals || 0),
-      prospectos:   (D.quilmes?.total?.prospectos || 0) + (D.north?.total?.prospectos || 0),
-    },
-    kinder: mergeSection('kinder', ['K1','K2','K3','K4','K5']),
-    prep:   mergeSection('prep',   ['P1','P2','P3','P4','P5','P6']),
-    college:mergeSection('college',['C1','C2','C3','C4','C5','C6']),
+// CAMPUS DATA
+function getCampusData(){
+  if(campus==='q')return D.quilmes;
+  if(campus==='n')return D.north;
+  return mergeOS();
+}
+function mergeOS(){
+  const q=D.quilmes||{},n=D.north||{};
+  const m=(a,b)=>({
+    matricula:(parseFloat(a?.matricula)||0)+(parseFloat(b?.matricula)||0),
+    ocupacion:null,vacantes:(parseFloat(a?.vacantes)||0)+(parseFloat(b?.vacantes)||0),
+    retencion:null,
+    new_students:(parseFloat(a?.new_students)||0)+(parseFloat(b?.new_students)||0),
+    withdrawals:(parseFloat(a?.withdrawals)||0)+(parseFloat(b?.withdrawals)||0),
+    prospectos:(parseFloat(a?.prospectos)||0)+(parseFloat(b?.prospectos)||0),
+  });
+  const mSec=(sec,grades)=>{
+    const r={total:m(q[sec]?.total,n[sec]?.total)};
+    grades.forEach(g=>{r[g]=m(q[sec]?.[g],n[sec]?.[g]);});
+    return r;
+  };
+  return{
+    total:m(q.total,n.total),
+    kinder:mSec('kinder',['K1','K2','K3','K4','K5']),
+    prep:mSec('prep',['P1','P2','P3','P4','P5','P6']),
+    college:mSec('college',['C1','C2','C3','C4','C5','C6']),
   };
 }
-
-function mergeSection(sec, grades) {
-  const q = D.quilmes?.[sec] || {};
-  const n = D.north?.[sec] || {};
-  const merge = (a, b) => ({
-    matricula:    (parseFloat(a?.matricula)||0) + (parseFloat(b?.matricula)||0),
-    ocupacion:    null,
-    vacantes:     (parseFloat(a?.vacantes)||0)  + (parseFloat(b?.vacantes)||0),
-    retencion:    null,
-    new_students: (parseFloat(a?.new_students)||0) + (parseFloat(b?.new_students)||0),
-    withdrawals:  (parseFloat(a?.withdrawals)||0) + (parseFloat(b?.withdrawals)||0),
-    prospectos:   (parseFloat(a?.prospectos)||0)  + (parseFloat(b?.prospectos)||0),
-  });
-  const result = { total: merge(q.total, n.total) };
-  grades.forEach(g => { result[g] = merge(q[g], n[g]); });
-  return result;
+function getWRField(r){
+  if(campus==='q')return{pipeline:r.qPipeline,won:r.qWon,wr:r.qWR};
+  if(campus==='n')return{pipeline:r.nPipeline,won:r.nWon,wr:r.nWR};
+  return{pipeline:r.osPipeline,won:r.osWon,wr:r.osWR};
+}
+function getCohortField(r){
+  if(campus==='q')return{ing:r.qIngresaron,act:r.qActivos,ret:r.qRet};
+  if(campus==='n')return{ing:r.nIngresaron,act:r.nActivos,ret:r.nRet};
+  const i=(parseFloat(r.qIngresaron)||0)+(parseFloat(r.nIngresaron)||0);
+  const a=(parseFloat(r.qActivos)||0)+(parseFloat(r.nActivos)||0);
+  return{ing:i,act:a,ret:i>0?a/i:null};
 }
 
-function getPipelineField(p, field) {
-  if (campus === 'q') return p['q' + field] ?? p['qT'] ?? '—';
-  if (campus === 'n') return p['n' + field] ?? p['nT'] ?? '—';
-  return p.total;
-}
-
-function getWinRateField(r) {
-  if (campus === 'q') return { pipeline: r.qPipeline, won: r.qWon, wr: r.qWR };
-  if (campus === 'n') return { pipeline: r.nPipeline, won: r.nWon, wr: r.nWR };
-  return { pipeline: r.osPipeline, won: r.osWon, wr: r.osWR };
-}
-
-function getCohortField(r) {
-  if (campus === 'q') return { ingresaron: r.qIngresaron, activos: r.qActivos, ret: r.qRet };
-  if (campus === 'n') return { ingresaron: r.nIngresaron, activos: r.nActivos, ret: r.nRet };
-  const ing = (parseFloat(r.qIngresaron)||0) + (parseFloat(r.nIngresaron)||0);
-  const act = (parseFloat(r.qActivos)||0) + (parseFloat(r.nActivos)||0);
-  return { ingresaron: ing, activos: act, ret: ing > 0 ? act/ing : null };
-}
-
-// ═══════════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════════
-function render() {
-  Object.values(charts).forEach(c => c.destroy());
-  charts = {};
-  const main = document.getElementById('main');
-  main.innerHTML = '';
-
-  TABS.forEach(t => {
-    if (!sectionVis[t.id]) return;
-    const panel = document.createElement('div');
-    panel.className = 'tab-panel' + (t.id === activeTab ? ' active' : '');
-    panel.id = 'panel-' + t.id;
-    const content = buildPanel(t.id);
-    if (content) panel.appendChild(content);
+// RENDER
+function render(){
+  Object.values(charts).forEach(c=>c.destroy());charts={};
+  const main=document.getElementById('main');main.innerHTML='';
+  TABS.forEach(t=>{
+    if(!sVis[t.id])return;
+    const panel=document.createElement('div');
+    panel.className='tab-panel'+(t.id===activeTab?' active':'');
+    panel.id='panel-'+t.id;
+    const content=buildPanel(t.id);
+    if(content)panel.appendChild(content);
     main.appendChild(panel);
   });
-
-  drawCharts();
-  updateTabNav();
-  hideLoading();
+  drawCharts();buildTabNav();hideLoad();
 }
 
-function buildPanel(id) {
-  switch(id) {
-    case 'kpis':        return buildKpis();
-    case 'pipeline':    return buildPipeline();
-    case 'winrate':     return buildWinRate();
-    case 'funnel':      return buildFunnel();
-    case 'withdrawals': return buildWithdrawals();
-    case 'cohort':      return buildCohort();
+function buildPanel(id){
+  switch(id){
+    case'resumen':return buildResumen();
+    case'kpis':return buildKpis();
+    case'pipeline':return buildPipeline();
+    case'winrate':return buildWinRate();
+    case'funnel':return buildFunnel();
+    case'withdrawals':return buildWithdrawals();
+    case'cohort':return buildCohort();
   }
 }
 
-function sec(id, title, meta, content) {
-  const s = document.createElement('div');
-  s.className = 'section';
-  s.innerHTML = `<div class="section-hd"><span class="section-title">${title}</span>${meta ? `<span class="section-meta">${meta}</span>` : ''}</div>`;
-  s.appendChild(content);
-  return s;
+function sec(title,meta,content){
+  const s=document.createElement('div');s.className='sec';
+  s.innerHTML=`<div class="sec-hd"><span class="sec-title">${title}</span>${meta?`<span class="sec-meta">${meta}</span>`:''}</div>`;
+  s.appendChild(content);return s;
 }
 
-// ── KPIs ──
-function buildKpis() {
-  const wrap = document.createElement('div');
-  const h = D.headline || {};
-  const varN = parseFloat(h.variacion_anual) * 100;
+// RESUMEN EJECUTIVO
+function buildResumen(){
+  const wrap=document.createElement('div');
+  const h=D.headline||{};
+  const varN=(parseFloat(h.variacion_anual)||0)*100;
 
-  // Headline
-  const cards = [
-    { label:'Total Alumnos', val: fN(h.total_alumnos), foot:'One School 2026', accent:true },
-    { label:'Variación Anual', val: varN.toFixed(2)+'%', foot:'2025 vs 2026', cls: varN<0?'neg':'pos' },
-    { label:'Retención '+(campus==='n'?'North':campus==='q'?'Quilmes':'One School'),
-      val: fP(campus==='n'?h.retencion_north:h.retencion_quilmes), foot:'Promedio ponderado' },
-    { label:'New Students 2026', val: fN(h.new_students), foot:'Quilmes + North' },
-    { label:'Win Rate 2026', val: fP(h.win_rate), foot:'Won / (Won + Lost)' },
-    { label:'Prospectos Activos', val: fN(h.prospectos), foot:'Pipeline 2026 abierto' },
+  // Headline cards
+  const cards=[
+    {lbl:'Total Alumnos 2026',val:fN(h.total_alumnos),foot:'One School',accent:true},
+    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 vs 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'Retención Quilmes',val:fP(h.retencion_quilmes),foot:'Promedio ponderado'},
+    {lbl:'Retención North',val:fP(h.retencion_north),foot:'Promedio ponderado'},
+    {lbl:'New Students 2026',val:fN(h.new_students),foot:'Quilmes + North'},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
+    {lbl:'Prospectos Activos',val:fN(h.prospectos),foot:'Pipeline abierto'},
   ];
-  if (campus === 'os') {
-    cards.splice(2, 1,
-      { label:'Retención Quilmes', val: fP(h.retencion_quilmes), foot:'Prom. ponderado' },
-      { label:'Retención North', val: fP(h.retencion_north), foot:'Prom. ponderado' }
-    );
+  const grid=document.createElement('div');grid.className='kpi-grid';
+  cards.forEach(c=>{
+    grid.innerHTML+=`<div class="kpi-card${c.accent?' accent':''}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val ${c.cls||''}">${c.val}</div><div class="kpi-foot">${c.foot}</div></div>`;
+  });
+  wrap.appendChild(sec('Resumen Ejecutivo','One School · Mayo 2026',grid));
+
+  // Enrolment evolution table
+  const re=D.resumen;
+  if(re){
+    const tw=document.createElement('div');tw.className='tw';
+    let html=`<table><thead><tr>
+      <th>Año</th>`;
+    if(campus==='os'||campus==='q')html+=`<th class="r">Q·Kinder</th><th class="r">Q·Prep</th><th class="r">Q·College</th><th class="r">Q·Total</th>`;
+    if(campus==='os'||campus==='n')html+=`<th class="r">N·Kinder</th><th class="r">N·Prep</th><th class="r">N·College</th><th class="r">N·Total</th>`;
+    if(campus==='os')html+=`<th class="r">OS·Total</th><th class="r">Crec. %</th>`;
+    else html+=`<th class="r">Crec. %</th>`;
+    html+=`</tr></thead><tbody>`;
+
+    const years=[2027,2026,2025,2024,2023,2022,2021];
+    years.forEach(yr=>{
+      const isProj=yr===2027;
+      const q=re.quilmes?.find(r=>r.año===yr)||{};
+      const n=re.north?.find(r=>r.año===yr)||{};
+      const os=re.oneSchool?.find(r=>r.año===yr)||{};
+      const crecOS=parseFloat(os.crec||0)*100;
+      html+=`<tr${isProj?' class="tot"':''}>`;
+      html+=`<td style="font-weight:600">${yr}${isProj?' <span class="enrol-badge proj">proj.</span>':''}</td>`;
+      if(campus==='os'||campus==='q'){
+        html+=`<td class="r">${fN(q.kinder)}</td><td class="r">${fN(q.prep)}</td><td class="r">${fN(q.college)}</td><td class="r">${fN(q.total)}</td>`;
+      }
+      if(campus==='os'||campus==='n'){
+        html+=`<td class="r">${fN(n.kinder)}</td><td class="r">${fN(n.prep)}</td><td class="r">${fN(n.college)}</td><td class="r">${fN(n.total)}</td>`;
+      }
+      if(campus==='os')html+=`<td class="r">${fN(os.total)}</td>`;
+      const crec=campus==='os'?crecOS:campus==='q'?(parseFloat(q.crec||0)*100):(parseFloat(n.crec||0)*100);
+      const crecFmt=isNaN(crec)||crec===0?'—':`<span class="${crec<0?'neg-small':'pos-small'}">${crec.toFixed(2)}%</span>`;
+      html+=`<td class="r">${crecFmt}</td></tr>`;
+    });
+    html+='</tbody></table>';
+    tw.innerHTML=html;
+    wrap.appendChild(sec('Evolución de Matrícula 2021–2027','Histórico + Proyección Tendencial',tw));
+
+    // Charts
+    const two=document.createElement('div');two.className='two';
+    const cc1=document.createElement('div');cc1.className='cc';
+    cc1.innerHTML='<div class="cc-ttl">Matrícula One School 2021–2027</div><canvas id="chart-enrol"></canvas>';
+    const cc2=document.createElement('div');cc2.className='cc';
+    cc2.innerHTML='<div class="cc-ttl">Quilmes vs North</div><canvas id="chart-qn"></canvas>';
+    two.appendChild(cc1);two.appendChild(cc2);
+    wrap.appendChild(two);
   }
 
-  const grid = document.createElement('div');
-  grid.className = 'kpi-grid';
-  cards.forEach(c => {
-    grid.innerHTML += `<div class="kpi-card${c.accent?' accent':''}">
-      <div class="kpi-label">${c.label}</div>
-      <div class="kpi-val ${c.cls||''}">${c.val}</div>
-      <div class="kpi-foot">${c.foot}</div>
-    </div>`;
-  });
-  wrap.appendChild(sec('headline', 'Indicadores Headline', 'One School · 2026', grid));
-
-  // KPI Table
-  const cd = getCampusData();
-  if (!cd) return wrap;
-  const tableWrap = document.createElement('div');
-  tableWrap.className = 'tbl-wrap';
-  tableWrap.innerHTML = buildKpiTable(cd);
-  wrap.appendChild(sec('kpis-table', 'KPIs por Sección', 'Matrícula · Ocupación · Retención', tableWrap));
   return wrap;
 }
 
-function buildKpiTable(cd) {
-  const secs = [
-    { label:'KINDER',  total: cd.kinder?.total,  rows: ['K1','K2','K3','K4','K5'].map(k=>({k, d:cd.kinder?.[k]})) },
-    { label:'PREP',    total: cd.prep?.total,     rows: ['P1','P2','P3','P4','P5','P6'].map(k=>({k, d:cd.prep?.[k]})) },
-    { label:'COLLEGE', total: cd.college?.total,  rows: ['C1','C2','C3','C4','C5','C6'].map(k=>({k, d:cd.college?.[k]})) },
+// KPIs
+function buildKpis(){
+  const wrap=document.createElement('div');
+  const h=D.headline||{};
+  const varN=(parseFloat(h.variacion_anual)||0)*100;
+  const cards=campus==='os'?[
+    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 vs 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'Retención Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. ponderado'},
+    {lbl:'Retención North',val:fP(h.retencion_north),foot:'Prom. ponderado'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
+    {lbl:'Prospectos Activos',val:fN(h.prospectos),foot:'Pipeline abierto'},
+  ]:[
+    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 vs 2026',cls:varN<0?'neg':'pos'},
+    {lbl:`Retención ${campus==='q'?'Quilmes':'North'}`,val:fP(campus==='q'?h.retencion_quilmes:h.retencion_north),foot:'Prom. ponderado'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
+    {lbl:'Prospectos Activos',val:fN(h.prospectos),foot:'Pipeline abierto'},
   ];
-  let html = `<table><thead><tr>
-    <th>Nivel</th><th>Grado</th>
+  const g=document.createElement('div');g.className='kpi-grid';
+  cards.forEach(c=>{g.innerHTML+=`<div class="kpi-card${c.accent?' accent':''}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val ${c.cls||''}">${c.val}</div><div class="kpi-foot">${c.foot}</div></div>`;});
+  wrap.appendChild(sec('Indicadores Headline','One School · 2026',g));
+
+  const cd=getCampusData();
+  if(cd){
+    const tw=document.createElement('div');tw.className='tw';
+    tw.innerHTML=buildKpiTable(cd);
+    wrap.appendChild(sec('KPIs por Sección','Matrícula · Ocupación · Retención',tw));
+  }
+  return wrap;
+}
+
+function buildKpiTable(cd){
+  const secs=[
+    {lbl:'KINDER',tot:cd.kinder?.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder?.[k]}))},
+    {lbl:'PREP',  tot:cd.prep?.total,  rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep?.[k]}))},
+    {lbl:'COLLEGE',tot:cd.college?.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college?.[k]}))},
+  ];
+  let h=`<table><thead><tr><th>Nivel</th><th>Grado</th>
     <th class="r">Matrícula</th><th class="r">Ocupación</th><th class="r">Vacantes</th>
     <th class="r">Retención</th><th class="r">New Students</th><th class="r">Withdrawals</th><th class="r">Prospectos</th>
   </tr></thead><tbody>`;
-  secs.forEach(s => {
-    html += `<tr class="grp"><td colspan="9">${s.label}</td></tr>`;
-    const t = s.total || {};
-    html += `<tr class="tot"><td></td><td>TOTAL ${s.label}</td>
+  secs.forEach(s=>{
+    h+=`<tr class="grp"><td colspan="9">${s.lbl}</td></tr>`;
+    const t=s.tot||{};
+    h+=`<tr class="tot"><td></td><td>TOTAL ${s.lbl}</td>
       <td class="r">${fN(t.matricula)}</td><td class="r">${fV(t.ocupacion)}</td><td class="r">${fN(t.vacantes)}</td>
-      <td class="r">${fV(t.retencion)}</td><td class="r">${fN(t.new_students)}</td><td class="r">${fN(t.withdrawals)}</td><td class="r">${fN(t.prospectos)}</td>
-    </tr>`;
-    s.rows.forEach(({k, d}) => {
-      d = d || {};
-      html += `<tr><td></td><td>${k}</td>
+      <td class="r">${fV(t.retencion)}</td><td class="r">${fN(t.new_students)}</td><td class="r">${fN(t.withdrawals)}</td><td class="r">${fN(t.prospectos)}</td></tr>`;
+    s.rows.forEach(({k,d})=>{
+      d=d||{};
+      h+=`<tr><td></td><td>${k}</td>
         <td class="r">${fV(d.matricula)}</td><td class="r">${fV(d.ocupacion)}</td><td class="r">${fV(d.vacantes)}</td>
-        <td class="r">${fV(d.retencion)}</td><td class="r">${fV(d.new_students)}</td><td class="r">${fV(d.withdrawals)}</td><td class="r">${fV(d.prospectos)}</td>
-      </tr>`;
+        <td class="r">${fV(d.retencion)}</td><td class="r">${fV(d.new_students)}</td><td class="r">${fV(d.withdrawals)}</td><td class="r">${fV(d.prospectos)}</td></tr>`;
     });
   });
-  const ct = cd.total || {};
-  html += `<tr class="campus-tot"><td colspan="2">TOTAL CAMPUS</td>
+  const ct=cd.total||{};
+  h+=`<tr class="ctot"><td colspan="2">TOTAL CAMPUS</td>
     <td class="r">${fN(ct.matricula)}</td><td class="r">${fV(ct.ocupacion)}</td><td class="r">${fN(ct.vacantes)}</td>
-    <td class="r">${fV(ct.retencion)}</td><td class="r">${fN(ct.new_students)}</td><td class="r">${fN(ct.withdrawals)}</td><td class="r">${fN(ct.prospectos)}</td>
-  </tr>`;
-  html += '</tbody></table>';
-  return html;
+    <td class="r">${fV(ct.retencion)}</td><td class="r">${fN(ct.new_students)}</td><td class="r">${fN(ct.withdrawals)}</td><td class="r">${fN(ct.prospectos)}</td></tr>`;
+  return h+'</tbody></table>';
 }
 
-// ── PIPELINE ──
-function buildPipeline() {
-  const wrap = document.createElement('div');
-  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
-  let html = `<table><thead><tr>
-    <th>Etapa</th>`;
-  if (campus === 'os') {
-    html += `<th class="r">Q·Kinder</th><th class="r">Q·Prep</th><th class="r">Q·College</th><th class="r">Q·Total</th>
-             <th class="r">N·Kinder</th><th class="r">N·Prep</th><th class="r">N·College</th><th class="r">N·Total</th>
-             <th class="r">One School</th>`;
-  } else if (campus === 'q') {
-    html += `<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
-  } else {
-    html += `<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
-  }
-  html += `</tr></thead><tbody>`;
-  (D.pipeline || []).forEach(p => {
-    const won = p.isWon;
-    html += `<tr style="${won?'background:#f0fdf4;font-weight:600':''}"><td>${p.etapa}</td>`;
-    if (campus === 'os') {
-      html += `<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td>
-               <td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td>
-               <td class="r">${fN(p.total)}</td>`;
-    } else if (campus === 'q') {
-      html += `<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td>`;
-    } else {
-      html += `<td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td>`;
-    }
-    html += `</tr>`;
+// PIPELINE
+function buildPipeline(){
+  const wrap=document.createElement('div');
+  const tw=document.createElement('div');tw.className='tw';
+  let h=`<table><thead><tr><th>Etapa</th>`;
+  if(campus==='os')h+=`<th class="r">Q·K</th><th class="r">Q·P</th><th class="r">Q·C</th><th class="r">Q·Tot</th><th class="r">N·K</th><th class="r">N·P</th><th class="r">N·C</th><th class="r">N·Tot</th><th class="r">One School</th>`;
+  else if(campus==='q')h+=`<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
+  else h+=`<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
+  h+=`</tr></thead><tbody>`;
+  (D.pipeline||[]).forEach(p=>{
+    const won=p.isWon;
+    h+=`<tr class="${won?'won-row':''}"><td>${p.etapa}</td>`;
+    if(campus==='os')h+=`<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td><td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td><td class="r">${fN(p.total)}</td>`;
+    else if(campus==='q')h+=`<td class="r">${fN(p.qK)}</td><td class="r">${fN(p.qP)}</td><td class="r">${fN(p.qC)}</td><td class="r">${fN(p.qT)}</td>`;
+    else h+=`<td class="r">${fN(p.nK)}</td><td class="r">${fN(p.nP)}</td><td class="r">${fN(p.nC)}</td><td class="r">${fN(p.nT)}</td>`;
+    h+=`</tr>`;
   });
-  html += '</tbody></table>';
-  tw.innerHTML = html;
-  wrap.appendChild(sec('pipeline', 'Pipeline Activo 2027', 'Foto del funnel en curso · Insightly', tw));
+  h+='</tbody></table>';tw.innerHTML=h;
+  wrap.appendChild(sec('Pipeline Activo 2027','Foto del funnel en curso · Insightly',tw));
   return wrap;
 }
 
-// ── WIN RATE ──
-function buildWinRate() {
-  const wrap = document.createElement('div');
-  const two = document.createElement('div'); two.className = 'two-col';
-  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
-  let html = `<table><thead><tr><th>Año</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>`;
-  (D.winrate || []).forEach(r => {
-    const f = getWinRateField(r);
-    html += `<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.pipeline)}</td><td class="r">${fN(f.won)}</td><td class="r">${fP(f.wr)}</td></tr>`;
+// WIN RATE
+function buildWinRate(){
+  const wrap=document.createElement('div');
+  const two=document.createElement('div');two.className='two';
+  const tw=document.createElement('div');tw.className='tw';
+  let h=`<table><thead><tr><th>Año</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>`;
+  (D.winrate||[]).forEach(r=>{
+    const f=getWRField(r);
+    h+=`<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.pipeline)}</td><td class="r">${fN(f.won)}</td><td class="r">${fP(f.wr)}</td></tr>`;
   });
-  html += '</tbody></table>';
-  tw.innerHTML = html;
-  const cc = document.createElement('div'); cc.className = 'chart-card';
-  cc.innerHTML = '<div class="chart-ttl">Evolución Win Rate %</div><canvas id="chart-wr"></canvas>';
-  two.appendChild(tw); two.appendChild(cc);
-  wrap.appendChild(sec('winrate', 'Win Rate Histórico', '2021–2026', two));
+  h+='</tbody></table>';tw.innerHTML=h;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-ttl">Evolución Win Rate %</div><canvas id="chart-wr"></canvas>';
+  two.appendChild(tw);two.appendChild(cc);
+  wrap.appendChild(sec('Win Rate Histórico','2021–2026',two));
   return wrap;
 }
 
-// ── FUNNEL ──
-function buildFunnel() {
-  const wrap = document.createElement('div');
-  const f = document.createElement('div'); f.className = 'funnel';
-  const max = Math.max(...(D.funnel || []).map(x => x.llegaron));
-  (D.funnel || []).forEach(item => {
-    const pct = max > 0 ? (item.llegaron / max * 100) : 0;
-    const lossP = (parseFloat(item.pctPerd) * 100).toFixed(0);
-    const div = document.createElement('div');
-    div.className = 'funnel-row' + (item.isWon ? ' won' : '');
-    div.innerHTML = `
-      <div class="funnel-label">${item.etapa}</div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:${pct}%"></div></div>
-      <div class="funnel-nums">${fN(item.llegaron)} · ${lossP}% baja</div>`;
+// FUNNEL
+function buildFunnel(){
+  const wrap=document.createElement('div');
+  const f=document.createElement('div');f.className='funnel';
+  const max=Math.max(...(D.funnel||[]).map(x=>x.llegaron));
+  (D.funnel||[]).forEach(item=>{
+    const pct=max>0?(item.llegaron/max*100):0;
+    const lp=(parseFloat(item.pctPerd)*100).toFixed(0);
+    const div=document.createElement('div');
+    div.className='f-row'+(item.isWon?' won':'');
+    div.innerHTML=`<div class="f-lbl">${item.etapa}</div>
+      <div class="f-track"><div class="f-fill" style="width:${pct}%"></div></div>
+      <div class="f-nums">${fN(item.llegaron)} · ${lp}% baja</div>`;
     f.appendChild(div);
   });
-  wrap.appendChild(sec('funnel', 'Funnel de Conversión', 'Histórico 2021–2026', f));
+  wrap.appendChild(sec('Funnel de Conversión','Histórico 2021–2026',f));
   return wrap;
 }
 
-// ── WITHDRAWALS ──
-function buildWithdrawals() {
-  const wrap = document.createElement('div');
-  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
-  let html = `<table><thead><tr>
-    <th>Causa</th><th>Tipo</th>`;
-  if (campus === 'os') {
-    html += `<th class="r">Q 2025</th><th class="r">Q 2026</th><th class="r">N 2025</th><th class="r">N 2026</th><th class="r">Total 2025</th><th class="r">Total 2026</th>`;
-  } else if (campus === 'q') {
-    html += `<th class="r">2025</th><th class="r">2026</th>`;
-  } else {
-    html += `<th class="r">2025</th><th class="r">2026</th>`;
+// WITHDRAWALS
+function buildWithdrawals(){
+  const wrap=document.createElement('div');
+  const tw=document.createElement('div');tw.className='tw';
+  let h=`<table><thead><tr><th>Causa</th><th>Tipo</th>`;
+  if(campus==='os')h+=`<th class="r">Q 2025</th><th class="r">Q 2026</th><th class="r">N 2025</th><th class="r">N 2026</th><th class="r">Total 2025</th><th class="r">Total 2026</th>`;
+  else if(campus==='q')h+=`<th class="r">2025</th><th class="r">2026</th>`;
+  else h+=`<th class="r">2025</th><th class="r">2026</th>`;
+  h+=`</tr></thead><tbody>`;
+  (D.withdrawals||[]).forEach(w=>{
+    const tc=w.tipo.includes('Natural')?'nat':w.tipo.includes('Exóg')||w.tipo.includes('Exog')?'exo':'act';
+    h+=`<tr><td>${w.causa}</td><td><span class="tag ${tc}">${w.tipo}</span></td>`;
+    if(campus==='os')h+=`<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td><td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td><td class="r">${fN(w.tot2025)}</td><td class="r">${fN(w.tot2026)}</td>`;
+    else if(campus==='q')h+=`<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td>`;
+    else h+=`<td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td>`;
+    h+=`</tr>`;
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  wrap.appendChild(sec('Withdrawals por Causa','Análisis de bajas 2025 vs 2026',tw));
+  return wrap;
+}
+
+// COHORT
+function buildCohort(){
+  const wrap=document.createElement('div');
+  const two=document.createElement('div');two.className='two';
+  const tw=document.createElement('div');tw.className='tw';
+  let h=`<table><thead><tr><th>Cohorte</th><th class="r">Ingresaron</th><th class="r">Activos</th><th class="r">Retención</th></tr></thead><tbody>`;
+  (D.cohort||[]).forEach(r=>{
+    const f=getCohortField(r);
+    h+=`<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.ing)}</td><td class="r">${fN(f.act)}</td><td class="r">${fP(f.ret)}</td></tr>`;
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-ttl">Retención por Cohorte</div><canvas id="chart-cohort"></canvas>';
+  two.appendChild(tw);two.appendChild(cc);
+  wrap.appendChild(sec('Cohort Retention','Fidelización generacional · ISAMS',two));
+  return wrap;
+}
+
+// CHARTS
+function drawCharts(){
+  // Enrolment OS
+  const eCanvas=document.getElementById('chart-enrol');
+  if(eCanvas&&D.resumen?.oneSchool){
+    const rows=[...D.resumen.oneSchool].reverse();
+    charts.enrol=new Chart(eCanvas,{
+      type:'bar',
+      data:{
+        labels:rows.map(r=>r.año+(r.año===2027?' (proj.)':'')),
+        datasets:[{label:'One School',data:rows.map(r=>r.total),backgroundColor:rows.map(r=>r.año===2027?'rgba(220,30,51,.5)':'rgba(33,54,105,.75)'),borderRadius:3}]
+      },
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f0f0'}},x:{grid:{display:false}}}}
+    });
   }
-  html += `</tr></thead><tbody>`;
-  (D.withdrawals || []).forEach(w => {
-    const tagC = w.tipo.includes('Natural')?'nat':w.tipo.includes('Exóg')?'exo':'act';
-    html += `<tr><td>${w.causa}</td><td><span class="tag ${tagC}">${w.tipo}</span></td>`;
-    if (campus === 'os') {
-      html += `<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td><td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td><td class="r">${fN(w.tot2025)}</td><td class="r">${fN(w.tot2026)}</td>`;
-    } else if (campus === 'q') {
-      html += `<td class="r">${fN(w.q2025)}</td><td class="r">${fN(w.q2026)}</td>`;
-    } else {
-      html += `<td class="r">${fN(w.n2025)}</td><td class="r">${fN(w.n2026)}</td>`;
-    }
-    html += `</tr>`;
-  });
-  html += '</tbody></table>';
-  tw.innerHTML = html;
-  wrap.appendChild(sec('withdrawals', 'Withdrawals por Causa', 'Análisis de bajas 2025 vs 2026', tw));
-  return wrap;
-}
-
-// ── COHORT ──
-function buildCohort() {
-  const wrap = document.createElement('div');
-  const two = document.createElement('div'); two.className = 'two-col';
-  const tw = document.createElement('div'); tw.className = 'tbl-wrap';
-  let html = `<table><thead><tr><th>Cohorte</th><th class="r">Ingresaron</th><th class="r">Activos</th><th class="r">Retención</th></tr></thead><tbody>`;
-  (D.cohort || []).forEach(r => {
-    const f = getCohortField(r);
-    html += `<tr><td style="font-weight:600">${r.año}</td><td class="r">${fN(f.ingresaron)}</td><td class="r">${fN(f.activos)}</td><td class="r">${fP(f.ret)}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  tw.innerHTML = html;
-  const cc = document.createElement('div'); cc.className = 'chart-card';
-  cc.innerHTML = '<div class="chart-ttl">Retención por Cohorte</div><canvas id="chart-cohort"></canvas>';
-  two.appendChild(tw); two.appendChild(cc);
-  wrap.appendChild(sec('cohort', 'Cohort Retention', 'Fidelización generacional · ISAMS', two));
-  return wrap;
-}
-
-// ── CHARTS ──
-function drawCharts() {
+  // QN comparison
+  const qnCanvas=document.getElementById('chart-qn');
+  if(qnCanvas&&D.resumen){
+    const qRows=[...(D.resumen.quilmes||[])].reverse();
+    const nRows=[...(D.resumen.north||[])].reverse();
+    charts.qn=new Chart(qnCanvas,{
+      type:'line',
+      data:{
+        labels:qRows.map(r=>r.año+(r.año===2027?' (p)':'')),
+        datasets:[
+          {label:'Quilmes',data:qRows.map(r=>r.total),borderColor:'#213669',backgroundColor:'rgba(33,54,105,.08)',tension:.35,fill:true},
+          {label:'North',data:nRows.map(r=>r.total),borderColor:'#DC1E33',backgroundColor:'rgba(220,30,51,.06)',tension:.35,fill:true},
+        ]
+      },
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}},scales:{y:{grid:{color:'#f0f0f0'}},x:{grid:{display:false}}}}
+    });
+  }
   // Win Rate
-  const wrCanvas = document.getElementById('chart-wr');
-  if (wrCanvas && D.winrate) {
-    const labels = D.winrate.map(r => r.año);
-    const getWR = (r, camp) => {
-      if (camp === 'q') return +(parseFloat(r.qWR)*100).toFixed(1);
-      if (camp === 'n') return +(parseFloat(r.nWR)*100).toFixed(1);
-      return +(parseFloat(r.osWR)*100).toFixed(1);
-    };
-    const datasets = campus === 'os' ? [
-      { label:'Quilmes', data: D.winrate.map(r=>getWR(r,'q')), borderColor:'#213669', backgroundColor:'rgba(33,54,105,.08)', tension:.35, fill:true },
-      { label:'North',   data: D.winrate.map(r=>getWR(r,'n')), borderColor:'#DC1E33', backgroundColor:'rgba(220,30,51,.06)', tension:.35, fill:true },
-    ] : [
-      { label: campus==='q'?'Quilmes':'North', data: D.winrate.map(r=>getWR(r,campus)), borderColor: campus==='q'?'#213669':'#DC1E33', backgroundColor: campus==='q'?'rgba(33,54,105,.08)':'rgba(220,30,51,.06)', tension:.35, fill:true }
-    ];
-    charts.wr = new Chart(wrCanvas, {
-      type: 'line',
-      data: { labels, datasets },
-      options: { responsive:true, plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}}, scales:{ y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
-    });
+  const wrCanvas=document.getElementById('chart-wr');
+  if(wrCanvas&&D.winrate){
+    const labels=D.winrate.map(r=>r.año);
+    const ds=campus==='os'?[
+      {label:'Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#213669',backgroundColor:'rgba(33,54,105,.08)',tension:.35,fill:true},
+      {label:'North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'rgba(220,30,51,.06)',tension:.35,fill:true},
+    ]:[{
+      label:campus==='q'?'Quilmes':'North',
+      data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),
+      borderColor:campus==='q'?'#213669':'#DC1E33',
+      backgroundColor:campus==='q'?'rgba(33,54,105,.08)':'rgba(220,30,51,.06)',
+      tension:.35,fill:true
+    }];
+    charts.wr=new Chart(wrCanvas,{type:'line',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}},scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}},x:{grid:{display:false}}}}});
   }
-
   // Cohort
-  const coCanvas = document.getElementById('chart-cohort');
-  if (coCanvas && D.cohort) {
-    const labels = D.cohort.map(r => r.año);
-    const datasets = campus === 'os' ? [
-      { label:'Quilmes', data: D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)), backgroundColor:'rgba(33,54,105,.75)', borderRadius:3 },
-      { label:'North',   data: D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)), backgroundColor:'rgba(220,30,51,.7)', borderRadius:3 },
-    ] : [
-      {
-        label: campus==='q'?'Quilmes':'North',
-        data: D.cohort.map(r => campus==='q' ? +(parseFloat(r.qRet)*100).toFixed(1) : +(parseFloat(r.nRet)*100).toFixed(1)),
-        backgroundColor: campus==='q'?'rgba(33,54,105,.75)':'rgba(220,30,51,.7)',
-        borderRadius:3
-      }
-    ];
-    charts.cohort = new Chart(coCanvas, {
-      type: 'bar',
-      data: { labels, datasets },
-      options: { responsive:true, plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}}, scales:{ y:{min:70,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } }
-    });
+  const coCanvas=document.getElementById('chart-cohort');
+  if(coCanvas&&D.cohort){
+    const labels=D.cohort.map(r=>r.año);
+    const ds=campus==='os'?[
+      {label:'Quilmes',data:D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)),backgroundColor:'rgba(33,54,105,.75)',borderRadius:3},
+      {label:'North',data:D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)),backgroundColor:'rgba(220,30,51,.7)',borderRadius:3},
+    ]:[{
+      label:campus==='q'?'Quilmes':'North',
+      data:D.cohort.map(r=>campus==='q'?+(parseFloat(r.qRet)*100).toFixed(1):+(parseFloat(r.nRet)*100).toFixed(1)),
+      backgroundColor:campus==='q'?'rgba(33,54,105,.75)':'rgba(220,30,51,.7)',borderRadius:3
+    }];
+    charts.cohort=new Chart(coCanvas,{type:'bar',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11}}}},scales:{y:{min:70,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}},x:{grid:{display:false}}}}});
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  NAVIGATION
-// ═══════════════════════════════════════════════════
-function buildNavTabs() {
-  const container = document.getElementById('nav-tabs');
-  container.innerHTML = '';
-  TABS.forEach(t => {
-    if (!sectionVis[t.id]) return;
-    const btn = document.createElement('button');
-    btn.className = 'nav-tab' + (t.id === activeTab ? ' active' : '');
-    btn.textContent = t.label;
-    btn.onclick = () => {
-      activeTab = t.id;
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+// TAB NAV
+function buildTabNav(){
+  const ctr=document.getElementById('tab-group');ctr.innerHTML='';
+  TABS.forEach(t=>{
+    if(!sVis[t.id])return;
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(t.id===activeTab?' active':'');
+    btn.textContent=t.label;
+    btn.onclick=()=>{
+      activeTab=t.id;
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      const panel = document.getElementById('panel-' + t.id);
-      if (panel) panel.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      const panel=document.getElementById('panel-'+t.id);
+      if(panel)panel.classList.add('active');
     };
-    container.appendChild(btn);
+    ctr.appendChild(btn);
   });
 }
 
-function updateTabNav() {
-  buildNavTabs();
-}
-
-// Campus toggle
-document.querySelectorAll('.campus-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    campus = btn.dataset.campus;
-    document.querySelectorAll('.campus-btn').forEach(b => b.classList.remove('active'));
+// CAMPUS
+document.querySelectorAll('.campus-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    campus=btn.dataset.c;
+    document.querySelectorAll('.campus-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     render();
   });
 });
 
-// Admin
-function buildAdminPanel() {
-  const container = document.getElementById('section-toggles');
-  TABS.forEach(t => {
-    const pill = document.createElement('div');
-    pill.className = 'toggle-pill active';
-    pill.innerHTML = `<span class="dot"></span>${t.label}`;
-    pill.onclick = () => {
-      sectionVis[t.id] = !sectionVis[t.id];
-      pill.classList.toggle('active', sectionVis[t.id]);
-      if (!sectionVis[t.id] && activeTab === t.id) {
-        activeTab = TABS.find(x => sectionVis[x.id])?.id || TABS[0].id;
-      }
+// ADMIN
+function buildAdmin(){
+  const ctr=document.getElementById('sec-toggles');
+  TABS.forEach(t=>{
+    const p=document.createElement('div');p.className='pill active';
+    p.innerHTML=`<span class="dot"></span>${t.label}`;
+    p.onclick=()=>{
+      sVis[t.id]=!sVis[t.id];
+      p.classList.toggle('active',sVis[t.id]);
+      if(!sVis[t.id]&&activeTab===t.id)activeTab=TABS.find(x=>sVis[x.id])?.id||TABS[0].id;
       render();
     };
-    container.appendChild(pill);
+    ctr.appendChild(p);
   });
 }
+document.getElementById('btn-admin').addEventListener('click',()=>document.getElementById('admin-panel').classList.toggle('open'));
 
-document.getElementById('btn-admin').addEventListener('click', () => {
-  document.getElementById('admin-panel').classList.toggle('open');
-});
-
-// ═══════════════════════════════════════════════════
-//  UI
-// ═══════════════════════════════════════════════════
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  const app = document.getElementById('app');
-  app.style.display = 'flex';
-  app.style.flexDirection = 'column';
+// UI
+function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  const app=document.getElementById('app');app.style.display='flex';app.style.flexDirection='column';
 }
-function showLoading(msg) {
-  const el = document.getElementById('loading');
-  el.querySelector('p').textContent = msg || 'Cargando…';
-  el.classList.remove('hidden');
-}
-function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+function showLoad(msg){const el=document.getElementById('loading');el.querySelector('p').textContent=msg||'Cargando…';el.classList.remove('hidden');}
+function hideLoad(){document.getElementById('loading').classList.add('hidden');}
 
-// ═══════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════
-buildAdminPanel();
-buildNavTabs();
-
-window.onload = () => {
-  const script = document.createElement('script');
-  script.src = 'https://accounts.google.com/gsi/client';
-  script.onload = initGoogleAuth;
-  document.head.appendChild(script);
+// INIT
+buildAdmin();buildTabNav();
+window.onload=()=>{
+  const s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client';
+  s.onload=initAuth;
+  document.head.appendChild(s);
 };
 </script>
 </body>
