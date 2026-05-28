@@ -702,7 +702,7 @@ function buildProyeccion(){
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th>'+' <th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+';min-width:80px;text-align:center">Final 2027</th>'+(showFact?'<th class="r fact-col">Facturacion USD</th>':'')+'</tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th>'+' <th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color: #fff;min-width:80px;text-align:center">Final 2027</th>'+(showFact?'<th class="r fact-col">Facturacion USD</th>':'')+'</tr></thead><tbody>';
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
