@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Admissions Dashboard 2026 · St George's College</title>
+  <title>Admissions Dashboard 2026 · St George&#39;s College</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Aleo:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Asap:wght@300;400;500;600&family=Asap+Condensed:wght@400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -307,7 +307,7 @@
 
   <main id="main"></main>
 
-  <footer>St George's College · Dashboard de Admisiones · Datos en tiempo real desde Google Sheets · <span id="f-time"></span></footer>
+  <footer>St George&#39;s College &middot; Dashboard de Admisiones &middot; Datos en tiempo real desde Google Sheets &middot; <span id="f-time"></span></footer>
 </div>
 
 <script>
@@ -355,7 +355,7 @@ document.getElementById('btn-out').addEventListener('click',()=>{
 
 // ── DATA ──
 function fetchData(){
-  showLoad('Cargando datos…');
+  showLoad('Cargando datos...');
   const cb='sgcCb_'+Date.now();
   window[cb]=data=>{
     D=data;
@@ -375,23 +375,23 @@ function fetchData(){
 
 // ── FORMAT ──
 const fN=v=>{
-  if(v===null||v===undefined||v==='')return'—';
+  if(v===null||v===undefined||v==='')return'--';
   const n=parseFloat(v);if(isNaN(n))return String(v);
   return Math.round(n).toLocaleString('es-AR');
 };
 const fP=v=>{
-  if(v===null||v===undefined||v==='')return'—';
+  if(v===null||v===undefined||v==='')return'--';
   const n=parseFloat(v);if(isNaN(n))return String(v);
   return(n*100).toFixed(1)+'%';
 };
 const fV=v=>{
-  if(v===null||v===undefined||v==='')return'—';
+  if(v===null||v===undefined||v==='')return'--';
   const n=parseFloat(v);if(isNaN(n))return String(v);
   if(n>-2&&n<2&&String(v).includes('.'))return fP(n);
   return fN(n);
 };
 const fCrp=v=>{
-  if(!v)return'—';
+  if(!v)return'--';
   const n=parseFloat(v)*100;
   const s=n.toFixed(2)+'%';
   return n<0?'<span class="val-neg">'+s+'</span>':'<span class="val-pos">+'+s+'</span>';
@@ -551,7 +551,7 @@ function buildResumen(){
   ];
   const g=document.createElement('div');g.className='kpi-grid';
   cards.forEach(c=>{g.innerHTML+=`<div class="kpi-card${c.accent?' accent':''}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val ${c.cls||''}">${c.val}</div><div class="kpi-foot">${c.foot}</div></div>`;});
-  wrap.appendChild(sec('Resumen Ejecutivo','One School · Mayo 2026',g));
+  wrap.appendChild(sec('Resumen Ejecutivo','One School . Mayo 2026',g));
 
   // Enrolment table
   const re=D.resumen;
@@ -559,9 +559,9 @@ function buildResumen(){
     const tw=document.createElement('div');tw.className='tw';
     const years=[2027,2026,2025,2024,2023,2022,2021];
     let html=`<table><thead><tr><th>Año</th>`;
-    if(campus==='os'||campus==='q')html+=`<th class="r">Q·K</th><th class="r">Q·P</th><th class="r">Q·C</th><th class="r">Q·Total</th>`;
-    if(campus==='os'||campus==='n')html+=`<th class="r">N·K</th><th class="r">N·P</th><th class="r">N·C</th><th class="r">N·Total</th>`;
-    if(campus==='os')html+=`<th class="r">OS·Total</th>`;
+    if(campus==='os'||campus==='q')html+=`<th class="r">Q.K</th><th class="r">Q.P</th><th class="r">Q.C</th><th class="r">Q.Total</th>`;
+    if(campus==='os'||campus==='n')html+=`<th class="r">N.K</th><th class="r">N.P</th><th class="r">N.C</th><th class="r">N.Total</th>`;
+    if(campus==='os')html+=`<th class="r">OS.Total</th>`;
     html+=`<th class="r">Crec. %</th></tr></thead><tbody>`;
     years.forEach(yr=>{
       const isProj=yr===2027;
@@ -578,12 +578,12 @@ function buildResumen(){
     });
     html+='</tbody></table>';
     tw.innerHTML=html;
-    wrap.appendChild(sec('Evolución de Matrícula 2021–2027','Histórico + Proyección Tendencial',tw));
+    wrap.appendChild(sec('Evolución de Matrícula 2021-2027','Histórico + Proyección Tendencial',tw));
 
     // Charts
     const two=document.createElement('div');two.className='two';
     const cc1=document.createElement('div');cc1.className='cc';
-    cc1.innerHTML='<div class="cc-ttl">Matrícula One School 2021–2027</div><canvas id="chart-enrol"></canvas>';
+    cc1.innerHTML='<div class="cc-ttl">Matrícula One School 2021-2027</div><canvas id="chart-enrol"></canvas>';
     const cc2=document.createElement('div');cc2.className='cc';
     cc2.innerHTML='<div class="cc-ttl">Quilmes vs North</div><canvas id="chart-qn"></canvas>';
     two.appendChild(cc1);two.appendChild(cc2);
@@ -615,9 +615,9 @@ function buildKpis(){
   ];
   const g=document.createElement('div');g.className='kpi-grid';
   cards.forEach(c=>{g.innerHTML+=`<div class="kpi-card${c.accent?' accent':''}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val ${c.cls||''}">${c.val}</div><div class="kpi-foot">${c.foot}</div></div>`;});
-  wrap.appendChild(sec('Indicadores Headline','One School · 2026',g));
+  wrap.appendChild(sec('Indicadores Headline','One School . 2026',g));
   const cd=getCampusData();
-  if(cd){const tw=document.createElement('div');tw.className='tw';tw.innerHTML=buildKpiTable(cd);wrap.appendChild(sec('KPIs por Sección','Matrícula · Ocupación · Retención',tw));}
+  if(cd){const tw=document.createElement('div');tw.className='tw';tw.innerHTML=buildKpiTable(cd);wrap.appendChild(sec('KPIs por Sección','Matrícula . Ocupación . Retención',tw));}
   return wrap;
 }
 
@@ -647,7 +647,7 @@ function buildPipeline(){
   const wrap=document.createElement('div');
   const tw=document.createElement('div');tw.className='tw';
   let h=`<table><thead><tr><th>Etapa</th>`;
-  if(campus==='os')h+=`<th class="r">Q·K</th><th class="r">Q·P</th><th class="r">Q·C</th><th class="r">Q·Tot</th><th class="r">N·K</th><th class="r">N·P</th><th class="r">N·C</th><th class="r">N·Tot</th><th class="r">One School</th>`;
+  if(campus==='os')h+=`<th class="r">Q.K</th><th class="r">Q.P</th><th class="r">Q.C</th><th class="r">Q.Tot</th><th class="r">N.K</th><th class="r">N.P</th><th class="r">N.C</th><th class="r">N.Tot</th><th class="r">One School</th>`;
   else if(campus==='q')h+=`<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
   else h+=`<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>`;
   h+=`</tr></thead><tbody>`;
@@ -659,7 +659,7 @@ function buildPipeline(){
     h+=`</tr>`;
   });
   h+='</tbody></table>';tw.innerHTML=h;
-  wrap.appendChild(sec('Pipeline Activo 2027','Foto del funnel en curso · Insightly',tw));
+  wrap.appendChild(sec('Pipeline Activo 2027','Foto del funnel en curso . Insightly',tw));
   return wrap;
 }
 
@@ -674,7 +674,7 @@ function buildWinRate(){
   const cc=document.createElement('div');cc.className='cc';
   cc.innerHTML='<div class="cc-ttl">Evolución Win Rate %</div><canvas id="chart-wr"></canvas>';
   two.appendChild(tw);two.appendChild(cc);
-  wrap.appendChild(sec('Win Rate Histórico','2021–2026',two));
+  wrap.appendChild(sec('Win Rate Histórico','2021-2026',two));
   return wrap;
 }
 
@@ -694,7 +694,7 @@ function buildFunnel(){
       <div class="f-nums">${fN(item.llegaron)} llegaron <span class="f-badge">${lp}% baja</span></div>`;
     f.appendChild(div);
   });
-  wrap.appendChild(sec('Funnel de Conversión','Histórico 2021–2026 · Dónde perdemos los prospectos',f));
+  wrap.appendChild(sec('Funnel de Conversión','Histórico 2021-2026 . Dónde perdemos los prospectos',f));
   return wrap;
 }
 
@@ -731,7 +731,7 @@ function buildCohort(){
   const cc=document.createElement('div');cc.className='cc';
   cc.innerHTML='<div class="cc-ttl">Retención por Cohorte</div><canvas id="chart-cohort"></canvas>';
   two.appendChild(tw);two.appendChild(cc);
-  wrap.appendChild(sec('Cohort Retention','Fidelización generacional · ISAMS',two));
+  wrap.appendChild(sec('Cohort Retention','Fidelización generacional . ISAMS',two));
   return wrap;
 }
 
@@ -807,7 +807,7 @@ function buildProyeccion(){
   }
 
   const tables=document.createElement('div');
-  tables.innerHTML=mkSimTable('Quilmes — Ajuste por grado','q',qGrades)+mkSimTable('North — Ajuste por grado','n',nGrades);
+  tables.innerHTML=mkSimTable('Quilmes -- Ajuste por grado','q',qGrades)+mkSimTable('North -- Ajuste por grado','n',nGrades);
   wrap.appendChild(tables);
 
   // override updateSimDisplay to also update final cells
@@ -981,7 +981,7 @@ function showApp(){
   document.getElementById('login-screen').style.display='none';
   const app=document.getElementById('app');app.style.display='flex';app.style.flexDirection='column';
 }
-function showLoad(msg){const el=document.getElementById('loading');el.querySelector('p').textContent=msg||'Cargando…';el.classList.remove('hidden');}
+function showLoad(msg){const el=document.getElementById('loading');el.querySelector('p').textContent=msg||'Cargando...';el.classList.remove('hidden');}
 function hideLoad(){document.getElementById('loading').classList.add('hidden');}
 
 // ── INIT ──
