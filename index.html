@@ -482,10 +482,10 @@ function buildResumen(){
 
   if(D.community){
     const cg=document.createElement('div');cg.className='comm-grid';
-    [{lbl:'OG Parent Quilmes',val:((parseFloat(D.community.ogQuilmes)||0)*100).toFixed(1)+'%',foot:'Padres Old Georgian'},
-     {lbl:'OG Parent North',val:((parseFloat(D.community.ogNorth)||0)*100).toFixed(1)+'%',foot:'Padres Old Georgian'},
-     {lbl:'Estudiantes Extranjeros',val:((parseFloat(D.community.foreignStudents)||0)*100).toFixed(1)+'%',foot:'One School'},
-     {lbl:'Comunidad Prioritaria',val:((parseFloat(D.community.priorityCommunity)||0)*100).toFixed(1)+'%',foot:'OG + Hermanos + Staff'},
+    [{lbl:'OG Parent Quilmes',val:fP(D.community.ogQuilmes),foot:'Padres Old Georgian'},
+     {lbl:'OG Parent North',val:fP(D.community.ogNorth),foot:'Padres Old Georgian'},
+     {lbl:'Estudiantes Extranjeros',val:fP(D.community.foreignStudents),foot:'One School'},
+     {lbl:'Comunidad Prioritaria',val:fP(D.community.priorityCommunity),foot:'OG + Hermanos + Staff'},
     ].forEach(c=>{cg.innerHTML+='<div class="comm-card"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
     wrap.appendChild(sec('Indicadores de Comunidad','Perfil 2026',cg));
   }
@@ -689,12 +689,12 @@ function buildProyeccion(){
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r">Facturacion USD</th><th class="r">Ajuste</th><th class="r" style="color:'+color+'">Final 2027</th></tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r fact-col">Facturacion USD</th><th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+'">Final 2027</th></tr></thead><tbody>';
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
       const proy=parseFloat(r.proy)||0;
-      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r val-usd">'+fUSD(r.facturacion)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td></tr>';
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r val-usd fact-col">'+fUSD(r.facturacion)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td></tr>';
     });
     h2+='</tbody></table></div></div>';
     return h2;
@@ -730,7 +730,7 @@ function drawCharts(){
     charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
       {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2},
       {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213469',backgroundColor:grad(ctx,33,52,105),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2},
-    ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{...TCK,usePointStyle:true,pointStyleWidth:8,padding:14,boxWidth:8,boxHeight:8}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:16,usePointStyle:true,pointStyle:'circle',pointStyleWidth:6}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
   const wrc=document.getElementById('chart-wr');
@@ -741,7 +741,7 @@ function drawCharts(){
       {label:'Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2},
       {label:'North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213469',backgroundColor:grad(ctx,33,52,105),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2},
     ]:[{label:campus==='q'?'Quilmes':'North',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:grad(ctx,...(campus==='q'?[220,30,51]:[33,52,105])),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:C.main,pointBorderColor:'#fff',pointBorderWidth:2}];
-    charts.wr=new Chart(wrc,{type:'line',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{...TCK,usePointStyle:true,pointStyleWidth:8,padding:14,boxWidth:8,boxHeight:8}},tooltip:TTP},scales:{y:{grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    charts.wr=new Chart(wrc,{type:'line',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:16,usePointStyle:true,pointStyle:'circle',pointStyleWidth:6}},tooltip:TTP},scales:{y:{grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
   const coc=document.getElementById('chart-cohort');
@@ -751,7 +751,7 @@ function drawCharts(){
       {label:'Quilmes',data:D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)),backgroundColor:'rgba(220,30,51,.72)',borderRadius:5,borderSkipped:false},
       {label:'North',data:D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)),backgroundColor:'rgba(33,52,105,.72)',borderRadius:5,borderSkipped:false},
     ]:[{label:campus==='q'?'Quilmes':'North',data:D.cohort.map(r=>campus==='q'?+(parseFloat(r.qRet)*100).toFixed(1):+(parseFloat(r.nRet)*100).toFixed(1)),backgroundColor:C.lt,borderRadius:5,borderSkipped:false}];
-    charts.cohort=new Chart(coc,{type:'bar',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{...TCK,usePointStyle:true,pointStyleWidth:8,padding:14,boxWidth:8,boxHeight:8}},tooltip:TTP},scales:{y:{min:70,max:100,grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    charts.cohort=new Chart(coc,{type:'bar',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:16,usePointStyle:true,pointStyle:'circle',pointStyleWidth:6}},tooltip:TTP},scales:{y:{min:70,max:100,grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
@@ -781,6 +781,7 @@ document.querySelectorAll('.campus-btn').forEach(btn=>{
 });
 
 // ADMIN
+let showFact=true;
 function buildAdmin(){
   const ctr=document.getElementById('sec-toggles');
   TABS.forEach(t=>{
@@ -789,6 +790,18 @@ function buildAdmin(){
     p.onclick=()=>{sVis[t.id]=!sVis[t.id];p.classList.toggle('active',sVis[t.id]);if(!sVis[t.id]&&activeTab===t.id)activeTab=TABS.find(x=>sVis[x.id])?.id||TABS[0].id;render();};
     ctr.appendChild(p);
   });
+  const fp=document.createElement('div');
+  fp.className='pill active';
+  fp.style.cssText='background:var(--teal);border-color:var(--teal);color:white;';
+  fp.innerHTML='<span class="dot"></span>Facturacion USD';
+  fp.onclick=()=>{
+    showFact=!showFact;
+    if(showFact){fp.style.cssText='background:var(--teal);border-color:var(--teal);color:white;';}
+    else{fp.style.cssText='background:var(--white);border-color:var(--line);color:var(--gray);';}
+    document.querySelectorAll('.sim-fact').forEach(el=>el.style.display=showFact?'':'none');
+    document.querySelectorAll('.fact-col').forEach(el=>el.style.display=showFact?'':'none');
+  };
+  ctr.appendChild(fp);
 }
 document.getElementById('btn-admin').addEventListener('click',()=>document.getElementById('admin-panel').classList.toggle('open'));
 
