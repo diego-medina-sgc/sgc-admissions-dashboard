@@ -682,7 +682,7 @@ function buildProyeccion(){
   const totDiv=document.createElement('div');totDiv.className='sim-totals';
   const mkCard=(id,label,final,base,fact,color)=>{
     const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
-    return '<div class="sim-card" id="'+id+'" style="border-top:3px solid '+color+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div><div class="sim-fact">'+fUSD(fact)+' USD</div><div class="sim-delta">vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
+    return '<div class="sim-card" id="'+id+'" style="border-top:3px solid '+color+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'')+'<div class="sim-delta">vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
   };
   totDiv.innerHTML=mkCard('sim-q','Quilmes 2027',qT.final,qT.base,qT.facturacion,'#DC1E33')+mkCard('sim-n','North 2027',nT.final,nT.base,nT.facturacion,'#213469')+mkCard('sim-os','One School 2027',osFinal,osBase,osFact,'#1A1F35');
   wrap.appendChild(totDiv);
@@ -693,12 +693,12 @@ function buildProyeccion(){
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r fact-col">Facturacion USD</th><th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+';min-width:80px;text-align:center">Final 2027</th></tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th>'+(showFact?'<th class="r fact-col">Facturacion USD</th>':'')+' <th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+';min-width:80px;text-align:center">Final 2027</th></tr></thead><tbody>';
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
       const proy=parseFloat(r.proy)||0;
-      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r val-usd fact-col">'+fUSD(r.facturacion)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td></tr>';
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td>'+(showFact?'<td class="r val-usd fact-col">'+fUSD(r.facturacion)+'</td>':'')+'<td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td></tr>';
     });
     h2+='</tbody></table></div></div>';
     return h2;
