@@ -53,7 +53,7 @@
     .bb-navy{flex:1;background:var(--navy);}
 
     /* NAV */
-    .sticky-nav{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:200;box-shadow:0 1px 6px rgba(26,31,53,.05);display:flex;align-items:stretch;justify-content:space-between;padding:0 40px;}
+    .sticky-nav{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:200;box-shadow:0 1px 6px rgba(26,31,53,.05);display:flex;align-items:stretch;justify-content:space-between;padding:0 40px;flex-wrap:nowrap;}
     .tab-group{display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;touch-action:pan-x;}
     .tab-group::-webkit-scrollbar{display:none;}
     .tab-btn{padding:11px 14px;background:none;border:none;border-bottom:2px solid transparent;font-family:'Asap',sans-serif;font-size:.76rem;font-weight:500;color:var(--gray);cursor:pointer;white-space:nowrap;transition:all .2s;margin-bottom:-1px;flex-shrink:0;}
@@ -138,7 +138,7 @@
 
     tbody tr{border-bottom:1px solid var(--line);transition:background .1s;}
     tbody tr:last-child{border-bottom:none;}
-    tbody tr.grp td{font-weight:700;font-size:.67rem;letter-spacing:.09em;text-transform:uppercase;padding:7px 13px;font-family:'Asap Condensed',sans-serif;}
+    tbody tr.grp td{font-weight:700;font-size:.67rem;letter-spacing:.09em;text-transform:uppercase;padding:7px 16px;font-family:'Asap Condensed',sans-serif;}
     tbody tr.grp-q td{background:var(--red-lt);color:var(--red);text-align:left !important;}
     tbody tr.grp-n td{background:var(--navy-lt);color:var(--navy);text-align:left !important;}
     tbody tr.grp-k td{background:var(--ink-lt);color:var(--ink);text-align:left !important;}
@@ -164,7 +164,7 @@
     .val-usd{color:var(--teal);font-weight:600;font-family:'Asap Condensed',sans-serif;}
 
     /* LAYOUT */
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:0;} .two>*{min-width:0;overflow:hidden;}
     .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
     @media(max-width:900px){.two,.three{grid-template-columns:1fr;}.comm-grid{grid-template-columns:repeat(2,1fr);}}
 
@@ -219,15 +219,22 @@
       header{padding:12px 18px;}
       .h-logo{height:36px;}
       .h-title{font-size:1.1rem;}
-      .sticky-nav{padding:0 14px;}
-      .campus-group{padding-left:10px;gap:3px;}
-      .campus-btn{padding:4px 9px;font-size:.68rem;}
-      .tab-panel{padding:18px 14px;}
+      .sticky-nav{padding:0;flex-wrap:wrap;}
+      .tab-group{padding:0 14px;order:2;width:100%;border-top:1px solid var(--line);}
+      .campus-group{order:1;width:100%;padding:6px 14px;border-left:none;border-bottom:1px solid var(--line);justify-content:flex-start;gap:6px;}
+      .campus-btn{padding:4px 12px;font-size:.72rem;}
+      .tab-panel{padding:16px 14px;}
       .kpi-grid{grid-template-columns:repeat(2,1fr);}
       .stat-strip{grid-template-columns:repeat(2,1fr);}
       .si{border-bottom:1px solid var(--line);}
       .sim-totals{grid-template-columns:1fr;}
       #admin-panel{padding:10px 14px;}
+      .two{grid-template-columns:1fr;}
+      .three{grid-template-columns:1fr;}
+      .comm-grid{grid-template-columns:repeat(2,1fr);}
+      .f-lbl{min-width:120px;font-size:.72rem;}
+      .f-nums{min-width:100px;font-size:.65rem;}
+      canvas{max-height:180px;}
     }
   </style>
 </head>
@@ -341,7 +348,7 @@ function fetchData(){
   const cb='sgcCb_'+Date.now();
   window[cb]=data=>{
     D=data;
-    const now=new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const now=D.lastUpdate||new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     document.getElementById('h-time').textContent='Actualizado: '+now;
     document.getElementById('f-time').textContent=now;
     // Aplicar config global desde el Sheet
@@ -431,6 +438,8 @@ function updateSimDisplay(){
   [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado,proy:parseFloat(r.proy)||0})),...(py.north||[]).map(r=>({key:'n_'+r.grado,proy:parseFloat(r.proy)||0}))].forEach(({key,proy})=>{
     const el=document.getElementById('final_'+key);
     if(el)el.textContent=Math.round(proy+(simAdj[key]||0)).toLocaleString('es-AR');
+    const felt=document.getElementById('factrow_'+key);
+    if(felt&&showFact){const adj2=simAdj[key]||0;const r2=(D.proyeccion.quilmes||[]).concat(D.proyeccion.north||[]).find(x=>(x.grado&&('q_'+x.grado===key||'n_'+x.grado===key)));felt.textContent=r2&&proy>0?fUSD(r2.facturacion/proy*(proy+adj2)):'--';}
   });
 }
 
@@ -498,7 +507,7 @@ function buildResumen(){
   if(re){
     const tw=document.createElement('div');tw.className='tw';
     const years=[2027,2026,2025,2024,2023,2022,2021];
-    let h2='<table><thead><tr><th>Ano</th>';
+    let h2='<table><thead><tr><th>A&ntilde;o</th>';
     if(campus==='os'||campus==='q')h2+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Total</th>';
     if(campus==='os'||campus==='n')h2+='<th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Total</th>';
     if(campus==='os')h2+='<th class="r">OS Total</th>';
@@ -621,7 +630,7 @@ function buildPipeline(){
   // Win Rate
   const two=document.createElement('div');two.className='two';
   const tw2=document.createElement('div');tw2.className='tw';
-  let h2='<table><thead><tr><th>Ano</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>';
+  let h2='<table><thead><tr><th>A&ntilde;o</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>';
   (D.winrate||[]).forEach(r=>{
     const f=getWRF(r);
     const wr=(parseFloat(f.wr)||0)*100;
@@ -693,12 +702,12 @@ function buildProyeccion(){
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th>'+(showFact?'<th class="r fact-col">Facturacion USD</th>':'')+' <th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+';min-width:80px;text-align:center">Final 2027</th></tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th>'+' <th class="r" style="min-width:130px;text-align:center">Ajuste</th><th class="r" style="color:'+color+';min-width:80px;text-align:center">Final 2027</th>'+(showFact?'<th class="r fact-col">Facturacion USD</th>':'')+'</tr></thead><tbody>';
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
       const proy=parseFloat(r.proy)||0;
-      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td>'+(showFact?'<td class="r val-usd fact-col">'+fUSD(r.facturacion)+'</td>':'')+'<td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td></tr>';
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td>'+'<td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">-</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'" >'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(r.base2026&&proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
     });
     h2+='</tbody></table></div></div>';
     return h2;
