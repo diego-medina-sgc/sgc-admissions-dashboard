@@ -247,7 +247,7 @@ td.c-n{color:var(--navy);font-weight:600;}
 
 /* ─── HEATMAP ─── */
 .heatmap{overflow-x:auto;}
-.hm-table{border-collapse:collapse;font-size:.76rem;font-family:'Asap Condensed',sans-serif;}
+.hm-table{width:100%;border-collapse:collapse;font-size:.76rem;font-family:'Asap Condensed',sans-serif;}
 .hm-table th{padding:6px 10px;font-weight:700;color:var(--gray);letter-spacing:.07em;text-align:center;white-space:nowrap;}
 .hm-table th:first-child{text-align:left;}
 .hm-table td{padding:7px 10px;text-align:center;font-weight:600;border:1px solid #EEF1F8;min-width:80px;}
@@ -304,6 +304,82 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 /* ─── FOOTER ─── */
 footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;border-top:1px solid var(--line);}
 
+/* ─── DARK MODE ─── */
+:root{
+  --bg:#EEF1F8;--surface:#fff;--surface2:#F5F7FC;
+  --border:rgba(14,22,40,.08);--border-strong:rgba(14,22,40,.15);
+  --text:var(--ink);--text-muted:#6B7180;
+  --row-hover:#F4F6FB;--row-tot:#EEF1F8;
+  --card-shadow:0 1px 3px rgba(14,22,40,.05),0 8px 24px rgba(14,22,40,.07);
+}
+[data-theme="dark"]{
+  --bg:#0D1117;--surface:#161B27;--surface2:#1E2638;
+  --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.15);
+  --text:#E2E8F4;--text-muted:#8892A4;
+  --row-hover:#1E2638;--row-tot:#1A2135;
+  --card-shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.4);
+  --line:rgba(255,255,255,.1);--paper:#1A2135;--cream:#0D1117;
+  --white:#161B27;--ink-lt:#1E2638;--red-lt:rgba(220,30,51,.15);
+  --navy-lt:rgba(33,52,105,.2);--green-lt:rgba(21,128,61,.2);
+  --amber-lt:rgba(180,83,9,.2);
+}
+[data-theme="dark"] body{background:var(--bg);color:var(--text);}
+[data-theme="dark"] .hdr{background:var(--surface);border-color:var(--border);}
+[data-theme="dark"] .hdr-title{color:var(--text);}
+[data-theme="dark"] .hdr-sub,.hdr-badge,[data-theme="dark"] .hdr-badge{color:var(--text-muted);}
+[data-theme="dark"] .hdr-badge{background:var(--surface2);border-color:var(--border);}
+[data-theme="dark"] .content{background:var(--bg);}
+[data-theme="dark"] .panel{background:var(--bg);}
+[data-theme="dark"] .kpi-card,[data-theme="dark"] .cc,[data-theme="dark"] .sim-card,
+[data-theme="dark"] .comm-card,[data-theme="dark"] .f-row,[data-theme="dark"] .insight,
+[data-theme="dark"] .stat-strip,[data-theme="dark"] .tw table{background:var(--surface);}
+[data-theme="dark"] .tw{border-color:var(--border);}
+[data-theme="dark"] tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:var(--row-hover);}
+[data-theme="dark"] tbody tr.tot td{background:var(--row-tot);}
+[data-theme="dark"] tbody tr{border-color:var(--border);}
+[data-theme="dark"] td,[data-theme="dark"] .kpi-lbl,[data-theme="dark"] .si-lbl,
+[data-theme="dark"] .sim-lbl,[data-theme="dark"] .cc-ttl{color:var(--text-muted);}
+[data-theme="dark"] .kpi-val,[data-theme="dark"] .si-val,[data-theme="dark"] .sim-val,
+[data-theme="dark"] .sec-title,[data-theme="dark"] .page-title,[data-theme="dark"] .kpi-foot,
+[data-theme="dark"] .si-foot,[data-theme="dark"] td:first-child{color:var(--text);}
+[data-theme="dark"] .sec-hd{border-color:var(--border);}
+[data-theme="dark"] .page-hd{border-color:var(--border);}
+[data-theme="dark"] .page-sub{color:var(--text-muted);}
+[data-theme="dark"] .login-box,[data-theme="dark"] #admin-drawer{background:var(--surface);}
+[data-theme="dark"] .btn-google,[data-theme="dark"] .adm-btn{background:var(--surface);border-color:var(--border);color:var(--text);}
+[data-theme="dark"] .campus-btn{background:var(--surface2);border-color:var(--border);color:var(--text-muted);}
+[data-theme="dark"] footer{border-color:var(--border);color:var(--text-muted);}
+[data-theme="dark"] .adj-btn,[data-theme="dark"] .adj-input,.adj-btn,[data-theme="dark"] .sim-btn{background:var(--surface2);border-color:var(--border);color:var(--text);}
+[data-theme="dark"] .f-track{background:var(--surface2);}
+[data-theme="dark"] .adm-info{background:var(--surface2);}
+[data-theme="dark"] .won-row td{background:rgba(21,128,61,.15);}
+[data-theme="dark"] .proj-row td{background:rgba(180,83,9,.12);}
+[data-theme="dark"] .hm-table td{border-color:var(--bg);}
+
+/* ─── SIDEBAR FLAG & THEME TOGGLES ─── */
+.sb-flag-row{display:flex;gap:6px;padding:8px 8px 4px;}
+.sidebar.collapsed .sb-flag-row{display:none;}
+.sb-flag{background:none;border:1.5px solid transparent;border-radius:8px;padding:5px 10px;cursor:pointer;
+  font-size:.85rem;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:5px;
+  transition:all .15s;flex:1;justify-content:center;}
+.sb-flag span{font-size:.65rem;font-family:'Asap Condensed',sans-serif;font-weight:700;letter-spacing:.06em;}
+.sb-flag:hover{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.15);}
+.sb-flag.sb-flag-active{color:#fff;border-color:var(--red);border-bottom-width:2px;background:rgba(220,30,51,.15);}
+.sb-appearance-row{display:flex;gap:4px;padding:4px 8px 10px;}
+.sidebar.collapsed .sb-appearance-row{display:none;}
+.sb-theme-btn{background:none;border:1.5px solid transparent;border-radius:6px;padding:5px 0;
+  cursor:pointer;color:rgba(255,255,255,.35);font-size:1rem;flex:1;transition:all .15s;}
+.sb-theme-btn:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.15);}
+.sb-theme-btn.active{color:#fff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);}
+
+/* ─── HEATMAP FULL WIDTH ─── */
+.hm-table td:first-child{width:80px;text-align:left;font-weight:700;}
+.hm-table td:not(:first-child){width:auto;}
+
+/* ─── TWO-PANE: stretch to equal height ─── */
+.two-stretch{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:0;align-items:start;}
+.two-stretch>*{min-width:0;}
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:1024px){
   :root{--sidebar-w:220px;}
@@ -326,6 +402,9 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .f-lbl{min-width:120px;font-size:.73rem;}
   .f-nums{min-width:110px;font-size:.65rem;}
   .insight-strip{display:none;}
+  .sim-controls{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
+  .sb-flag-row,.sb-appearance-row{display:flex;}
 }
 @media print{
   .sidebar,.hdr,.adm-overlay,footer{display:none !important;}
@@ -475,13 +554,13 @@ const STRINGS={
     heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',
-    new_students:'New Students',win_rate:'Win Rate 2026',prospectos:'Active Prospects',
+    new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n 2026',prospectos:'Active Prospects',
     ret_campus:'Retention',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
     foreign:'International Students',priority:'Priority Community',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Siblings + Staff',
-    col_year:'Year',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
-    col_ret:'Retention',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospects',
+    col_year:'Year',col_level:'Level',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
+    col_ret:'Retention',col_new:'Nuevos Alumnos',col_with:'Bajas',col_prosp:'Prospects',
     col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',
     col_active:'Active',col_lifespan:'Lifespan (yr)',
     col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
@@ -504,37 +583,37 @@ const STRINGS={
     login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
     footer_txt:'St George\'s College &middot; Admissions Dashboard &middot; Live data',
     lang_switch:'Espa&ntilde;ol (AR)',
-    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Win Rate 2026',
-    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Won / (Won + Lost)',
+    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'Nuevos Alumnos',insight_wr:'Tasa de Conversi&oacute;n 2026',
+    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Ganados / (Ganados + Perdidos)',
   },
   es:{
-    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Win Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Proyecci&oacute;n 2027',
+    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conversi&oacute;n',tab_cohort:'Retenci&oacute;n de Camadas',tab_proyeccion:'Proyecci&oacute;n 2027',
     ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Panorama general de admisiones &mdash; Mayo 2026',
     ph_kpis:'KPIs 2026',ph_kpis_sub:'Indicadores clave de desempe&ntilde;o',
     ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Funnel de conversi&oacute;n e hist&oacute;rico',
-    ph_cohort:'Cohort Retention',ph_cohort_sub:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
+    ph_cohort:'Retenci&oacute;n de Camadas',ph_cohort_sub:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
-    headline:'Indicadores Headline',headline_meta:'One School &mdash; Mayo 2026',
+    headline:'Indicadores Destacados',headline_meta:'One School &mdash; Mayo 2026',
     community:'Indicadores de Comunidad',community_meta:'Perfil 2026',
     evol:'Evoluci&oacute;n de Matr&iacute;cula 2021&ndash;2027',evol_meta:'Hist&oacute;rico + Proyecci&oacute;n Tendencial',
     s_kpis:'KPIs por Secci&oacute;n',s_kpis_meta:'Matr&iacute;cula &mdash; Ocupaci&oacute;n &mdash; Retenci&oacute;n',
-    s_withdrawals:'Withdrawals por Causa',s_withdrawals_meta:'An&aacute;lisis de bajas 2025 vs 2026',
+    s_withdrawals:'Bajas por Causa',s_withdrawals_meta:'An&aacute;lisis de bajas 2025 vs 2026',
     s_pipeline:'Pipeline Activo 2027',s_pipeline_meta:'Foto del funnel en curso &mdash; Insightly',
-    s_winrate:'Win Rate Hist&oacute;rico',s_winrate_meta:'2021&ndash;2026',
+    s_winrate:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_winrate_meta:'2021&ndash;2026',
     s_funnel:'Funnel de Conversi&oacute;n',s_funnel_meta:'Hist&oacute;rico 2021&ndash;2026',
-    s_cohort:'Cohort Retention',s_cohort_meta:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
+    s_cohort:'Retenci&oacute;n de Camadas',s_cohort_meta:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
     s_heatmap:'Mapa de Calor &mdash; Retenci&oacute;n',s_heatmap_meta:'Verde &ge;95% &middot; Amarillo &ge;88% &middot; Rojo &lt;85%',
     heatmap_desc:'Cada celda muestra qu&eacute; porcentaje de los alumnos de esa cohorte sigue activo hoy. Verde oscuro = mayor retenci&oacute;n.',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',
-    new_students:'New Students',win_rate:'Win Rate 2026',prospectos:'Prospectos Activos',
+    new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n 2026',prospectos:'Prospectos Activos',
     ret_campus:'Retenci&oacute;n',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
     foreign:'Estudiantes Extranjeros',priority:'Comunidad Prioritaria',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Hermanos + Staff',
-    col_year:'A&ntilde;o',col_enrol:'Matr&iacute;cula',col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',
-    col_ret:'Retenci&oacute;n',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospectos',
-    col_cause:'Causa',col_type:'Tipo',col_cohort:'Cohorte',col_enrolled:'Ingresaron',
+    col_year:'A&ntilde;o',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',
+    col_ret:'Retenci&oacute;n',col_new:'Nuevos Alumnos',col_with:'Bajas',col_prosp:'Prospectos',
+    col_cause:'Causa',col_type:'Tipo',col_cohort:'Camada',col_enrolled:'Ingresaron',
     col_active:'Activos',col_lifespan:'Lifespan (yr)',
     col_grade:'Grado',col_base:'Base 2026',col_proy:'Proy. base',
     col_adj:'Ajuste',col_final:'Final 2027',col_fact:'Facturaci&oacute;n USD',
@@ -556,8 +635,8 @@ const STRINGS={
     login_tagline:'Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas',
     footer_txt:'St George\'s College &middot; Dashboard de Admisiones &middot; Datos en tiempo real',
     lang_switch:'English (UK)',
-    insight_total:'Total Alumnos',insight_var:'Variaci&oacute;n Anual',insight_new:'New Students',insight_wr:'Win Rate 2026',
-    prom_ponderado:'Prom. ponderado',qs_north:'Quilmes + North',pipeline_abierto:'Pipeline abierto',won_lost:'Won / (Won + Lost)',
+    insight_total:'Total Alumnos',insight_var:'Variaci&oacute;n Anual',insight_new:'Nuevos Alumnos',insight_wr:'Tasa de Conversi&oacute;n 2026',
+    prom_ponderado:'Prom. ponderado',qs_north:'Quilmes + North',pipeline_abierto:'Funnel abierto',won_lost:'Ganados / (Ganados + Perdidos)',
   }
 };
 let lang='en';
@@ -578,8 +657,24 @@ Object.defineProperty(TABS[3],'label',{get:()=>t('tab_cohort')});
 Object.defineProperty(TABS[4],'label',{get:()=>t('tab_proyeccion')});
 
 let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
-let sVis=Object.fromEntries(TABS.map(t=>[t.id,true]));
+let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
+let currentTheme=localStorage.getItem('sgc-theme')||'system';
+function applyTheme(th){
+  const root=document.documentElement;
+  if(th==='dark'){root.setAttribute('data-theme','dark');}
+  else if(th==='light'){root.setAttribute('data-theme','light');}
+  else{
+    root.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  }
+}
+function setTheme(th){
+  currentTheme=th;
+  localStorage.setItem('sgc-theme',th);
+  applyTheme(th);
+  buildSidebarNav();
+}
+applyTheme(currentTheme);
 
 // ── AUTH ──
 function initAuth(){
@@ -643,6 +738,8 @@ const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v)
 const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">&#9660; '+s+'</span>':'<span class="val-pos">&#9650; '+s+'</span>';};
 const fUSD=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v);if(isNaN(n))return'--';return'$'+Math.round(n).toLocaleString('en-US');};
 const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
+const STAGE_EN={'Prospecto':'Prospect','Prospectos':'Prospects','Primera Reunión':'First Meeting','1ª Reunión':'First Meeting','Reunión':'Meeting','Propuesta Enviada':'Proposal Sent','Propuesta enviada':'Proposal Sent','En evaluación':'Under Review','Evaluación':'Under Review','Pre-Inscripto':'Pre-Enrolled','Pre inscripto':'Pre-Enrolled','Inscripto':'Enrolled','Matrículado':'Enrolled','Ganados':'Won','Ganado':'Won','Perdidos':'Lost','Perdido':'Lost','No contactado':'Not Contacted'};
+function trStage(s){return lang==='en'?(STAGE_EN[s]||s):s;};
 
 // ── CAMPUS DATA ──
 function getCampusData(){
@@ -900,7 +997,7 @@ function buildKpiTable(cd){
   ];
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_enrol').replace('Enrolment','Level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_new')+'</th><th class="r">'+t('col_with')+'</th><th class="r">'+t('col_prosp')+'</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_new')+'</th><th class="r">'+t('col_with')+'</th><th class="r">'+t('col_prosp')+'</th></tr></thead><tbody>';
   lvls.forEach(s=>{
     h+='<tr class="'+grpCls+'"><td colspan="9">'+s.lbl+'</td></tr>';
     const tot=s.tot||{};
@@ -954,7 +1051,7 @@ function buildPipeline(){
     const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
     const div=document.createElement('div');
     div.className='f-row'+(item.isWon?' won':'');
-    div.innerHTML='<div class="f-lbl">'+item.etapa+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% drop</span></div>';
+    div.innerHTML='<div class="f-lbl">'+trStage(item.etapa)+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
     fd.appendChild(div);
   });
   wrap.appendChild(sec(t('s_funnel'),t('s_funnel_meta'),fd));
@@ -1146,8 +1243,14 @@ function drawCharts(){
 
 // ── SIDEBAR NAV ──
 function buildSidebarNav(){
-  const nav=document.getElementById('sb-nav');nav.innerHTML='';
-  nav.innerHTML+='<div class="sb-lbl">'+t('nav_label')+'</div>';
+  const nav=document.getElementById('sb-nav');
+  // Clear using DOM (NOT innerHTML= to preserve event listeners added below)
+  while(nav.firstChild)nav.removeChild(nav.firstChild);
+
+  // Section label
+  const lbl=document.createElement('div');lbl.className='sb-lbl';lbl.innerHTML=t('nav_label');nav.appendChild(lbl);
+
+  // Tab nav buttons
   TABS.forEach(function(tab){
     if(!sVis[tab.id])return;
     const btn=document.createElement('button');
@@ -1171,13 +1274,35 @@ function buildSidebarNav(){
     };
     nav.appendChild(btn);
   });
-  nav.innerHTML+='<div class="sb-divider" style="margin-top:12px"></div>';
-  const langBtn=document.createElement('button');
-  langBtn.className='nav-item';
-  langBtn.style.cssText='margin-top:4px;color:rgba(255,255,255,.4);font-size:.78rem;';
-  langBtn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg><span>'+t('lang_switch')+'</span>';
-  langBtn.onclick=function(){lang=lang==='en'?'es':'en';document.documentElement.lang=lang;render();};
-  nav.appendChild(langBtn);
+
+  // Divider
+  const div=document.createElement('div');div.className='sb-divider';div.style.marginTop='12px';nav.appendChild(div);
+
+  // Language flag toggle
+  const flagRow=document.createElement('div');
+  flagRow.className='sb-flag-row';
+  flagRow.innerHTML=
+    '<button class="sb-flag'+(lang==='en'?' sb-flag-active':'')+'" data-lang="en" title="English (UK)">&#127468;&#127463; <span>EN</span></button>'+
+    '<button class="sb-flag'+(lang==='es'?' sb-flag-active':'')+'" data-lang="es" title="Espa&ntilde;ol (AR)">&#127462;&#127479; <span>ES</span></button>';
+  flagRow.querySelectorAll('.sb-flag').forEach(function(fbtn){
+    fbtn.onclick=function(){
+      lang=fbtn.dataset.lang;
+      document.documentElement.lang=lang;
+      render();
+    };
+  });
+  nav.appendChild(flagRow);
+
+  // Appearance toggle
+  const appRow=document.createElement('div');
+  appRow.className='sb-appearance-row';
+  appRow.innerHTML='<button class="sb-theme-btn'+(currentTheme==='light'?' active':'')+'" data-theme="light" title="Light">&#9728;</button>'+
+    '<button class="sb-theme-btn'+(currentTheme==='system'?' active':'')+'" data-theme="system" title="System">&#9711;</button>'+
+    '<button class="sb-theme-btn'+(currentTheme==='dark'?' active':'')+'" data-theme="dark" title="Dark">&#9790;</button>';
+  appRow.querySelectorAll('.sb-theme-btn').forEach(function(tbtn){
+    tbtn.onclick=function(){setTheme(tbtn.dataset.theme);};
+  });
+  nav.appendChild(appRow);
 }
 
 // ── CAMPUS ──
@@ -1292,7 +1417,6 @@ window.onload=()=>{
 </script>
 </body>
 </html>
-
 
 
 
