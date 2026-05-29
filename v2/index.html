@@ -12,38 +12,39 @@
 :root{
   --ink:#1A1F35;--red:#DC1E33;--navy:#213469;
   --celeste:#6AB2E2;--violet:#6B6EB3;--teal:#109AA9;
-  --cream:#FAF7F2;--paper:#F0EDE6;--gray:#6B7180;
-  --line:#E8E3DA;--white:#fff;
+  --cream:#EEF1F8;--paper:#E6EAF4;--gray:#5A6070;
+  --line:#D8DDE8;--white:#fff;
   --green:#15803d;--green-lt:#dcfce7;
   --amber:#b45309;--amber-lt:#fef3c7;
-  --red-lt:#FEE8EB;--navy-lt:#E8EDF8;--ink-lt:#EEECEA;
+  --red-lt:#FEE8EB;--navy-lt:#E8EDF8;--ink-lt:#E8EBF2;
+  --card-shadow:0 1px 3px rgba(14,22,40,.05),0 8px 24px rgba(14,22,40,.07);
   --sidebar-w:252px;--sidebar-collapsed:60px;--header-h:56px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body{font-family:'Asap',sans-serif;background:#EEF1F8;color:var(--ink);min-height:100vh;overflow-x:hidden;}
 
 /* ─── LOADING ─── */
-#loading{position:fixed;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:900;transition:opacity .4s;}
+#loading{position:fixed;inset:0;background:#0E1628;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:900;transition:opacity .4s;}
 #loading.hidden{opacity:0;pointer-events:none;}
 .load-logo{width:90px;border-radius:6px;}
-.load-ring{width:32px;height:32px;border:2.5px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
+.load-ring{width:40px;height:40px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.load-txt{font-family:'Asap Condensed',sans-serif;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);font-weight:700;}
+.load-txt{font-family:'Asap Condensed',sans-serif;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:700;}
 
 /* ─── LOGIN ─── */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--cream);}
-.login-box{background:var(--white);border-radius:12px;box-shadow:0 12px 60px rgba(26,31,53,.13);padding:52px 48px;max-width:420px;width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#EEF1F8;}
+.login-box{background:var(--white);border-radius:16px;box-shadow:0 24px 80px rgba(14,22,40,.18);padding:52px 48px;max-width:420px;width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;}
 .login-logo{width:120px;border-radius:6px;}
 .login-rule{width:100%;height:1px;background:var(--line);}
 .login-tagline{font-size:.84rem;color:var(--gray);text-align:center;line-height:1.65;}
 .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;background:var(--white);border:1.5px solid var(--line);border-radius:6px;font-family:'Asap',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink);cursor:pointer;transition:border-color .15s,box-shadow .15s;}
-.btn-google:hover{border-color:var(--navy);box-shadow:0 4px 18px rgba(26,31,53,.1);}
+.btn-google:hover{border-color:var(--navy);box-shadow:0 4px 18px rgba(14,22,40,.1);}
 
 /* ─── APP SHELL ─── */
 #app{display:none;}
 
 /* ─── HEADER ─── */
-.hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 1px 8px rgba(26,31,53,.06);}
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid rgba(14,22,40,.08);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 1px 6px rgba(14,22,40,.05);}
 .hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
 .hdr-brand.collapsed{width:var(--sidebar-collapsed);}
 .hdr-logo{height:32px;width:auto;border-radius:4px;flex-shrink:0;}
@@ -68,7 +69,7 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
 
 /* ─── SIDEBAR ─── */
-.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;z-index:200;transition:width .25s;overflow:hidden;}
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#1A1F35 0%,#12172A 100%);display:flex;flex-direction:column;z-index:200;transition:width .25s;overflow:hidden;}
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
 .sb-toggle{position:absolute;top:12px;right:-12px;width:24px;height:24px;background:var(--white);border:1px solid var(--line);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:transform .25s;}
 .sidebar.collapsed .sb-toggle{transform:rotate(180deg);}
@@ -77,9 +78,9 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 .sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
 .sb-lbl{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:10px 8px 5px;white-space:nowrap;font-family:'Asap Condensed',sans-serif;}
 .sidebar.collapsed .sb-lbl{opacity:0;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
 .nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
-.nav-item.active{background:rgba(220,30,51,.22);color:#fff;font-weight:600;}
+.nav-item.active{background:rgba(220,30,51,.15);border-left:3px solid var(--red);color:#fff;font-weight:600;padding-left:9px;}
 .nav-item svg{flex-shrink:0;width:18px;height:18px;}
 .nav-item span{overflow:hidden;text-overflow:ellipsis;}
 .sidebar.collapsed .nav-item span{display:none;}
@@ -96,14 +97,14 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 
 /* ─── SECTION ─── */
 .sec{margin-bottom:32px;}
-.sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid transparent;background-image:linear-gradient(90deg,var(--campus-color,var(--ink)) 0%,transparent 100%);background-repeat:no-repeat;background-size:100% 1px;background-position:bottom;}
 .sec-title{font-size:1.1rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
 .sec-meta{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
 
 /* ─── PAGE HEADER ─── */
 .page-hd{margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--line);}
 .page-hd-inner{display:flex;align-items:flex-end;justify-content:space-between;}
-.page-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);}
+.page-title{font-size:1.8rem;font-weight:700;letter-spacing:-.03em;color:var(--ink);}
 .page-sub{font-size:.72rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
 .campus-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;}
 .campus-badge.os{background:var(--ink-lt);color:var(--ink);}
@@ -115,12 +116,12 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 .campus-badge.n .cb-dot{background:var(--navy);}
 
 /* ─── STAT STRIP (headline KPIs) ─── */
-.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(26,31,53,.06);}
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow);}
 .si{padding:18px 20px 16px;border-right:1px solid var(--line);transition:background .12s;position:relative;}
 .si:last-child{border-right:none;}
-.si:hover{background:var(--paper);}
+.si:hover{background:#F5F7FC;}
 .si-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
-.si-val{font-size:1.7rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.03em;}
+.si-val{font-size:1.7rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;}
 .si-val.neg{color:var(--red);}
 .si-val.pos{color:var(--green);}
 .si-val.c-red{color:var(--red);}
@@ -130,14 +131,14 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 
 /* ─── KPI CARDS ─── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
-.kpi-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px;position:relative;overflow:hidden;box-shadow:0 1px 5px rgba(26,31,53,.05);transition:box-shadow .2s,transform .18s;}
-.kpi-card:hover{box-shadow:0 6px 22px rgba(26,31,53,.09);transform:translateY(-2px);}
+.kpi-card{background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:12px;padding:18px 18px 14px;position:relative;overflow:hidden;box-shadow:var(--card-shadow);transition:box-shadow .2s,transform .18s;}
+.kpi-card:hover{box-shadow:0 4px 12px rgba(14,22,40,.06),0 16px 40px rgba(14,22,40,.1);transform:translateY(-2px);}
 .kpi-card.accent::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.campus-os .kpi-card.accent::after{background:var(--ink);}
-.campus-q .kpi-card.accent::after{background:var(--red);}
-.campus-n .kpi-card.accent::after{background:var(--navy);}
+.campus-os .kpi-card.accent::after{background:linear-gradient(90deg,var(--ink),transparent);}
+.campus-q .kpi-card.accent::after{background:linear-gradient(90deg,var(--red),transparent);}
+.campus-n .kpi-card.accent::after{background:linear-gradient(90deg,var(--navy),transparent);}
 .kpi-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:8px;font-family:'Asap Condensed',sans-serif;}
-.kpi-val{font-size:2rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px;letter-spacing:-.03em;}
+.kpi-val{font-size:2rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px;letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
 .kpi-val.neg{color:var(--red);}
 .kpi-val.pos{color:var(--green);}
 .kpi-val.c-red{color:var(--red);}
@@ -146,13 +147,13 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 
 /* ─── COMMUNITY CARDS ─── */
 .comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.comm-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:10px;padding:16px 18px;text-align:center;}
+.comm-card{background:var(--white);border:1px solid rgba(14,22,40,.08);border-top:3px solid var(--teal);border-radius:12px;padding:16px 18px;text-align:center;box-shadow:var(--card-shadow);}
 .comm-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
-.comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;}
+.comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
 .comm-foot{font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 
 /* ─── CHART CARD ─── */
-.cc{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:22px 24px;box-shadow:0 1px 5px rgba(26,31,53,.05);}
+.cc{background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:12px;padding:22px 24px;box-shadow:var(--card-shadow);}
 .cc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .cc-ttl{font-size:.65rem;font-weight:700;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;font-family:'Asap Condensed',sans-serif;}
 .cc-sub{font-size:.6rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;}
@@ -160,7 +161,7 @@ body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-
 canvas{display:block;}
 
 /* ─── TABLES ─── */
-.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--line);box-shadow:0 1px 5px rgba(26,31,53,.05);}
+.tw{overflow-x:auto;border-radius:10px;border:1px solid rgba(14,22,40,.1);box-shadow:var(--card-shadow);}
 .tw.scroll-y{max-height:420px;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;font-size:.79rem;background:var(--white);}
 thead{position:sticky;top:0;z-index:5;}
@@ -182,7 +183,7 @@ tbody tr.grp td{font-weight:700;font-size:.65rem;letter-spacing:.09em;text-trans
 tbody tr.grp-q td{background:var(--red-lt);color:var(--red);}
 tbody tr.grp-n td{background:var(--navy-lt);color:var(--navy);}
 tbody tr.grp-k td{background:var(--ink-lt);color:var(--ink);}
-tbody tr.tot td{font-weight:600;background:#F5F2EC;}
+tbody tr.tot td{font-weight:600;background:#EEF1F8;}
 tbody tr.tot td:first-child,tbody tr.tot td:nth-child(2){text-align:left !important;}
 tbody tr.ctot td{font-weight:700;border-top:2px solid;}
 tbody tr.ctot-q td{background:var(--red-lt);color:var(--red);border-top-color:var(--red);}
@@ -190,7 +191,7 @@ tbody tr.ctot-n td{background:var(--navy-lt);color:var(--navy);border-top-color:
 tbody tr.ctot-os td{background:var(--ink-lt);color:var(--ink);border-top-color:var(--ink);}
 tbody tr.won-row td{background:#f0fdf4;font-weight:600;}
 tbody tr.proj-row td{background:#FFFBEB;}
-tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:#F7F4EE;}
+tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:#F4F6FB;}
 td{padding:9px 14px;}
 td:first-child{text-align:left !important;font-weight:500;}
 td.r{text-align:center;font-family:'Asap Condensed',sans-serif;font-size:.77rem;}
@@ -214,7 +215,7 @@ td.c-n{color:var(--navy);font-weight:600;}
 
 /* ─── INSIGHT STRIP ─── */
 .insight-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
-.insight{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:10px 14px;flex:1;min-width:160px;}
+.insight{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:8px;padding:10px 14px;flex:1;min-width:160px;box-shadow:var(--card-shadow);}
 .ins-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ins-icon.green{background:var(--green-lt);}
 .ins-icon.red{background:var(--red-lt);}
@@ -230,8 +231,8 @@ td.c-n{color:var(--navy);font-weight:600;}
 
 /* ─── FUNNEL ─── */
 .funnel{display:flex;flex-direction:column;gap:6px;}
-.f-row{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:10px 14px;transition:box-shadow .15s,transform .15s;}
-.f-row:hover{box-shadow:0 4px 16px rgba(26,31,53,.08);transform:translateX(3px);}
+.f-row{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:8px;padding:10px 14px;transition:box-shadow .15s,transform .15s;}
+.f-row:hover{box-shadow:0 4px 16px rgba(14,22,40,.09);transform:translateX(3px);}
 .f-row.won{border-left:3px solid var(--teal);}
 .f-lbl{font-size:.8rem;font-weight:500;min-width:180px;}
 .f-track{flex:1;height:9px;background:var(--paper);border-radius:5px;overflow:hidden;}
@@ -246,20 +247,20 @@ td.c-n{color:var(--navy);font-weight:600;}
 
 /* ─── HEATMAP ─── */
 .heatmap{overflow-x:auto;}
-.hm-table{border-collapse:collapse;font-size:.73rem;font-family:'Asap Condensed',sans-serif;}
+.hm-table{border-collapse:collapse;font-size:.76rem;font-family:'Asap Condensed',sans-serif;}
 .hm-table th{padding:6px 10px;font-weight:700;color:var(--gray);letter-spacing:.07em;text-align:center;white-space:nowrap;}
 .hm-table th:first-child{text-align:left;}
-.hm-table td{padding:7px 10px;text-align:center;font-weight:600;border:1px solid #fff;min-width:64px;}
-.hm-cell{border-radius:4px;padding:5px 8px;display:block;text-align:center;}
+.hm-table td{padding:7px 10px;text-align:center;font-weight:600;border:1px solid #EEF1F8;min-width:80px;}
+.hm-cell{border-radius:6px;padding:6px 10px;display:block;text-align:center;font-size:.76rem;}
 
 /* ─── SIMULATOR ─── */
 .sim-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-.sim-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:18px 20px;text-align:center;position:relative;overflow:hidden;}
+.sim-card{background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:12px;padding:18px 20px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--card-shadow);}
 .sim-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ink);}
 .sim-card.q::after{background:var(--red);}
 .sim-card.n::after{background:var(--navy);}
 .sim-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
-.sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.03em;}
+.sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
 .sim-fact{font-size:.8rem;font-weight:600;color:var(--teal);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-delta{font-size:.67rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-controls{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
@@ -276,7 +277,7 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 /* ─── ADMIN PANEL (slide-out) ─── */
 #admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;backdrop-filter:blur(2px);}
 #admin-overlay.open{display:block;}
-#admin-drawer{position:fixed;top:0;right:-340px;bottom:0;width:320px;background:var(--white);z-index:401;box-shadow:-4px 0 32px rgba(26,31,53,.16);transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+#admin-drawer{position:fixed;top:0;right:-340px;bottom:0;width:320px;background:var(--white);z-index:401;box-shadow:-4px 0 32px rgba(14,22,40,.16);transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
 #admin-drawer.open{right:0;}
 .adm-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--ink);}
 .adm-hdr-title{font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px;}
@@ -452,13 +453,129 @@ const CLIENT_ID   = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleus
 const API_URL     = 'https://script.google.com/macros/s/AKfycbyJDI5osYSQ4JpPB9ahuSz8EqU84HpQvoPDSkZo97FEuE2_s0avu4iSVQ1kfxVmrJODlg/exec';
 const ADMIN_EMAIL = 'diego.medina@stgeorges.edu.ar';
 
+// ── BILINGUAL STRINGS ──
+const STRINGS={
+  en:{
+    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Win Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027',
+    ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview &mdash; May 2026',
+    ph_kpis:'KPIs 2026',ph_kpis_sub:'Key performance indicators',
+    ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Conversion funnel &amp; historical data',
+    ph_cohort:'Cohort Retention',ph_cohort_sub:'Generational loyalty &mdash; ISAMS',
+    ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
+    headline:'Headline KPIs',headline_meta:'One School &mdash; May 2026',
+    community:'Community Indicators',community_meta:'Profile 2026',
+    evol:'Enrolment Evolution 2021&ndash;2027',evol_meta:'Historical + Trend Projection',
+    s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment &mdash; Occupancy &mdash; Retention',
+    s_withdrawals:'Withdrawals by Cause',s_withdrawals_meta:'Analysis 2025 vs 2026',
+    s_pipeline:'Active Pipeline 2027',s_pipeline_meta:'Current funnel snapshot &mdash; Insightly',
+    s_winrate:'Historical Win Rate',s_winrate_meta:'2021&ndash;2026',
+    s_funnel:'Conversion Funnel',s_funnel_meta:'Historical 2021&ndash;2026',
+    s_cohort:'Cohort Retention',s_cohort_meta:'Generational loyalty &mdash; ISAMS',
+    s_heatmap:'Retention Heatmap',s_heatmap_meta:'Green &ge;95% &middot; Yellow &ge;88% &middot; Red &lt;85%',
+    heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
+    total_alumnos:'Total Students',var_anual:'Annual Variation',
+    ret_quilmes:'Quilmes Retention',ret_north:'North Retention',
+    new_students:'New Students',win_rate:'Win Rate 2026',prospectos:'Active Prospects',
+    ret_campus:'Retention',
+    og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
+    foreign:'International Students',priority:'Priority Community',
+    og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Siblings + Staff',
+    col_year:'Year',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
+    col_ret:'Retention',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospects',
+    col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',
+    col_active:'Active',col_lifespan:'Lifespan (yr)',
+    col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
+    col_adj:'Adjustment',col_final:'Final 2027',col_fact:'Billing USD',
+    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Win Rate',
+    btn_tendencial:'Trend (base)',btn_opt:'&#9650; Optimistic +2',btn_cons:'&#9660; Conservative &minus;2',
+    scenario:'Scenario:',vs_base:'vs base',
+    quilmes_table:'Quilmes &mdash; Adjustment by year group',north_table:'North &mdash; Adjustment by year group',
+    quilmes_2027:t('quilmes_2027'),north_2027:t('north_2027'),os_2027:t('os_2027'),
+    proy_not_avail:'Projection data not available.',proj_note:'proj.',
+    enrol_chart:'Enrolment One School 2021&ndash;2027',enrol_sub:'Historical bars + 2027 projection',
+    qn_chart:'Quilmes vs North',qn_sub:'Enrolment by campus',
+    wr_chart:'Win Rate Evolution',wr_sub:'Pipeline vs Won vs WR%',
+    cohort_chart:'Retention by Cohort',cohort_sub:'Annual retention %',
+    donut_chart:'Enrolment Composition',donut_sub:'K / Prep / College by campus',
+    kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
+    nav_label:'Navigation',conn:'Connection',active:'Active',last_update:'Last sync',
+    fact_toggle:'Show Billing USD',sections:'Visible sections',
+    logout:'Sign out',loading:'Loading dashboard',
+    login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
+    footer_txt:'St George\'s College &middot; Admissions Dashboard &middot; Live data',
+    lang_switch:'Espa&ntilde;ol (AR)',
+    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Win Rate 2026',
+    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Won / (Won + Lost)',
+  },
+  es:{
+    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Win Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Proyecci&oacute;n 2027',
+    ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Panorama general de admisiones &mdash; Mayo 2026',
+    ph_kpis:'KPIs 2026',ph_kpis_sub:'Indicadores clave de desempe&ntilde;o',
+    ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Funnel de conversi&oacute;n e hist&oacute;rico',
+    ph_cohort:'Cohort Retention',ph_cohort_sub:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
+    ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
+    headline:'Indicadores Headline',headline_meta:'One School &mdash; Mayo 2026',
+    community:'Indicadores de Comunidad',community_meta:'Perfil 2026',
+    evol:'Evoluci&oacute;n de Matr&iacute;cula 2021&ndash;2027',evol_meta:'Hist&oacute;rico + Proyecci&oacute;n Tendencial',
+    s_kpis:'KPIs por Secci&oacute;n',s_kpis_meta:'Matr&iacute;cula &mdash; Ocupaci&oacute;n &mdash; Retenci&oacute;n',
+    s_withdrawals:'Withdrawals por Causa',s_withdrawals_meta:'An&aacute;lisis de bajas 2025 vs 2026',
+    s_pipeline:'Pipeline Activo 2027',s_pipeline_meta:'Foto del funnel en curso &mdash; Insightly',
+    s_winrate:'Win Rate Hist&oacute;rico',s_winrate_meta:'2021&ndash;2026',
+    s_funnel:'Funnel de Conversi&oacute;n',s_funnel_meta:'Hist&oacute;rico 2021&ndash;2026',
+    s_cohort:'Cohort Retention',s_cohort_meta:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
+    s_heatmap:'Mapa de Calor &mdash; Retenci&oacute;n',s_heatmap_meta:'Verde &ge;95% &middot; Amarillo &ge;88% &middot; Rojo &lt;85%',
+    heatmap_desc:'Cada celda muestra qu&eacute; porcentaje de los alumnos de esa cohorte sigue activo hoy. Verde oscuro = mayor retenci&oacute;n.',
+    total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
+    ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',
+    new_students:'New Students',win_rate:'Win Rate 2026',prospectos:'Prospectos Activos',
+    ret_campus:'Retenci&oacute;n',
+    og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
+    foreign:'Estudiantes Extranjeros',priority:'Comunidad Prioritaria',
+    og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Hermanos + Staff',
+    col_year:'A&ntilde;o',col_enrol:'Matr&iacute;cula',col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',
+    col_ret:'Retenci&oacute;n',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospectos',
+    col_cause:'Causa',col_type:'Tipo',col_cohort:'Cohorte',col_enrolled:'Ingresaron',
+    col_active:'Activos',col_lifespan:'Lifespan (yr)',
+    col_grade:'Grado',col_base:'Base 2026',col_proy:'Proy. base',
+    col_adj:'Ajuste',col_final:'Final 2027',col_fact:'Facturaci&oacute;n USD',
+    col_stage:'Etapa',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Win Rate',
+    btn_tendencial:'Tendencial (base)',btn_opt:'&#9650; Optimista +2',btn_cons:'&#9660; Conservador &minus;2',
+    scenario:t('scenario'),vs_base:'vs base',
+    quilmes_table:t('quilmes_table'),north_table:t('north_table'),
+    quilmes_2027:t('quilmes_2027'),north_2027:t('north_2027'),os_2027:t('os_2027'),
+    proy_not_avail:'Datos de proyecci&oacute;n no disponibles.',proj_note:'proj.',
+    enrol_chart:'Matr&iacute;cula One School 2021&ndash;2027',enrol_sub:'Barras hist&oacute;ricas + proyecci&oacute;n 2027',
+    qn_chart:'Quilmes vs North',qn_sub:'Evoluci&oacute;n de matr&iacute;cula por campus',
+    wr_chart:'Evoluci&oacute;n Win Rate',wr_sub:'Pipeline vs Ganados vs WR%',
+    cohort_chart:'Retenci&oacute;n por Cohorte',cohort_sub:'Porcentaje de retenci&oacute;n anual',
+    donut_chart:'Composici&oacute;n de Matr&iacute;cula',donut_sub:'K / Prep / College por campus',
+    kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
+    nav_label:'Navegaci&oacute;n',conn:t('conn'),active:'Activa',last_update:'&Uacute;ltima sync',
+    fact_toggle:'Mostrar Facturaci&oacute;n USD',sections:'Secciones visibles',
+    logout:'Salir',loading:'Cargando dashboard',
+    login_tagline:'Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas',
+    footer_txt:'St George\'s College &middot; Dashboard de Admisiones &middot; Datos en tiempo real',
+    lang_switch:'English (UK)',
+    insight_total:'Total Alumnos',insight_var:'Variaci&oacute;n Anual',insight_new:'New Students',insight_wr:'Win Rate 2026',
+    prom_ponderado:'Prom. ponderado',qs_north:'Quilmes + North',pipeline_abierto:'Pipeline abierto',won_lost:'Won / (Won + Lost)',
+  }
+};
+let lang='en';
+const t=k=>STRINGS[lang][k]||STRINGS.en[k]||k;
+
 const TABS=[
-  {id:'resumen',   label:'Resumen Ejecutivo', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
-  {id:'kpis',      label:'KPIs 2026',         icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
-  {id:'pipeline',  label:'Pipeline & Win Rate',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
-  {id:'cohort',    label:'Cohort Retention',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
-  {id:'proyeccion',label:'Proyección 2027',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
+  {id:'resumen',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
+  {id:'kpis',      icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
+  {id:'pipeline',  icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
+  {id:'cohort',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {id:'proyeccion',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
 ];
+function getTabLabel(id){return t('tab_'+id);}
+Object.defineProperty(TABS[0],'label',{get:()=>t('tab_resumen')});
+Object.defineProperty(TABS[1],'label',{get:()=>t('tab_kpis')});
+Object.defineProperty(TABS[2],'label',{get:()=>t('tab_pipeline')});
+Object.defineProperty(TABS[3],'label',{get:()=>t('tab_cohort')});
+Object.defineProperty(TABS[4],'label',{get:()=>t('tab_proyeccion')});
 
 let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
 let sVis=Object.fromEntries(TABS.map(t=>[t.id,true]));
@@ -523,7 +640,7 @@ function fetchData(){
 const fN=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
 const fP=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return(n*100).toFixed(1)+'%';};
 const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);if(n>-2&&n<2&&String(v).includes('.'))return fP(n);return fN(n);};
-const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">▼ '+s+'</span>':'<span class="val-pos">▲ '+s+'</span>';};
+const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">&#9660; '+s+'</span>':'<span class="val-pos">&#9650; '+s+'</span>';};
 const fUSD=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v);if(isNaN(n))return'--';return'$'+Math.round(n).toLocaleString('en-US');};
 const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
 
@@ -600,12 +717,12 @@ function render(){
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
   const main=document.getElementById('main');main.innerHTML='';
   main.className='campus-'+campus;
-  TABS.forEach(t=>{
-    if(!sVis[t.id])return;
+  TABS.forEach(function(tab){
+    if(!sVis[tab.id])return;
     const panel=document.createElement('div');
-    panel.className='panel'+(t.id===activeTab?' active':'');
-    panel.id='panel-'+t.id;
-    const content=buildPanel(t.id);
+    panel.className='panel'+(tab.id===activeTab?' active':'');
+    panel.id='panel-'+tab.id;
+    const content=buildPanel(tab.id);
     if(content)panel.appendChild(content);
     main.appendChild(panel);
   });
@@ -623,37 +740,34 @@ function buildPanel(id){
   }
 }
 
-function sec(title,meta,content){
-  const s=document.createElement('div');s.className='sec';
-  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
-  s.appendChild(content);return s;
-}
-
 function pageHeader(title,sub){
   const d=document.createElement('div');d.className='page-hd';
   const campusName=campus==='os'?'One School':campus==='q'?'Quilmes':'North';
   d.innerHTML='<div class="page-hd-inner"><div><div class="page-title">'+title+'</div><div class="page-sub">'+sub+'</div></div><div class="campus-badge '+campus+'"><span class="cb-dot"></span>'+campusName+'</div></div>';
   return d;
 }
+function sec(title,meta,content){
+  const s=document.createElement('div');s.className='sec';
+  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
+  s.appendChild(content);return s;
+}
 
 // ── RESUMEN ──
 function buildResumen(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader('Resumen Ejecutivo','Panorama general de admisiones'));
+  wrap.appendChild(pageHeader(t('ph_resumen'),t('ph_resumen_sub')));
 
   const h=D.headline||{};
   const varN=(parseFloat(h.variacion_anual)||0)*100;
   const wrPct=(parseFloat(h.win_rate)||0)*100;
-  const retQ=(parseFloat(h.retencion_quilmes)||0)*100;
-  const retN=(parseFloat(h.retencion_north)||0)*100;
 
   // Insight strip
   const ins=document.createElement('div');ins.className='insight-strip';
   const insData=[
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:'Total Alumnos',val:fN(h.total_alumnos)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:'Variación Anual',val:(varN>=0?'▲ ':'▼ ')+Math.abs(varN).toFixed(2)+'%'},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:'New Students',val:fN(h.new_students)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:'Win Rate 2026',val:wrPct.toFixed(1)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:t('insight_total'),val:fN(h.total_alumnos)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:t('insight_var'),val:(varN>=0?'&#9650; ':'&#9660; ')+Math.abs(varN).toFixed(2)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:t('insight_new'),val:fN(h.new_students)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:t('insight_wr'),val:wrPct.toFixed(1)+'%'},
   ];
   insData.forEach(i=>{ins.innerHTML+='<div class="insight"><div class="ins-icon '+i.cls+'">'+i.icon+'</div><div><div class="ins-lbl">'+i.lbl+'</div><div class="ins-val">'+i.val+'</div></div></div>';});
   wrap.appendChild(ins);
@@ -661,34 +775,34 @@ function buildResumen(){
   // Stat strip
   const strip=document.createElement('div');strip.className='stat-strip';
   const statItems=[
-    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
-    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
-    {lbl:'Retención Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. ponderado',cls:'c-red'},
-    {lbl:'Retención North',val:fP(h.retencion_north),foot:'Prom. ponderado',cls:'c-navy'},
-    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North',cls:''},
-    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)',cls:''},
-    {lbl:'Prospectos Activos',val:fN(h.prospectos),foot:'Pipeline abierto',cls:''},
+    {lbl:t('total_alumnos'),val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
+    {lbl:t('ret_quilmes'),val:fP(h.retencion_quilmes),foot:t('prom_ponderado'),cls:'c-red'},
+    {lbl:t('ret_north'),val:fP(h.retencion_north),foot:t('prom_ponderado'),cls:'c-navy'},
+    {lbl:t('new_students'),val:fN(h.new_students),foot:t('qs_north'),cls:''},
+    {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost'),cls:''},
+    {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto'),cls:''},
   ];
   statItems.forEach(s=>{
     strip.innerHTML+='<div class="si"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+s.cls+'">'+s.val+'</div><div class="si-foot">'+s.foot+'</div></div>';
   });
-  wrap.appendChild(sec('Indicadores Headline','One School — Mayo 2026',strip));
+  wrap.appendChild(sec(t('headline'),t('headline_meta'),strip));
 
   if(D.community){
     const cg=document.createElement('div');cg.className='comm-grid';
-    [{lbl:'OG Parent Quilmes',val:fP(D.community.ogQuilmes),foot:'Padres Old Georgian'},
-     {lbl:'OG Parent North',val:fP(D.community.ogNorth),foot:'Padres Old Georgian'},
-     {lbl:'Estudiantes Extranjeros',val:fP(D.community.foreignStudents),foot:'One School'},
-     {lbl:'Comunidad Prioritaria',val:fP(D.community.priorityCommunity),foot:'OG + Hermanos + Staff'},
+    [{lbl:t('og_quilmes'),val:fP(D.community.ogQuilmes),foot:t('og_foot')},
+     {lbl:t('og_north'),val:fP(D.community.ogNorth),foot:t('og_foot')},
+     {lbl:t('foreign'),val:fP(D.community.foreignStudents),foot:t('os_foot')},
+     {lbl:t('priority'),val:fP(D.community.priorityCommunity),foot:t('og_plus')},
     ].forEach(c=>{cg.innerHTML+='<div class="comm-card"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
-    wrap.appendChild(sec('Indicadores de Comunidad','Perfil 2026',cg));
+    wrap.appendChild(sec(t('community'),t('community_meta'),cg));
   }
 
   const re=D.resumen;
   if(re){
-    const tw=document.createElement('div');tw.className='tw scroll-y';
+    const tw=document.createElement('div');tw.className='tw';
     const years=[2027,2026,2025,2024,2023,2022,2021];
-    let h2='<table><thead><tr><th>Año</th>';
+    let h2='<table><thead><tr><th>'+t('col_year')+'</th>';
     if(campus==='os'||campus==='q')h2+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Total</th>';
     if(campus==='os'||campus==='n')h2+='<th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Total</th>';
     if(campus==='os')h2+='<th class="r">OS Total</th>';
@@ -699,20 +813,20 @@ function buildResumen(){
       const n=(re.north||[]).find(r=>r.yr===yr)||{};
       const os=(re.oneSchool||[]).find(r=>r.yr===yr)||{};
       const crec=campus==='os'?os.crec:campus==='q'?q.crec:n.crec;
-      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">proj.</span>':'')+'</td>';
+      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">'+t('proj_note')+'</span>':'')+'</td>';
       if(campus==='os'||campus==='q')h2+='<td class="r c-q">'+fN(q.kinder)+'</td><td class="r c-q">'+fN(q.prep)+'</td><td class="r c-q">'+fN(q.college)+'</td><td class="r c-q" style="font-weight:700">'+fN(q.total)+'</td>';
       if(campus==='os'||campus==='n')h2+='<td class="r c-n">'+fN(n.kinder)+'</td><td class="r c-n">'+fN(n.prep)+'</td><td class="r c-n">'+fN(n.college)+'</td><td class="r c-n" style="font-weight:700">'+fN(n.total)+'</td>';
       if(campus==='os')h2+='<td class="r" style="font-weight:700">'+fN(os.total)+'</td>';
       h2+='<td class="r">'+fCrp(crec)+'</td></tr>';
     });
     h2+='</tbody></table>';tw.innerHTML=h2;
-    wrap.appendChild(sec('Evolución de Matrícula 2021–2027','Histórico + Proyección Tendencial',tw));
+    wrap.appendChild(sec(t('evol'),t('evol_meta'),tw));
 
     const two=document.createElement('div');two.className='two';
     const cc1=document.createElement('div');cc1.className='cc';
-    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Matrícula One School 2021–2027</div><div class="cc-sub">Barras históricas + proyección 2027</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
+    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('enrol_chart')+'</div><div class="cc-sub">'+t('enrol_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
     const cc2=document.createElement('div');cc2.className='cc';
-    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Quilmes vs North</div><div class="cc-sub">Evolución de matrícula por campus</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
+    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('qn_chart')+'</div><div class="cc-sub">'+t('qn_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
     two.appendChild(cc1);two.appendChild(cc2);
     wrap.appendChild(two);
   }
@@ -722,47 +836,47 @@ function buildResumen(){
 // ── KPIs ──
 function buildKpis(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader('KPIs 2026','Indicadores clave de desempeño'));
+  wrap.appendChild(pageHeader(t('ph_kpis'),t('ph_kpis_sub')));
 
   const h=D.headline||{};
   const varN=(parseFloat(h.variacion_anual)||0)*100;
+  const retLbl=campus==='q'?t('ret_quilmes'):campus==='n'?t('ret_north'):t('ret_campus');
+  const retVal=fP(campus==='q'?h.retencion_quilmes:campus==='n'?h.retencion_north:h.retencion_quilmes);
+  const retCls=campus==='q'?'c-red':campus==='n'?'c-navy':'';
   const cards=campus==='os'?[
-    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
-    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
-    {lbl:'Retención Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. ponderado',cls:'c-red'},
-    {lbl:'Retención North',val:fP(h.retencion_north),foot:'Prom. ponderado',cls:'c-navy'},
-    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
-    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
-    {lbl:'Prospectos',val:fN(h.prospectos),foot:'Pipeline abierto'},
+    {lbl:t('total_alumnos'),val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
+    {lbl:t('ret_quilmes'),val:fP(h.retencion_quilmes),foot:t('prom_ponderado'),cls:'c-red'},
+    {lbl:t('ret_north'),val:fP(h.retencion_north),foot:t('prom_ponderado'),cls:'c-navy'},
+    {lbl:t('new_students'),val:fN(h.new_students),foot:t('qs_north')},
+    {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost')},
+    {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto')},
   ]:[
-    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
-    {lbl:'Variación Anual',val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
-    {lbl:'Retención '+(campus==='q'?'Quilmes':'North'),val:fP(campus==='q'?h.retencion_quilmes:h.retencion_north),foot:'Prom. ponderado',cls:campus==='q'?'c-red':'c-navy'},
-    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
-    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
-    {lbl:'Prospectos',val:fN(h.prospectos),foot:'Pipeline abierto'},
+    {lbl:t('total_alumnos'),val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
+    {lbl:retLbl,val:retVal,foot:t('prom_ponderado'),cls:retCls},
+    {lbl:t('new_students'),val:fN(h.new_students),foot:t('qs_north')},
+    {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost')},
+    {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto')},
   ];
   const g=document.createElement('div');g.className='kpi-grid';
   cards.forEach(c=>{g.innerHTML+='<div class="kpi-card'+(c.accent?' accent':'')+'"><div class="kpi-lbl">'+c.lbl+'</div><div class="kpi-val '+(c.cls||'')+'">'+c.val+'</div><div class="kpi-foot">'+c.foot+'</div></div>';});
-  wrap.appendChild(sec('Indicadores Headline','One School — 2026',g));
+  wrap.appendChild(sec(t('headline'),t('headline_meta'),g));
 
-  // KPI table + donut layout
   const cd=getCampusData();
   if(cd){
     const col=document.createElement('div');col.className='col-6040';
-    const tw=document.createElement('div');tw.className='tw scroll-y';
+    const tw=document.createElement('div');tw.className='tw';
     tw.innerHTML=buildKpiTable(cd);
     const cc=document.createElement('div');cc.className='cc';
-    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Composición de Matrícula</div><div class="cc-sub">K / Prep / College por campus</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="200"></canvas></div>';
+    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="200"></canvas></div>';
     col.appendChild(tw);col.appendChild(cc);
-    wrap.appendChild(sec('KPIs por Sección','Matrícula — Ocupación — Retención',col));
+    wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),col));
   }
 
-  // Withdrawals
-  const tw2=document.createElement('div');tw2.className='tw scroll-y';
-  let h2='<table><thead><tr><th>Causa</th><th style="text-align:left">Tipo</th>';
+  const tw2=document.createElement('div');tw2.className='tw';
+  let h2='<table><thead><tr><th>'+t('col_cause')+'</th><th style="text-align:left">'+t('col_type')+'</th>';
   if(campus==='os')h2+='<th class="r th-q">Q 2025</th><th class="r th-q">Q 2026</th><th class="r th-n">N 2025</th><th class="r th-n">N 2026</th><th class="r">OS 2025</th><th class="r">OS 2026</th>';
-  else if(campus==='q')h2+='<th class="r">2025</th><th class="r">2026</th>';
   else h2+='<th class="r">2025</th><th class="r">2026</th>';
   h2+='</tr></thead><tbody>';
   (D.withdrawals||[]).forEach(w=>{
@@ -774,41 +888,39 @@ function buildKpis(){
     h2+='</tr>';
   });
   h2+='</tbody></table>';tw2.innerHTML=h2;
-  wrap.appendChild(sec('Withdrawals por Causa','Análisis de bajas 2025 vs 2026',tw2));
+  wrap.appendChild(sec(t('s_withdrawals'),t('s_withdrawals_meta'),tw2));
   return wrap;
 }
 
 function buildKpiTable(cd){
-  const secs=[
-    {lbl:'KINDER',tot:cd.kinder&&cd.kinder.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder&&cd.kinder[k]}))},
-    {lbl:'PREP',tot:cd.prep&&cd.prep.total,rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep&&cd.prep[k]}))},
-    {lbl:'COLLEGE',tot:cd.college&&cd.college.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college&&cd.college[k]}))},
+  const lvls=[
+    {lbl:t('kinder'),tot:cd.kinder&&cd.kinder.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder&&cd.kinder[k]}))},
+    {lbl:t('prep'),tot:cd.prep&&cd.prep.total,rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep&&cd.prep[k]}))},
+    {lbl:t('college'),tot:cd.college&&cd.college.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college&&cd.college[k]}))},
   ];
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>Nivel</th><th>Grado</th><th class="r">Matrícula</th><th class="r">Ocupación</th><th class="r">Vacantes</th><th class="r">Retención</th><th class="r">New Students</th><th class="r">Withdrawals</th><th class="r">Prospectos</th></tr></thead><tbody>';
-  secs.forEach(s=>{
+  let h='<table><thead><tr><th>'+t('col_enrol').replace('Enrolment','Level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_new')+'</th><th class="r">'+t('col_with')+'</th><th class="r">'+t('col_prosp')+'</th></tr></thead><tbody>';
+  lvls.forEach(s=>{
     h+='<tr class="'+grpCls+'"><td colspan="9">'+s.lbl+'</td></tr>';
-    const t=s.tot||{};
-    h+='<tr class="tot"><td></td><td>TOTAL '+s.lbl+'</td><td class="r"><strong>'+fN(t.matricula)+'</strong></td><td class="r">'+fV(t.ocupacion)+'</td><td class="r">'+fN(t.vacantes)+'</td><td class="r">'+fV(t.retencion)+'</td><td class="r">'+fN(t.new_students)+'</td><td class="r">'+fN(t.withdrawals)+'</td><td class="r">'+fN(t.prospectos)+'</td></tr>';
+    const tot=s.tot||{};
+    h+='<tr class="tot"><td></td><td>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td><td class="r">'+fV(tot.ocupacion)+'</td><td class="r">'+fN(tot.vacantes)+'</td><td class="r">'+fV(tot.retencion)+'</td><td class="r">'+fN(tot.new_students)+'</td><td class="r">'+fN(tot.withdrawals)+'</td><td class="r">'+fN(tot.prospectos)+'</td></tr>';
     s.rows.forEach(({k,d})=>{d=d||{};h+='<tr><td></td><td>'+k+'</td><td class="r">'+fV(d.matricula)+'</td><td class="r">'+fV(d.ocupacion)+'</td><td class="r">'+fV(d.vacantes)+'</td><td class="r">'+fV(d.retencion)+'</td><td class="r">'+fV(d.new_students)+'</td><td class="r">'+fV(d.withdrawals)+'</td><td class="r">'+fV(d.prospectos)+'</td></tr>';});
   });
   const ct=cd.total||{};
-  h+='<tr class="'+ctotCls+'"><td colspan="2">TOTAL CAMPUS</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">'+fV(ct.ocupacion)+'</td><td class="r">'+fN(ct.vacantes)+'</td><td class="r">'+fV(ct.retencion)+'</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
+  h+='<tr class="'+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">'+fV(ct.ocupacion)+'</td><td class="r">'+fN(ct.vacantes)+'</td><td class="r">'+fV(ct.retencion)+'</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
   return h+'</tbody></table>';
 }
 
 // ── PIPELINE ──
 function buildPipeline(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader('Pipeline & Win Rate','Funnel de conversión e histórico'));
+  wrap.appendChild(pageHeader(t('ph_pipeline'),t('ph_pipeline_sub')));
 
-  // Pipeline table
-  const tw=document.createElement('div');tw.className='tw scroll-y';
-  let h='<table><thead><tr><th>Etapa</th>';
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_stage')+'</th>';
   if(campus==='os')h+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Tot</th><th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Tot</th><th class="r">One School</th>';
-  else if(campus==='q')h+='<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>';
-  else h+='<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>';
+  else h+='<th class="r">'+t('kinder')+'</th><th class="r">'+t('prep')+'</th><th class="r">'+t('college')+'</th><th class="r">Total</th>';
   h+='</tr></thead><tbody>';
   (D.pipeline||[]).forEach(p=>{
     h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+p.etapa+'</td>';
@@ -818,12 +930,11 @@ function buildPipeline(){
     h+='</tr>';
   });
   h+='</tbody></table>';tw.innerHTML=h;
-  wrap.appendChild(sec('Pipeline Activo 2027','Foto del funnel en curso — Insightly',tw));
+  wrap.appendChild(sec(t('s_pipeline'),t('s_pipeline_meta'),tw));
 
-  // Win Rate table + dual-axis chart
   const two=document.createElement('div');two.className='two';
   const tw2=document.createElement('div');tw2.className='tw';
-  let h2='<table><thead><tr><th>Año</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>';
+  let h2='<table><thead><tr><th>'+t('col_year')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
   (D.winrate||[]).forEach(r=>{
     const f=getWRF(r);
     const wr=(parseFloat(f.wr)||0)*100;
@@ -832,11 +943,10 @@ function buildPipeline(){
   });
   h2+='</tbody></table>';tw2.innerHTML=h2;
   const cc=document.createElement('div');cc.className='cc';
-  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Evolución Win Rate</div><div class="cc-sub">Pipeline vs Ganados vs WR%</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
   two.appendChild(tw2);two.appendChild(cc);
-  wrap.appendChild(sec('Win Rate Histórico','2021–2026',two));
+  wrap.appendChild(sec(t('s_winrate'),t('s_winrate_meta'),two));
 
-  // Funnel
   const fd=document.createElement('div');fd.className='funnel';
   const maxF=Math.max(...(D.funnel||[]).map(x=>parseFloat(x.llegaron)||0),1);
   (D.funnel||[]).forEach(item=>{
@@ -844,21 +954,21 @@ function buildPipeline(){
     const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
     const div=document.createElement('div');
     div.className='f-row'+(item.isWon?' won':'');
-    div.innerHTML='<div class="f-lbl">'+item.etapa+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' llegaron <span class="f-badge">'+lp+'% baja</span></div>';
+    div.innerHTML='<div class="f-lbl">'+item.etapa+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% drop</span></div>';
     fd.appendChild(div);
   });
-  wrap.appendChild(sec('Funnel de Conversión','Histórico 2021–2026',fd));
+  wrap.appendChild(sec(t('s_funnel'),t('s_funnel_meta'),fd));
   return wrap;
 }
 
 // ── COHORT ──
 function buildCohort(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader('Cohort Retention','Fidelización generacional'));
+  wrap.appendChild(pageHeader(t('ph_cohort'),t('ph_cohort_sub')));
 
   const two=document.createElement('div');two.className='two';
   const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>Cohorte</th><th class="r">Ingresaron</th><th class="r">Activos</th><th class="r">Retención</th><th class="r">Lifespan (yr)</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>'+t('col_cohort')+'</th><th class="r">'+t('col_enrolled')+'</th><th class="r">'+t('col_active')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_lifespan')+'</th></tr></thead><tbody>';
   (D.cohort||[]).forEach(r=>{
     const f=getCohF(r);
     const ret=(parseFloat(f.ret)||0)*100;
@@ -867,28 +977,24 @@ function buildCohort(){
   });
   h+='</tbody></table>';tw.innerHTML=h;
   const cc=document.createElement('div');cc.className='cc';
-  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Retención por Cohorte</div><div class="cc-sub">Porcentaje de retención anual</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div>';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('cohort_chart')+'</div><div class="cc-sub">'+t('cohort_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div>';
   two.appendChild(tw);two.appendChild(cc);
-  wrap.appendChild(sec('Cohort Retention','Fidelización generacional — ISAMS',two));
+  wrap.appendChild(sec(t('s_cohort'),t('s_cohort_meta'),two));
 
-  // Heatmap retención Q vs N por año
   if(D.cohort&&D.cohort.length){
+    const hmWrap=document.createElement('div');
+    // Explanation box
+    const desc=document.createElement('div');
+    desc.style.cssText='background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.78rem;color:var(--gray);line-height:1.6;display:flex;align-items:flex-start;gap:12px;';
+    desc.innerHTML='<svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('heatmap_desc')+'</span>';
+    hmWrap.appendChild(desc);
     const hm=document.createElement('div');hm.className='heatmap';
-    const heatColor=(v)=>{
-      const n=parseFloat(v)*100;
-      if(isNaN(n))return'#F5F2EC';
-      if(n>=97)return'#15803d';
-      if(n>=95)return'#22c55e';
-      if(n>=92)return'#86efac';
-      if(n>=88)return'#fef08a';
-      if(n>=85)return'#fca5a5';
-      return'#ef4444';
-    };
+    const heatColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#F0F3FA';if(n>=97)return'#15803d';if(n>=95)return'#22c55e';if(n>=92)return'#86efac';if(n>=88)return'#fef08a';if(n>=85)return'#fca5a5';return'#ef4444';};
     const textColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#6B7180';return n>=95?'#fff':n>=88?'#78350f':'#7f1d1d';};
-    let ht='<table class="hm-table"><thead><tr><th>Cohorte</th>';
+    let ht='<table class="hm-table"><thead><tr><th>'+t('col_cohort')+'</th>';
     if(campus==='os'||campus==='q')ht+='<th>Q Ret%</th>';
     if(campus==='os'||campus==='n')ht+='<th>N Ret%</th>';
-    if(campus==='os')ht+='<th>Q Activos</th><th>N Activos</th>';
+    if(campus==='os')ht+='<th>Q '+t('col_active')+'</th><th>N '+t('col_active')+'</th>';
     ht+='</tr></thead><tbody>';
     D.cohort.forEach(r=>{
       ht+='<tr><td style="font-weight:700;text-align:left">'+r.yr+'</td>';
@@ -898,7 +1004,8 @@ function buildCohort(){
       ht+='</tr>';
     });
     ht+='</tbody></table>';hm.innerHTML=ht;
-    wrap.appendChild(sec('Mapa de Calor — Retención','Verde ≥95% · Amarillo ≥88% · Rojo <85%',hm));
+    hmWrap.appendChild(hm);
+    wrap.appendChild(sec(t('s_heatmap'),t('s_heatmap_meta'),hmWrap));
   }
   return wrap;
 }
@@ -906,7 +1013,7 @@ function buildCohort(){
 // ── PROYECCION ──
 function buildProyeccion(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader('Proyección 2027','Simulador de escenarios por grado'));
+  wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
 
   const py=D.proyeccion;
   if(!py){const p=document.createElement('p');p.textContent='Datos de proyección no disponibles.';p.style.cssText='color:var(--gray);font-family:Asap Condensed,sans-serif;padding:20px;';wrap.appendChild(p);return wrap;}
@@ -917,9 +1024,9 @@ function buildProyeccion(){
   const totDiv=document.createElement('div');totDiv.className='sim-totals';
   const mkCard=(id,cls,label,final,base,fact)=>{
     const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
-    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">–</div>')+'<div class="sim-delta">vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
+    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">&ndash;</div>')+'<div class="sim-delta">'+t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
   };
-  totDiv.innerHTML=mkCard('sim-q','q','Quilmes 2027',qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n','North 2027',nT.final,nT.base,nT.facturacion)+mkCard('sim-os','','One School 2027',osFinal,osBase,osFact);
+  totDiv.innerHTML=mkCard('sim-q','q',t('quilmes_2027'),qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n',t('north_2027'),nT.final,nT.base,nT.facturacion)+mkCard('sim-os','',t('os_2027'),osFinal,osBase,osFact);
   wrap.appendChild(totDiv);
 
   const ctrl=document.createElement('div');ctrl.className='sim-controls';
@@ -928,7 +1035,7 @@ function buildProyeccion(){
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r" style="min-width:130px">Ajuste</th><th class="r" style="min-width:90px">Final 2027</th>'+(showFact?'<th class="r fact-col">Facturación USD</th>':'')+'</tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">Facturación USD</th>':'')+'</tr></thead><tbody>';
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
@@ -984,10 +1091,10 @@ function drawCharts(){
     const qR=[...(D.resumen.quilmes||[])].reverse();
     const nR=[...(D.resumen.north||[])].reverse();
     const ctx=qnc.getContext('2d');
-    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' ▸':'')),datasets:[
-      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2},
-      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213469',backgroundColor:grad(ctx,33,52,105),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2},
-    ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
+      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.4,fill:true,borderWidth:3,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2},
+      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213469',backgroundColor:grad(ctx,33,52,105),tension:.4,fill:true,borderWidth:3,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2},
+    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
   // Donut K/P/C
@@ -1018,9 +1125,9 @@ function drawCharts(){
       {type:'bar',label:'Pipeline N',data:D.winrate.map(r=>parseFloat(r.nPipeline)||0),backgroundColor:'rgba(33,52,105,.35)',borderRadius:4,yAxisID:'y',order:3},
     ]:[{type:'bar',label:'Pipeline',data:D.winrate.map(r=>campus==='q'?parseFloat(r.qPipeline)||0:parseFloat(r.nPipeline)||0),backgroundColor:C.bg,borderRadius:4,yAxisID:'y',order:3}];
     const wrDs=campus==='os'?[
-      {type:'line',label:'WR% Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
-      {type:'line',label:'WR% North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213469',backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
-    ]:[{type:'line',label:'Win Rate %',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:C.main,pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1}];
+      {type:'line',label:'WR% Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
+      {type:'line',label:'WR% North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213469',backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
+    ]:[{type:'line',label:'Win Rate %',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:C.main,pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1}];
     charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[...pipDs,...wrDs]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:'#6B7180',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
@@ -1040,24 +1147,23 @@ function drawCharts(){
 // ── SIDEBAR NAV ──
 function buildSidebarNav(){
   const nav=document.getElementById('sb-nav');nav.innerHTML='';
-  nav.innerHTML+='<div class="sb-lbl">Navegación</div>';
-  TABS.forEach(t=>{
-    if(!sVis[t.id])return;
+  nav.innerHTML+='<div class="sb-lbl">'+t('nav_label')+'</div>';
+  TABS.forEach(function(tab){
+    if(!sVis[tab.id])return;
     const btn=document.createElement('button');
-    btn.className='nav-item'+(t.id===activeTab?' active':'');
-    btn.innerHTML=t.icon+'<span>'+t.label+'</span>';
-    btn.onclick=()=>{
-      activeTab=t.id;
-      document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+    btn.className='nav-item'+(tab.id===activeTab?' active':'');
+    btn.innerHTML=tab.icon+'<span>'+tab.label+'</span>';
+    btn.onclick=function(){
+      activeTab=tab.id;
+      document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active');});
       btn.classList.add('active');
-      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-      const panel=document.getElementById('panel-'+t.id);
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      const panel=document.getElementById('panel-'+tab.id);
       if(panel){
         panel.classList.add('active');
-        setTimeout(()=>{panel.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);
+        setTimeout(function(){panel.querySelectorAll('.f-fill').forEach(function(el){const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);
       }
       window.scrollTo({top:0,behavior:'smooth'});
-      // close mobile sidebar after navigation
       if(isMobile()){
         document.getElementById('sidebar').classList.remove('mobile-open');
         document.getElementById('mob-overlay').classList.remove('active');
@@ -1065,6 +1171,13 @@ function buildSidebarNav(){
     };
     nav.appendChild(btn);
   });
+  nav.innerHTML+='<div class="sb-divider" style="margin-top:12px"></div>';
+  const langBtn=document.createElement('button');
+  langBtn.className='nav-item';
+  langBtn.style.cssText='margin-top:4px;color:rgba(255,255,255,.4);font-size:.78rem;';
+  langBtn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg><span>'+t('lang_switch')+'</span>';
+  langBtn.onclick=function(){lang=lang==='en'?'es':'en';document.documentElement.lang=lang;render();};
+  nav.appendChild(langBtn);
 }
 
 // ── CAMPUS ──
@@ -1107,13 +1220,13 @@ document.getElementById('mob-overlay').addEventListener('click',()=>{
 // ── ADMIN ──
 function buildAdmin(){
   const ctr=document.getElementById('sec-toggles');ctr.innerHTML='';
-  TABS.forEach(t=>{
+  TABS.forEach(function(tab){
     const p=document.createElement('div');p.className='pill active';
-    p.innerHTML='<span class="dot"></span>'+t.label;
-    p.onclick=()=>{
-      sVis[t.id]=!sVis[t.id];
-      p.classList.toggle('active',sVis[t.id]);
-      if(!sVis[t.id]&&activeTab===t.id)activeTab=TABS.find(x=>sVis[x.id])?.id||TABS[0].id;
+    p.innerHTML='<span class="dot"></span>'+tab.label;
+    p.onclick=function(){
+      sVis[tab.id]=!sVis[tab.id];
+      p.classList.toggle('active',sVis[tab.id]);
+      if(!sVis[tab.id]&&activeTab===tab.id)activeTab=(TABS.find(function(x){return sVis[x.id];})||TABS[0]).id;
       render();
     };
     ctr.appendChild(p);
@@ -1122,7 +1235,7 @@ function buildAdmin(){
   const fw=document.getElementById('fact-toggle-wrap');fw.innerHTML='';
   const fp=document.createElement('div');
   fp.className='pill teal-pill'+(showFact?' active':'');
-  fp.innerHTML='<span class="dot"></span>Mostrar Facturación USD';
+  fp.innerHTML='<span class="dot"></span>'+t('fact_toggle');
   fp.onclick=()=>{
     showFact=!showFact;fp.classList.toggle('active',showFact);
     document.querySelectorAll('.sim-fact').forEach(el=>el.style.visibility=showFact?'':'hidden');
@@ -1179,4 +1292,10 @@ window.onload=()=>{
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
