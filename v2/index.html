@@ -85,9 +85,10 @@ body{font-family:'Asap',sans-serif;background:#EEF1F8;color:var(--ink);min-heigh
 .nav-item span{overflow:hidden;text-overflow:ellipsis;}
 .sidebar.collapsed .nav-item span{display:none;}
 .sb-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 0;}
-.sb-footer{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
-.sb-update{font-size:.62rem;font-family:'Asap Condensed',sans-serif;color:rgba(255,255,255,.3);text-align:center;line-height:1.5;white-space:nowrap;overflow:hidden;}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;padding-bottom:4px;}
+.sb-update{font-size:.62rem;font-family:'Asap Condensed',sans-serif;color:rgba(255,255,255,.25);text-align:center;line-height:1.5;padding:4px 12px 6px;}
 .sidebar.collapsed .sb-update{display:none;}
+.sidebar.collapsed .sb-flag-row,.sidebar.collapsed .sb-appearance-row{display:none;}
 
 /* ─── CONTENT ─── */
 .content{margin-top:var(--header-h);margin-left:var(--sidebar-w);transition:margin-left .25s;min-height:calc(100vh - var(--header-h));}
@@ -403,13 +404,31 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 }
 @media(max-width:768px){
   :root{--sidebar-w:0px;--sidebar-collapsed:0px;}
-  .sidebar{transform:translateX(-100%);width:240px;transition:transform .25s ease;}
-  .sidebar.mobile-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.4);}
-  #mob-overlay{display:block;opacity:0;pointer-events:none;}
-  #mob-overlay.active{opacity:1 !important;pointer-events:auto !important;}
-  #mob-overlay:not(.active){opacity:0;pointer-events:none;}
+  /* Sidebar slides in from left, full height, above everything */
+  .sidebar{
+    transform:translateX(-100%);
+    width:280px;
+    top:0;
+    z-index:500;
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar.mobile-open{
+    transform:translateX(0);
+    box-shadow:6px 0 32px rgba(0,0,0,.5);
+  }
+  /* Overlay covers full screen */
+  #mob-overlay{
+    display:block;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .28s;
+    z-index:499;
+  }
+  #mob-overlay.active{opacity:1;pointer-events:auto;}
   .content{margin-left:0 !important;}
   .hdr-brand{width:auto;}
+  /* Hamburger always visible on mobile */
+  #btn-sb-toggle{display:flex !important;color:var(--ink);}
   .panel{padding:16px 14px;}
   .two,.three,.col-6040{grid-template-columns:1fr;}
   .comm-grid{grid-template-columns:repeat(2,1fr);}
@@ -422,6 +441,12 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .sim-controls{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
   .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
   .sb-flag-row,.sb-appearance-row{display:flex;}
+  /* Hide collapsed state on mobile (sidebar is either open or closed) */
+  .sidebar.collapsed{width:280px;}
+  .sidebar.collapsed .nav-item span{display:initial;}
+  .sidebar.collapsed .sb-lbl{opacity:1;}
+  .sidebar.collapsed .sb-update{display:block;}
+  .sidebar.collapsed .sb-flag-row,.sidebar.collapsed .sb-appearance-row{display:flex;}
 }
 @media print{
   .sidebar,.hdr,.adm-overlay,footer{display:none !important;}
@@ -490,7 +515,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <nav class="sb-nav" id="sb-nav"></nav>
-    <div class="sb-footer">
+    <div class="sb-bottom" id="sb-bottom">
       <div class="sb-update" id="sb-update">–</div>
     </div>
   </aside>
@@ -1163,7 +1188,7 @@ function buildProyeccion(){
   };
 
   const tables=document.createElement('div');
-  tables.innerHTML=mkTable('Quilmes — Ajuste por grado','q',py.quilmes,'#DC1E33')+mkTable('North — Ajuste por grado','n',py.north,'#213469');
+  tables.innerHTML=mkTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33')+mkTable(t('north_table'),'n',py.north,'#213469');
   wrap.appendChild(tables);
   return wrap;
 }
@@ -1297,35 +1322,43 @@ function buildSidebarNav(){
     nav.appendChild(btn);
   });
 
-  // Divider
-  const div=document.createElement('div');div.className='sb-divider';div.style.marginTop='12px';nav.appendChild(div);
+  // Build bottom section (flags + theme) into sb-bottom, not sb-nav
+  const bottom=document.getElementById('sb-bottom');
+  while(bottom.firstChild)bottom.removeChild(bottom.firstChild);
 
-// Language flag toggle (inline SVG flags — reliable cross-platform)
+  // Language flag toggle — always at bottom of sidebar
   var svgUK='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg>';
   var svgAR='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#74ACDF"/><rect y="10" width="60" height="10" fill="#fff"/><circle cx="30" cy="15" r="4" fill="#F6B40E"/></svg>';
   const flagRow=document.createElement('div');flagRow.className='sb-flag-row';
   [['en',svgUK,'EN'],['es',svgAR,'ES']].forEach(function(pair){
-    const lc=pair[0],svg=pair[1],label=pair[2];
-    const fbtn=document.createElement('button');
+    var lc=pair[0],svg=pair[1],label=pair[2];
+    var fbtn=document.createElement('button');
     fbtn.className='sb-flag'+(lang===lc?' sb-flag-active':'');
     fbtn.innerHTML=svg+' <span>'+label+'</span>';
     fbtn.onclick=function(){lang=lc;document.documentElement.lang=lc;render();};
     flagRow.appendChild(fbtn);
   });
-  nav.appendChild(flagRow);
-  // Light/Dark toggle (compact, no system option)
-  const appRow=document.createElement('div');appRow.className='sb-appearance-row';
+  bottom.appendChild(flagRow);
+
+  // Light/Dark toggle
   var sunSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
   var moonSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  var appRow=document.createElement('div');appRow.className='sb-appearance-row';
   [['light',sunSVG,'Light'],['dark',moonSVG,'Dark']].forEach(function(pair){
-    const th=pair[0],icon=pair[1],lbl=pair[2];
-    const tbtn=document.createElement('button');
+    var th=pair[0],icon=pair[1],lbl=pair[2];
+    var tbtn=document.createElement('button');
     tbtn.className='sb-theme-btn'+(currentTheme===th?' active':'');
     tbtn.innerHTML=icon+' '+lbl;
     tbtn.onclick=function(){setTheme(th);};
     appRow.appendChild(tbtn);
   });
-  nav.appendChild(appRow);
+  bottom.appendChild(appRow);
+
+  // Update text
+  var upd=document.createElement('div');upd.id='sb-update-inner';upd.className='sb-update';
+  bottom.appendChild(upd);
+  var sbUpd=document.getElementById('sb-update');
+  if(sbUpd)upd.textContent=sbUpd.textContent;
 }
 
 // ── CAMPUS ──
@@ -1339,7 +1372,7 @@ document.querySelectorAll('.campus-btn').forEach(btn=>{
 });
 
 // ── SIDEBAR TOGGLE ──
-function isMobile(){return window.innerWidth<=768;}
+function isMobile(){return window.matchMedia('(max-width:768px)').matches;}
 function setSidebarCollapsed(v){
   sidebarCollapsed=v;
   const sb=document.getElementById('sidebar');
