@@ -1,0 +1,1157 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SGC â€” Admissions Dashboard 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Asap+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{
+  --ink:#1A1F35;--red:#DC1E33;--navy:#213469;
+  --celeste:#6AB2E2;--violet:#6B6EB3;--teal:#109AA9;
+  --cream:#FAF7F2;--paper:#F0EDE6;--gray:#6B7180;
+  --line:#E8E3DA;--white:#fff;
+  --green:#15803d;--green-lt:#dcfce7;
+  --amber:#b45309;--amber-lt:#fef3c7;
+  --red-lt:#FEE8EB;--navy-lt:#E8EDF8;--ink-lt:#EEECEA;
+  --sidebar-w:252px;--sidebar-collapsed:60px;--header-h:56px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Asap',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+
+/* â”€â”€â”€ LOADING â”€â”€â”€ */
+#loading{position:fixed;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:900;transition:opacity .4s;}
+#loading.hidden{opacity:0;pointer-events:none;}
+.load-logo{width:90px;border-radius:6px;}
+.load-ring{width:32px;height:32px;border:2.5px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-txt{font-family:'Asap Condensed',sans-serif;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);font-weight:700;}
+
+/* â”€â”€â”€ LOGIN â”€â”€â”€ */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--cream);}
+.login-box{background:var(--white);border-radius:12px;box-shadow:0 12px 60px rgba(26,31,53,.13);padding:52px 48px;max-width:420px;width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;}
+.login-logo{width:120px;border-radius:6px;}
+.login-rule{width:100%;height:1px;background:var(--line);}
+.login-tagline{font-size:.84rem;color:var(--gray);text-align:center;line-height:1.65;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;background:var(--white);border:1.5px solid var(--line);border-radius:6px;font-family:'Asap',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink);cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.btn-google:hover{border-color:var(--navy);box-shadow:0 4px 18px rgba(26,31,53,.1);}
+
+/* â”€â”€â”€ APP SHELL â”€â”€â”€ */
+#app{display:none;}
+
+/* â”€â”€â”€ HEADER â”€â”€â”€ */
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 1px 8px rgba(26,31,53,.06);}
+.hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
+.hdr-brand.collapsed{width:var(--sidebar-collapsed);}
+.hdr-logo{height:32px;width:auto;border-radius:4px;flex-shrink:0;}
+.hdr-titles{overflow:hidden;white-space:nowrap;}
+.hdr-title{font-size:1rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+.hdr-sub{font-size:.58rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-top:1px;}
+.hdr-mid{flex:1;display:flex;align-items:center;gap:10px;padding-left:4px;}
+.campus-group{display:flex;gap:5px;}
+.campus-btn{padding:5px 13px;border-radius:20px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .18s;}
+.campus-btn[data-c="os"].active{background:var(--ink);border-color:var(--ink);color:#fff;}
+.campus-btn[data-c="q"].active{background:var(--red);border-color:var(--red);color:#fff;}
+.campus-btn[data-c="n"].active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.hdr-time{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;white-space:nowrap;}
+.hdr-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:var(--paper);border:1px solid var(--line);font-size:.68rem;font-family:'Asap Condensed',sans-serif;color:var(--gray);font-weight:600;}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--gray);padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.btn-icon:hover{background:var(--paper);color:var(--ink);}
+.btn-icon svg{display:block;}
+.btn-logout{background:none;border:1.5px solid var(--line);color:var(--gray);padding:5px 12px;border-radius:6px;font-size:.72rem;font-family:'Asap',sans-serif;cursor:pointer;transition:all .15s;}
+.btn-logout:hover{border-color:var(--red);color:var(--red);}
+
+/* â”€â”€â”€ SIDEBAR â”€â”€â”€ */
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;z-index:200;transition:width .25s;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-toggle{position:absolute;top:12px;right:-12px;width:24px;height:24px;background:var(--white);border:1px solid var(--line);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:transform .25s;}
+.sidebar.collapsed .sb-toggle{transform:rotate(180deg);}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden;}
+.sb-nav::-webkit-scrollbar{width:3px;}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+.sb-lbl{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:10px 8px 5px;white-space:nowrap;font-family:'Asap Condensed',sans-serif;}
+.sidebar.collapsed .sb-lbl{opacity:0;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item.active{background:rgba(220,30,51,.22);color:#fff;font-weight:600;}
+.nav-item svg{flex-shrink:0;width:18px;height:18px;}
+.nav-item span{overflow:hidden;text-overflow:ellipsis;}
+.sidebar.collapsed .nav-item span{display:none;}
+.sb-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 0;}
+.sb-footer{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
+.sb-update{font-size:.62rem;font-family:'Asap Condensed',sans-serif;color:rgba(255,255,255,.3);text-align:center;line-height:1.5;white-space:nowrap;overflow:hidden;}
+.sidebar.collapsed .sb-update{display:none;}
+
+/* â”€â”€â”€ CONTENT â”€â”€â”€ */
+.content{margin-top:var(--header-h);margin-left:var(--sidebar-w);transition:margin-left .25s;min-height:calc(100vh - var(--header-h));}
+.content.collapsed{margin-left:var(--sidebar-collapsed);}
+.panel{display:none;padding:28px 32px;max-width:1520px;}
+.panel.active{display:block;}
+
+/* â”€â”€â”€ SECTION â”€â”€â”€ */
+.sec{margin-bottom:32px;}
+.sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.sec-title{font-size:1.1rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.sec-meta{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
+
+/* â”€â”€â”€ PAGE HEADER â”€â”€â”€ */
+.page-hd{margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--line);}
+.page-hd-inner{display:flex;align-items:flex-end;justify-content:space-between;}
+.page-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);}
+.page-sub{font-size:.72rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
+.campus-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;}
+.campus-badge.os{background:var(--ink-lt);color:var(--ink);}
+.campus-badge.q{background:var(--red-lt);color:var(--red);}
+.campus-badge.n{background:var(--navy-lt);color:var(--navy);}
+.cb-dot{width:7px;height:7px;border-radius:50%;}
+.campus-badge.os .cb-dot{background:var(--ink);}
+.campus-badge.q .cb-dot{background:var(--red);}
+.campus-badge.n .cb-dot{background:var(--navy);}
+
+/* â”€â”€â”€ STAT STRIP (headline KPIs) â”€â”€â”€ */
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(26,31,53,.06);}
+.si{padding:18px 20px 16px;border-right:1px solid var(--line);transition:background .12s;position:relative;}
+.si:last-child{border-right:none;}
+.si:hover{background:var(--paper);}
+.si-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
+.si-val{font-size:1.7rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.03em;}
+.si-val.neg{color:var(--red);}
+.si-val.pos{color:var(--green);}
+.si-val.c-red{color:var(--red);}
+.si-val.c-navy{color:var(--navy);}
+.si-foot{font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:4px;}
+.si-spark{margin-top:6px;height:28px;}
+
+/* â”€â”€â”€ KPI CARDS â”€â”€â”€ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.kpi-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px;position:relative;overflow:hidden;box-shadow:0 1px 5px rgba(26,31,53,.05);transition:box-shadow .2s,transform .18s;}
+.kpi-card:hover{box-shadow:0 6px 22px rgba(26,31,53,.09);transform:translateY(-2px);}
+.kpi-card.accent::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.campus-os .kpi-card.accent::after{background:var(--ink);}
+.campus-q .kpi-card.accent::after{background:var(--red);}
+.campus-n .kpi-card.accent::after{background:var(--navy);}
+.kpi-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:8px;font-family:'Asap Condensed',sans-serif;}
+.kpi-val{font-size:2rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px;letter-spacing:-.03em;}
+.kpi-val.neg{color:var(--red);}
+.kpi-val.pos{color:var(--green);}
+.kpi-val.c-red{color:var(--red);}
+.kpi-val.c-navy{color:var(--navy);}
+.kpi-foot{font-size:.62rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;}
+
+/* â”€â”€â”€ COMMUNITY CARDS â”€â”€â”€ */
+.comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.comm-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:10px;padding:16px 18px;text-align:center;}
+.comm-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
+.comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;}
+.comm-foot{font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
+
+/* â”€â”€â”€ CHART CARD â”€â”€â”€ */
+.cc{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:22px 24px;box-shadow:0 1px 5px rgba(26,31,53,.05);}
+.cc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cc-ttl{font-size:.65rem;font-weight:700;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;font-family:'Asap Condensed',sans-serif;}
+.cc-sub{font-size:.6rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;}
+.chart-wrap{position:relative;}
+canvas{display:block;}
+
+/* â”€â”€â”€ TABLES â”€â”€â”€ */
+.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--line);box-shadow:0 1px 5px rgba(26,31,53,.05);}
+.tw.scroll-y{max-height:420px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;font-size:.79rem;background:var(--white);}
+thead{position:sticky;top:0;z-index:5;}
+thead th{background:var(--ink);color:#fff;padding:10px 14px;text-align:center;font-weight:700;font-size:.65rem;letter-spacing:.08em;white-space:nowrap;font-family:'Asap Condensed',sans-serif;cursor:default;}
+thead th:first-child{text-align:left;}
+thead th.sortable{cursor:pointer;user-select:none;}
+thead th.sortable:hover{background:rgba(255,255,255,.1);}
+thead th .sort-ico{opacity:.4;margin-left:4px;font-size:.6em;}
+thead th.asc .sort-ico::after{content:'â–²';}
+thead th.desc .sort-ico::after{content:'â–¼';}
+thead th:not(.asc):not(.desc) .sort-ico::after{content:'â‡…';}
+.campus-q thead th{background:var(--red);}
+.campus-n thead th{background:var(--navy);}
+thead th.th-q{background:var(--red) !important;}
+thead th.th-n{background:var(--navy) !important;}
+tbody tr{border-bottom:1px solid var(--line);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr.grp td{font-weight:700;font-size:.65rem;letter-spacing:.09em;text-transform:uppercase;padding:7px 14px;font-family:'Asap Condensed',sans-serif;}
+tbody tr.grp-q td{background:var(--red-lt);color:var(--red);}
+tbody tr.grp-n td{background:var(--navy-lt);color:var(--navy);}
+tbody tr.grp-k td{background:var(--ink-lt);color:var(--ink);}
+tbody tr.tot td{font-weight:600;background:#F5F2EC;}
+tbody tr.tot td:first-child,tbody tr.tot td:nth-child(2){text-align:left !important;}
+tbody tr.ctot td{font-weight:700;border-top:2px solid;}
+tbody tr.ctot-q td{background:var(--red-lt);color:var(--red);border-top-color:var(--red);}
+tbody tr.ctot-n td{background:var(--navy-lt);color:var(--navy);border-top-color:var(--navy);}
+tbody tr.ctot-os td{background:var(--ink-lt);color:var(--ink);border-top-color:var(--ink);}
+tbody tr.won-row td{background:#f0fdf4;font-weight:600;}
+tbody tr.proj-row td{background:#FFFBEB;}
+tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:#F7F4EE;}
+td{padding:9px 14px;}
+td:first-child{text-align:left !important;font-weight:500;}
+td.r{text-align:center;font-family:'Asap Condensed',sans-serif;font-size:.77rem;}
+td.c-q{color:var(--red);font-weight:600;}
+td.c-n{color:var(--navy);font-weight:600;}
+.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:.6rem;font-weight:700;font-family:'Asap Condensed',sans-serif;}
+.tag.nat{background:var(--green-lt);color:var(--green);}
+.tag.exo{background:var(--amber-lt);color:var(--amber);}
+.tag.act{background:#fee2e2;color:#b91c1c;}
+.badge-proj{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.57rem;font-weight:700;background:var(--amber-lt);color:var(--amber);font-family:'Asap Condensed',sans-serif;margin-left:5px;}
+.val-pos{color:var(--green);font-weight:600;}
+.val-neg{color:var(--red);font-weight:600;}
+.val-usd{color:var(--teal);font-weight:600;font-family:'Asap Condensed',sans-serif;}
+
+/* â”€â”€â”€ LAYOUT HELPERS â”€â”€â”€ */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:0;}
+.two>*{min-width:0;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.col-6040{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;min-width:0;}
+.col-6040>*{min-width:0;}
+
+/* â”€â”€â”€ INSIGHT STRIP â”€â”€â”€ */
+.insight-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.insight{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:10px 14px;flex:1;min-width:160px;}
+.ins-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ins-icon.green{background:var(--green-lt);}
+.ins-icon.red{background:var(--red-lt);}
+.ins-icon.amber{background:var(--amber-lt);}
+.ins-icon.teal{background:#ccfbf1;}
+.ins-icon svg{width:16px;height:16px;}
+.ins-icon.green svg{color:var(--green);}
+.ins-icon.red svg{color:var(--red);}
+.ins-icon.amber svg{color:var(--amber);}
+.ins-icon.teal svg{color:var(--teal);}
+.ins-lbl{font-size:.62rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.ins-val{font-size:.92rem;font-weight:700;color:var(--ink);}
+
+/* â”€â”€â”€ FUNNEL â”€â”€â”€ */
+.funnel{display:flex;flex-direction:column;gap:6px;}
+.f-row{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:10px 14px;transition:box-shadow .15s,transform .15s;}
+.f-row:hover{box-shadow:0 4px 16px rgba(26,31,53,.08);transform:translateX(3px);}
+.f-row.won{border-left:3px solid var(--teal);}
+.f-lbl{font-size:.8rem;font-weight:500;min-width:180px;}
+.f-track{flex:1;height:9px;background:var(--paper);border-radius:5px;overflow:hidden;}
+.f-fill{height:100%;border-radius:5px;width:0%;transition:width .95s cubic-bezier(.4,0,.2,1);}
+.campus-os .f-fill{background:var(--ink);}
+.campus-q .f-fill{background:var(--red);}
+.campus-n .f-fill{background:var(--navy);}
+.f-row.won .f-fill{background:var(--teal) !important;}
+.f-nums{font-family:'Asap Condensed',sans-serif;font-size:.71rem;color:var(--gray);min-width:165px;text-align:right;}
+.f-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.62rem;font-weight:700;background:#fee2e2;color:#b91c1c;margin-left:4px;font-family:'Asap Condensed',sans-serif;}
+.f-row.won .f-badge{background:var(--green-lt);color:var(--green);}
+
+/* â”€â”€â”€ HEATMAP â”€â”€â”€ */
+.heatmap{overflow-x:auto;}
+.hm-table{border-collapse:collapse;font-size:.73rem;font-family:'Asap Condensed',sans-serif;}
+.hm-table th{padding:6px 10px;font-weight:700;color:var(--gray);letter-spacing:.07em;text-align:center;white-space:nowrap;}
+.hm-table th:first-child{text-align:left;}
+.hm-table td{padding:7px 10px;text-align:center;font-weight:600;border:1px solid #fff;min-width:64px;}
+.hm-cell{border-radius:4px;padding:5px 8px;display:block;text-align:center;}
+
+/* â”€â”€â”€ SIMULATOR â”€â”€â”€ */
+.sim-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.sim-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:18px 20px;text-align:center;position:relative;overflow:hidden;}
+.sim-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ink);}
+.sim-card.q::after{background:var(--red);}
+.sim-card.n::after{background:var(--navy);}
+.sim-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
+.sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.03em;}
+.sim-fact{font-size:.8rem;font-weight:600;color:var(--teal);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
+.sim-delta{font-size:.67rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
+.sim-controls{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.sim-btn{padding:6px 13px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s;}
+.sim-btn:hover{border-color:var(--ink);color:var(--ink);}
+.sim-btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.adj-wrap{display:flex;align-items:center;justify-content:center;gap:3px;}
+td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
+.adj-btn{width:20px;height:20px;border:1px solid var(--line);border-radius:3px;background:var(--white);cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center;color:var(--gray);transition:all .1s;font-weight:700;line-height:1;}
+.adj-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.adj-input{width:46px;text-align:center;border:1px solid var(--line);border-radius:3px;padding:2px 3px;font-family:'Asap Condensed',sans-serif;font-size:.75rem;color:var(--ink);background:var(--white);font-weight:600;}
+.adj-input:focus{outline:none;border-color:var(--ink);}
+
+/* â”€â”€â”€ ADMIN PANEL (slide-out) â”€â”€â”€ */
+#admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;backdrop-filter:blur(2px);}
+#admin-overlay.open{display:block;}
+#admin-drawer{position:fixed;top:0;right:-340px;bottom:0;width:320px;background:var(--white);z-index:401;box-shadow:-4px 0 32px rgba(26,31,53,.16);transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+#admin-drawer.open{right:0;}
+.adm-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--ink);}
+.adm-hdr-title{font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px;}
+.adm-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.adm-close:hover{background:rgba(255,255,255,.2);}
+.adm-body{flex:1;overflow-y:auto;padding:16px;}
+.adm-section{margin-bottom:20px;}
+.adm-section-title{font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gray);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;padding-bottom:6px;border-bottom:1px solid var(--line);}
+.pill{display:flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid var(--line);border-radius:20px;padding:5px 12px;cursor:pointer;user-select:none;font-size:.71rem;color:var(--gray);font-family:'Asap',sans-serif;font-weight:500;transition:all .15s;margin-bottom:6px;}
+.pill.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+.pill.teal-pill.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;}
+.adm-info{background:var(--paper);border-radius:8px;padding:12px 14px;}
+.adm-info-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;margin-bottom:6px;}
+.adm-info-row:last-child{margin-bottom:0;}
+.adm-info-lbl{color:var(--gray);font-family:'Asap Condensed',sans-serif;font-weight:600;}
+.adm-info-val{color:var(--ink);font-weight:600;font-family:'Asap Condensed',sans-serif;}
+.adm-conn{display:inline-flex;align-items:center;gap:4px;}
+.adm-conn-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.adm-btn{display:block;width:100%;padding:9px 14px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.78rem;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;text-align:left;margin-bottom:8px;}
+.adm-btn:hover{border-color:var(--ink);background:var(--paper);}
+.adm-btn svg{vertical-align:middle;margin-right:6px;}
+
+/* â”€â”€â”€ FOOTER â”€â”€â”€ */
+footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;border-top:1px solid var(--line);}
+
+/* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
+@media(max-width:1024px){
+  :root{--sidebar-w:220px;}
+}
+@media(max-width:768px){
+  :root{--sidebar-w:0px;--sidebar-collapsed:0px;}
+  .sidebar{transform:translateX(-100%);width:240px;}
+  .sidebar.mobile-open{transform:translateX(0);}
+  .content{margin-left:0 !important;}
+  .hdr-brand{width:auto;}
+  .panel{padding:16px 14px;}
+  .two,.three,.col-6040{grid-template-columns:1fr;}
+  .comm-grid{grid-template-columns:repeat(2,1fr);}
+  .sim-totals{grid-template-columns:1fr;}
+  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .si{border-bottom:1px solid var(--line);}
+  .f-lbl{min-width:120px;font-size:.73rem;}
+  .f-nums{min-width:110px;font-size:.65rem;}
+  .insight-strip{display:none;}
+}
+@media print{
+  .sidebar,.hdr,.adm-overlay,footer{display:none !important;}
+  .content{margin:0 !important;}
+  .panel{display:block !important;padding:10px !important;}
+  .cc{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <img class="load-logo" src="../logo.jpg" alt="SGC"/>
+  <div class="load-ring"></div>
+  <div class="load-txt">Cargando dashboard</div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <img class="login-logo" src="../logo.jpg" alt="St George's College"/>
+    <div class="login-rule"></div>
+    <p class="login-tagline">Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas</p>
+    <button class="btn-google" id="btn-login">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Ingresar con Google
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="hdr-brand" id="hdr-brand">
+      <img class="hdr-logo" src="../logo.jpg" alt="SGC"/>
+      <div class="hdr-titles">
+        <div class="hdr-title">Admissions</div>
+        <div class="hdr-sub">Analytics &middot; 2026</div>
+      </div>
+    </div>
+    <div class="hdr-mid">
+      <div class="campus-group">
+        <button class="campus-btn active" data-c="os">One School</button>
+        <button class="campus-btn" data-c="q">Quilmes</button>
+        <button class="campus-btn" data-c="n">North</button>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <span class="hdr-badge"><span class="hdr-dot"></span><span id="h-update">â€“</span></span>
+      <button class="btn-icon" id="btn-admin" title="Panel de administraciÃ³n" style="display:none">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M12 14c-5 0-8 2-8 3v1h16v-1c0-1-3-3-8-3z"/><path d="M19 8l.94-2.06L22 5l-2.06-.94L19 2l-.94 2.06L16 5l2.06.94z"/></svg>
+      </button>
+      <button class="btn-icon" id="btn-sb-toggle" title="Colapsar menÃº">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <button class="btn-logout" id="btn-out">Salir</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sb-nav" id="sb-nav"></nav>
+    <div class="sb-footer">
+      <div class="sb-update" id="sb-update">â€“</div>
+    </div>
+  </aside>
+
+  <!-- ADMIN OVERLAY + DRAWER -->
+  <div id="admin-overlay"></div>
+  <div id="admin-drawer">
+    <div class="adm-hdr">
+      <div class="adm-hdr-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M12 14c-5 0-8 2-8 3v1h16v-1c0-1-3-3-8-3z"/></svg>
+        Panel de AdministraciÃ³n
+      </div>
+      <button class="adm-close" id="adm-close">âœ•</button>
+    </div>
+    <div class="adm-body">
+      <div class="adm-section">
+        <div class="adm-section-title">Secciones visibles</div>
+        <div id="sec-toggles"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-section-title">ConfiguraciÃ³n de datos</div>
+        <div id="fact-toggle-wrap"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-section-title">InformaciÃ³n del sistema</div>
+        <div class="adm-info" id="adm-info"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-section-title">Exportar</div>
+        <button class="adm-btn" onclick="navigator.clipboard.writeText(JSON.stringify(D,null,2)).then(()=>alert('JSON copiado al portapapeles'))">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar JSON (debug)
+        </button>
+        <button class="adm-btn" onclick="window.print()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir / Exportar PDF
+        </button>
+        <button class="adm-btn" onclick="fetchData()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Forzar actualizaciÃ³n
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <main class="content" id="content">
+    <div id="main" class="campus-os"></div>
+  </main>
+
+  <footer>St George's College &middot; Dashboard de Admisiones &middot; Datos en tiempo real &middot; <span id="f-time"></span></footer>
+</div>
+
+<script>
+const CLIENT_ID   = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
+const API_URL     = 'https://script.google.com/macros/s/AKfycbyJDI5osYSQ4JpPB9ahuSz8EqU84HpQvoPDSkZo97FEuE2_s0avu4iSVQ1kfxVmrJODlg/exec';
+const ADMIN_EMAIL = 'diego.medina@stgeorges.edu.ar';
+
+const TABS=[
+  {id:'resumen',   label:'Resumen Ejecutivo', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
+  {id:'kpis',      label:'KPIs 2026',         icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
+  {id:'pipeline',  label:'Pipeline & Win Rate',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
+  {id:'cohort',    label:'Cohort Retention',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {id:'proyeccion',label:'ProyecciÃ³n 2027',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
+];
+
+let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
+let sVis=Object.fromEntries(TABS.map(t=>[t.id,true]));
+let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
+
+// â”€â”€ AUTH â”€â”€
+function initAuth(){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,
+    scope:'https://www.googleapis.com/auth/spreadsheets.readonly openid email profile',
+    callback:async r=>{
+      if(r.error){alert('Error de autenticaciÃ³n: '+r.error);return;}
+      accessToken=r.access_token;
+      try{
+        const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
+        const info=await res.json();
+        userEmail=(info.email||'').toLowerCase().trim();
+      }catch(ex){console.warn('userinfo error',ex);}
+      if(userEmail===ADMIN_EMAIL){
+        document.getElementById('btn-admin').style.display='flex';
+      }
+      showApp();fetchData();
+    }
+  });
+  hideLoad();
+}
+
+document.getElementById('btn-login').addEventListener('click',()=>tokenClient.requestAccessToken({prompt:'select_account'}));
+document.getElementById('btn-out').addEventListener('click',()=>{
+  google.accounts.oauth2.revoke(accessToken,()=>{
+    accessToken=null;userEmail='';
+    document.getElementById('app').style.display='none';
+    document.getElementById('btn-admin').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
+  });
+});
+
+// â”€â”€ DATA â”€â”€
+function fetchData(){
+  showLoad('Sincronizando datos...');
+  const cb='sgcCb_'+Date.now();
+  window[cb]=data=>{
+    D=data;
+    const now=D.lastUpdate||new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('h-update').textContent='Actualizado: '+now;
+    document.getElementById('sb-update').textContent='Ãšltima sincronizaciÃ³n:\n'+now;
+    document.getElementById('f-time').textContent=now;
+    if(D.config&&typeof D.config.showFact!=='undefined'){
+      showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
+    }
+    updateAdminInfo();
+    initSimAdj();render();
+    delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
+  };
+  const s=document.createElement('script');s.id='_jp';
+  s.src=API_URL+'?callback='+cb;
+  s.onerror=()=>{hideLoad();alert('Error al cargar datos del servidor.');};
+  document.head.appendChild(s);
+}
+
+// â”€â”€ FORMAT â”€â”€
+const fN=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
+const fP=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return(n*100).toFixed(1)+'%';};
+const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);if(n>-2&&n<2&&String(v).includes('.'))return fP(n);return fN(n);};
+const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">â–¼ '+s+'</span>':'<span class="val-pos">â–² '+s+'</span>';};
+const fUSD=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v);if(isNaN(n))return'--';return'$'+Math.round(n).toLocaleString('en-US');};
+const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
+
+// â”€â”€ CAMPUS DATA â”€â”€
+function getCampusData(){
+  if(campus==='q')return D.quilmes;
+  if(campus==='n')return D.north;
+  const q=D.quilmes||{},n=D.north||{};
+  const m=(a,b)=>({matricula:(parseFloat(a&&a.matricula)||0)+(parseFloat(b&&b.matricula)||0),ocupacion:null,vacantes:(parseFloat(a&&a.vacantes)||0)+(parseFloat(b&&b.vacantes)||0),retencion:null,new_students:(parseFloat(a&&a.new_students)||0)+(parseFloat(b&&b.new_students)||0),withdrawals:(parseFloat(a&&a.withdrawals)||0)+(parseFloat(b&&b.withdrawals)||0),prospectos:(parseFloat(a&&a.prospectos)||0)+(parseFloat(b&&b.prospectos)||0)});
+  const mS=(sec,gr)=>{const r={total:m(q[sec]&&q[sec].total,n[sec]&&n[sec].total)};gr.forEach(g=>{r[g]=m(q[sec]&&q[sec][g],n[sec]&&n[sec][g]);});return r;};
+  return{total:m(q.total,n.total),kinder:mS('kinder',['K1','K2','K3','K4','K5']),prep:mS('prep',['P1','P2','P3','P4','P5','P6']),college:mS('college',['C1','C2','C3','C4','C5','C6'])};
+}
+function getWRF(r){if(campus==='q')return{pipeline:r.qPipeline,won:r.qWon,wr:r.qWR};if(campus==='n')return{pipeline:r.nPipeline,won:r.nWon,wr:r.nWR};return{pipeline:r.osPipeline,won:r.osWon,wr:r.osWR};}
+function getCohF(r){if(campus==='q')return{ing:r.qIngresaron,act:r.qActivos,ret:r.qRet,life:r.qLifespan};if(campus==='n')return{ing:r.nIngresaron,act:r.nActivos,ret:r.nRet,life:r.nLifespan};const i=(parseFloat(r.qIngresaron)||0)+(parseFloat(r.nIngresaron)||0);const a=(parseFloat(r.qActivos)||0)+(parseFloat(r.nActivos)||0);return{ing:i,act:a,ret:i>0?a/i:null,life:null};}
+
+const CC={os:{main:'#1A1F35',lt:'rgba(26,31,53,.72)',bg:'rgba(26,31,53,.08)',r:26,g:31,b:53},q:{main:'#DC1E33',lt:'rgba(220,30,51,.72)',bg:'rgba(220,30,51,.08)',r:220,g:30,b:51},n:{main:'#213469',lt:'rgba(33,52,105,.72)',bg:'rgba(33,52,105,.08)',r:33,g:52,b:105}};
+
+// â”€â”€ SIMULATOR â”€â”€
+function initSimAdj(){
+  simAdj={};
+  const py=D.proyeccion;if(!py)return;
+  (py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});
+  (py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});
+}
+function calcSimTotal(ck){
+  const py=D.proyeccion;if(!py)return{base:0,final:0,facturacion:0};
+  const rows=ck==='q'?py.quilmes:py.north;
+  const totRow=ck==='q'?py.quilmesTotal:py.northTotal;
+  let alumnos=0,factAdj=0;
+  (rows||[]).forEach(r=>{
+    const key=ck+'_'+r.grado;
+    const adj=simAdj[key]||0;
+    const proy=parseFloat(r.proy)||0;
+    const factPerAlumno=proy>0?(parseFloat(r.facturacion)||0)/proy:0;
+    alumnos+=Math.round(proy+adj);
+    factAdj+=factPerAlumno*(proy+adj);
+  });
+  return{base:parseFloat((totRow||{}).alumnos)||0,final:alumnos,facturacion:factAdj,baseFact:parseFloat((totRow||{}).facturacion)||0};
+}
+function applyScenario(type){
+  const py=D.proyeccion;if(!py)return;
+  if(type==='reset')initSimAdj();
+  else if(type==='opt'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=1;});}
+  else if(type==='cons'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=-2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=-1;});}
+  updateSimDisplay();
+}
+function updateSimDisplay(){
+  const py=D.proyeccion;if(!py)return;
+  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado})),...(py.north||[]).map(r=>({key:'n_'+r.grado}))].forEach(({key})=>{
+    const el=document.getElementById('adj_'+key);if(el)el.value=simAdj[key]||0;
+  });
+  const qT=calcSimTotal('q'),nT=calcSimTotal('n');
+  const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
+  const setCard=(id,final,base,fact)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.querySelector('.sim-val').textContent=Math.round(final).toLocaleString('es-AR');
+    if(showFact)el.querySelector('.sim-fact').textContent=fUSD(fact)+' USD';
+    const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
+    el.querySelector('.sim-delta').innerHTML='vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
+  };
+  setCard('sim-q',qT.final,qT.base,qT.facturacion);
+  setCard('sim-n',nT.final,nT.base,nT.facturacion);
+  setCard('sim-os',osFinal,osBase,osFact);
+  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado,proy:parseFloat(r.proy)||0,r})),...(py.north||[]).map(r=>({key:'n_'+r.grado,proy:parseFloat(r.proy)||0,r}))].forEach(({key,proy,r})=>{
+    const el=document.getElementById('final_'+key);
+    if(el)el.textContent=Math.round(proy+(simAdj[key]||0)).toLocaleString('es-AR');
+    const felt=document.getElementById('factrow_'+key);
+    if(felt&&showFact){const adj2=simAdj[key]||0;felt.textContent=proy>0?fUSD(r.facturacion/proy*(proy+adj2)):'--';}
+  });
+}
+
+// â”€â”€ RENDER â”€â”€
+function render(){
+  Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
+  const main=document.getElementById('main');main.innerHTML='';
+  main.className='campus-'+campus;
+  TABS.forEach(t=>{
+    if(!sVis[t.id])return;
+    const panel=document.createElement('div');
+    panel.className='panel'+(t.id===activeTab?' active':'');
+    panel.id='panel-'+t.id;
+    const content=buildPanel(t.id);
+    if(content)panel.appendChild(content);
+    main.appendChild(panel);
+  });
+  setTimeout(()=>{document.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);
+  buildSidebarNav();drawCharts();hideLoad();
+}
+
+function buildPanel(id){
+  switch(id){
+    case'resumen':return buildResumen();
+    case'kpis':return buildKpis();
+    case'pipeline':return buildPipeline();
+    case'cohort':return buildCohort();
+    case'proyeccion':return buildProyeccion();
+  }
+}
+
+function sec(title,meta,content){
+  const s=document.createElement('div');s.className='sec';
+  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
+  s.appendChild(content);return s;
+}
+
+function pageHeader(title,sub){
+  const d=document.createElement('div');d.className='page-hd';
+  const campusName=campus==='os'?'One School':campus==='q'?'Quilmes':'North';
+  d.innerHTML='<div class="page-hd-inner"><div><div class="page-title">'+title+'</div><div class="page-sub">'+sub+'</div></div><div class="campus-badge '+campus+'"><span class="cb-dot"></span>'+campusName+'</div></div>';
+  return d;
+}
+
+// â”€â”€ RESUMEN â”€â”€
+function buildResumen(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader('Resumen Ejecutivo','Panorama general de admisiones'));
+
+  const h=D.headline||{};
+  const varN=(parseFloat(h.variacion_anual)||0)*100;
+  const wrPct=(parseFloat(h.win_rate)||0)*100;
+  const retQ=(parseFloat(h.retencion_quilmes)||0)*100;
+  const retN=(parseFloat(h.retencion_north)||0)*100;
+
+  // Insight strip
+  const ins=document.createElement('div');ins.className='insight-strip';
+  const insData=[
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:'Total Alumnos',val:fN(h.total_alumnos)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:'VariaciÃ³n Anual',val:(varN>=0?'â–² ':'â–¼ ')+Math.abs(varN).toFixed(2)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:'New Students',val:fN(h.new_students)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:'Win Rate 2026',val:wrPct.toFixed(1)+'%'},
+  ];
+  insData.forEach(i=>{ins.innerHTML+='<div class="insight"><div class="ins-icon '+i.cls+'">'+i.icon+'</div><div><div class="ins-lbl">'+i.lbl+'</div><div class="ins-val">'+i.val+'</div></div></div>';});
+  wrap.appendChild(ins);
+
+  // Stat strip
+  const strip=document.createElement('div');strip.className='stat-strip';
+  const statItems=[
+    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
+    {lbl:'VariaciÃ³n Anual',val:varN.toFixed(2)+'%',foot:'2025 â†’ 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'RetenciÃ³n Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. ponderado',cls:'c-red'},
+    {lbl:'RetenciÃ³n North',val:fP(h.retencion_north),foot:'Prom. ponderado',cls:'c-navy'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North',cls:''},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)',cls:''},
+    {lbl:'Prospectos Activos',val:fN(h.prospectos),foot:'Pipeline abierto',cls:''},
+  ];
+  statItems.forEach(s=>{
+    strip.innerHTML+='<div class="si"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+s.cls+'">'+s.val+'</div><div class="si-foot">'+s.foot+'</div></div>';
+  });
+  wrap.appendChild(sec('Indicadores Headline','One School â€” Mayo 2026',strip));
+
+  if(D.community){
+    const cg=document.createElement('div');cg.className='comm-grid';
+    [{lbl:'OG Parent Quilmes',val:fP(D.community.ogQuilmes),foot:'Padres Old Georgian'},
+     {lbl:'OG Parent North',val:fP(D.community.ogNorth),foot:'Padres Old Georgian'},
+     {lbl:'Estudiantes Extranjeros',val:fP(D.community.foreignStudents),foot:'One School'},
+     {lbl:'Comunidad Prioritaria',val:fP(D.community.priorityCommunity),foot:'OG + Hermanos + Staff'},
+    ].forEach(c=>{cg.innerHTML+='<div class="comm-card"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
+    wrap.appendChild(sec('Indicadores de Comunidad','Perfil 2026',cg));
+  }
+
+  const re=D.resumen;
+  if(re){
+    const tw=document.createElement('div');tw.className='tw scroll-y';
+    const years=[2027,2026,2025,2024,2023,2022,2021];
+    let h2='<table><thead><tr><th>AÃ±o</th>';
+    if(campus==='os'||campus==='q')h2+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Total</th>';
+    if(campus==='os'||campus==='n')h2+='<th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Total</th>';
+    if(campus==='os')h2+='<th class="r">OS Total</th>';
+    h2+='<th class="r">Crec. %</th></tr></thead><tbody>';
+    years.forEach(yr=>{
+      const isP=yr===2027;
+      const q=(re.quilmes||[]).find(r=>r.yr===yr)||{};
+      const n=(re.north||[]).find(r=>r.yr===yr)||{};
+      const os=(re.oneSchool||[]).find(r=>r.yr===yr)||{};
+      const crec=campus==='os'?os.crec:campus==='q'?q.crec:n.crec;
+      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">proj.</span>':'')+'</td>';
+      if(campus==='os'||campus==='q')h2+='<td class="r c-q">'+fN(q.kinder)+'</td><td class="r c-q">'+fN(q.prep)+'</td><td class="r c-q">'+fN(q.college)+'</td><td class="r c-q" style="font-weight:700">'+fN(q.total)+'</td>';
+      if(campus==='os'||campus==='n')h2+='<td class="r c-n">'+fN(n.kinder)+'</td><td class="r c-n">'+fN(n.prep)+'</td><td class="r c-n">'+fN(n.college)+'</td><td class="r c-n" style="font-weight:700">'+fN(n.total)+'</td>';
+      if(campus==='os')h2+='<td class="r" style="font-weight:700">'+fN(os.total)+'</td>';
+      h2+='<td class="r">'+fCrp(crec)+'</td></tr>';
+    });
+    h2+='</tbody></table>';tw.innerHTML=h2;
+    wrap.appendChild(sec('EvoluciÃ³n de MatrÃ­cula 2021â€“2027','HistÃ³rico + ProyecciÃ³n Tendencial',tw));
+
+    const two=document.createElement('div');two.className='two';
+    const cc1=document.createElement('div');cc1.className='cc';
+    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">MatrÃ­cula One School 2021â€“2027</div><div class="cc-sub">Barras histÃ³ricas + proyecciÃ³n 2027</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
+    const cc2=document.createElement('div');cc2.className='cc';
+    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Quilmes vs North</div><div class="cc-sub">EvoluciÃ³n de matrÃ­cula por campus</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
+    two.appendChild(cc1);two.appendChild(cc2);
+    wrap.appendChild(two);
+  }
+  return wrap;
+}
+
+// â”€â”€ KPIs â”€â”€
+function buildKpis(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader('KPIs 2026','Indicadores clave de desempeÃ±o'));
+
+  const h=D.headline||{};
+  const varN=(parseFloat(h.variacion_anual)||0)*100;
+  const cards=campus==='os'?[
+    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:'VariaciÃ³n Anual',val:varN.toFixed(2)+'%',foot:'2025 â†’ 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'RetenciÃ³n Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. ponderado',cls:'c-red'},
+    {lbl:'RetenciÃ³n North',val:fP(h.retencion_north),foot:'Prom. ponderado',cls:'c-navy'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
+    {lbl:'Prospectos',val:fN(h.prospectos),foot:'Pipeline abierto'},
+  ]:[
+    {lbl:'Total Alumnos',val:fN(h.total_alumnos),foot:'One School 2026',accent:true},
+    {lbl:'VariaciÃ³n Anual',val:varN.toFixed(2)+'%',foot:'2025 â†’ 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'RetenciÃ³n '+(campus==='q'?'Quilmes':'North'),val:fP(campus==='q'?h.retencion_quilmes:h.retencion_north),foot:'Prom. ponderado',cls:campus==='q'?'c-red':'c-navy'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Quilmes + North'},
+    {lbl:'Win Rate 2026',val:fP(h.win_rate),foot:'Won / (Won + Lost)'},
+    {lbl:'Prospectos',val:fN(h.prospectos),foot:'Pipeline abierto'},
+  ];
+  const g=document.createElement('div');g.className='kpi-grid';
+  cards.forEach(c=>{g.innerHTML+='<div class="kpi-card'+(c.accent?' accent':'')+'"><div class="kpi-lbl">'+c.lbl+'</div><div class="kpi-val '+(c.cls||'')+'">'+c.val+'</div><div class="kpi-foot">'+c.foot+'</div></div>';});
+  wrap.appendChild(sec('Indicadores Headline','One School â€” 2026',g));
+
+  // KPI table + donut layout
+  const cd=getCampusData();
+  if(cd){
+    const col=document.createElement('div');col.className='col-6040';
+    const tw=document.createElement('div');tw.className='tw scroll-y';
+    tw.innerHTML=buildKpiTable(cd);
+    const cc=document.createElement('div');cc.className='cc';
+    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">ComposiciÃ³n de MatrÃ­cula</div><div class="cc-sub">K / Prep / College por campus</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="200"></canvas></div>';
+    col.appendChild(tw);col.appendChild(cc);
+    wrap.appendChild(sec('KPIs por SecciÃ³n','MatrÃ­cula â€” OcupaciÃ³n â€” RetenciÃ³n',col));
+  }
+
+  // Withdrawals
+  const tw2=document.createElement('div');tw2.className='tw scroll-y';
+  let h2='<table><thead><tr><th>Causa</th><th style="text-align:left">Tipo</th>';
+  if(campus==='os')h2+='<th class="r th-q">Q 2025</th><th class="r th-q">Q 2026</th><th class="r th-n">N 2025</th><th class="r th-n">N 2026</th><th class="r">OS 2025</th><th class="r">OS 2026</th>';
+  else if(campus==='q')h2+='<th class="r">2025</th><th class="r">2026</th>';
+  else h2+='<th class="r">2025</th><th class="r">2026</th>';
+  h2+='</tr></thead><tbody>';
+  (D.withdrawals||[]).forEach(w=>{
+    const tc=w.tipo==='Natural'?'nat':w.tipo==='Exogena'?'exo':'act';
+    h2+='<tr><td style="font-weight:500">'+w.causa+'</td><td style="text-align:left"><span class="tag '+tc+'">'+w.tipo+'</span></td>';
+    if(campus==='os')h2+='<td class="r c-q">'+fN(w.q2025)+'</td><td class="r c-q" style="font-weight:700">'+fN(w.q2026)+'</td><td class="r c-n">'+fN(w.n2025)+'</td><td class="r c-n" style="font-weight:700">'+fN(w.n2026)+'</td><td class="r">'+fN(w.tot2025)+'</td><td class="r" style="font-weight:700">'+fN(w.tot2026)+'</td>';
+    else if(campus==='q')h2+='<td class="r">'+fN(w.q2025)+'</td><td class="r" style="font-weight:700">'+fN(w.q2026)+'</td>';
+    else h2+='<td class="r">'+fN(w.n2025)+'</td><td class="r" style="font-weight:700">'+fN(w.n2026)+'</td>';
+    h2+='</tr>';
+  });
+  h2+='</tbody></table>';tw2.innerHTML=h2;
+  wrap.appendChild(sec('Withdrawals por Causa','AnÃ¡lisis de bajas 2025 vs 2026',tw2));
+  return wrap;
+}
+
+function buildKpiTable(cd){
+  const secs=[
+    {lbl:'KINDER',tot:cd.kinder&&cd.kinder.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder&&cd.kinder[k]}))},
+    {lbl:'PREP',tot:cd.prep&&cd.prep.total,rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep&&cd.prep[k]}))},
+    {lbl:'COLLEGE',tot:cd.college&&cd.college.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college&&cd.college[k]}))},
+  ];
+  const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
+  const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
+  let h='<table><thead><tr><th>Nivel</th><th>Grado</th><th class="r">MatrÃ­cula</th><th class="r">OcupaciÃ³n</th><th class="r">Vacantes</th><th class="r">RetenciÃ³n</th><th class="r">New Students</th><th class="r">Withdrawals</th><th class="r">Prospectos</th></tr></thead><tbody>';
+  secs.forEach(s=>{
+    h+='<tr class="'+grpCls+'"><td colspan="9">'+s.lbl+'</td></tr>';
+    const t=s.tot||{};
+    h+='<tr class="tot"><td></td><td>TOTAL '+s.lbl+'</td><td class="r"><strong>'+fN(t.matricula)+'</strong></td><td class="r">'+fV(t.ocupacion)+'</td><td class="r">'+fN(t.vacantes)+'</td><td class="r">'+fV(t.retencion)+'</td><td class="r">'+fN(t.new_students)+'</td><td class="r">'+fN(t.withdrawals)+'</td><td class="r">'+fN(t.prospectos)+'</td></tr>';
+    s.rows.forEach(({k,d})=>{d=d||{};h+='<tr><td></td><td>'+k+'</td><td class="r">'+fV(d.matricula)+'</td><td class="r">'+fV(d.ocupacion)+'</td><td class="r">'+fV(d.vacantes)+'</td><td class="r">'+fV(d.retencion)+'</td><td class="r">'+fV(d.new_students)+'</td><td class="r">'+fV(d.withdrawals)+'</td><td class="r">'+fV(d.prospectos)+'</td></tr>';});
+  });
+  const ct=cd.total||{};
+  h+='<tr class="'+ctotCls+'"><td colspan="2">TOTAL CAMPUS</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">'+fV(ct.ocupacion)+'</td><td class="r">'+fN(ct.vacantes)+'</td><td class="r">'+fV(ct.retencion)+'</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
+  return h+'</tbody></table>';
+}
+
+// â”€â”€ PIPELINE â”€â”€
+function buildPipeline(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader('Pipeline & Win Rate','Funnel de conversiÃ³n e histÃ³rico'));
+
+  // Pipeline table
+  const tw=document.createElement('div');tw.className='tw scroll-y';
+  let h='<table><thead><tr><th>Etapa</th>';
+  if(campus==='os')h+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Tot</th><th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Tot</th><th class="r">One School</th>';
+  else if(campus==='q')h+='<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>';
+  else h+='<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>';
+  h+='</tr></thead><tbody>';
+  (D.pipeline||[]).forEach(p=>{
+    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+p.etapa+'</td>';
+    if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">'+fN(p.nK)+'</td><td class="r c-n">'+fN(p.nP)+'</td><td class="r c-n">'+fN(p.nC)+'</td><td class="r c-n" style="font-weight:700">'+fN(p.nT)+'</td><td class="r" style="font-weight:700">'+fN(p.total)+'</td>';
+    else if(campus==='q')h+='<td class="r">'+fN(p.qK)+'</td><td class="r">'+fN(p.qP)+'</td><td class="r">'+fN(p.qC)+'</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
+    else h+='<td class="r">'+fN(p.nK)+'</td><td class="r">'+fN(p.nP)+'</td><td class="r">'+fN(p.nC)+'</td><td class="r" style="font-weight:700">'+fN(p.nT)+'</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  wrap.appendChild(sec('Pipeline Activo 2027','Foto del funnel en curso â€” Insightly',tw));
+
+  // Win Rate table + dual-axis chart
+  const two=document.createElement('div');two.className='two';
+  const tw2=document.createElement('div');tw2.className='tw';
+  let h2='<table><thead><tr><th>AÃ±o</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Win Rate</th></tr></thead><tbody>';
+  (D.winrate||[]).forEach(r=>{
+    const f=getWRF(r);
+    const wr=(parseFloat(f.wr)||0)*100;
+    const cls=wr>=15?'val-pos':wr<8?'val-neg':'';
+    h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.pipeline)+'</td><td class="r">'+fN(f.won)+'</td><td class="r"><span class="'+cls+'">'+fP(f.wr)+'</span></td></tr>';
+  });
+  h2+='</tbody></table>';tw2.innerHTML=h2;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">EvoluciÃ³n Win Rate</div><div class="cc-sub">Pipeline vs Ganados vs WR%</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
+  two.appendChild(tw2);two.appendChild(cc);
+  wrap.appendChild(sec('Win Rate HistÃ³rico','2021â€“2026',two));
+
+  // Funnel
+  const fd=document.createElement('div');fd.className='funnel';
+  const maxF=Math.max(...(D.funnel||[]).map(x=>parseFloat(x.llegaron)||0),1);
+  (D.funnel||[]).forEach(item=>{
+    const pct=((parseFloat(item.llegaron)||0)/maxF*100);
+    const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
+    const div=document.createElement('div');
+    div.className='f-row'+(item.isWon?' won':'');
+    div.innerHTML='<div class="f-lbl">'+item.etapa+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' llegaron <span class="f-badge">'+lp+'% baja</span></div>';
+    fd.appendChild(div);
+  });
+  wrap.appendChild(sec('Funnel de ConversiÃ³n','HistÃ³rico 2021â€“2026',fd));
+  return wrap;
+}
+
+// â”€â”€ COHORT â”€â”€
+function buildCohort(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader('Cohort Retention','FidelizaciÃ³n generacional'));
+
+  const two=document.createElement('div');two.className='two';
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>Cohorte</th><th class="r">Ingresaron</th><th class="r">Activos</th><th class="r">RetenciÃ³n</th><th class="r">Lifespan (yr)</th></tr></thead><tbody>';
+  (D.cohort||[]).forEach(r=>{
+    const f=getCohF(r);
+    const ret=(parseFloat(f.ret)||0)*100;
+    const retCls=ret>=95?'val-pos':ret<85?'val-neg':'';
+    h+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.ing)+'</td><td class="r">'+fN(f.act)+'</td><td class="r"><span class="'+retCls+'">'+fP(f.ret)+'</span></td><td class="r">'+(f.life?parseFloat(f.life).toFixed(1):'--')+'</td></tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">RetenciÃ³n por Cohorte</div><div class="cc-sub">Porcentaje de retenciÃ³n anual</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div>';
+  two.appendChild(tw);two.appendChild(cc);
+  wrap.appendChild(sec('Cohort Retention','FidelizaciÃ³n generacional â€” ISAMS',two));
+
+  // Heatmap retenciÃ³n Q vs N por aÃ±o
+  if(D.cohort&&D.cohort.length){
+    const hm=document.createElement('div');hm.className='heatmap';
+    const heatColor=(v)=>{
+      const n=parseFloat(v)*100;
+      if(isNaN(n))return'#F5F2EC';
+      if(n>=97)return'#15803d';
+      if(n>=95)return'#22c55e';
+      if(n>=92)return'#86efac';
+      if(n>=88)return'#fef08a';
+      if(n>=85)return'#fca5a5';
+      return'#ef4444';
+    };
+    const textColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#6B7180';return n>=95?'#fff':n>=88?'#78350f':'#7f1d1d';};
+    let ht='<table class="hm-table"><thead><tr><th>Cohorte</th>';
+    if(campus==='os'||campus==='q')ht+='<th>Q Ret%</th>';
+    if(campus==='os'||campus==='n')ht+='<th>N Ret%</th>';
+    if(campus==='os')ht+='<th>Q Activos</th><th>N Activos</th>';
+    ht+='</tr></thead><tbody>';
+    D.cohort.forEach(r=>{
+      ht+='<tr><td style="font-weight:700;text-align:left">'+r.yr+'</td>';
+      if(campus==='os'||campus==='q'){const v=r.qRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
+      if(campus==='os'||campus==='n'){const v=r.nRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
+      if(campus==='os')ht+='<td>'+fN(r.qActivos)+'</td><td>'+fN(r.nActivos)+'</td>';
+      ht+='</tr>';
+    });
+    ht+='</tbody></table>';hm.innerHTML=ht;
+    wrap.appendChild(sec('Mapa de Calor â€” RetenciÃ³n','Verde â‰¥95% Â· Amarillo â‰¥88% Â· Rojo <85%',hm));
+  }
+  return wrap;
+}
+
+// â”€â”€ PROYECCION â”€â”€
+function buildProyeccion(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader('ProyecciÃ³n 2027','Simulador de escenarios por grado'));
+
+  const py=D.proyeccion;
+  if(!py){const p=document.createElement('p');p.textContent='Datos de proyecciÃ³n no disponibles.';p.style.cssText='color:var(--gray);font-family:Asap Condensed,sans-serif;padding:20px;';wrap.appendChild(p);return wrap;}
+
+  const qT=calcSimTotal('q'),nT=calcSimTotal('n');
+  const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
+
+  const totDiv=document.createElement('div');totDiv.className='sim-totals';
+  const mkCard=(id,cls,label,final,base,fact)=>{
+    const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
+    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">â€“</div>')+'<div class="sim-delta">vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
+  };
+  totDiv.innerHTML=mkCard('sim-q','q','Quilmes 2027',qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n','North 2027',nT.final,nT.base,nT.facturacion)+mkCard('sim-os','','One School 2027',osFinal,osBase,osFact);
+  wrap.appendChild(totDiv);
+
+  const ctrl=document.createElement('div');ctrl.className='sim-controls';
+  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">Escenario:</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">Tendencial (base)</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="border-color:var(--green);color:var(--green)">â–² Optimista +2</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="border-color:var(--red);color:var(--red)">â–¼ Conservador âˆ’2</button>';
+  wrap.appendChild(ctrl);
+
+  const mkTable=(title,ck,rows,color)=>{
+    if(!rows||!rows.length)return'';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r" style="min-width:130px">Ajuste</th><th class="r" style="min-width:90px">Final 2027</th>'+(showFact?'<th class="r fact-col">FacturaciÃ³n USD</th>':'')+'</tr></thead><tbody>';
+    rows.forEach(r=>{
+      const key=ck+'_'+r.grado;
+      const adj=simAdj[key]||0;
+      const proy=parseFloat(r.proy)||0;
+      const delta=adj!==0?'<span class="'+(adj>0?'val-pos':'val-neg')+'"> ('+fSign(adj)+')</span>':'';
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">âˆ’</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
+    });
+    h2+='</tbody></table></div></div>';
+    return h2;
+  };
+
+  const tables=document.createElement('div');
+  tables.innerHTML=mkTable('Quilmes â€” Ajuste por grado','q',py.quilmes,'#DC1E33')+mkTable('North â€” Ajuste por grado','n',py.north,'#213469');
+  wrap.appendChild(tables);
+  return wrap;
+}
+
+// â”€â”€ CHARTS â”€â”€
+const TTP={backgroundColor:'rgba(26,31,53,.93)',titleFont:{family:'Asap',size:12,weight:'600'},bodyFont:{family:'Asap Condensed',size:11},padding:12,cornerRadius:6,titleColor:'#fff',bodyColor:'rgba(255,255,255,.8)',displayColors:true,boxWidth:8,boxHeight:8,usePointStyle:true};
+const TCK={font:{family:'Asap Condensed',size:11},color:'#6B7180'};
+const GRD={color:'rgba(232,227,218,.65)'};
+function grad(ctx,r,g,b,h){const gr=ctx.createLinearGradient(0,0,0,h||200);gr.addColorStop(0,'rgba('+r+','+g+','+b+',.2)');gr.addColorStop(1,'rgba('+r+','+g+','+b+',.02)');return gr;}
+
+// Unregister datalabels globally (opt-in per chart)
+Chart.unregister(ChartDataLabels);
+
+function drawCharts(){
+  Chart.defaults.font.family='Asap';Chart.defaults.color='#6B7180';
+  const C=CC[campus];
+
+  // Enrollment combo bar+line
+  const ec=document.getElementById('chart-enrol');
+  if(ec&&D.resumen&&D.resumen.oneSchool){
+    const rows=[...D.resumen.oneSchool].reverse();
+    const ctx=ec.getContext('2d');
+    const crecData=rows.map(r=>r.crec?+(parseFloat(r.crec)*100).toFixed(2):null);
+    charts.enrol=new Chart(ec,{
+      type:'bar',
+      data:{
+        labels:rows.map(r=>String(r.yr)+(r.yr===2027?' â–¸':'')),
+        datasets:[
+          {type:'bar',label:'Total Alumnos',data:rows.map(r=>parseFloat(r.total)||0),backgroundColor:rows.map(r=>r.yr===2027?'rgba(220,30,51,.4)':'rgba(26,31,53,.75)'),borderRadius:5,borderSkipped:false,yAxisID:'y',order:2},
+          {type:'line',label:'Crec. %',data:crecData,borderColor:'#109AA9',backgroundColor:'transparent',tension:.4,borderWidth:2,pointRadius:4,pointBackgroundColor:'#109AA9',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
+        ]
+      },
+      options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:'#109AA9',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}
+    });
+  }
+
+  // Q vs N area
+  const qnc=document.getElementById('chart-qn');
+  if(qnc&&D.resumen){
+    const qR=[...(D.resumen.quilmes||[])].reverse();
+    const nR=[...(D.resumen.north||[])].reverse();
+    const ctx=qnc.getContext('2d');
+    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' â–¸':'')),datasets:[
+      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2},
+      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213469',backgroundColor:grad(ctx,33,52,105),tension:.4,fill:true,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2},
+    ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+
+  // Donut K/P/C
+  const dc=document.getElementById('chart-donut');
+  if(dc){
+    const cd=getCampusData();
+    if(cd){
+      const kTotal=parseFloat((cd.kinder&&cd.kinder.total&&cd.kinder.total.matricula)||0);
+      const pTotal=parseFloat((cd.prep&&cd.prep.total&&cd.prep.total.matricula)||0);
+      const cTotal=parseFloat((cd.college&&cd.college.total&&cd.college.total.matricula)||0);
+      const donutColors=campus==='q'?['rgba(220,30,51,.9)','rgba(220,30,51,.55)','rgba(220,30,51,.25)']:campus==='n'?['rgba(33,52,105,.9)','rgba(33,52,105,.55)','rgba(33,52,105,.25)']:['rgba(26,31,53,.9)','rgba(26,31,53,.55)','rgba(26,31,53,.25)'];
+      charts.donut=new Chart(dc,{
+        type:'doughnut',
+        plugins:[ChartDataLabels],
+        data:{labels:['Kinder','Prep','College'],datasets:[{data:[kTotal,pTotal,cTotal],backgroundColor:donutColors,borderWidth:0,hoverOffset:8}]},
+        options:{responsive:true,cutout:'62%',plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP,datalabels:{color:'#fff',font:{family:'Asap Condensed',size:12,weight:'700'},formatter:(v,ctx)=>{const total=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return total>0?Math.round(v/total*100)+'%':'';}}}}}
+      );
+    }
+  }
+
+  // Win Rate dual-axis
+  const wrc=document.getElementById('chart-wr');
+  if(wrc&&D.winrate){
+    const labels=D.winrate.map(r=>String(r.yr));
+    const ctx=wrc.getContext('2d');
+    const pipDs=campus==='os'?[
+      {type:'bar',label:'Pipeline Q',data:D.winrate.map(r=>parseFloat(r.qPipeline)||0),backgroundColor:'rgba(220,30,51,.35)',borderRadius:4,yAxisID:'y',order:3},
+      {type:'bar',label:'Pipeline N',data:D.winrate.map(r=>parseFloat(r.nPipeline)||0),backgroundColor:'rgba(33,52,105,.35)',borderRadius:4,yAxisID:'y',order:3},
+    ]:[{type:'bar',label:'Pipeline',data:D.winrate.map(r=>campus==='q'?parseFloat(r.qPipeline)||0:parseFloat(r.nPipeline)||0),backgroundColor:C.bg,borderRadius:4,yAxisID:'y',order:3}];
+    const wrDs=campus==='os'?[
+      {type:'line',label:'WR% Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
+      {type:'line',label:'WR% North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213469',backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#213469',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
+    ]:[{type:'line',label:'Win Rate %',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:C.main,pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1}];
+    charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[...pipDs,...wrDs]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:'#6B7180',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+
+  // Cohort retention
+  const coc=document.getElementById('chart-cohort');
+  if(coc&&D.cohort){
+    const labels=D.cohort.map(r=>String(r.yr));
+    const ctx=coc.getContext('2d');
+    const ds=campus==='os'?[
+      {label:'Quilmes',data:D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)),backgroundColor:'rgba(220,30,51,.7)',borderRadius:5,borderSkipped:false},
+      {label:'North',data:D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)),backgroundColor:'rgba(33,52,105,.7)',borderRadius:5,borderSkipped:false},
+    ]:[{label:campus==='q'?'Quilmes':'North',data:D.cohort.map(r=>campus==='q'?+(parseFloat(r.qRet)*100).toFixed(1):+(parseFloat(r.nRet)*100).toFixed(1)),backgroundColor:C.lt,borderRadius:5,borderSkipped:false}];
+    charts.cohort=new Chart(coc,{type:'bar',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{min:75,max:100,grid:GRD,ticks:{font:{family:'Asap Condensed',size:11},color:'#6B7180',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+}
+
+// â”€â”€ SIDEBAR NAV â”€â”€
+function buildSidebarNav(){
+  const nav=document.getElementById('sb-nav');nav.innerHTML='';
+  nav.innerHTML+='<div class="sb-lbl">NavegaciÃ³n</div>';
+  TABS.forEach(t=>{
+    if(!sVis[t.id])return;
+    const btn=document.createElement('button');
+    btn.className='nav-item'+(t.id===activeTab?' active':'');
+    btn.innerHTML=t.icon+'<span>'+t.label+'</span>';
+    btn.onclick=()=>{
+      activeTab=t.id;
+      document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      const panel=document.getElementById('panel-'+t.id);
+      if(panel){
+        panel.classList.add('active');
+        setTimeout(()=>{panel.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);
+      }
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+    nav.appendChild(btn);
+  });
+}
+
+// â”€â”€ CAMPUS â”€â”€
+document.querySelectorAll('.campus-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    campus=btn.dataset.c;
+    document.querySelectorAll('.campus-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+
+// â”€â”€ SIDEBAR TOGGLE â”€â”€
+function setSidebarCollapsed(v){
+  sidebarCollapsed=v;
+  const sb=document.getElementById('sidebar');
+  const ct=document.getElementById('content');
+  const hb=document.getElementById('hdr-brand');
+  sb.classList.toggle('collapsed',v);
+  ct.classList.toggle('collapsed',v);
+  hb.classList.toggle('collapsed',v);
+}
+document.getElementById('btn-sb-toggle').addEventListener('click',()=>setSidebarCollapsed(!sidebarCollapsed));
+
+// â”€â”€ ADMIN â”€â”€
+let showFact=true;
+function buildAdmin(){
+  const ctr=document.getElementById('sec-toggles');ctr.innerHTML='';
+  TABS.forEach(t=>{
+    const p=document.createElement('div');p.className='pill active';
+    p.innerHTML='<span class="dot"></span>'+t.label;
+    p.onclick=()=>{
+      sVis[t.id]=!sVis[t.id];
+      p.classList.toggle('active',sVis[t.id]);
+      if(!sVis[t.id]&&activeTab===t.id)activeTab=TABS.find(x=>sVis[x.id])?.id||TABS[0].id;
+      render();
+    };
+    ctr.appendChild(p);
+  });
+
+  const fw=document.getElementById('fact-toggle-wrap');fw.innerHTML='';
+  const fp=document.createElement('div');
+  fp.className='pill teal-pill'+(showFact?' active':'');
+  fp.innerHTML='<span class="dot"></span>Mostrar FacturaciÃ³n USD';
+  fp.onclick=()=>{
+    showFact=!showFact;fp.classList.toggle('active',showFact);
+    document.querySelectorAll('.sim-fact').forEach(el=>el.style.visibility=showFact?'':'hidden');
+    document.querySelectorAll('.fact-col').forEach(el=>el.style.display=showFact?'':'none');
+    const _s=document.createElement('script');
+    _s.src=API_URL+'?setFact='+(showFact?'1':'0')+'&callback=_noop';
+    window._noop=()=>{};document.head.appendChild(_s);setTimeout(()=>_s.remove(),3000);
+  };
+  fw.appendChild(fp);
+}
+
+function updateAdminInfo(){
+  const el=document.getElementById('adm-info');if(!el)return;
+  el.innerHTML='<div class="adm-info-row"><span class="adm-info-lbl">Admin</span><span class="adm-info-val">'+ADMIN_EMAIL+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">ConexiÃ³n</span><span class="adm-info-val"><span class="adm-conn"><span class="adm-conn-dot"></span> Activa</span></span></div><div class="adm-info-row"><span class="adm-info-lbl">Ãšltima sync</span><span class="adm-info-val">'+(D.lastUpdate||'â€“')+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">showFact</span><span class="adm-info-val">'+(showFact?'Visible':'Oculto')+'</span></div>';
+}
+
+document.getElementById('btn-admin').addEventListener('click',()=>{
+  document.getElementById('admin-drawer').classList.add('open');
+  document.getElementById('admin-overlay').classList.add('open');
+});
+document.getElementById('adm-close').addEventListener('click',closeAdmin);
+document.getElementById('admin-overlay').addEventListener('click',closeAdmin);
+function closeAdmin(){
+  document.getElementById('admin-drawer').classList.remove('open');
+  document.getElementById('admin-overlay').classList.remove('open');
+}
+
+// â”€â”€ UI HELPERS â”€â”€
+function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+function showLoad(msg){const el=document.getElementById('loading');el.querySelector('.load-txt').textContent=msg||'Cargando...';el.classList.remove('hidden');}
+function hideLoad(){document.getElementById('loading').classList.add('hidden');}
+
+// â”€â”€ CLOCK â”€â”€
+function updateClock(){
+  const now=new Date();
+  const t=now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  const el=document.getElementById('h-update');
+  if(el&&!el.textContent.startsWith('Actual'))el.textContent=t;
+}
+setInterval(updateClock,30000);
+
+// â”€â”€ INIT â”€â”€
+buildAdmin();buildSidebarNav();
+window.onload=()=>{
+  const t=setTimeout(()=>{hideLoad();document.getElementById('login-screen').style.display='flex';},10000);
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
+  s.onload=()=>{clearTimeout(t);initAuth();};
+  s.onerror=()=>{clearTimeout(t);hideLoad();document.getElementById('login-screen').style.display='flex';};
+  document.head.appendChild(s);
+};
+</script>
+</body>
+</html>
+
