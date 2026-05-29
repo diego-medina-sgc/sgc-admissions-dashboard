@@ -403,8 +403,48 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   :root{--sidebar-w:220px;}
 }
 @media(max-width:768px){
-  :root{--sidebar-w:0px;--sidebar-collapsed:0px;}
-  /* Sidebar slides in from left, full height, above everything */
+  /* ── Header: 2-row layout ── */
+  :root{--sidebar-w:0px;--sidebar-collapsed:0px;--header-h:88px;}
+  .hdr{height:var(--header-h);flex-wrap:wrap;align-content:flex-start;padding:0;}
+  /* Row 1: logo left, hamburger right */
+  .hdr-brand{
+    order:1;width:auto;flex:1;
+    padding:10px 14px;
+    border-bottom:none;
+  }
+  .hdr-mid{
+    order:3;width:100%;
+    padding:6px 14px 8px;
+    border-top:1px solid rgba(14,22,40,.06);
+    flex:none;
+  }
+  .hdr-right{
+    order:2;
+    padding:0 14px;
+    gap:4px;
+    margin-left:0;
+  }
+  /* Hide non-essential header items on mobile */
+  .hdr-badge,.btn-logout{display:none;}
+  #btn-admin{display:none !important;}
+  /* Hamburger always visible, prominent */
+  #btn-sb-toggle{
+    display:flex !important;
+    padding:8px;
+    background:var(--surface2,#f0f2f8);
+    border-radius:8px;
+    color:var(--ink);
+  }
+  /* Campus buttons: smaller, fill row */
+  .campus-group{gap:5px;width:100%;}
+  .campus-btn{
+    flex:1;text-align:center;
+    padding:5px 8px;
+    font-size:.68rem;
+    border-radius:16px;
+  }
+
+  /* ── Sidebar: full height, above header ── */
   .sidebar{
     transform:translateX(-100%);
     width:280px;
@@ -416,7 +456,6 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
     transform:translateX(0);
     box-shadow:6px 0 32px rgba(0,0,0,.5);
   }
-  /* Overlay covers full screen */
   #mob-overlay{
     display:block;
     opacity:0;
@@ -426,9 +465,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   }
   #mob-overlay.active{opacity:1;pointer-events:auto;}
   .content{margin-left:0 !important;}
-  .hdr-brand{width:auto;}
-  /* Hamburger always visible on mobile */
-  #btn-sb-toggle{display:flex !important;color:var(--ink);}
+
+  /* ── Layout ── */
   .panel{padding:16px 14px;}
   .two,.three,.col-6040{grid-template-columns:1fr;}
   .comm-grid{grid-template-columns:repeat(2,1fr);}
@@ -441,7 +479,6 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .sim-controls{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
   .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
   .sb-flag-row,.sb-appearance-row{display:flex;}
-  /* Hide collapsed state on mobile (sidebar is either open or closed) */
   .sidebar.collapsed{width:280px;}
   .sidebar.collapsed .nav-item span{display:initial;}
   .sidebar.collapsed .sb-lbl{opacity:1;}
@@ -752,14 +789,17 @@ document.getElementById('btn-out').addEventListener('click',()=>{
 });
 
 // ── DATA ──
+let _fetchRetry=0;
 function fetchData(){
   showLoad('Sincronizando datos...');
   const cb='sgcCb_'+Date.now();
+  // Clear previous script if stuck
+  const old=document.getElementById('_jp');if(old)old.remove();
   window[cb]=data=>{
+    _fetchRetry=0;
     D=data;
     const now=D.lastUpdate||new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     document.getElementById('h-update').textContent='Actualizado: '+now;
-    document.getElementById('sb-update').textContent='Última sincronización:\n'+now;
     document.getElementById('f-time').textContent=now;
     if(D.config&&typeof D.config.showFact!=='undefined'){
       showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
@@ -769,9 +809,25 @@ function fetchData(){
     delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
   };
   const s=document.createElement('script');s.id='_jp';
-  s.src=API_URL+'?callback='+cb;
-  s.onerror=()=>{hideLoad();alert('Error al cargar datos del servidor.');};
+  s.src=API_URL+'?callback='+cb+'&t='+Date.now(); // cache-bust
+  s.onerror=()=>{
+    delete window[cb];
+    if(_fetchRetry<1){_fetchRetry++;setTimeout(fetchData,2000);} // retry once
+    else{_fetchRetry=0;showErrorBanner();}
+  };
   document.head.appendChild(s);
+}
+function showErrorBanner(){
+  hideLoad();
+  let banner=document.getElementById('err-banner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='err-banner';
+    banner.style.cssText='position:fixed;top:var(--header-h);left:50%;transform:translateX(-50%);background:#b91c1c;color:#fff;padding:10px 20px;border-radius:0 0 8px 8px;font-size:.8rem;font-family:Asap,sans-serif;z-index:600;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(0,0,0,.3);';
+    banner.innerHTML='<span>&#9888; Error loading data.</span><button onclick="document.getElementById(\'err-banner\').remove();fetchData();" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:Asap,sans-serif;font-size:.78rem;">Retry</button>';
+    document.body.appendChild(banner);
+    setTimeout(()=>{if(banner.parentNode)banner.remove();},8000);
+  }
 }
 
 // ── FORMAT ──
@@ -1492,14 +1548,12 @@ document.getElementById('btn-out').addEventListener('click',()=>{clearSession();
 // ── INIT ──
 buildAdmin();buildSidebarNav();
 window.onload=()=>{
-  // Try restoring session before loading OAuth
+  // Try restoring session — skip OAuth entirely, go straight to data
   if(loadSession()){
     if(userEmail===ADMIN_EMAIL)document.getElementById('btn-admin').style.display='flex';
-    showApp();fetchData();
-    // Still load GSI in background for token refresh
-    const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
-    s.onload=()=>{initAuth();};document.head.appendChild(s);
-    return;
+    showApp();
+    fetchData(); // hideLoad() is called inside render() once data arrives
+    return;      // Do NOT load GSI/initAuth — it calls hideLoad() prematurely
   }
   const t=setTimeout(()=>{hideLoad();document.getElementById('login-screen').style.display='flex';},10000);
   const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
