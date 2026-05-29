@@ -69,7 +69,7 @@ body{font-family:'Asap',sans-serif;background:#EEF1F8;color:var(--ink);min-heigh
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
 
 /* ─── SIDEBAR ─── */
-.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#1A1F35 0%,#12172A 100%);display:flex;flex-direction:column;z-index:200;transition:width .25s;overflow:hidden;}
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#1A1F35 0%,#12172A 100%);display:flex;flex-direction:column;z-index:200;transition:width .25s,transform .25s ease;overflow:hidden;}
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
 .sb-toggle{position:absolute;top:12px;right:-12px;width:24px;height:24px;background:var(--white);border:1px solid var(--line);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:transform .25s;}
 .sidebar.collapsed .sb-toggle{transform:rotate(180deg);}
@@ -355,6 +355,22 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] .won-row td{background:rgba(21,128,61,.15);}
 [data-theme="dark"] .proj-row td{background:rgba(180,83,9,.12);}
 [data-theme="dark"] .hm-table td{border-color:var(--bg);}
+[data-theme="dark"] .cc-ttl{color:var(--text-muted);}
+[data-theme="dark"] .cc-sub{color:var(--text-muted);}
+[data-theme="dark"] .sec-meta{color:var(--text-muted);}
+[data-theme="dark"] .page-hd-inner .campus-badge{opacity:.9;}
+[data-theme="dark"] .val-pos{color:#4ade80;}
+[data-theme="dark"] .val-neg{color:#f87171;}
+[data-theme="dark"] .val-usd{color:#5eead4;}
+[data-theme="dark"] .ins-val{color:var(--text);}
+[data-theme="dark"] .comm-val{color:#5eead4;}
+[data-theme="dark"] .si-val.c-red{color:#f87171;}
+[data-theme="dark"] .si-val.c-navy{color:#93a5d8;}
+[data-theme="dark"] .kpi-val.c-red{color:#f87171;}
+[data-theme="dark"] .kpi-val.c-navy{color:#93a5d8;}
+[data-theme="dark"] .kpi-val.pos{color:#4ade80;}
+[data-theme="dark"] .kpi-val.neg{color:#f87171;}
+[data-theme="dark"] canvas{filter:brightness(1.05);}
 
 /* ─── SIDEBAR FLAG & THEME TOGGLES ─── */
 .sb-flag-row{display:flex;gap:6px;padding:8px 8px 4px;}
@@ -376,9 +392,10 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 .hm-table td:first-child{width:80px;text-align:left;font-weight:700;}
 .hm-table td:not(:first-child){width:auto;}
 
-/* ─── TWO-PANE: stretch to equal height ─── */
-.two-stretch{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:0;align-items:start;}
-.two-stretch>*{min-width:0;}
+/* ─── TWO-PANE: stretch tables to match chart height ─── */
+.two{align-items:stretch;}
+.two .tw{display:flex;flex-direction:column;}
+.two .tw table{flex:1;}
 
 /* ─── RESPONSIVE ─── */
 @media(max-width:1024px){
@@ -386,10 +403,10 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 }
 @media(max-width:768px){
   :root{--sidebar-w:0px;--sidebar-collapsed:0px;}
-  .sidebar{transform:translateX(-100%);width:240px;}
-  .sidebar.mobile-open{transform:translateX(0);}
-  #mob-overlay{display:block !important;}
-  #mob-overlay.active{opacity:1;pointer-events:auto;}
+  .sidebar{transform:translateX(-100%);width:240px;transition:transform .25s ease;}
+  .sidebar.mobile-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.4);}
+  #mob-overlay{display:block;opacity:0;pointer-events:none;}
+  #mob-overlay.active{opacity:1 !important;pointer-events:auto !important;}
   #mob-overlay:not(.active){opacity:0;pointer-events:none;}
   .content{margin-left:0 !important;}
   .hdr-brand{width:auto;}
@@ -468,7 +485,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   </header>
 
   <!-- MOBILE OVERLAY -->
-  <div id="mob-overlay" style="display:none;position:fixed;inset:0;background:rgba(14,22,40,.55);z-index:199;backdrop-filter:blur(2px);transition:opacity .25s;opacity:0;"></div>
+  <div id="mob-overlay" style="position:fixed;inset:0;background:rgba(14,22,40,.55);z-index:199;backdrop-filter:blur(2px);transition:opacity .25s;opacity:0;pointer-events:none;"></div>
 
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
@@ -535,7 +552,7 @@ const ADMIN_EMAIL = 'diego.medina@stgeorges.edu.ar';
 // ── BILINGUAL STRINGS ──
 const STRINGS={
   en:{
-    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Win Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027',
+    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conv. Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027',
     ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview &mdash; May 2026',
     ph_kpis:'KPIs 2026',ph_kpis_sub:'Key performance indicators',
     ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Conversion funnel &amp; historical data',
@@ -554,18 +571,18 @@ const STRINGS={
     heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',
-    new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n 2026',prospectos:'Active Prospects',
+    new_students:'New Students',win_rate:'Conversion Rate 2026',prospectos:'Active Prospects',
     ret_campus:'Retention',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
     foreign:'International Students',priority:'Priority Community',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Siblings + Staff',
     col_year:'Year',col_level:'Level',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
-    col_ret:'Retention',col_new:'Nuevos Alumnos',col_with:'Bajas',col_prosp:'Prospects',
+    col_ret:'Retention',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospects',
     col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',
     col_active:'Active',col_lifespan:'Lifespan (yr)',
     col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
     col_adj:'Adjustment',col_final:'Final 2027',col_fact:'Billing USD',
-    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Win Rate',
+    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conv. Rate',
     btn_tendencial:'Trend (base)',btn_opt:'&#9650; Optimistic +2',btn_cons:'&#9660; Conservative &minus;2',
     scenario:'Scenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Adjustment by year group',north_table:'North &mdash; Adjustment by year group',
@@ -573,7 +590,7 @@ const STRINGS={
     proy_not_avail:'Projection data not available.',proj_note:'proj.',
     enrol_chart:'Enrolment One School 2021&ndash;2027',enrol_sub:'Historical bars + 2027 projection',
     qn_chart:'Quilmes vs North',qn_sub:'Enrolment by campus',
-    wr_chart:'Win Rate Evolution',wr_sub:'Pipeline vs Won vs WR%',
+    wr_chart:'Conversion Rate History',wr_sub:'Pipeline vs Won vs Conv.%',
     cohort_chart:'Retention by Cohort',cohort_sub:'Annual retention %',
     donut_chart:'Enrolment Composition',donut_sub:'K / Prep / College by campus',
     kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
@@ -583,11 +600,11 @@ const STRINGS={
     login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
     footer_txt:'St George\'s College &middot; Admissions Dashboard &middot; Live data',
     lang_switch:'Espa&ntilde;ol (AR)',
-    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'Nuevos Alumnos',insight_wr:'Tasa de Conversi&oacute;n 2026',
+    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Conv. Rate 2026',
     prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Ganados / (Ganados + Perdidos)',
   },
   es:{
-    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conversi&oacute;n',tab_cohort:'Retenci&oacute;n de Camadas',tab_proyeccion:'Proyecci&oacute;n 2027',
+    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Tasa Conv.',tab_cohort:'Retenci&oacute;n de Camadas',tab_proyeccion:'Proyecci&oacute;n 2027',
     ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Panorama general de admisiones &mdash; Mayo 2026',
     ph_kpis:'KPIs 2026',ph_kpis_sub:'Indicadores clave de desempe&ntilde;o',
     ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Funnel de conversi&oacute;n e hist&oacute;rico',
@@ -617,7 +634,7 @@ const STRINGS={
     col_active:'Activos',col_lifespan:'Lifespan (yr)',
     col_grade:'Grado',col_base:'Base 2026',col_proy:'Proy. base',
     col_adj:'Ajuste',col_final:'Final 2027',col_fact:'Facturaci&oacute;n USD',
-    col_stage:'Etapa',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Win Rate',
+    col_stage:'Etapa',col_pipeline:'Embudo',col_won:'Ganados',col_wr:'Tasa Conv.',
     btn_tendencial:'Tendencial (base)',btn_opt:'&#9650; Optimista +2',btn_cons:'&#9660; Conservador &minus;2',
     scenario:'Escenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Ajuste por grado',north_table:'North &mdash; Ajuste por grado',
@@ -625,7 +642,7 @@ const STRINGS={
     proy_not_avail:'Datos de proyecci&oacute;n no disponibles.',proj_note:'proj.',
     enrol_chart:'Matr&iacute;cula One School 2021&ndash;2027',enrol_sub:'Barras hist&oacute;ricas + proyecci&oacute;n 2027',
     qn_chart:'Quilmes vs North',qn_sub:'Evoluci&oacute;n de matr&iacute;cula por campus',
-    wr_chart:'Evoluci&oacute;n Win Rate',wr_sub:'Pipeline vs Ganados vs WR%',
+    wr_chart:'Evoluci&oacute;n Tasa de Conversi&oacute;n',wr_sub:'Pipeline vs Ganados vs Tasa%',
     cohort_chart:'Retenci&oacute;n por Cohorte',cohort_sub:'Porcentaje de retenci&oacute;n anual',
     donut_chart:'Composici&oacute;n de Matr&iacute;cula',donut_sub:'K / Prep / College por campus',
     kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
@@ -692,6 +709,7 @@ function initAuth(){
       if(userEmail===ADMIN_EMAIL){
         document.getElementById('btn-admin').style.display='flex';
       }
+      saveSession();
       showApp();fetchData();
     }
   });
@@ -1113,7 +1131,7 @@ function buildProyeccion(){
   wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
 
   const py=D.proyeccion;
-  if(!py){const p=document.createElement('p');p.textContent='Datos de proyección no disponibles.';p.style.cssText='color:var(--gray);font-family:Asap Condensed,sans-serif;padding:20px;';wrap.appendChild(p);return wrap;}
+  if(!py){const p=document.createElement('p');p.textContent=t('proy_not_avail');p.style.cssText='color:var(--gray);font-family:Asap Condensed,sans-serif;padding:20px;';wrap.appendChild(p);return wrap;}
 
   const qT=calcSimTotal('q'),nT=calcSimTotal('n');
   const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
@@ -1152,6 +1170,10 @@ function buildProyeccion(){
 
 // ── CHARTS ──
 const TTP={backgroundColor:'rgba(26,31,53,.93)',titleFont:{family:'Asap',size:12,weight:'600'},bodyFont:{family:'Asap Condensed',size:11},padding:12,cornerRadius:6,titleColor:'#fff',bodyColor:'rgba(255,255,255,.8)',displayColors:true,boxWidth:8,boxHeight:8,usePointStyle:true};
+function isDarkMode(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function getTCK(){return{font:{family:'Asap Condensed',size:11},color:isDarkMode()?'#8892A4':'#6B7180'};}
+function getGRD(){return{color:isDarkMode()?'rgba(255,255,255,.08)':'rgba(232,227,218,.65)'};}
+// Legacy aliases (used in chart options below)
 const TCK={font:{family:'Asap Condensed',size:11},color:'#6B7180'};
 const GRD={color:'rgba(232,227,218,.65)'};
 function grad(ctx,r,g,b,h){const gr=ctx.createLinearGradient(0,0,0,h||200);gr.addColorStop(0,'rgba('+r+','+g+','+b+',.2)');gr.addColorStop(1,'rgba('+r+','+g+','+b+',.02)');return gr;}
@@ -1278,29 +1300,30 @@ function buildSidebarNav(){
   // Divider
   const div=document.createElement('div');div.className='sb-divider';div.style.marginTop='12px';nav.appendChild(div);
 
-  // Language flag toggle
-  const flagRow=document.createElement('div');
-  flagRow.className='sb-flag-row';
-  flagRow.innerHTML=
-    '<button class="sb-flag'+(lang==='en'?' sb-flag-active':'')+'" data-lang="en" title="English (UK)">&#127468;&#127463; <span>EN</span></button>'+
-    '<button class="sb-flag'+(lang==='es'?' sb-flag-active':'')+'" data-lang="es" title="Espa&ntilde;ol (AR)">&#127462;&#127479; <span>ES</span></button>';
-  flagRow.querySelectorAll('.sb-flag').forEach(function(fbtn){
-    fbtn.onclick=function(){
-      lang=fbtn.dataset.lang;
-      document.documentElement.lang=lang;
-      render();
-    };
+// Language flag toggle (inline SVG flags — reliable cross-platform)
+  var svgUK='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg>';
+  var svgAR='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#74ACDF"/><rect y="10" width="60" height="10" fill="#fff"/><circle cx="30" cy="15" r="4" fill="#F6B40E"/></svg>';
+  const flagRow=document.createElement('div');flagRow.className='sb-flag-row';
+  [['en',svgUK,'EN'],['es',svgAR,'ES']].forEach(function(pair){
+    const lc=pair[0],svg=pair[1],label=pair[2];
+    const fbtn=document.createElement('button');
+    fbtn.className='sb-flag'+(lang===lc?' sb-flag-active':'');
+    fbtn.innerHTML=svg+' <span>'+label+'</span>';
+    fbtn.onclick=function(){lang=lc;document.documentElement.lang=lc;render();};
+    flagRow.appendChild(fbtn);
   });
   nav.appendChild(flagRow);
-
-  // Appearance toggle
-  const appRow=document.createElement('div');
-  appRow.className='sb-appearance-row';
-  appRow.innerHTML='<button class="sb-theme-btn'+(currentTheme==='light'?' active':'')+'" data-theme="light" title="Light">&#9728;</button>'+
-    '<button class="sb-theme-btn'+(currentTheme==='system'?' active':'')+'" data-theme="system" title="System">&#9711;</button>'+
-    '<button class="sb-theme-btn'+(currentTheme==='dark'?' active':'')+'" data-theme="dark" title="Dark">&#9790;</button>';
-  appRow.querySelectorAll('.sb-theme-btn').forEach(function(tbtn){
-    tbtn.onclick=function(){setTheme(tbtn.dataset.theme);};
+  // Light/Dark toggle (compact, no system option)
+  const appRow=document.createElement('div');appRow.className='sb-appearance-row';
+  var sunSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  var moonSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  [['light',sunSVG,'Light'],['dark',moonSVG,'Dark']].forEach(function(pair){
+    const th=pair[0],icon=pair[1],lbl=pair[2];
+    const tbtn=document.createElement('button');
+    tbtn.className='sb-theme-btn'+(currentTheme===th?' active':'');
+    tbtn.innerHTML=icon+' '+lbl;
+    tbtn.onclick=function(){setTheme(th);};
+    appRow.appendChild(tbtn);
   });
   nav.appendChild(appRow);
 }
@@ -1405,9 +1428,46 @@ function updateClock(){
 }
 setInterval(updateClock,30000);
 
+// ── SESSION PERSISTENCE ──
+// Store token in localStorage to survive page refresh (expires after 55 min)
+function saveSession(){
+  try{
+    localStorage.setItem('sgc_token',accessToken);
+    localStorage.setItem('sgc_email',userEmail);
+    localStorage.setItem('sgc_exp',String(Date.now()+55*60*1000));
+  }catch(e){}
+}
+function loadSession(){
+  try{
+    const tok=localStorage.getItem('sgc_token');
+    const exp=parseInt(localStorage.getItem('sgc_exp')||'0');
+    const em=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();
+    if(tok&&exp>Date.now()&&em){
+      accessToken=tok;userEmail=em;return true;
+    }
+  }catch(e){}
+  return false;
+}
+function clearSession(){
+  try{localStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}
+}
+
+// Patch logout to also clear session
+const _origLogout=document.getElementById('btn-out').onclick;
+document.getElementById('btn-out').addEventListener('click',()=>{clearSession();});
+
 // ── INIT ──
 buildAdmin();buildSidebarNav();
 window.onload=()=>{
+  // Try restoring session before loading OAuth
+  if(loadSession()){
+    if(userEmail===ADMIN_EMAIL)document.getElementById('btn-admin').style.display='flex';
+    showApp();fetchData();
+    // Still load GSI in background for token refresh
+    const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
+    s.onload=()=>{initAuth();};document.head.appendChild(s);
+    return;
+  }
   const t=setTimeout(()=>{hideLoad();document.getElementById('login-screen').style.display='flex';},10000);
   const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
   s.onload=()=>{clearTimeout(t);initAuth();};
