@@ -790,12 +790,15 @@ document.getElementById('btn-out').addEventListener('click',()=>{
 
 // ── DATA ──
 let _fetchRetry=0;
-function fetchData(){
+// fetch() follows HTTP redirects (Google Apps Script can redirect on first hit).
+// Script-tag JSONP does NOT follow redirects on all mobile browsers → use fetch() first.
+async function fetchData(){
   showLoad('Sincronizando datos...');
-  const cb='sgcCb_'+Date.now();
-  // Clear previous script if stuck
   const old=document.getElementById('_jp');if(old)old.remove();
-  window[cb]=data=>{
+  const cb='sgcCb_'+Date.now();
+  const url=API_URL+'?callback='+cb+'&t='+Date.now();
+
+  const onSuccess=data=>{
     _fetchRetry=0;
     D=data;
     const now=D.lastUpdate||new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
@@ -804,30 +807,54 @@ function fetchData(){
     if(D.config&&typeof D.config.showFact!=='undefined'){
       showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
     }
-    updateAdminInfo();
-    initSimAdj();render();
-    delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
-  };
-  const s=document.createElement('script');s.id='_jp';
-  s.src=API_URL+'?callback='+cb+'&t='+Date.now(); // cache-bust
-  s.onerror=()=>{
+    updateAdminInfo();initSimAdj();render();
     delete window[cb];
-    if(_fetchRetry<1){_fetchRetry++;setTimeout(fetchData,2000);} // retry once
+    const s=document.getElementById('_jp');if(s)s.remove();
+  };
+
+  const onError=()=>{
+    delete window[cb];
+    if(_fetchRetry<2){_fetchRetry++;setTimeout(fetchData,3000);}
     else{_fetchRetry=0;showErrorBanner();}
   };
+
+  // ── Strategy 1: fetch() — follows all redirects, works on mobile ──
+  try{
+    const resp=await Promise.race([
+      fetch(url,{cache:'no-store',redirect:'follow'}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
+    ]);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const text=await resp.text();
+    // JSONP response: cbName({...json...}) → extract JSON between first ( and last )
+    const i=text.indexOf('('),j=text.lastIndexOf(')');
+    if(i<0||j<0)throw new Error('bad jsonp');
+    const data=JSON.parse(text.slice(i+1,j));
+    onSuccess(data);
+    return;
+  }catch(fetchErr){
+    console.warn('fetch() failed, falling back to JSONP script tag:',fetchErr.message);
+  }
+
+  // ── Strategy 2: JSONP script tag (desktop/legacy fallback) ──
+  window[cb]=onSuccess;
+  const s=document.createElement('script');s.id='_jp';
+  s.src=url;
+  // Timeout guard — onerror doesn't always fire on mobile
+  const guard=setTimeout(()=>{if(window[cb])onError();},12000);
+  s.onload=()=>clearTimeout(guard);  // success: guard no longer needed
+  s.onerror=()=>{clearTimeout(guard);onError();};
   document.head.appendChild(s);
 }
 function showErrorBanner(){
   hideLoad();
-  let banner=document.getElementById('err-banner');
-  if(!banner){
-    banner=document.createElement('div');
-    banner.id='err-banner';
-    banner.style.cssText='position:fixed;top:var(--header-h);left:50%;transform:translateX(-50%);background:#b91c1c;color:#fff;padding:10px 20px;border-radius:0 0 8px 8px;font-size:.8rem;font-family:Asap,sans-serif;z-index:600;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(0,0,0,.3);';
-    banner.innerHTML='<span>&#9888; Error loading data.</span><button onclick="document.getElementById(\'err-banner\').remove();fetchData();" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:Asap,sans-serif;font-size:.78rem;">Retry</button>';
-    document.body.appendChild(banner);
-    setTimeout(()=>{if(banner.parentNode)banner.remove();},8000);
-  }
+  const existing=document.getElementById('err-banner');if(existing)existing.remove();
+  const banner=document.createElement('div');
+  banner.id='err-banner';
+  banner.style.cssText='position:fixed;top:var(--header-h);left:50%;transform:translateX(-50%);background:#b91c1c;color:#fff;padding:12px 20px;border-radius:0 0 10px 10px;font-size:.82rem;font-family:Asap,sans-serif;z-index:600;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.35);white-space:nowrap;';
+  banner.innerHTML='&#9888; No se pudo cargar los datos. <button onclick="document.getElementById(\'err-banner\').remove();fetchData();" style="background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 12px;border-radius:5px;cursor:pointer;font-family:Asap,sans-serif;font-size:.78rem;font-weight:600;">Reintentar</button>';
+  document.body.appendChild(banner);
+  setTimeout(()=>{if(banner.parentNode)banner.remove();},12000);
 }
 
 // ── FORMAT ──
