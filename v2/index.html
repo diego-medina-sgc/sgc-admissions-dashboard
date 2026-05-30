@@ -47,7 +47,7 @@ body{font-family:'Asap',sans-serif;background:#F8F9FC;color:var(--ink);min-heigh
 .hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);border-top:3px solid var(--red);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 2px 8px rgba(33,52,99,.06);}
 .hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
 .hdr-brand.collapsed{width:var(--sidebar-collapsed);}
-.hdr-logo{height:auto;width:160px;max-height:52px;flex-shrink:0;object-fit:contain;}
+.hdr-logo{height:50px;width:auto;flex-shrink:0;}
 .hdr-titles{display:none;}
 .hdr-title{font-size:1rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
 .hdr-sub{font-size:.58rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-top:1px;}
@@ -80,7 +80,7 @@ body{font-family:'Asap',sans-serif;background:#F8F9FC;color:var(--ink);min-heigh
 .sidebar.collapsed .sb-lbl{opacity:0;}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#64748B;font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
 .nav-item:hover{background:#F0F4FB;color:#1A1F35;}
-.nav-item.active{background:rgba(220,30,51,.15);border-left:3px solid var(--red);color:#fff;font-weight:600;padding-left:9px;}
+.nav-item.active{background:rgba(220,30,51,.12);border-left:3px solid var(--red);color:var(--red);font-weight:700;padding-left:9px;}
 .nav-item svg{flex-shrink:0;width:18px;height:18px;}
 .nav-item span{overflow:hidden;text-overflow:ellipsis;}
 .sidebar.collapsed .nav-item span{display:none;}
@@ -520,7 +520,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
     transition:opacity .28s;
     z-index:499;
   }
-  #mob-overlay.active{opacity:1;pointer-events:auto;}
+  #mob-overlay.active{opacity:1;pointer-events:auto !important;}
   .content{margin-left:0 !important;}
 
   /* ── Layout ── */
