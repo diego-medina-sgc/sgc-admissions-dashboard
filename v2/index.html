@@ -118,6 +118,7 @@ body{font-family:'Asap',sans-serif;background:#F8F9FC;color:var(--ink);min-heigh
 /* ─── STAT STRIP (headline KPIs) ─── */
 .stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow);}
 .si{padding:18px 20px 16px;border-right:1px solid var(--line);transition:background .12s;position:relative;text-align:center;}
+.si-lbl,.si-val,.si-foot,.si-spark{text-align:center;}
 .si:last-child{border-right:none;}
 .si:hover{background:#F5F7FC;}
 .si-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
@@ -1070,6 +1071,21 @@ function updateSimDisplay(){
     const felt=document.getElementById('factrow_'+key);
     if(felt&&showFact){const adj2=simAdj[key]||0;felt.textContent=proy>0?fUSD(r.facturacion/proy*(proy+adj2)):'--';}
   });
+  // Update table total rows
+  ['q','n'].forEach(ck=>{
+    const rows=ck==='q'?py.quilmes:py.north;
+    if(!rows||!rows.length)return;
+    let tProy=0,tFinal=0,tFact=0;
+    rows.forEach(r=>{
+      const proy=parseFloat(r.proy)||0;
+      const adj=simAdj[ck+'_'+r.grado]||0;
+      tProy+=proy;tFinal+=Math.round(proy+adj);
+      if(proy>0)tFact+=r.facturacion/proy*(proy+adj);
+    });
+    const elP=document.getElementById('tot-proy-'+ck);if(elP)elP.textContent=fN(tProy);
+    const elF=document.getElementById('tot-final-'+ck);if(elF)elF.textContent=tFinal.toLocaleString('es-AR');
+    const elFact=document.getElementById('tot-fact-'+ck);if(elFact&&showFact)elFact.textContent=fUSD(tFact);
+  });
 }
 
 // ── RENDER ──
@@ -1408,7 +1424,7 @@ function buildProyeccion(){
     });
     const totFinal=totProy+totAdj;
     const totDelta=totAdj!==0?'<span class="'+(totAdj>0?'val-pos':'val-neg')+'"> ('+fSign(totAdj)+')</span>':'';
-    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">TOTAL</td><td class="r">'+fN(totBase)+'</td><td class="r">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'">'+Math.round(totFinal).toLocaleString('es-AR')+totDelta+'</td>'+(showFact?'<td class="r val-usd fact-col">'+fUSD(totFact)+'</td>':'')+'</tr>';
+    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">TOTAL</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
     h2+='</tbody></table></div></div>';
     return h2;
   };
