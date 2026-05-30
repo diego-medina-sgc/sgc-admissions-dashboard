@@ -1235,19 +1235,23 @@ function buildKpis(){
     {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost')},
     {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto')},
   ];
-  const g=document.createElement('div');g.className='kpi-grid';
-  cards.forEach(c=>{g.innerHTML+='<div class="kpi-card'+(c.accent?' accent':'')+'"><div class="kpi-lbl">'+c.lbl+'</div><div class="kpi-val '+(c.cls||'')+'">'+c.val+'</div><div class="kpi-foot">'+c.foot+'</div></div>';});
-  wrap.appendChild(sec(t('headline'),t('headline_meta'),g));
+  const strip=document.createElement('div');strip.className='stat-strip';
+  cards.forEach(c=>{strip.innerHTML+='<div class="si"><div class="si-lbl">'+c.lbl+'</div><div class="si-val '+(c.cls||'')+'">'+c.val+'</div><div class="si-foot">'+c.foot+'</div></div>';});
+  wrap.appendChild(sec(t('headline'),t('headline_meta'),strip));
 
   const cd=getCampusData();
   if(cd){
-    const col=document.createElement('div');col.className='col-6040';
+    // KPI table — full width with horizontal scroll
     const tw=document.createElement('div');tw.className='tw';
     tw.innerHTML=buildKpiTable(cd);
+    wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),tw));
+    // Donut chart — separate row
+    const two=document.createElement('div');two.className='two';
     const cc=document.createElement('div');cc.className='cc';
-    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="200"></canvas></div>';
-    col.appendChild(tw);col.appendChild(cc);
-    wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),col));
+    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="260"></canvas></div>';
+    two.appendChild(cc);
+    const blank=document.createElement('div');two.appendChild(blank);
+    wrap.appendChild(two);
   }
 
   const tw2=document.createElement('div');tw2.className='tw';
