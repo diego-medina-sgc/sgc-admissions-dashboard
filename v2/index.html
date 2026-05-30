@@ -87,8 +87,7 @@ body{font-family:'Asap',sans-serif;background:#F8F9FC;color:var(--ink);min-heigh
 .sb-divider{height:1px;background:#E2E8F0;margin:8px 0;}
 .sb-bottom{border-top:1px solid #E2E8F0;flex-shrink:0;padding-bottom:4px;background:#F8F9FC;}
 .sb-update{font-size:.62rem;font-family:'Asap Condensed',sans-serif;color:#94A3B8;text-align:center;line-height:1.5;padding:4px 12px 6px;}
-.sidebar.collapsed .sb-update{display:none;}.sidebar.collapsed .sb-flag-row,.sidebar.collapsed .sb-appearance-row{display:none !important;}
-.sidebar.collapsed .sb-flag-row,.sidebar.collapsed .sb-appearance-row{display:none;}
+.sidebar.collapsed .sb-update{display:none;}.sidebar.collapsed .sb-switches{display:none !important;}
 
 /* ─── CONTENT ─── */
 .content{margin-top:var(--header-h);margin-left:var(--sidebar-w);transition:margin-left .25s;min-height:calc(100vh - var(--header-h));}
@@ -375,8 +374,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] .nav-item:hover{background:rgba(255,255,255,.06) !important;color:var(--text) !important;}
 [data-theme="dark"] .nav-item.active{background:rgba(220,30,51,.18) !important;color:#f87171 !important;border-left-color:#E84057 !important;}
 [data-theme="dark"] .sb-lbl,[data-theme="dark"] .sb-update{color:var(--text-muted) !important;}
-[data-theme="dark"] .sb-flag{color:var(--text-muted) !important;}
-[data-theme="dark"] .sb-flag.sb-flag-active{color:#f87171 !important;background:rgba(220,30,51,.15) !important;border-color:#E84057 !important;}
+
 [data-theme="dark"] .sb-theme-btn{color:var(--text-muted) !important;}
 [data-theme="dark"] .sb-theme-btn:hover{background:rgba(255,255,255,.06) !important;border-color:var(--border) !important;}
 [data-theme="dark"] .sb-theme-btn.active{background:rgba(255,255,255,.08) !important;border-color:var(--border-strong) !important;}
@@ -502,20 +500,20 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] #btn-sb-toggle{background:var(--surface2);color:#EDEDF0 !important;}
 
 /* ─── SIDEBAR FLAG & THEME TOGGLES ─── */
-.sb-flag-row{display:flex;gap:6px;padding:8px 8px 4px;}
-.sidebar.collapsed .sb-flag-row{display:none;}
-.sb-flag{background:none;border:1.5px solid transparent;border-radius:8px;padding:5px 10px;cursor:pointer;
-  font-size:.85rem;color:#64748B;display:flex;align-items:center;gap:5px;
-  transition:all .15s;flex:1;justify-content:center;}
-.sb-flag span{font-size:.65rem;font-family:'Asap Condensed',sans-serif;font-weight:700;letter-spacing:.06em;}
-.sb-flag:hover{color:#1A1F35;border-color:#E2E8F0;background:#F0F4FB;}
-.sb-flag.sb-flag-active{color:#DC1E33;border-color:#DC1E33;border-bottom-width:2px;background:rgba(220,30,51,.08);}
-.sb-appearance-row{display:flex;gap:4px;padding:4px 8px 10px;}
-.sidebar.collapsed .sb-appearance-row{display:none;}
-.sb-theme-btn{background:none;border:1.5px solid transparent;border-radius:8px;padding:7px 0;
-  cursor:pointer;color:#94A3B8;flex:1;transition:all .15s;display:flex;align-items:center;justify-content:center;}
-.sb-theme-btn:hover{border-color:#E2E8F0;background:#F0F4FB;}
-.sb-theme-btn.active{background:rgba(33,52,99,.08);border-color:#D1D5DB;}
+.sb-switches{padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px;}
+.sidebar.collapsed .sb-switches{display:none;}
+.sb-switch-row{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
+.sb-switch-lbl{font-size:.62rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;color:#94A3B8;min-width:20px;transition:color .2s;display:flex;align-items:center;justify-content:center;}
+.sb-switch-lbl.sw-active{color:#1A1F35;}
+.sb-switch-track{width:42px;height:24px;border-radius:12px;background:#CBD5E1;position:relative;flex-shrink:0;transition:background .22s;}
+.sb-switch-track.sw-on{background:#3B82F6;}
+.sb-switch-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .22s;}
+.sb-switch-track.sw-on .sb-switch-thumb{transform:translateX(18px);}
+/* dark sidebar overrides for switches */
+[data-theme="dark"] .sb-switch-lbl{color:#555570;}
+[data-theme="dark"] .sb-switch-lbl.sw-active{color:#EDEDF0;}
+[data-theme="dark"] .sb-switch-track{background:#3D3D52;}
+[data-theme="dark"] .sb-switch-track.sw-on{background:#4A6CB3;}
 
 /* ─── HEATMAP FULL WIDTH ─── */
 .hm-table td:first-child{width:80px;text-align:left;font-weight:700;}
@@ -610,12 +608,12 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .sim-controls{flex-wrap:wrap;gap:5px;}
   .sim-btn{flex:1;min-width:0;font-size:.62rem;padding:5px 6px;justify-content:center;}
   .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
-  .sb-flag-row,.sb-appearance-row{display:flex;}
+  .sb-switches{display:flex;}
   .sidebar.collapsed{width:280px;}
   .sidebar.collapsed .nav-item span{display:initial;}
   .sidebar.collapsed .sb-lbl{opacity:1;}
   .sidebar.collapsed .sb-update{display:block;}
-  .sidebar.collapsed .sb-flag-row,.sidebar.collapsed .sb-appearance-row{display:flex;}
+  .sidebar.collapsed .sb-switches{display:flex;}
 }
 @media print{
   .sidebar,.hdr,.adm-overlay,footer{display:none !important;}
@@ -1544,39 +1542,38 @@ function buildSidebarNav(){
   const bottom=document.getElementById('sb-bottom');
   while(bottom.firstChild)bottom.removeChild(bottom.firstChild);
 
-  // Language flag toggle — always at bottom of sidebar
-  var svgUK='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg>';
-  var svgAR='<svg viewBox="0 0 60 30" width="22" height="12" style="border-radius:2px;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#74ACDF"/><rect y="10" width="60" height="10" fill="#fff"/><circle cx="30" cy="15" r="4" fill="#F6B40E"/></svg>';
-  const flagRow=document.createElement('div');flagRow.className='sb-flag-row';
-  [['en',svgUK,'EN'],['es',svgAR,'ES']].forEach(function(pair){
-    var lc=pair[0],svg=pair[1],label=pair[2];
-    var fbtn=document.createElement('button');
-    fbtn.className='sb-flag'+(lang===lc?' sb-flag-active':'');
-    fbtn.innerHTML=svg+' <span>'+label+'</span>';
-    fbtn.onclick=function(){lang=lc;document.documentElement.lang=lc;render();};
-    flagRow.appendChild(fbtn);
-  });
-  bottom.appendChild(flagRow);
+  // Helper: build a switch row
+  function mkSwitch(leftHTML,rightHTML,isOn,onToggle){
+    var row=document.createElement('div');row.className='sb-switch-row';
+    var lblL=document.createElement('div');lblL.className='sb-switch-lbl'+(isOn?'':' sw-active');lblL.innerHTML=leftHTML;
+    var track=document.createElement('div');track.className='sb-switch-track'+(isOn?' sw-on':'');
+    var thumb=document.createElement('div');thumb.className='sb-switch-thumb';
+    track.appendChild(thumb);
+    var lblR=document.createElement('div');lblR.className='sb-switch-lbl'+(isOn?' sw-active':'');lblR.innerHTML=rightHTML;
+    row.appendChild(lblL);row.appendChild(track);row.appendChild(lblR);
+    row.onclick=onToggle;
+    return row;
+  }
 
-  // Light/Dark toggle — icon only, filled when active
-  var sunFilled='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-  var sunOutline='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-  var moonFilled='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
-  var moonOutline='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
-  var appRow=document.createElement('div');appRow.className='sb-appearance-row';
-  var themeMap=[['light',sunFilled,sunOutline,'#F59E0B'],['dark',moonFilled,moonOutline,'#EDEDF0']];
-  themeMap.forEach(function(pair){
-    var th=pair[0],iconFill=pair[1],iconOut=pair[2],col=pair[3];
-    var isActive=currentTheme===th;
-    var tbtn=document.createElement('button');
-    tbtn.className='sb-theme-btn'+(isActive?' active':'');
-    tbtn.innerHTML=isActive?iconFill:iconOut;
-    tbtn.title=th==='light'?'Light mode':'Dark mode';
-    if(isActive)tbtn.style.color=col;
-    tbtn.onclick=function(){setTheme(th);};
-    appRow.appendChild(tbtn);
-  });
-  bottom.appendChild(appRow);
+  var switchWrap=document.createElement('div');switchWrap.className='sb-switches';
+
+  // Language switch: ES (left/off) ↔ EN (right/on)
+  var isEN=lang==='en';
+  switchWrap.appendChild(mkSwitch('ES','EN',isEN,function(){
+    lang=isEN?'es':'en';
+    document.documentElement.lang=lang;
+    render();
+  }));
+
+  // Theme switch: ☀ (left/off=light) ↔ ☾ (right/on=dark)
+  var sunIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  var moonIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  var isDark=currentTheme==='dark';
+  switchWrap.appendChild(mkSwitch(sunIcon,moonIcon,isDark,function(){
+    setTheme(isDark?'light':'dark');
+  }));
+
+  bottom.appendChild(switchWrap);
 
   // Update text
   var upd=document.createElement('div');upd.id='sb-update-inner';upd.className='sb-update';
