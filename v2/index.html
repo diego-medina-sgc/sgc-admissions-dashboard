@@ -1405,7 +1405,7 @@ function buildProyeccion(){
   };
 
   const tables=document.createElement('div');
-  tables.innerHTML=mkTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33')+mkTable(t('north_table'),'n',py.north,'#213463');
+  tables.innerHTML=(campus!=='n'?mkTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33'):'')+(campus!=='q'?mkTable(t('north_table'),'n',py.north,'#213463'):'');
   wrap.appendChild(tables);
   return wrap;
 }
