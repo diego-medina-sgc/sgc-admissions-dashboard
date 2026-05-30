@@ -994,7 +994,8 @@ async function fetchData(){
     ]);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const text=await resp.text();
-    // JSONP response: cbName({...json...}) → extract JSON between first ( and last )
+    // JSONP response: cbName({...json...}) → validate callback name then extract JSON
+    if(!text.startsWith(cb+'('))throw new Error('unexpected jsonp callback');
     const i=text.indexOf('('),j=text.lastIndexOf(')');
     if(i<0||j<0)throw new Error('bad jsonp');
     const data=JSON.parse(text.slice(i+1,j));
@@ -1026,6 +1027,7 @@ function showErrorBanner(){
 }
 
 // ── FORMAT ──
+const escHtml=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fN=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
 const fP=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return(n*100).toFixed(1)+'%';};
 const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);if(n>-2&&n<2&&String(v).includes('.'))return fP(n);return fN(n);};
@@ -1291,7 +1293,7 @@ function buildKpis(){
   h2+='</tr></thead><tbody>';
   (D.withdrawals||[]).forEach(w=>{
     const tc=w.tipo==='Natural'?'nat':w.tipo==='Exogena'?'exo':'act';
-    h2+='<tr><td style="font-weight:500">'+w.causa+'</td><td style="text-align:left"><span class="tag '+tc+'">'+w.tipo+'</span></td>';
+    h2+='<tr><td style="font-weight:500">'+escHtml(w.causa)+'</td><td style="text-align:left"><span class="tag '+tc+'">'+escHtml(w.tipo)+'</span></td>';
     if(campus==='os')h2+='<td class="r c-q">'+fN(w.q2025)+'</td><td class="r c-q" style="font-weight:700">'+fN(w.q2026)+'</td><td class="r c-n">'+fN(w.n2025)+'</td><td class="r c-n" style="font-weight:700">'+fN(w.n2026)+'</td><td class="r">'+fN(w.tot2025)+'</td><td class="r" style="font-weight:700">'+fN(w.tot2026)+'</td>';
     else if(campus==='q')h2+='<td class="r">'+fN(w.q2025)+'</td><td class="r" style="font-weight:700">'+fN(w.q2026)+'</td>';
     else h2+='<td class="r">'+fN(w.n2025)+'</td><td class="r" style="font-weight:700">'+fN(w.n2026)+'</td>';
@@ -1335,7 +1337,7 @@ function buildPipeline(){
   else h+='<th class="r">'+t('kinder')+'</th><th class="r">'+t('prep')+'</th><th class="r">'+t('college')+'</th><th class="r">Total</th>';
   h+='</tr></thead><tbody>';
   (D.pipeline||[]).forEach(p=>{
-    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+p.etapa+'</td>';
+    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+escHtml(p.etapa)+'</td>';
     if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">'+fN(p.nK)+'</td><td class="r c-n">'+fN(p.nP)+'</td><td class="r c-n">'+fN(p.nC)+'</td><td class="r c-n" style="font-weight:700">'+fN(p.nT)+'</td><td class="r" style="font-weight:700">'+fN(p.total)+'</td>';
     else if(campus==='q')h+='<td class="r">'+fN(p.qK)+'</td><td class="r">'+fN(p.qP)+'</td><td class="r">'+fN(p.qC)+'</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
     else h+='<td class="r">'+fN(p.nK)+'</td><td class="r">'+fN(p.nP)+'</td><td class="r">'+fN(p.nC)+'</td><td class="r" style="font-weight:700">'+fN(p.nT)+'</td>';
@@ -1706,7 +1708,7 @@ function buildAdmin(){
     document.querySelectorAll('.sim-fact').forEach(el=>el.style.visibility=showFact?'':'hidden');
     document.querySelectorAll('.fact-col').forEach(el=>el.style.display=showFact?'':'none');
     const _s=document.createElement('script');
-    _s.src=API_URL+'?setFact='+(showFact?'1':'0')+'&callback=_noop';
+    _s.src=API_URL+'?setFact='+(showFact?'1':'0')+'&tok='+encodeURIComponent(accessToken)+'&callback=_noop';
     window._noop=()=>{};document.head.appendChild(_s);setTimeout(()=>_s.remove(),3000);
   };
   fw.appendChild(fp);
@@ -1714,7 +1716,7 @@ function buildAdmin(){
 
 function updateAdminInfo(){
   const el=document.getElementById('adm-info');if(!el)return;
-  el.innerHTML='<div class="adm-info-row"><span class="adm-info-lbl">Admin</span><span class="adm-info-val">'+ADMIN_EMAIL+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">Conexión</span><span class="adm-info-val"><span class="adm-conn"><span class="adm-conn-dot"></span> Activa</span></span></div><div class="adm-info-row"><span class="adm-info-lbl">Última sync</span><span class="adm-info-val">'+(D.lastUpdate||'–')+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">showFact</span><span class="adm-info-val">'+(showFact?'Visible':'Oculto')+'</span></div>';
+  el.innerHTML='<div class="adm-info-row"><span class="adm-info-lbl">Admin</span><span class="adm-info-val">'+escHtml(ADMIN_EMAIL)+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">Conexión</span><span class="adm-info-val"><span class="adm-conn"><span class="adm-conn-dot"></span> Activa</span></span></div><div class="adm-info-row"><span class="adm-info-lbl">Última sync</span><span class="adm-info-val">'+escHtml(D.lastUpdate||'–')+'</span></div><div class="adm-info-row"><span class="adm-info-lbl">showFact</span><span class="adm-info-val">'+(showFact?'Visible':'Oculto')+'</span></div>';
 }
 
 document.getElementById('btn-admin').addEventListener('click',()=>{
@@ -1754,17 +1756,17 @@ function updateClock(){
 setInterval(updateClock,30000);
 
 // ── SESSION PERSISTENCE ──
-// Store token in localStorage to survive page refresh (expires after 55 min)
+// Token in sessionStorage (cleared on tab close); email/expiry in localStorage for UX
 function saveSession(){
   try{
-    localStorage.setItem('sgc_token',accessToken);
+    sessionStorage.setItem('sgc_token',accessToken);
     localStorage.setItem('sgc_email',userEmail);
     localStorage.setItem('sgc_exp',String(Date.now()+55*60*1000));
   }catch(e){}
 }
 function loadSession(){
   try{
-    const tok=localStorage.getItem('sgc_token');
+    const tok=sessionStorage.getItem('sgc_token');
     const exp=parseInt(localStorage.getItem('sgc_exp')||'0');
     const em=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();
     if(tok&&exp>Date.now()&&em){
@@ -1774,7 +1776,7 @@ function loadSession(){
   return false;
 }
 function clearSession(){
-  try{localStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}
+  try{sessionStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}
 }
 
 // Patch logout to also clear session
