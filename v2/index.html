@@ -117,7 +117,7 @@ body{font-family:'Asap',sans-serif;background:#F8F9FC;color:var(--ink);min-heigh
 
 /* ─── STAT STRIP (headline KPIs) ─── */
 .stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow);}
-.si{padding:18px 20px 16px;border-right:1px solid var(--line);transition:background .12s;position:relative;}
+.si{padding:18px 20px 16px;border-right:1px solid var(--line);transition:background .12s;position:relative;text-align:center;}
 .si:last-child{border-right:none;}
 .si:hover{background:#F5F7FC;}
 .si-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
@@ -263,7 +263,7 @@ td.c-n{color:var(--navy);font-weight:600;}
 .sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
 .sim-fact{font-size:.8rem;font-weight:600;color:var(--teal);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-delta{font-size:.67rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
-.sim-controls{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:stretch;}
+.sim-controls{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
 .sim-btn{padding:5px 11px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.68rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;}
 .sim-btn:hover{border-color:var(--ink);color:var(--ink);}
 .sim-btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
@@ -500,20 +500,22 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] #btn-sb-toggle{background:var(--surface2);color:#EDEDF0 !important;}
 
 /* ─── SIDEBAR FLAG & THEME TOGGLES ─── */
-.sb-switches{padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px;}
+.sb-switches{padding:8px 12px 10px;display:flex;flex-direction:row;gap:6px;justify-content:space-around;}
 .sidebar.collapsed .sb-switches{display:none;}
-.sb-switch-row{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
-.sb-switch-lbl{font-size:.62rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;color:#94A3B8;min-width:20px;transition:color .2s;display:flex;align-items:center;justify-content:center;}
+.sb-switch-row{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex:1;justify-content:center;}
+.sb-switch-lbl{font-size:.62rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;color:#94A3B8;min-width:18px;transition:color .2s;display:flex;align-items:center;justify-content:center;}
 .sb-switch-lbl.sw-active{color:#1A1F35;}
-.sb-switch-track{width:42px;height:24px;border-radius:12px;background:#CBD5E1;position:relative;flex-shrink:0;transition:background .22s;}
-.sb-switch-track.sw-on{background:#3B82F6;}
-.sb-switch-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .22s;}
+.sb-switch-lbl.sw-sun.sw-active{color:#F59E0B;}
+.sb-switch-track{width:40px;height:22px;border-radius:11px;background:#CBD5E1;position:relative;flex-shrink:0;transition:background .22s;}
+.sb-switch-track.sw-on{background:#109AA9;}
+.sb-switch-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .22s;}
 .sb-switch-track.sw-on .sb-switch-thumb{transform:translateX(18px);}
 /* dark sidebar overrides for switches */
 [data-theme="dark"] .sb-switch-lbl{color:#555570;}
 [data-theme="dark"] .sb-switch-lbl.sw-active{color:#EDEDF0;}
+[data-theme="dark"] .sb-switch-lbl.sw-sun.sw-active{color:#F59E0B;}
 [data-theme="dark"] .sb-switch-track{background:#3D3D52;}
-[data-theme="dark"] .sb-switch-track.sw-on{background:#4A6CB3;}
+[data-theme="dark"] .sb-switch-track.sw-on{background:#109AA9;}
 
 /* ─── HEATMAP FULL WIDTH ─── */
 .hm-table td:first-child{width:80px;text-align:left;font-weight:700;}
@@ -607,6 +609,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .insight-strip{display:none;}
   .sim-controls{flex-wrap:wrap;gap:5px;}
   .sim-btn{flex:1;min-width:0;font-size:.62rem;padding:5px 6px;justify-content:center;}
+  footer{font-size:.5rem;letter-spacing:.01em;padding:10px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
   .sb-switches{display:flex;}
   .sidebar.collapsed{width:280px;}
@@ -1393,13 +1396,19 @@ function buildProyeccion(){
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
     let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">Facturación USD</th>':'')+'</tr></thead><tbody>';
+    let totBase=0,totProy=0,totAdj=0,totFact=0;
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
       const adj=simAdj[key]||0;
       const proy=parseFloat(r.proy)||0;
       const delta=adj!==0?'<span class="'+(adj>0?'val-pos':'val-neg')+'"> ('+fSign(adj)+')</span>':'';
+      totBase+=parseFloat(r.base2026)||0;totProy+=proy;totAdj+=adj;
+      if(proy>0)totFact+=r.facturacion/proy*(proy+adj);
       h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">−</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
     });
+    const totFinal=totProy+totAdj;
+    const totDelta=totAdj!==0?'<span class="'+(totAdj>0?'val-pos':'val-neg')+'"> ('+fSign(totAdj)+')</span>':'';
+    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">TOTAL</td><td class="r">'+fN(totBase)+'</td><td class="r">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'">'+Math.round(totFinal).toLocaleString('es-AR')+totDelta+'</td>'+(showFact?'<td class="r val-usd fact-col">'+fUSD(totFact)+'</td>':'')+'</tr>';
     h2+='</tbody></table></div></div>';
     return h2;
   };
@@ -1426,6 +1435,7 @@ Chart.unregister(ChartDataLabels);
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#64748B';
   const C=CC[campus];
+  const PBC=isDarkMode()?'transparent':'#fff'; // point border color
 
   // Enrollment combo bar+line
   const ec=document.getElementById('chart-enrol');
@@ -1439,7 +1449,7 @@ function drawCharts(){
         labels:rows.map(r=>String(r.yr)+(r.yr===2027?' ▸':'')),
         datasets:[
           {type:'bar',label:'Total Alumnos',data:rows.map(r=>parseFloat(r.total)||0),backgroundColor:rows.map(r=>r.yr===2027?'rgba(220,30,51,.35)':'rgba(33,52,99,.75)'),borderRadius:8,borderSkipped:false,yAxisID:'y',order:2},
-          {type:'line',label:'Crec. %',data:crecData,borderColor:'#6AB2E2',backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#6AB2E2',pointBorderColor:'#fff',pointBorderWidth:2.5,yAxisID:'y1',order:1},
+          {type:'line',label:'Crec. %',data:crecData,borderColor:'#6AB2E2',backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#6AB2E2',pointBorderColor:PBC,pointBorderWidth:2.5,yAxisID:'y1',order:1},
         ]
       },
       options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:'#109AA9',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}
@@ -1453,8 +1463,8 @@ function drawCharts(){
     const nR=[...(D.resumen.north||[])].reverse();
     const ctx=qnc.getContext('2d');
     charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
-      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.45,fill:true,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2.5},
-      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213463',backgroundColor:grad(ctx,33,52,105),tension:.45,fill:true,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#213463',pointBorderColor:'#fff',pointBorderWidth:2},
+      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:grad(ctx,220,30,51),tension:.45,fill:true,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#DC1E33',pointBorderColor:PBC,pointBorderWidth:2.5},
+      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213463',backgroundColor:grad(ctx,33,52,105),tension:.45,fill:true,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#213463',pointBorderColor:PBC,pointBorderWidth:2},
     ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
@@ -1485,9 +1495,9 @@ function drawCharts(){
       {type:'bar',label:'Pipeline N',data:D.winrate.map(r=>parseFloat(r.nPipeline)||0),backgroundColor:'rgba(33,52,99,.25)',borderRadius:8,borderSkipped:false,yAxisID:'y',order:3},
     ]:[{type:'bar',label:'Pipeline',data:D.winrate.map(r=>campus==='q'?parseFloat(r.qPipeline)||0:parseFloat(r.nPipeline)||0),backgroundColor:C.bg,borderRadius:8,yAxisID:'y',order:3}];
     const wrDs=campus==='os'?[
-      {type:'line',label:'WR% Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.45,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#DC1E33',pointBorderColor:'#fff',pointBorderWidth:2.5,yAxisID:'y1',order:1},
-      {type:'line',label:'WR% North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213463',backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#213463',pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1},
-    ]:[{type:'line',label:'Win Rate %',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:C.main,pointBorderColor:'#fff',pointBorderWidth:2,yAxisID:'y1',order:1}];
+      {type:'line',label:'WR% Quilmes',data:D.winrate.map(r=>+(parseFloat(r.qWR)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.45,borderWidth:3.5,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#DC1E33',pointBorderColor:PBC,pointBorderWidth:2.5,yAxisID:'y1',order:1},
+      {type:'line',label:'WR% North',data:D.winrate.map(r=>+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:'#213463',backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:'#213463',pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
+    ]:[{type:'line',label:'Win Rate %',data:D.winrate.map(r=>campus==='q'?+(parseFloat(r.qWR)*100).toFixed(1):+(parseFloat(r.nWR)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:C.main,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1}];
     charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[...pipDs,...wrDs]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:'#6B7180',padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:'#6B7180',callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
@@ -1569,9 +1579,10 @@ function buildSidebarNav(){
   var sunIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
   var moonIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
   var isDark=currentTheme==='dark';
-  switchWrap.appendChild(mkSwitch(sunIcon,moonIcon,isDark,function(){
-    setTheme(isDark?'light':'dark');
-  }));
+  var themeSwitch=mkSwitch(sunIcon,moonIcon,isDark,function(){setTheme(isDark?'light':'dark');});
+  // mark left label as sun for yellow coloring
+  themeSwitch.querySelector('.sb-switch-lbl').classList.add('sw-sun');
+  switchWrap.appendChild(themeSwitch);
 
   bottom.appendChild(switchWrap);
 
