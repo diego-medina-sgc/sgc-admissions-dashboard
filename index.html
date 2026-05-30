@@ -4,14 +4,16 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SGC — Admissions Dashboard 2026</title>
+<meta name="description" content="St. George's College Admissions Dashboard 2026 — Real-time enrollment, retention, pipeline and projection data for Quilmes and North campuses."/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="apple-touch-icon" href="favicon.png"/>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Asap+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 :root{
   --ink:#1A1F35;--red:#DC1E33;--navy:#213463;
@@ -635,7 +637,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 
 <!-- LOADING -->
 <div id="loading">
-  <img class="load-logo" src="logo-v.png" alt="SGC"/>
+  <img class="load-logo" src="logo-v.png" alt="SGC" width="180" height="180"/>
   <div class="load-ring"></div>
   <div class="load-txt">Cargando dashboard</div>
 </div>
@@ -643,7 +645,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <img class="login-logo" src="logo-v.png" alt="St George's College"/>
+    <img class="login-logo" src="logo-v.png" alt="St George's College" width="220" height="220"/>
     <div class="login-rule"></div>
     <p class="login-tagline">Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas</p>
     <button class="btn-google" id="btn-login">
@@ -656,7 +658,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 <!-- ACCESS DENIED -->
 <div id="access-denied" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:#EEF1F8;">
   <div class="login-box" style="text-align:center;gap:20px;">
-    <img class="login-logo" src="logo-v.png" alt="St George's College"/>
+    <img class="login-logo" src="logo-v.png" alt="St George's College" width="220" height="220"/>
     <div class="login-rule"></div>
     <div style="width:56px;height:56px;background:#FEE8EB;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;">
       <svg width="26" height="26" fill="none" stroke="#DC1E33" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
@@ -678,7 +680,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   <!-- HEADER -->
   <header class="hdr">
     <div class="hdr-brand" id="hdr-brand">
-      <img class="hdr-logo" id="hdr-logo-img" src="logo-h.png" alt="SGC"/>
+      <img class="hdr-logo" id="hdr-logo-img" src="logo-h.png" alt="SGC" width="200" height="50"/>
       <div class="hdr-titles">
         <div class="hdr-title">Admissions</div>
         <div class="hdr-sub">Analytics &middot; 2026</div>
