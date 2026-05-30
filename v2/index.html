@@ -264,8 +264,8 @@ td.c-n{color:var(--navy);font-weight:600;}
 .sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
 .sim-fact{font-size:.8rem;font-weight:600;color:var(--teal);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-delta{font-size:.67rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
-.sim-controls{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
-.sim-btn{padding:6px 13px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s;}
+.sim-controls{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:stretch;}
+.sim-btn{padding:5px 11px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.68rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;}
 .sim-btn:hover{border-color:var(--ink);color:var(--ink);}
 .sim-btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
 .adj-wrap{display:flex;align-items:center;justify-content:center;gap:3px;}
@@ -378,7 +378,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] .sb-flag{color:var(--text-muted) !important;}
 [data-theme="dark"] .sb-flag.sb-flag-active{color:#f87171 !important;background:rgba(220,30,51,.15) !important;border-color:#E84057 !important;}
 [data-theme="dark"] .sb-theme-btn{color:var(--text-muted) !important;}
-[data-theme="dark"] .sb-theme-btn.active{color:#93A5D8 !important;background:rgba(33,52,99,.3) !important;border-color:#4A6CB3 !important;}
+[data-theme="dark"] .sb-theme-btn:hover{background:rgba(255,255,255,.06) !important;border-color:var(--border) !important;}
+[data-theme="dark"] .sb-theme-btn.active{background:rgba(255,255,255,.08) !important;border-color:var(--border-strong) !important;}
 /* ── dark: campus toggle buttons ── */
 [data-theme="dark"] .campus-btn{background:var(--surface2);border-color:var(--border);color:var(--text-muted);}
 [data-theme="dark"] .campus-btn[data-c="os"].active{background:#3D4170;border-color:#6B70AA;color:#fff;}
@@ -511,10 +512,10 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 .sb-flag.sb-flag-active{color:#DC1E33;border-color:#DC1E33;border-bottom-width:2px;background:rgba(220,30,51,.08);}
 .sb-appearance-row{display:flex;gap:4px;padding:4px 8px 10px;}
 .sidebar.collapsed .sb-appearance-row{display:none;}
-.sb-theme-btn{background:none;border:1.5px solid transparent;border-radius:6px;padding:5px 0;
-  cursor:pointer;color:#94A3B8;font-size:1rem;flex:1;transition:all .15s;}
-.sb-theme-btn:hover{color:#1A1F35;border-color:#E2E8F0;background:#F0F4FB;}
-.sb-theme-btn.active{color:#213463;background:rgba(33,52,99,.1);border-color:#213463;}
+.sb-theme-btn{background:none;border:1.5px solid transparent;border-radius:8px;padding:7px 0;
+  cursor:pointer;color:#94A3B8;flex:1;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.sb-theme-btn:hover{border-color:#E2E8F0;background:#F0F4FB;}
+.sb-theme-btn.active{background:rgba(33,52,99,.08);border-color:#D1D5DB;}
 
 /* ─── HEATMAP FULL WIDTH ─── */
 .hm-table td:first-child{width:80px;text-align:left;font-weight:700;}
@@ -606,7 +607,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .f-lbl{min-width:120px;font-size:.73rem;}
   .f-nums{min-width:110px;font-size:.65rem;}
   .insight-strip{display:none;}
-  .sim-controls{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  .sim-controls{flex-wrap:wrap;gap:5px;}
+  .sim-btn{flex:1;min-width:0;font-size:.62rem;padding:5px 6px;justify-content:center;}
   .sim-btn{white-space:nowrap;padding:5px 9px;font-size:.68rem;}
   .sb-flag-row,.sb-appearance-row{display:flex;}
   .sidebar.collapsed{width:280px;}
@@ -1556,15 +1558,21 @@ function buildSidebarNav(){
   });
   bottom.appendChild(flagRow);
 
-  // Light/Dark toggle
-  var sunSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-  var moonSVG='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  // Light/Dark toggle — icon only, filled when active
+  var sunFilled='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  var sunOutline='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  var moonFilled='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  var moonOutline='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
   var appRow=document.createElement('div');appRow.className='sb-appearance-row';
-  [['light',sunSVG,'Light'],['dark',moonSVG,'Dark']].forEach(function(pair){
-    var th=pair[0],icon=pair[1],lbl=pair[2];
+  var themeMap=[['light',sunFilled,sunOutline,'#F59E0B'],['dark',moonFilled,moonOutline,'#EDEDF0']];
+  themeMap.forEach(function(pair){
+    var th=pair[0],iconFill=pair[1],iconOut=pair[2],col=pair[3];
+    var isActive=currentTheme===th;
     var tbtn=document.createElement('button');
-    tbtn.className='sb-theme-btn'+(currentTheme===th?' active':'');
-    tbtn.innerHTML=icon+' '+lbl;
+    tbtn.className='sb-theme-btn'+(isActive?' active':'');
+    tbtn.innerHTML=isActive?iconFill:iconOut;
+    tbtn.title=th==='light'?'Light mode':'Dark mode';
+    if(isActive)tbtn.style.color=col;
     tbtn.onclick=function(){setTheme(th);};
     appRow.appendChild(tbtn);
   });
