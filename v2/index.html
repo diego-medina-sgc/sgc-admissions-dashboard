@@ -459,12 +459,13 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 }
 @media(max-width:768px){
   /* ── Header: 2-row layout ── */
-  :root{--sidebar-w:0px;--sidebar-collapsed:0px;--header-h:88px;}
+  :root{--sidebar-w:0px;--sidebar-collapsed:0px;--header-h:96px;}
   .hdr{height:var(--header-h);flex-wrap:wrap;align-content:flex-start;padding:0;}
   /* Row 1: logo left, hamburger right */
+  .hdr-logo{height:38px;}
   .hdr-brand{
     order:1;width:auto;flex:1;
-    padding:10px 14px;
+    padding:8px 14px;
     border-bottom:none;
   }
   .hdr-mid{
