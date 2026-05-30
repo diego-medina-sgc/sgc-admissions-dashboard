@@ -1368,7 +1368,7 @@ function buildPipeline(){
     const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
     const div=document.createElement('div');
     div.className='f-row'+(item.isWon?' won':'');
-    div.innerHTML='<div class="f-lbl">'+trStage(item.etapa)+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
+    div.innerHTML='<div class="f-lbl">'+escHtml(trStage(item.etapa))+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
     fd.appendChild(div);
   });
   wrap.appendChild(sec(t('s_funnel'),t('s_funnel_meta'),fd));
