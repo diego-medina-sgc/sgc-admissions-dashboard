@@ -1245,13 +1245,13 @@ function buildKpis(){
     const tw=document.createElement('div');tw.className='tw';
     tw.innerHTML=buildKpiTable(cd);
     wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),tw));
-    // Donut chart — separate row
-    const two=document.createElement('div');two.className='two';
+    // Donut chart — centered, fixed max-width, with top margin
+    const donutWrap=document.createElement('div');
+    donutWrap.style.cssText='max-width:360px;margin:28px auto 0;';
     const cc=document.createElement('div');cc.className='cc';
     cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-donut" height="260"></canvas></div>';
-    two.appendChild(cc);
-    const blank=document.createElement('div');two.appendChild(blank);
-    wrap.appendChild(two);
+    donutWrap.appendChild(cc);
+    wrap.appendChild(donutWrap);
   }
 
   const tw2=document.createElement('div');tw2.className='tw';
@@ -1268,7 +1268,9 @@ function buildKpis(){
     h2+='</tr>';
   });
   h2+='</tbody></table>';tw2.innerHTML=h2;
-  wrap.appendChild(sec(t('s_withdrawals'),t('s_withdrawals_meta'),tw2));
+  const withSec=sec(t('s_withdrawals'),t('s_withdrawals_meta'),tw2);
+  withSec.style.marginTop='36px';
+  wrap.appendChild(withSec);
   return wrap;
 }
 
