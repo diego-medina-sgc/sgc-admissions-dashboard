@@ -329,8 +329,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] .hdr-title{color:var(--text);}
 [data-theme="dark"] .hdr-sub,.hdr-badge,[data-theme="dark"] .hdr-badge{color:var(--text-muted);}
 [data-theme="dark"] .hdr-badge{background:var(--surface2);border-color:var(--border);}
-[data-theme="dark"] .content{background:#F0F4FC !important;}
-[data-theme="dark"] .panel{background:#F0F4FC !important;}
+[data-theme="dark"] .content{background:var(--bg) !important;}
+[data-theme="dark"] .panel{background:var(--bg) !important;}
 [data-theme="dark"] .kpi-card,[data-theme="dark"] .cc,[data-theme="dark"] .sim-card,
 [data-theme="dark"] .comm-card,[data-theme="dark"] .f-row,[data-theme="dark"] .insight,
 [data-theme="dark"] .stat-strip,[data-theme="dark"] .tw table{background:var(--surface);}
@@ -372,6 +372,61 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] .kpi-val.pos{color:#4ade80;}
 [data-theme="dark"] .kpi-val.neg{color:#f87171;}
 [data-theme="dark"] canvas{filter:brightness(1.05);}
+/* dark: group rows — override hardcoded light text on dark bg */
+[data-theme="dark"] tbody tr.grp-k td{color:#A8B4CC;}
+[data-theme="dark"] tbody tr.grp-n td{color:#93A5D8;}
+[data-theme="dark"] tbody tr.ctot-os td{color:#A8B4CC;}
+/* dark: campus badges — ink/navy text becomes unreadable on dark backgrounds */
+[data-theme="dark"] .campus-badge.os{background:rgba(255,255,255,.08);color:#EDEDF0;}
+[data-theme="dark"] .campus-badge.n{background:rgba(33,52,99,.35);color:#93A5D8;}
+/* dark: funnel badge (hardcoded #fee2e2) */
+[data-theme="dark"] .f-badge{background:rgba(220,30,51,.25);color:#f87171;}
+[data-theme="dark"] .f-row.won .f-badge{background:rgba(21,128,61,.25);color:#4ade80;}
+/* dark: insight icon backgrounds (teal hardcoded #ccfbf1) */
+[data-theme="dark"] .ins-icon.teal{background:rgba(16,154,169,.2);}
+[data-theme="dark"] .ins-icon.green{background:rgba(21,128,61,.2);}
+[data-theme="dark"] .ins-icon.red{background:rgba(220,30,51,.2);}
+[data-theme="dark"] .ins-icon.amber{background:rgba(180,83,9,.2);}
+/* dark: stat strip hover */
+[data-theme="dark"] .si:hover{background:var(--surface2);}
+/* dark: sim-btn hover */
+[data-theme="dark"] .sim-btn:hover{border-color:var(--text);color:var(--text);}
+/* dark: adj-btn hover */
+[data-theme="dark"] .adj-btn:hover{background:var(--text);color:var(--bg);}
+/* dark: admin drawer pills and buttons */
+[data-theme="dark"] .pill{background:var(--surface2);border-color:var(--border);color:var(--text-muted);}
+[data-theme="dark"] .adm-section-title{color:var(--text-muted);}
+[data-theme="dark"] .adm-info-lbl{color:var(--text-muted);}
+[data-theme="dark"] .adm-info-val{color:var(--text);}
+[data-theme="dark"] .adm-info{background:var(--surface2);}
+/* dark: heatmap th */
+[data-theme="dark"] .hm-table th{color:var(--text-muted);}
+/* dark: tag badges (nat/exo/act use light colors) */
+[data-theme="dark"] .tag.nat{background:rgba(21,128,61,.2);color:#4ade80;}
+[data-theme="dark"] .tag.exo{background:rgba(180,83,9,.2);color:#fbbf24;}
+[data-theme="dark"] .tag.act{background:rgba(220,30,51,.2);color:#f87171;}
+/* dark: badge-proj */
+[data-theme="dark"] .badge-proj{background:rgba(180,83,9,.2);color:#fbbf24;}
+/* dark: sb-bottom override (footer of content, not sidebar) */
+[data-theme="dark"] footer{background:var(--bg);}
+/* dark: page-sub text */
+[data-theme="dark"] .page-sub{color:var(--text-muted);}
+/* dark: community cards border */
+[data-theme="dark"] .comm-card{background:var(--surface);border-color:var(--border);}
+/* dark: thead th gets slightly less harsh background */
+[data-theme="dark"] thead th{background:#252540;}
+[data-theme="dark"] thead th.th-q{background:#7a1020 !important;}
+[data-theme="dark"] thead th.th-n{background:#1a2a55 !important;}
+[data-theme="dark"] .campus-q thead th{background:#7a1020;}
+[data-theme="dark"] .campus-n thead th{background:#1a2a55;}
+/* dark: hdr right area */
+[data-theme="dark"] .btn-logout{border-color:var(--border);color:var(--text-muted);}
+[data-theme="dark"] .btn-logout:hover{border-color:var(--red);color:#f87171;}
+[data-theme="dark"] .btn-icon{color:var(--text-muted);}
+[data-theme="dark"] .btn-icon:hover{background:var(--surface2);color:var(--text);}
+[data-theme="dark"] .hdr-time{color:var(--text-muted);}
+/* dark: sb-toggle button */
+[data-theme="dark"] .sb-toggle{background:var(--surface);border-color:var(--border);}
 
 /* ─── SIDEBAR FLAG & THEME TOGGLES ─── */
 .sb-flag-row{display:flex;gap:6px;padding:8px 8px 4px;}
@@ -497,7 +552,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 
 <!-- LOADING -->
 <div id="loading">
-  <img class="load-logo" src="../logo-v.png" alt="SGC"/>
+  <img class="load-logo" src="logo-v.png" alt="SGC"/>
   <div class="load-ring"></div>
   <div class="load-txt">Cargando dashboard</div>
 </div>
@@ -505,7 +560,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <img class="login-logo" src="../logo-v.png" alt="St George's College"/>
+    <img class="login-logo" src="logo-v.png" alt="St George's College"/>
     <div class="login-rule"></div>
     <p class="login-tagline">Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas</p>
     <button class="btn-google" id="btn-login">
@@ -521,7 +576,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   <!-- HEADER -->
   <header class="hdr">
     <div class="hdr-brand" id="hdr-brand">
-      <img class="hdr-logo" src="../logo-v.png" alt="SGC"/>
+      <img class="hdr-logo" src="../logo-h.png" alt="SGC"/>
       <div class="hdr-titles">
         <div class="hdr-title">Admissions</div>
         <div class="hdr-sub">Analytics &middot; 2026</div>
