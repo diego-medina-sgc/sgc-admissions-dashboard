@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -1608,9 +1608,9 @@ function drawCharts(){
     const nR=[...(D.resumen.north||[])].reverse();
     const ctx=qnc.getContext('2d');
     charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
-      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:kRed,backgroundColor:DK?'rgba(255,99,113,.38)':'rgba(220,30,51,.5)',tension:.4,fill:true,stack:'s',borderWidth:2,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2.5},
-      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:kNavy,backgroundColor:DK?'rgba(124,154,224,.4)':'rgba(33,52,99,.5)',tension:.4,fill:true,stack:'s',borderWidth:2,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kNavy,pointBorderColor:PBC,pointBorderWidth:2},
-    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:kGray,padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:kRed,backgroundColor:DK?'rgba(255,99,113,.22)':'rgba(220,30,51,.28)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2.5},
+      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:kNavy,backgroundColor:DK?'rgba(124,154,224,.24)':'rgba(33,52,99,.26)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kNavy,pointBorderColor:PBC,pointBorderWidth:2},
+    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:kGray,padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:TTP},scales:{y:{stacked:false,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:false},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 
   // Donut K/P/C
