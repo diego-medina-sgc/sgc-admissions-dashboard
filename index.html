@@ -344,7 +344,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   --text:#EDEDF0;--text-muted:#8888A8;
   --row-hover:#252538;--row-tot:#1C1C2C;
   --card-shadow:0 1px 4px rgba(0,0,0,.25),0 6px 20px rgba(0,0,0,.35);
-  --line:rgba(255,255,255,.09);--paper:#1C1C2C;--cream:#13131F;
+  --line:rgba(255,255,255,.09);--hairline:rgba(255,255,255,.07);--paper:#1C1C2C;--cream:#13131F;
   --white:#1C1C2C;--ink-lt:#252538;--red-lt:rgba(220,30,51,.18);
   --navy-lt:rgba(33,52,99,.22);--green-lt:rgba(22,163,74,.18);
   --amber-lt:rgba(180,83,9,.2);
@@ -837,10 +837,10 @@ const ADMIN_EMAIL = 'diego.medina@stgeorges.edu.ar';
 // ── BILINGUAL STRINGS ──
 const STRINGS={
   en:{
-    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conv. Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027',
+    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conversion Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027',
     ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview &mdash; May 2026',
     ph_kpis:'KPIs 2026',ph_kpis_sub:'Key performance indicators',
-    ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Conversion funnel &amp; historical data',
+    ph_pipeline:'Pipeline & Conversion Rate',ph_pipeline_sub:'Conversion pipeline &amp; historical data',
     ph_cohort:'Cohort Retention',ph_cohort_sub:'Generational loyalty &mdash; ISAMS',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     headline:'Headline KPIs',headline_meta:'One School &mdash; May 2026',
@@ -848,9 +848,9 @@ const STRINGS={
     evol:'Enrolment Evolution 2021&ndash;2027',evol_meta:'Historical + Trend Projection',
     s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment &mdash; Occupancy &mdash; Retention',
     s_withdrawals:'Withdrawals by Cause',s_withdrawals_meta:'Analysis 2025 vs 2026',
-    s_pipeline:'Active Pipeline 2027',s_pipeline_meta:'Current funnel snapshot &mdash; Insightly',
-    s_winrate:'Historical Win Rate',s_winrate_meta:'2021&ndash;2026',
-    s_funnel:'Conversion Funnel',s_funnel_meta:'Historical 2021&ndash;2026',
+    s_pipeline:'Active Pipeline 2027',s_pipeline_meta:'Current pipeline snapshot &mdash; Insightly',
+    s_winrate:'Historical Conversion Rate',s_winrate_meta:'2021&ndash;2026',
+    s_funnel:'Conversion Pipeline',s_funnel_meta:'Historical 2021&ndash;2026',
     s_cohort:'Cohort Retention',s_cohort_meta:'Generational loyalty &mdash; ISAMS',
     s_heatmap:'Retention Heatmap',s_heatmap_meta:'Green &ge;95% &middot; Yellow &ge;88% &middot; Red &lt;85%',
     heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
@@ -867,7 +867,7 @@ const STRINGS={
     col_active:'Active',col_lifespan:'Lifespan (yr)',
     col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
     col_adj:'Adjustment',col_final:'Final 2027',col_fact:'Billing USD',
-    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conv. Rate',
+    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conversion Rate',
     btn_tendencial:'Trend (base)',btn_opt:'&#9650; Optimistic +2',btn_cons:'&#9660; Conservative &minus;2',
     scenario:'Scenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Adjustment by year group',north_table:'North &mdash; Adjustment by year group',
@@ -885,14 +885,14 @@ const STRINGS={
     login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
     footer_txt:'St George\'s College &middot; Admissions Dashboard &middot; Live data',
     lang_switch:'Espa&ntilde;ol (AR)',
-    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Conv. Rate 2026',
-    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Ganados / (Ganados + Perdidos)',
+    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Conversion Rate 2026',
+    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Won / (Won + Lost)',
   },
   es:{
-    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Tasa Conv.',tab_cohort:'Retenci&oacute;n de Camadas',tab_proyeccion:'Proyecci&oacute;n 2027',
+    tab_resumen:'Resumen Ejecutivo',tab_kpis:'KPIs 2026',tab_pipeline:'Embudo y Tasa de Conversi&oacute;n',tab_cohort:'Retenci&oacute;n de Camadas',tab_proyeccion:'Proyecci&oacute;n 2027',
     ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Panorama general de admisiones &mdash; Mayo 2026',
     ph_kpis:'KPIs 2026',ph_kpis_sub:'Indicadores clave de desempe&ntilde;o',
-    ph_pipeline:'Pipeline & Win Rate',ph_pipeline_sub:'Funnel de conversi&oacute;n e hist&oacute;rico',
+    ph_pipeline:'Embudo y Tasa de Conversi&oacute;n',ph_pipeline_sub:'Embudo de conversi&oacute;n e hist&oacute;rico',
     ph_cohort:'Retenci&oacute;n de Camadas',ph_cohort_sub:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
     headline:'Indicadores Destacados',headline_meta:'One School &mdash; Mayo 2026',
@@ -900,9 +900,9 @@ const STRINGS={
     evol:'Evoluci&oacute;n de Matr&iacute;cula 2021&ndash;2027',evol_meta:'Hist&oacute;rico + Proyecci&oacute;n Tendencial',
     s_kpis:'KPIs por Secci&oacute;n',s_kpis_meta:'Matr&iacute;cula &mdash; Ocupaci&oacute;n &mdash; Retenci&oacute;n',
     s_withdrawals:'Bajas por Causa',s_withdrawals_meta:'An&aacute;lisis de bajas 2025 vs 2026',
-    s_pipeline:'Pipeline Activo 2027',s_pipeline_meta:'Foto del funnel en curso &mdash; Insightly',
+    s_pipeline:'Embudo Activo 2027',s_pipeline_meta:'Estado actual del embudo &mdash; Insightly',
     s_winrate:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_winrate_meta:'2021&ndash;2026',
-    s_funnel:'Funnel de Conversi&oacute;n',s_funnel_meta:'Hist&oacute;rico 2021&ndash;2026',
+    s_funnel:'Embudo de Conversi&oacute;n',s_funnel_meta:'Hist&oacute;rico 2021&ndash;2026',
     s_cohort:'Retenci&oacute;n de Camadas',s_cohort_meta:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
     s_heatmap:'Mapa de Calor &mdash; Retenci&oacute;n',s_heatmap_meta:'Verde &ge;95% &middot; Amarillo &ge;88% &middot; Rojo &lt;85%',
     heatmap_desc:'Cada celda muestra qu&eacute; porcentaje de los alumnos de esa cohorte sigue activo hoy. Verde oscuro = mayor retenci&oacute;n.',
@@ -916,10 +916,10 @@ const STRINGS={
     col_year:'A&ntilde;o',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',
     col_ret:'Retenci&oacute;n',col_new:'Nuevos Alumnos',col_with:'Bajas',col_prosp:'Prospectos',
     col_cause:'Causa',col_type:'Tipo',col_cohort:'Camada',col_enrolled:'Ingresaron',
-    col_active:'Activos',col_lifespan:'Lifespan (yr)',
+    col_active:'Activos',col_lifespan:'Permanencia (a&ntilde;os)',
     col_grade:'Grado',col_base:'Base 2026',col_proy:'Proy. base',
     col_adj:'Ajuste',col_final:'Final 2027',col_fact:'Facturaci&oacute;n USD',
-    col_stage:'Etapa',col_pipeline:'Embudo',col_won:'Ganados',col_wr:'Tasa Conv.',
+    col_stage:'Etapa',col_pipeline:'Embudo',col_won:'Ganados',col_wr:'Tasa de Conversi&oacute;n',
     btn_tendencial:'Tendencial (base)',btn_opt:'&#9650; Optimista +2',btn_cons:'&#9660; Conservador &minus;2',
     scenario:'Escenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Ajuste por grado',north_table:'North &mdash; Ajuste por grado',
@@ -928,17 +928,17 @@ const STRINGS={
     enrol_chart:'Matr&iacute;cula One School 2021&ndash;2027',enrol_sub:'Barras hist&oacute;ricas + proyecci&oacute;n 2027',
     qn_chart:'Quilmes vs North',qn_sub:'Evoluci&oacute;n de matr&iacute;cula por campus',
     wr_chart:'Evoluci&oacute;n Tasa de Conversi&oacute;n',wr_sub:'Pipeline vs Ganados vs Tasa%',
-    cohort_chart:'Retenci&oacute;n por Cohorte',cohort_sub:'Porcentaje de retenci&oacute;n anual',
+    cohort_chart:'Retenci&oacute;n por Camada',cohort_sub:'Porcentaje de retenci&oacute;n anual',
     donut_chart:'Composici&oacute;n de Matr&iacute;cula',donut_sub:'K / Prep / College por campus',
     kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
-    nav_label:'Navegaci&oacute;n',conn:'Conexi&oacute;n',active:'Activa',last_update:'&Uacute;ltima sync',
+    nav_label:'Navegaci&oacute;n',conn:'Conexi&oacute;n',active:'Activa',last_update:'&Uacute;ltima actualizaci&oacute;n',
     fact_toggle:'Mostrar Facturaci&oacute;n USD',sections:'Secciones visibles',
     logout:'Salir',loading:'Cargando dashboard',
     login_tagline:'Dashboard de Admisiones 2026<br>Acceso restringido a cuentas autorizadas',
     footer_txt:'St George\'s College &middot; Dashboard de Admisiones &middot; Datos en tiempo real',
     lang_switch:'English (UK)',
     insight_total:'Total Alumnos',insight_var:'Variaci&oacute;n Anual',insight_new:'Nuevos Alumnos',insight_wr:'Tasa de Conversi&oacute;n 2026',
-    prom_ponderado:'Prom. ponderado',qs_north:'Quilmes + North',pipeline_abierto:'Funnel abierto',won_lost:'Ganados / (Ganados + Perdidos)',
+    prom_ponderado:'Prom. ponderado',qs_north:'Quilmes + North',pipeline_abierto:'Embudo abierto',won_lost:'Ganados / (Ganados + Perdidos)',
   }
 };
 let lang='en';
@@ -979,6 +979,7 @@ function setTheme(th){
   localStorage.setItem('sgc-theme',th);
   applyTheme(th);
   buildSidebarNav();
+  if(typeof D!=='undefined'&&D)drawCharts();
 }
 applyTheme(currentTheme);
 
@@ -1157,7 +1158,7 @@ function updateSimDisplay(){
     el.querySelector('.sim-val').textContent=Math.round(final).toLocaleString('es-AR');
     if(showFact)el.querySelector('.sim-fact').textContent=fUSD(fact)+' USD';
     const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
-    el.querySelector('.sim-delta').innerHTML='vs base '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
+    el.querySelector('.sim-delta').innerHTML=t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
   };
   setCard('sim-q',qT.final,qT.base,qT.facturacion);
   setCard('sim-n',nT.final,nT.base,nT.facturacion);
@@ -1509,12 +1510,12 @@ function buildProyeccion(){
   wrap.appendChild(totDiv);
 
   const ctrl=document.createElement('div');ctrl.className='sim-controls';
-  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">Escenario:</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">Tendencial (base)</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="border-color:var(--green);color:var(--green)">▲ Optimista +2</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="border-color:var(--red);color:var(--red)">▼ Conservador −2</button>';
+  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">'+t('scenario')+'</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">'+t('btn_tendencial')+'</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="border-color:var(--green);color:var(--green)">'+t('btn_opt')+'</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="border-color:var(--red);color:var(--red)">'+t('btn_cons')+'</button>';
   wrap.appendChild(ctrl);
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">Facturación USD</th>':'')+'</tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
     let totBase=0,totProy=0,totAdj=0,totFact=0;
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
@@ -1527,7 +1528,7 @@ function buildProyeccion(){
     });
     const totFinal=totProy+totAdj;
     const totDelta=totAdj!==0?'<span class="'+(totAdj>0?'val-pos':'val-neg')+'"> ('+fSign(totAdj)+')</span>':'';
-    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">TOTAL</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
+    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">'+t('total_lbl')+'</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
     h2+='</tbody></table></div></div>';
     return h2;
   };
@@ -1553,6 +1554,9 @@ Chart.unregister(ChartDataLabels);
 
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
+  // destroy any existing chart instances so theme re-renders don't collide
+  Object.keys(charts).forEach(function(k){try{if(charts[k])charts[k].destroy();}catch(e){}});
+  charts={};
   const C=CC[campus];
   const DK=isDarkMode();
   const PBC=DK?'#1C1C2C':'#fff'; // point border color
@@ -1625,12 +1629,12 @@ function drawCharts(){
     }
   }
 
-  // Win Rate dual-axis
+  // Conversion Rate dual-axis
   const wrc=document.getElementById('chart-wr');
   if(wrc&&D.winrate){
     const labels=D.winrate.map(r=>String(r.yr));
     const F=D.winrate.map(r=>getWRF(r));
-    const pipeBg='rgba('+Crgb+',.24)';
+    const pipeBg=DK?'rgba(140,152,176,.4)':'rgba('+Crgb+',.24)';
     charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[
       {type:'bar',label:t('col_pipeline'),data:F.map(f=>parseFloat(f.pipeline)||0),backgroundColor:pipeBg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:3},
       {type:'bar',label:t('col_won'),data:F.map(f=>parseFloat(f.won)||0),backgroundColor:kTeal,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
@@ -1843,6 +1847,8 @@ function showAccessDenied(){
 }
 function showLoad(msg){const el=document.getElementById('loading');el.querySelector('.load-txt').textContent=msg||'Cargando...';el.classList.remove('hidden');}
 function hideLoad(){document.getElementById('loading').classList.add('hidden');}
+
+window.__setD=function(d){D=d;try{hideLoad();}catch(e){}var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';window.showLoad=function(){};window.fetchData=function(){};showApp();try{initSimAdj();}catch(e){}render();window.scrollTo(0,0);};
 function applyDensity(){var m=document.getElementById('main');if(m)m.classList.toggle('compact',localStorage.getItem('sgc-density')==='compact');}
 function showSkeleton(){
   var m=document.getElementById('main');if(!m)return;
