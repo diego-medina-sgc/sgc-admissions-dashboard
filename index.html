@@ -4,8 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SGC — Admissions Dashboard 2026</title>
-<meta name="description" content="St. George's College Admissions Dashboard 2026 — Real-time enrollment, retention, pipeline and projection data for Quilmes and North campuses."/>
+<meta name="description" content="St. George's College Admissions Dashboard 2026"/>
 
+<!-- Se flexibiliza la política de seguridad para permitir los scripts de Vercel y tus imágenes -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com https://va.vercel-scripts.com https://vercel.live https://script.google.com https://script.googleusercontent.com; frame-src https://accounts.google.com https://script.google.com https://script.googleusercontent.com;">
 
 <link rel="icon" type="image/png" href="favicon.png"/>
@@ -45,12 +46,15 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .btn-google:hover{border-color:var(--navy);background:#FCFBF9;box-shadow:0 4px 16px rgba(40,33,28,.1);}
 #app{display:none;}
 .hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);border-top:3px solid var(--red);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 2px 8px rgba(33,52,99,.06);}
-.hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
+.hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;}
 .hdr-logo{height:50px;width:auto;flex-shrink:0;}
 .hdr-titles{display:none;}
+.hdr-title{font-size:1rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+.hdr-sub{font-size:.58rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-top:1px;}
 .hdr-mid{flex:1;display:flex;align-items:center;gap:10px;padding-left:4px;}
-.campus-group{display:flex;gap:5px;}
-.campus-btn{padding:5px 13px;border-radius:20px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.campus-group{display:flex;gap:5px;background:var(--cream);padding:3px;border-radius:22px;border:1px solid var(--line);}
+.campus-btn{padding:5px 13px;border-radius:20px;border:1.5px solid transparent;background:transparent;font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.campus-btn:hover:not(.active){background:var(--white);color:var(--ink);}
 .campus-btn[data-c="os"].active{background:var(--ink);border-color:var(--ink);color:#fff;}
 .campus-btn[data-c="q"].active{background:var(--red);border-color:var(--red);color:#fff;}
 .campus-btn[data-c="n"].active{background:var(--navy);border-color:var(--navy);color:#fff;}
@@ -60,7 +64,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .btn-logout{background:none;border:1.5px solid var(--line);color:var(--gray);padding:5px 12px;border-radius:6px;font-size:.72rem;font-family:'Asap',sans-serif;cursor:pointer;transition:all .15s;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
-.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);transition:width .25s,transform .25s ease;overflow:hidden;}
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);}
 .sb-nav{flex:1;padding:14px 10px;overflow-y:auto;overflow-x:hidden;}
 .sb-lbl{font-size:.56rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9C968B;padding:14px 10px 6px;white-space:nowrap;font-family:'Asap Condensed',sans-serif;}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--gray);font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:3px;border:none;background:none;width:100%;text-align:left;}
@@ -181,14 +185,17 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 </head>
 <body>
 
+<!-- LOADING -->
 <div id="loading">
+  <img class="load-logo" src="logo-v.png" alt="SGC" width="180" height="127"/>
   <div class="load-ring"></div>
   <div class="load-txt">Cargando dashboard</div>
 </div>
 
+<!-- LOGIN -->
 <div id="login-screen" role="main">
   <div class="login-box">
-    <div style="font-size:2rem; font-weight:700; color:var(--ink); margin-bottom:-10px;">St George's</div>
+    <img class="login-logo" src="logo-v.png" alt="St George's College" width="220" height="155"/>
     <div class="login-rule"></div>
     <p class="login-tagline"><strong>Dashboard de Admisiones 2026</strong>Acceso restringido a cuentas autorizadas</p>
     <button class="btn-google" id="btn-login">
@@ -198,9 +205,10 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   </div>
 </div>
 
+<!-- ACCESS DENIED -->
 <div id="access-denied" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:#F1EDE5;">
   <div class="login-box" style="text-align:center;gap:20px;">
-    <div style="font-size:2rem; font-weight:700; color:var(--ink); margin-bottom:-10px;">St George's</div>
+    <img class="login-logo" src="logo-v.png" alt="St George's College" width="220" height="155"/>
     <div class="login-rule"></div>
     <div style="font-weight:700;font-size:1rem;color:#1A1F35;margin-bottom:6px">Acceso no autorizado</div>
     <div style="font-size:.82rem;color:#64748B;line-height:1.6">La cuenta <strong id="denied-email" style="color:#DC1E33"></strong><br>no tiene permisos para acceder a este dashboard.</div>
@@ -208,10 +216,15 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <header class="hdr">
     <div class="hdr-brand" id="hdr-brand">
-      <div style="font-size:1.2rem; font-weight:700; color:var(--ink);">St George's</div>
+      <img class="hdr-logo" id="hdr-logo-img" src="logo-h.png" alt="SGC" width="118" height="50"/>
+      <div class="hdr-titles">
+        <div class="hdr-title">Admissions</div>
+        <div class="hdr-sub">Analytics &middot; 2026</div>
+      </div>
     </div>
     <div class="hdr-mid">
       <span class="hdr-context-lbl" id="hdr-viewing" style="font-family:'Asap Condensed'; font-size:0.6rem; font-weight:700; color:#9C968B; text-transform:uppercase; margin-right:5px;">Viendo</span>
@@ -239,85 +252,19 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 </div>
 
 <script>
-const CLIENT_ID   = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
-const API_URL     = 'https://script.google.com/macros/s/AKfycbx2Ad-6YTGwPTcXV2Q_Bs-dgDVsXGRwy4wR2h7uIvhGOMvgWK7G260IEDDd8prg97At/exec'; // <--- ¡RECORDÁ PEGAR TU URL ACÁ!
-
-// ── BILINGUAL STRINGS ──
-const STRINGS={
-  en:{
-    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conversion Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027', tab_marketing:'Marketing', tab_alumni:'Alumni',
-    ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview — May 2026',
-    ph_kpis:'KPIs 2026',ph_kpis_sub:'Key performance indicators',
-    ph_pipeline:'Pipeline & Conversion Rate',ph_pipeline_sub:'Conversion pipeline & historical data',
-    ph_cohort:'Cohort Retention',ph_cohort_sub:'Generational loyalty — ISAMS',
-    ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
-    ph_marketing:'Marketing', ph_marketing_sub:'Pauta digital y app',
-    ph_alumni:'Alumni', ph_alumni_sub:'Métricas de egresados',
-    headline:'Headline KPIs',headline_meta:'One School — May 2026',
-    community:'Community Indicators',community_meta:'Profile 2026',
-    evol:'Enrolment Evolution 2021–2027',evol_meta:'Historical + Trend Projection',
-    s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment — Occupancy — Retention',
-    s_withdrawals:'Withdrawals by Cause',s_withdrawals_meta:'Analysis 2025 vs 2026',
-    s_pipeline:'Active Pipeline 2027',s_pipeline_meta:'Current pipeline snapshot — Insightly',
-    s_winrate:'Historical Conversion Rate',s_winrate_meta:'2021–2026',
-    s_funnel:'Conversion Pipeline',s_funnel_meta:'Historical 2021–2026',
-    s_cohort:'Cohort Retention',s_cohort_meta:'Generational loyalty — ISAMS',
-    s_heatmap:'Retention Heatmap',s_heatmap_meta:'Green ≥95% · Yellow ≥88% · Red <85%',
-    heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
-    total_alumnos:'Total Students',var_anual:'Annual Variation',
-    ret_quilmes:'Quilmes Retention',ret_north:'North Retention',
-    new_students:'New Students',win_rate:'Conversion Rate 2026',prospectos:'Active Prospects',
-    ret_campus:'Retention',
-    og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
-    foreign:'International Students',priority:'Priority Community',
-    og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Siblings + Staff',
-    col_year:'Year',col_level:'Level',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
-    col_ret:'Retention',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospects',
-    col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',
-    col_active:'Active',col_lifespan:'Lifespan (yr)',
-    col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
-    col_adj:'Adjustment',col_final:'Final 2027',col_fact:'Billing USD',
-    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conversion Rate',
-    btn_tendencial:'Trend (base)',btn_opt:'▲ Optimistic +2',btn_cons:'▼ Conservative −2',
-    scenario:'Scenario:',vs_base:'vs base',
-    quilmes_table:'Quilmes — Adjustment by year group',north_table:'North — Adjustment by year group',
-    quilmes_2027:'Quilmes 2027',north_2027:'North 2027',os_2027:'One School 2027',
-    proy_not_avail:'Projection data not available.',proj_note:'proj.',
-    enrol_chart:'Enrolment One School 2021–2027',enrol_sub:'Historical bars + 2027 projection',
-    qn_chart:'Quilmes vs North',qn_sub:'Enrolment by campus',
-    wr_chart:'Conversion Rate History',wr_sub:'Pipeline vs Won vs Conv.%',
-    cohort_chart:'Retention by Cohort',cohort_sub:'Annual retention %',
-    donut_chart:'Enrolment Composition',donut_sub:'K / Prep / College by campus',
-    kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
-    nav_label:'Navigation',conn:'Connection',active:'Active',last_update:'Last sync',viewing:'Viewing',
-    fact_toggle:'Show Billing USD',sections:'Visible sections',
-    logout:'Sign out',loading:'Loading dashboard',
-    login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
-    footer_txt:'St George\'s College · Admissions Dashboard · Live data',
-    lang_switch:'Español (AR)',
-    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Conversion Rate 2026',
-    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Won / (Won + Lost)',
-  }
-};
-let lang='en';
-const t=k=>STRINGS[lang][k]||STRINGS.en[k]||k;
+// ¡PEGÁ TU URL DE APPS SCRIPT ACÁ!
+const API_URL = 'https://script.google.com/macros/s/AKfycbx2Ad-6YTGwPTcXV2Q_Bs-dgDVsXGRwy4wR2h7uIvhGOMvgWK7G260IEDDd8prg97At/exec'; 
+const CLIENT_ID = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
 
 const TABS=[
-  {id:'resumen',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
-  {id:'kpis',      icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
-  {id:'pipeline',  icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
-  {id:'cohort',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
-  {id:'proyeccion',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
-  {id:'marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>'},
-  {id:'alumni',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>'}
+  {id:'resumen',   label:'Executive Summary', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
+  {id:'kpis',      label:'KPIs 2026', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
+  {id:'pipeline',  label:'Pipeline & Conversion Rate', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
+  {id:'cohort',    label:'Cohort Retention', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {id:'proyeccion',label:'Projection 2027', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
+  {id:'marketing', label:'Marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>'},
+  {id:'alumni',    label:'Alumni', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>'}
 ];
-Object.defineProperty(TABS[0],'label',{get:()=>t('tab_resumen')});
-Object.defineProperty(TABS[1],'label',{get:()=>t('tab_kpis')});
-Object.defineProperty(TABS[2],'label',{get:()=>t('tab_pipeline')});
-Object.defineProperty(TABS[3],'label',{get:()=>t('tab_cohort')});
-Object.defineProperty(TABS[4],'label',{get:()=>t('tab_proyeccion')});
-Object.defineProperty(TABS[5],'label',{get:()=>t('tab_marketing')});
-Object.defineProperty(TABS[6],'label',{get:()=>t('tab_alumni')});
 
 let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
 let charts={},simAdj={},showFact=true;
@@ -351,7 +298,7 @@ window.onload=()=>{
   s.onload=initAuth; document.head.appendChild(s);
 };
 
-// ── FETCH Y ADAPTADOR DE DATOS ──
+// ── FETCH Y TRADUCTOR DE DATOS (EL FIX PRINCIPAL) ──
 async function fetchData(){
   document.getElementById('loading').classList.remove('hidden');
   document.querySelector('.load-txt').textContent = 'Sincronizando datos...';
@@ -361,82 +308,83 @@ async function fetchData(){
 
   const onSuccess=data=>{
     const raw = data.data || {};
-    
-    // Funciones de búsqueda seguras para evitar errores JS
     const getArr = (arr) => Array.isArray(arr) ? arr : [];
-    const safeFind = (arr, key, val, retCol) => {
-      const row = getArr(arr).find(r => String(r[key]||'').toLowerCase() === String(val).toLowerCase());
-      return row ? row[retCol] : 0;
+    
+    // Función extractora blindada contra nombres de columna
+    const findKPI = (arr, kpiName, col) => {
+      const row = getArr(arr).find(r => String(r['KPI']||r['Causa']||r['Etapa']||r['Nivel']||r['Indicador']||'').toLowerCase() === String(kpiName).toLowerCase());
+      return row ? (row[col] || 0) : 0;
     };
-    const findKPI = (arr, kpiName, col) => safeFind(arr, 'KPI', kpiName, col);
+
+    // Pivoteador para dar vuelta la tabla de Enrollment Horizontal a Vertical
+    const pivotEnrollment = (campusName) => {
+      const rows = getArr(raw.exec_enroll).filter(r => String(r.Campus||'').toUpperCase() === campusName.toUpperCase());
+      const getVal = (sec, yr) => { const r = rows.find(x => x['Sección'] === sec); return r ? (r[yr] || 0) : 0; };
+      const years = ['2021', '2022', '2023', '2024', '2025*', '2026', '2027†'];
+      return years.map(y => ({
+        yr: y.replace('*','').replace('†',''),
+        kinder: getVal('Kinder', y),
+        prep: getVal('Prep', y),
+        college: getVal('College', y),
+        total: getVal('Total '+campusName, y) || getVal('Total', y),
+        crec: 0
+      })).reverse();
+    };
 
     D = {
       lastUpdate: data.lastUpdate,
       headline: {
         total_alumnos: findKPI(raw.exec_head, 'Total Students 2026', 'One School'),
-        variacion_anual: findKPI(raw.exec_head, 'Anual Variation', 'One School'),
+        variacion_anual: findKPI(raw.exec_head, 'Variación anual (vs 2025)', 'One School'),
         new_students: findKPI(raw.exec_head, 'New Students 2026', 'One School'),
-        win_rate: findKPI(raw.adm_head, 'Conversion Rate 2026', 'One School'),
-        prospectos: findKPI(raw.adm_head, 'Total Prospects 2026', 'One School'),
-        retencion_quilmes: findKPI(raw.ret_head, 'Retention Rate', 'Quilmes'),
-        retencion_north: findKPI(raw.ret_head, 'Retention Rate', 'North')
+        win_rate: findKPI(raw.exec_head, 'Conversion Rate 2026', 'One School'),
+        prospectos: findKPI(raw.exec_head, 'Active Prospects 2026', 'One School'),
+        retencion_quilmes: findKPI(raw.exec_head, 'Retention Rate 2026', 'Quilmes'),
+        retencion_north: findKPI(raw.exec_head, 'Retention Rate 2026', 'North')
       },
       community: {
-        ogQuilmes: findKPI(raw.exec_comm, 'OG Parent Quilmes', 'Quilmes') || findKPI(raw.exec_comm, 'OG Parent', 'Quilmes'),
-        ogNorth: findKPI(raw.exec_comm, 'OG Parent North', 'North') || findKPI(raw.exec_comm, 'OG Parent', 'North'),
-        foreignStudents: findKPI(raw.exec_comm, 'International students', 'One School'),
-        priorityCommunity: findKPI(raw.exec_comm, 'Priority community', 'One School')
+        ogQuilmes: findKPI(raw.exec_head, 'OG Parent Rate 2026', 'Quilmes'),
+        ogNorth: findKPI(raw.exec_head, 'OG Parent Rate 2026', 'North'),
+        foreignStudents: findKPI(raw.exec_head, 'International Students Rate 2026', 'One School'),
+        priorityCommunity: (parseFloat(findKPI(raw.exec_comm, 'Priority Community (OG + Intl.)', 'Quilmes (#)')) + parseFloat(findKPI(raw.exec_comm, 'Priority Community (OG + Intl.)', 'North (#)'))) / (parseFloat(findKPI(raw.exec_head, 'Total Students 2026', 'One School')) || 1)
       },
-      funnel: getArr(raw.adm_funnel).map(r => ({
-        etapa: r.Etapa || r.Stage || '',
-        llegaron: r.Llegaron || r.Pipeline || 0,
-        pctPerd: r['Drop %'] || r.Drop || 0,
-        isWon: String(r.Etapa || r.Stage || '').toLowerCase().includes('won') || String(r.Etapa || '').toLowerCase().includes('place offering')
+      // Calcula los embudos sumando las columnas de pipeline 2026 y 2027
+      funnel: ['Consultation', 'Doc. Request', 'Info. Meeting', 'Parents Interv.', 'Students Interv.', 'HM Approval', 'Place Offering'].map(s => ({
+        etapa: s,
+        llegaron: getArr(raw.adm_pipe).reduce((acc, r) => acc + (parseFloat(r[s])||0), 0),
+        pctPerd: 0,
+        isWon: s === 'Place Offering'
       })),
       pipeline: getArr(raw.adm_pipe).map(r => ({
-        etapa: r.Nivel || r.Level || '',
+        etapa: r['Nivel'] || '',
         qK: r['Consultation']||0, qP: r['Info. Meeting']||0, qC: r['Parents Interv.']||0, qT: r['TOTAL']||0,
         isWon: false
-      })),
+      })).filter(r => r.etapa),
       proyeccion: {
         quilmes: getArr(raw.proj).filter(r => r.Campus === 'Quilmes').map(r => ({
-          grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026']
-        })),
+          grado: r['Grado'], proy: r['Proy. final'], facturacion: r['Facturación USD'], base2026: r['Base 2026']
+        })).filter(r => r.grado && r.grado !== '—'),
         north: getArr(raw.proj).filter(r => r.Campus === 'North').map(r => ({
-          grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026']
-        })),
-        quilmesTotal: {alumnos: 0, facturacion: 0},
-        northTotal: {alumnos: 0, facturacion: 0}
+          grado: r['Grado'], proy: r['Proy. final'], facturacion: r['Facturación USD'], base2026: r['Base 2026']
+        })).filter(r => r.grado && r.grado !== '—'),
+        quilmesTotal: { alumnos: 0, facturacion: 0 },
+        northTotal: { alumnos: 0, facturacion: 0 }
       },
       withdrawals: getArr(raw.ret_with).map(r => ({
-        causa: r.Cause || r.Causa, tipo: r.Type || r.Tipo,
-        q2025: r['Q 2025']||0, q2026: r['Q 2026']||0, n2025: r['N 2025']||0, n2026: r['N 2026']||0, tot2025: r['OS 2025']||0, tot2026: r['OS 2026']||0
-      })),
+        causa: r['Causa'], tipo: r['Tipo'],
+        q2025: r['Q 2025']||0, q2026: r['Q 2026']||0, n2025: r['N 2025']||0, n2026: r['N 2026']||0, tot2025: 0, tot2026: r['Total 2026']||0
+      })).filter(r => r.causa && r.causa !== 'Causa' && r.causa !== 'TOTAL'),
       resumen: {
-        quilmes: getArr(raw.exec_enroll).filter(r=>r.Campus==='Quilmes').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec})),
-        north: getArr(raw.exec_enroll).filter(r=>r.Campus==='North').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec})),
-        oneSchool: getArr(raw.exec_enroll).filter(r=>r.Campus==='One School').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec}))
-      },
-      quilmes: {
-        total: {matricula:0, ocupacion:0, vacantes:0, retencion:0, new_students:0, withdrawals:0, prospectos:0},
-        kinder: {total:{}, "K1":{}, "K2":{}, "K3":{}, "K4":{}, "K5":{}},
-        prep: {total:{}, "P1":{}, "P2":{}, "P3":{}, "P4":{}, "P5":{}, "P6":{}},
-        college: {total:{}, "C1":{}, "C2":{}, "C3":{}, "C4":{}, "C5":{}, "C6":{}}
-      },
-      north: {
-        total: {matricula:0, ocupacion:0, vacantes:0, retencion:0, new_students:0, withdrawals:0, prospectos:0},
-        kinder: {total:{}, "K1":{}, "K2":{}, "K3":{}, "K4":{}, "K5":{}},
-        prep: {total:{}, "P1":{}, "P2":{}, "P3":{}, "P4":{}, "P5":{}, "P6":{}},
-        college: {total:{}, "C1":{}, "C2":{}, "C3":{}, "C4":{}, "C5":{}, "C6":{}}
+        quilmes: pivotEnrollment('Quilmes'),
+        north: pivotEnrollment('North'),
+        oneSchool: pivotEnrollment('ONE SCHOOL')
       },
       winrate: getArr(raw.adm_hist).map(r => ({
-        yr: r.Year || r.yr, qPipeline: r.qPipeline||0, qWon: r.qWon||0, qWR: r.qWR||0, nPipeline: r.nPipeline||0, nWon: r.nWon||0, nWR: r.nWR||0, osPipeline: r.osPipeline||0, osWon: r.osWon||0, osWR: r.osWR||0
+        yr: r['Año'], pipeline: r['Pipeline Total']||0, won: r['WON']||0, wr: r['Conversion Rate']||0
       })),
-      cohort: getArr(raw.cohort).map(r => ({
-        yr: r.Cohort || r.yr, qIngresaron: r.qIngresaron||0, qActivos: r.qActivos||0, qRet: r.qRet||0, qLifespan: r.qLifespan||0, nIngresaron: r.nIngresaron||0, nActivos: r.nActivos||0, nRet: r.nRet||0, nLifespan: r.nLifespan||0
-      })),
+      
       // Datos directos para tablas de nuevas solapas
-      rawMarketing: getArr(raw.marketing),
+      rawMarketing: getArr(raw.mkt_health),
       rawAlumni: getArr(raw.alumni)
     };
 
@@ -476,63 +424,53 @@ async function fetchData(){
   document.head.appendChild(s);
 }
 
-// ── FORMAT ──
+// ── FORMAT Y HELPERS ──
 const escHtml=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const fN=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
+const fN=v=>{if(v===null||v===undefined||v===''||v==='—')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
 const fP=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return(n*100).toFixed(1)+'%';};
-const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);if(n>-2&&n<2&&String(v).includes('.'))return fP(n);return fN(n);};
 const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">▼ '+s+'</span>':'<span class="val-pos">▲ '+s+'</span>';};
 const fUSD=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v);if(isNaN(n))return'--';return'$'+Math.round(n).toLocaleString('en-US');};
-const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
-const STAGE_EN={'Prospecto':'Prospect','Prospectos':'Prospects','Primera Reunión':'First Meeting','1ª Reunión':'First Meeting','Reunión':'Meeting','Propuesta Enviada':'Proposal Sent','Propuesta enviada':'Proposal Sent','En evaluación':'Under Review','Evaluación':'Under Review','Pre-Inscripto':'Pre-Enrolled','Pre inscripto':'Pre-Enrolled','Inscripto':'Enrolled','Matrículado':'Enrolled','Ganados':'Won','Ganado':'Won','Perdidos':'Lost','Perdido':'Lost','No contactado':'Not Contacted'};
-function trStage(s){return lang==='en'?(STAGE_EN[s]||s):s;};
-
-// ── CAMPUS DATA ──
-function getCampusData(){
-  if(campus==='q')return D.quilmes;
-  if(campus==='n')return D.north;
-  const q=D.quilmes||{},n=D.north||{};
-  const m=(a,b)=>({matricula:(parseFloat(a&&a.matricula)||0)+(parseFloat(b&&b.matricula)||0),ocupacion:null,vacantes:(parseFloat(a&&a.vacantes)||0)+(parseFloat(b&&b.vacantes)||0),retencion:null,new_students:(parseFloat(a&&a.new_students)||0)+(parseFloat(b&&b.new_students)||0),withdrawals:(parseFloat(a&&a.withdrawals)||0)+(parseFloat(b&&b.withdrawals)||0),prospectos:(parseFloat(a&&a.prospectos)||0)+(parseFloat(b&&b.prospectos)||0)});
-  const mS=(sec,gr)=>{const r={total:m(q[sec]&&q[sec].total,n[sec]&&n[sec].total)};gr.forEach(g=>{r[g]=m(q[sec]&&q[sec][g],n[sec]&&n[sec][g]);});return r;};
-  return{total:m(q.total,n.total),kinder:mS('kinder',['K1','K2','K3','K4','K5']),prep:mS('prep',['P1','P2','P3','P4','P5','P6']),college:mS('college',['C1','C2','C3','C4','C5','C6'])};
-}
-function getWRF(r){if(campus==='q')return{pipeline:r.qPipeline,won:r.qWon,wr:r.qWR};if(campus==='n')return{pipeline:r.nPipeline,won:r.nWon,wr:r.nWR};return{pipeline:r.osPipeline,won:r.osWon,wr:r.osWR};}
-function getCohF(r){if(campus==='q')return{ing:r.qIngresaron,act:r.qActivos,ret:r.qRet,life:r.qLifespan};if(campus==='n')return{ing:r.nIngresaron,act:r.nActivos,ret:r.nRet,life:r.nLifespan};const i=(parseFloat(r.qIngresaron)||0)+(parseFloat(r.nIngresaron)||0);const a=(parseFloat(r.qActivos)||0)+(parseFloat(r.nActivos)||0);return{ing:i,act:a,ret:i>0?a/i:null,life:null};}
 
 const CC={os:{main:'#1A1F35'},q:{main:'#DC1E33'},n:{main:'#213463'}};
 
 // ── SIMULATOR ──
 function initSimAdj(){
   simAdj={};
-  const py=D.proyeccion;if(!py)return;
-  (py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});
-  (py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});
+  if(!D.proyeccion) return;
+  (D.proyeccion.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});
+  (D.proyeccion.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});
 }
 function calcSimTotal(ck){
-  const py=D.proyeccion;if(!py)return{base:0,final:0,facturacion:0};
-  const rows=ck==='q'?py.quilmes:py.north;
-  const totRow=ck==='q'?py.quilmesTotal:py.northTotal;
-  let alumnos=0,factAdj=0;
+  const rows = ck==='q' ? D.proyeccion.quilmes : D.proyeccion.north;
+  let alumnos=0,factAdj=0, base=0;
   (rows||[]).forEach(r=>{
     const key=ck+'_'+r.grado;
     const adj=simAdj[key]||0;
     const proy=parseFloat(r.proy)||0;
+    const b26=parseFloat(r.base2026)||0;
     const factPerAlumno=proy>0?(parseFloat(r.facturacion)||0)/proy:0;
     alumnos+=Math.round(proy+adj);
+    base+=b26;
     factAdj+=factPerAlumno*(proy+adj);
   });
-  return{base:parseFloat((totRow||{}).alumnos)||0,final:alumnos,facturacion:factAdj,baseFact:parseFloat((totRow||{}).facturacion)||0};
+  return{base:base,final:alumnos,facturacion:factAdj};
 }
-function applyScenario(type){
-  const py=D.proyeccion;if(!py)return;
+window.applyScenario = function(type){
+  if(!D.proyeccion) return;
   if(type==='reset')initSimAdj();
-  else if(type==='opt'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=1;});}
-  else if(type==='cons'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=-2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=-1;});}
+  else if(type==='opt'){
+    (D.proyeccion.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=2;});
+    (D.proyeccion.north||[]).forEach(r=>{simAdj['n_'+r.grado]=1;});
+  }
+  else if(type==='cons'){
+    (D.proyeccion.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=-2;});
+    (D.proyeccion.north||[]).forEach(r=>{simAdj['n_'+r.grado]=-1;});
+  }
   updateSimDisplay();
-}
-function updateSimDisplay(){
-  const py=D.proyeccion;if(!py)return;
-  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado})),...(py.north||[]).map(r=>({key:'n_'+r.grado}))].forEach(({key})=>{
+};
+window.updateSimDisplay = function(){
+  if(!D.proyeccion) return;
+  [...(D.proyeccion.quilmes||[]).map(r=>({key:'q_'+r.grado})),...(D.proyeccion.north||[]).map(r=>({key:'n_'+r.grado}))].forEach(({key})=>{
     const el=document.getElementById('adj_'+key);if(el)el.value=simAdj[key]||0;
   });
   const qT=calcSimTotal('q'),nT=calcSimTotal('n');
@@ -542,32 +480,31 @@ function updateSimDisplay(){
     el.querySelector('.sim-val').textContent=Math.round(final).toLocaleString('es-AR');
     if(showFact)el.querySelector('.sim-fact').textContent=fUSD(fact)+' USD';
     const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
-    el.querySelector('.sim-delta').innerHTML=t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
+    el.querySelector('.sim-delta').innerHTML='vs base '+fN(base)+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
   };
   setCard('sim-q',qT.final,qT.base,qT.facturacion);
   setCard('sim-n',nT.final,nT.base,nT.facturacion);
   setCard('sim-os',osFinal,osBase,osFact);
-  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado,proy:parseFloat(r.proy)||0,r})),...(py.north||[]).map(r=>({key:'n_'+r.grado,proy:parseFloat(r.proy)||0,r}))].forEach(({key,proy,r})=>{
-    const el=document.getElementById('final_'+key);
-    if(el)el.textContent=Math.round(proy+(simAdj[key]||0)).toLocaleString('es-AR');
-    const felt=document.getElementById('factrow_'+key);
-    if(felt&&showFact){const adj2=simAdj[key]||0;felt.textContent=proy>0?fUSD(r.facturacion/proy*(proy+adj2)):'--';}
-  });
+  
   ['q','n'].forEach(ck=>{
-    const rows=ck==='q'?py.quilmes:py.north;
-    if(!rows||!rows.length)return;
+    const rows=ck==='q'?D.proyeccion.quilmes:D.proyeccion.north;
     let tProy=0,tFinal=0,tFact=0;
     rows.forEach(r=>{
+      const key = ck+'_'+r.grado;
       const proy=parseFloat(r.proy)||0;
-      const adj=simAdj[ck+'_'+r.grado]||0;
-      tProy+=proy;tFinal+=Math.round(proy+adj);
+      const adj=simAdj[key]||0;
+      const el=document.getElementById('final_'+key);
+      if(el)el.textContent=Math.round(proy+adj).toLocaleString('es-AR');
+      const felt=document.getElementById('factrow_'+key);
+      if(felt&&showFact) felt.textContent=proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--';
+      tProy+=proy; tFinal+=Math.round(proy+adj);
       if(proy>0)tFact+=r.facturacion/proy*(proy+adj);
     });
     const elP=document.getElementById('tot-proy-'+ck);if(elP)elP.textContent=fN(tProy);
     const elF=document.getElementById('tot-final-'+ck);if(elF)elF.textContent=tFinal.toLocaleString('es-AR');
     const elFact=document.getElementById('tot-fact-'+ck);if(elFact&&showFact)elFact.textContent=fUSD(tFact);
   });
-}
+};
 
 // ── RENDER Y VISTAS ──
 function render(){
@@ -607,10 +544,11 @@ function pageHeader(title,sub){
 function sec(title,meta,content){
   const s=document.createElement('div');s.className='sec';
   s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
-  s.appendChild(content);return s;
+  if(content) s.appendChild(content);
+  return s;
 }
 
-// ARREGLO: La función genérica ahora devuelve correctamente un Node HTML y no un string.
+// Tablas genéricas (Ahora devuelven Nodes reales, arreglando el error del click)
 function buildGenericTableNode(data2D) {
   const wrap = document.createElement('div'); 
   wrap.className = 'tw scroll-y';
@@ -639,21 +577,21 @@ function buildGenericTableNode(data2D) {
 
 function buildMarketing() {
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_marketing'),t('ph_marketing_sub')));
-  wrap.appendChild(sec('Métricas Globales', '', buildGenericTableNode(D.rawMarketing)));
+  wrap.appendChild(pageHeader('Marketing', 'Fidu App KPIs'));
+  wrap.appendChild(sec('Métricas', '', buildGenericTableNode(D.rawMarketing)));
   return wrap;
 }
 
 function buildAlumni() {
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_alumni'),t('ph_alumni_sub')));
+  wrap.appendChild(pageHeader('Alumni', 'Métricas de Egresados'));
   wrap.appendChild(sec('Demographics & KPIs', '', buildGenericTableNode(D.rawAlumni)));
   return wrap;
 }
 
 function buildResumen(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_resumen'),t('ph_resumen_sub')));
+  wrap.appendChild(pageHeader('Executive Summary', 'Panorama general 2026'));
 
   const h=D.headline||{};
   const varN=(parseFloat(h.variacion_anual)||0)*100;
@@ -661,68 +599,67 @@ function buildResumen(){
 
   const ins=document.createElement('div');ins.className='insight-strip';
   const insData=[
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:t('insight_total'),val:fN(h.total_alumnos)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:t('insight_var'),val:(varN>=0?'▲ ':'▼ ')+Math.abs(varN).toFixed(2)+'%'},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:t('insight_new'),val:fN(h.new_students)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:t('insight_wr'),val:wrPct.toFixed(1)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:'Total Students',val:fN(h.total_alumnos)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:'Anual Var.',val:(varN>=0?'▲ ':'▼ ')+Math.abs(varN).toFixed(2)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:'New Students',val:fN(h.new_students)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:'Conv. Rate',val:wrPct.toFixed(1)+'%'},
   ];
   insData.forEach(i=>{ins.innerHTML+='<div class="insight"><div class="ins-icon '+i.cls+'">'+i.icon+'</div><div><div class="ins-lbl">'+i.lbl+'</div><div class="ins-val">'+i.val+'</div></div></div>';});
   wrap.appendChild(ins);
 
   const strip=document.createElement('div');strip.className='stat-strip';
   const statItems=[
-    {lbl:t('total_alumnos'),val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
-    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
-    {lbl:t('ret_quilmes'),val:fP(h.retencion_quilmes),foot:t('prom_ponderado'),cls:'c-red'},
-    {lbl:t('ret_north'),val:fP(h.retencion_north),foot:t('prom_ponderado'),cls:'c-navy'},
-    {lbl:t('new_students'),val:fN(h.new_students),foot:t('qs_north'),cls:''},
-    {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost'),cls:''},
-    {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto'),cls:''},
+    {lbl:'Total Students',val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
+    {lbl:'Anual Var.',val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
+    {lbl:'Ret. Quilmes',val:fP(h.retencion_quilmes),foot:'Prom. Ponderado',cls:'c-red'},
+    {lbl:'Ret. North',val:fP(h.retencion_north),foot:'Prom. Ponderado',cls:'c-navy'},
+    {lbl:'New Students',val:fN(h.new_students),foot:'Qs + North',cls:''},
+    {lbl:'Win Rate',val:fP(h.win_rate),foot:'Won / Pipeline',cls:''},
+    {lbl:'Prospects',val:fN(h.prospectos),foot:'Activos 2026',cls:''},
   ];
   statItems.forEach(s=>{
     strip.innerHTML+='<div class="si"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+s.cls+'">'+s.val+'</div><div class="si-foot">'+s.foot+'</div></div>';
   });
-  wrap.appendChild(sec(t('headline'),t('headline_meta'),strip));
+  wrap.appendChild(sec('Headline KPIs', '', strip));
 
   if(D.community){
     const cg=document.createElement('div');cg.className='comm-grid';
-    [{lbl:t('og_quilmes'),val:fP(D.community.ogQuilmes),foot:t('og_foot')},
-     {lbl:t('og_north'),val:fP(D.community.ogNorth),foot:t('og_foot')},
-     {lbl:t('foreign'),val:fP(D.community.foreignStudents),foot:t('os_foot')},
-     {lbl:t('priority'),val:fP(D.community.priorityCommunity),foot:t('og_plus'),lead:true},
+    [{lbl:'OG Quilmes',val:fP(D.community.ogQuilmes),foot:'Parents'},
+     {lbl:'OG North',val:fP(D.community.ogNorth),foot:'Parents'},
+     {lbl:'Int. Students',val:fP(D.community.foreignStudents),foot:'One School'},
+     {lbl:'Priority Comm.',val:fP(D.community.priorityCommunity),foot:'OG + Intl.',lead:true},
     ].forEach(c=>{cg.innerHTML+='<div class="comm-card'+(c.lead?' lead':'')+'" '+(c.lead?'style="box-shadow: 0 0 0 1px rgba(16,154,169,.4)"':'')+'><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
-    wrap.appendChild(sec(t('community'),t('community_meta'),cg));
+    wrap.appendChild(sec('Community Indicators', '', cg));
   }
 
   const re=D.resumen;
   if(re && re.quilmes && re.quilmes.length > 0){
     const tw=document.createElement('div');tw.className='tw';
-    const years=[2027,2026,2025,2024,2023,2022,2021];
-    let h2='<table><thead><tr><th>'+t('col_year')+'</th>';
+    const years=['2027', '2026', '2025', '2024', '2023', '2022', '2021'];
+    let h2='<table><thead><tr><th>Año</th>';
     if(campus==='os'||campus==='q')h2+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Total</th>';
     if(campus==='os'||campus==='n')h2+='<th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Total</th>';
     if(campus==='os')h2+='<th class="r">OS Total</th>';
-    h2+='<th class="r">Crec. %</th></tr></thead><tbody>';
+    h2+='</tr></thead><tbody>';
     years.forEach(yr=>{
-      const isP=yr===2027;
+      const isP=yr==='2027';
       const q=(re.quilmes||[]).find(r=>r.yr===yr)||{};
       const n=(re.north||[]).find(r=>r.yr===yr)||{};
       const os=(re.oneSchool||[]).find(r=>r.yr===yr)||{};
-      const crec=campus==='os'?os.crec:campus==='q'?q.crec:n.crec;
-      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">'+t('proj_note')+'</span>':'')+'</td>';
+      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">proj.</span>':'')+'</td>';
       if(campus==='os'||campus==='q')h2+='<td class="r c-q">'+fN(q.kinder)+'</td><td class="r c-q">'+fN(q.prep)+'</td><td class="r c-q">'+fN(q.college)+'</td><td class="r c-q" style="font-weight:700">'+fN(q.total)+'</td>';
       if(campus==='os'||campus==='n')h2+='<td class="r c-n">'+fN(n.kinder)+'</td><td class="r c-n">'+fN(n.prep)+'</td><td class="r c-n">'+fN(n.college)+'</td><td class="r c-n" style="font-weight:700">'+fN(n.total)+'</td>';
       if(campus==='os')h2+='<td class="r" style="font-weight:700">'+fN(os.total)+'</td>';
-      h2+='<td class="r">'+fCrp(crec)+'</td></tr>';
+      h2+='</tr>';
     });
     h2+='</tbody></table>';tw.innerHTML=h2;
-    wrap.appendChild(sec(t('evol'),t('evol_meta'),tw));
+    wrap.appendChild(sec('Enrolment Evolution 2021–2027', 'Historical + Proyección', tw));
 
     const two=document.createElement('div');two.className='two';
     const cc1=document.createElement('div');cc1.className='cc';
-    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('enrol_chart')+'</div><div class="cc-sub">'+t('enrol_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
+    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Enrolment</div><div class="cc-sub">Bars + Proyección</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
     const cc2=document.createElement('div');cc2.className='cc';
-    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('qn_chart')+'</div><div class="cc-sub">'+t('qn_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
+    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Quilmes vs North</div><div class="cc-sub">Evolución de matrícula</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
     two.appendChild(cc1);two.appendChild(cc2);
     wrap.appendChild(two);
   }
@@ -731,157 +668,76 @@ function buildResumen(){
 
 function buildKpis(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_kpis'),t('ph_kpis_sub')));
-  const cd=getCampusData();
-  
-  if(cd && cd.total){
-    const tw=document.createElement('div');tw.className='tw';
-    const lvls=[
-      {lbl:t('kinder'),tot:cd.kinder&&cd.kinder.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder&&cd.kinder[k]}))},
-      {lbl:t('prep'),tot:cd.prep&&cd.prep.total,rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep&&cd.prep[k]}))},
-      {lbl:t('college'),tot:cd.college&&cd.college.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college&&cd.college[k]}))},
-    ];
-    let ht='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_new')+'</th><th class="r">'+t('col_with')+'</th><th class="r">'+t('col_prosp')+'</th></tr></thead><tbody>';
-    lvls.forEach(s=>{
-      ht+='<tr class="grp"><td colspan="9">'+s.lbl+'</td></tr>';
-      const tot=s.tot||{};
-      ht+='<tr class="tot"><td></td><td style="text-align:left">'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td><td class="r">'+fV(tot.ocupacion)+'</td><td class="r">'+fN(tot.vacantes)+'</td><td class="r">'+fV(tot.retencion)+'</td><td class="r">'+fN(tot.new_students)+'</td><td class="r">'+fN(tot.withdrawals)+'</td><td class="r">'+fN(tot.prospectos)+'</td></tr>';
-      s.rows.forEach(({k,d})=>{d=d||{};ht+='<tr><td></td><td>'+k+'</td><td class="r">'+fV(d.matricula)+'</td><td class="r">'+fV(d.ocupacion)+'</td><td class="r">'+fV(d.vacantes)+'</td><td class="r">'+fV(d.retencion)+'</td><td class="r">'+fV(d.new_students)+'</td><td class="r">'+fV(d.withdrawals)+'</td><td class="r">'+fV(d.prospectos)+'</td></tr>';});
-    });
-    const ct=cd.total||{};
-    ht+='<tr class="ctot"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">'+fV(ct.ocupacion)+'</td><td class="r">'+fN(ct.vacantes)+'</td><td class="r">'+fV(ct.retencion)+'</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
-    ht+='</tbody></table>';tw.innerHTML=ht;
-    wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),tw));
-    
-    const donutWrap=document.createElement('div');
-    donutWrap.style.cssText='max-width:560px;margin:28px auto 0;';
-    const cc=document.createElement('div');cc.className='cc';
-    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap" style="height:118px"><canvas id="chart-donut"></canvas></div>';
-    donutWrap.appendChild(cc);
-    wrap.appendChild(donutWrap);
-  }
-
-  const tw2=document.createElement('div');tw2.className='tw';
-  let h2='<table><thead><tr><th>'+t('col_cause')+'</th><th style="text-align:left">'+t('col_type')+'</th>';
-  if(campus==='os')h2+='<th class="r th-q">Q 2025</th><th class="r th-q">Q 2026</th><th class="r th-n">N 2025</th><th class="r th-n">N 2026</th><th class="r">OS 2025</th><th class="r">OS 2026</th>';
-  else h2+='<th class="r">2025</th><th class="r">2026</th>';
-  h2+='</tr></thead><tbody>';
-  (D.withdrawals||[]).forEach(w=>{
-    const tc=w.tipo==='Natural'?'nat':w.tipo==='Exogena'?'exo':'act';
-    h2+='<tr><td style="font-weight:500">'+escHtml(w.causa)+'</td><td style="text-align:left"><span class="tag '+tc+'">'+escHtml(w.tipo)+'</span></td>';
-    if(campus==='os')h2+='<td class="r c-q">'+fN(w.q2025)+'</td><td class="r c-q" style="font-weight:700">'+fN(w.q2026)+'</td><td class="r c-n">'+fN(w.n2025)+'</td><td class="r c-n" style="font-weight:700">'+fN(w.n2026)+'</td><td class="r">'+fN(w.tot2025)+'</td><td class="r" style="font-weight:700">'+fN(w.tot2026)+'</td>';
-    else if(campus==='q')h2+='<td class="r">'+fN(w.q2025)+'</td><td class="r" style="font-weight:700">'+fN(w.q2026)+'</td>';
-    else h2+='<td class="r">'+fN(w.n2025)+'</td><td class="r" style="font-weight:700">'+fN(w.n2026)+'</td>';
-    h2+='</tr>';
-  });
-  h2+='</tbody></table>';tw2.innerHTML=h2;
-  const withSec=sec(t('s_withdrawals'),t('s_withdrawals_meta'),tw2);
-  withSec.style.marginTop='36px';
-  wrap.appendChild(withSec);
+  wrap.appendChild(pageHeader('KPIs 2026', 'Key Performance Indicators'));
+  // Al no estar provistos los datos granulares por grado en las nuevas pestañas OUT, 
+  // mostramos un mensaje o se puede borrar la pestaña si no es necesaria.
+  const msg = document.createElement('div');
+  msg.innerHTML = '<p style="color:var(--gray); padding:10px"><i>Datos granulares por grado no provistos en la nueva exportación.</i></p>';
+  wrap.appendChild(msg);
   return wrap;
 }
 
 function buildPipeline(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_pipeline'),t('ph_pipeline_sub')));
+  wrap.appendChild(pageHeader('Pipeline & Conversion Rate', 'Embudo de conversión e histórico'));
 
   const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+t('col_stage')+'</th>';
+  let h='<table><thead><tr><th>Etapa</th>';
   if(campus==='os')h+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Tot</th><th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Tot</th><th class="r">One School</th>';
-  else h+='<th class="r">'+t('kinder')+'</th><th class="r">'+t('prep')+'</th><th class="r">'+t('college')+'</th><th class="r">Total</th>';
+  else h+='<th class="r">Kinder</th><th class="r">Prep</th><th class="r">College</th><th class="r">Total</th>';
   h+='</tr></thead><tbody>';
   (D.pipeline||[]).forEach(p=>{
-    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+escHtml(p.etapa)+'</td>';
-    if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">'+fN(p.nK)+'</td><td class="r c-n">'+fN(p.nP)+'</td><td class="r c-n">'+fN(p.nC)+'</td><td class="r c-n" style="font-weight:700">'+fN(p.nT)+'</td><td class="r" style="font-weight:700">'+fN(p.total)+'</td>';
+    h+='<tr><td style="font-weight:400">'+escHtml(p.etapa)+'</td>';
+    if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">--</td><td class="r c-n">--</td><td class="r c-n">--</td><td class="r c-n" style="font-weight:700">--</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
     else if(campus==='q')h+='<td class="r">'+fN(p.qK)+'</td><td class="r">'+fN(p.qP)+'</td><td class="r">'+fN(p.qC)+'</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
-    else h+='<td class="r">'+fN(p.nK)+'</td><td class="r">'+fN(p.nP)+'</td><td class="r">'+fN(p.nC)+'</td><td class="r" style="font-weight:700">'+fN(p.nT)+'</td>';
+    else h+='<td class="r">--</td><td class="r">--</td><td class="r">--</td><td class="r" style="font-weight:700">--</td>';
     h+='</tr>';
   });
   h+='</tbody></table>';tw.innerHTML=h;
-  wrap.appendChild(sec(t('s_pipeline'),t('s_pipeline_meta'),tw));
+  wrap.appendChild(sec('Active Pipeline', 'Prospectos activos por nivel', tw));
 
   const two=document.createElement('div');two.className='two';
   const tw2=document.createElement('div');tw2.className='tw';
-  let h2='<table><thead><tr><th>'+t('col_year')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
+  let h2='<table><thead><tr><th>Año</th><th class="r">Pipeline</th><th class="r">Won</th><th class="r">Conv. Rate</th></tr></thead><tbody>';
   (D.winrate||[]).forEach(r=>{
-    const f=getWRF(r);
-    const wr=(parseFloat(f.wr)||0)*100;
+    const wr=(parseFloat(r.wr)||0)*100;
     const cls=wr>=15?'val-pos':wr<8?'val-neg':'';
-    h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.pipeline)+'</td><td class="r">'+fN(f.won)+'</td><td class="r"><span class="'+cls+'">'+fP(f.wr)+'</span></td></tr>';
+    h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(r.pipeline)+'</td><td class="r">'+fN(r.won)+'</td><td class="r"><span class="'+cls+'">'+fP(r.wr)+'</span></td></tr>';
   });
   h2+='</tbody></table>';tw2.innerHTML=h2;
   const cc=document.createElement('div');cc.className='cc';
-  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">Conversion Rate History</div><div class="cc-sub">Pipeline vs Won vs Conv.%</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
   two.appendChild(tw2);two.appendChild(cc);
-  wrap.appendChild(sec(t('s_winrate'),t('s_winrate_meta'),two));
+  wrap.appendChild(sec('Historical Conversion Rate', '2021-2026', two));
 
   const fd=document.createElement('div');fd.className='funnel';
   const maxF=Math.max(...(D.funnel||[]).map(x=>parseFloat(x.llegaron)||0),1);
   (D.funnel||[]).forEach(item=>{
     const pct=((parseFloat(item.llegaron)||0)/maxF*100);
-    const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
     const div=document.createElement('div');
     div.className='f-row'+(item.isWon?' won':'');
-    div.innerHTML='<div class="f-lbl">'+escHtml(trStage(item.etapa))+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
+    div.innerHTML='<div class="f-lbl">'+escHtml(item.etapa)+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+'</div>';
     fd.appendChild(div);
   });
-  wrap.appendChild(sec(t('s_funnel'),t('s_funnel_meta'),fd));
+  wrap.appendChild(sec('Conversion Pipeline', 'Volumen por etapa', fd));
   return wrap;
 }
 
 function buildCohort(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_cohort'),t('ph_cohort_sub')));
-
-  const two=document.createElement('div');two.className='two';
-  const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+t('col_cohort')+'</th><th class="r">'+t('col_enrolled')+'</th><th class="r">'+t('col_active')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_lifespan')+'</th></tr></thead><tbody>';
-  (D.cohort||[]).forEach(r=>{
-    const f=getCohF(r);
-    const ret=(parseFloat(f.ret)||0)*100;
-    const retCls=ret>=95?'val-pos':ret<85?'val-neg':'';
-    h+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.ing)+'</td><td class="r">'+fN(f.act)+'</td><td class="r"><span class="'+retCls+'">'+fP(f.ret)+'</span></td><td class="r">'+(f.life?parseFloat(f.life).toFixed(1):'--')+'</td></tr>';
-  });
-  h+='</tbody></table>';tw.innerHTML=h;
-  const cc=document.createElement('div');cc.className='cc';
-  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('cohort_chart')+'</div><div class="cc-sub">'+t('cohort_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div>';
-  two.appendChild(tw);two.appendChild(cc);
-  wrap.appendChild(sec(t('s_cohort'),t('s_cohort_meta'),two));
-
-  if(D.cohort&&D.cohort.length){
-    const hmWrap=document.createElement('div');
-    const desc=document.createElement('div');
-    desc.style.cssText='background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.78rem;color:var(--gray);line-height:1.6;display:flex;align-items:flex-start;gap:12px;';
-    desc.innerHTML='<svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('heatmap_desc')+'</span>';
-    hmWrap.appendChild(desc);
-    const hm=document.createElement('div');hm.className='heatmap';
-    const heatColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#F0F3FA';if(n>=97)return'#15803d';if(n>=95)return'#22c55e';if(n>=92)return'#86efac';if(n>=88)return'#fef08a';if(n>=85)return'#fca5a5';return'#ef4444';};
-    const textColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#6E6A60';return n>=95?'#fff':n>=88?'#78350f':'#7f1d1d';};
-    let ht='<table class="hm-table"><thead><tr><th>'+t('col_cohort')+'</th>';
-    if(campus==='os'||campus==='q')ht+='<th>Q Ret%</th>';
-    if(campus==='os'||campus==='n')ht+='<th>N Ret%</th>';
-    if(campus==='os')ht+='<th>Q '+t('col_active')+'</th><th>N '+t('col_active')+'</th>';
-    ht+='</tr></thead><tbody>';
-    D.cohort.forEach(r=>{
-      ht+='<tr><td style="font-weight:700;text-align:left">'+r.yr+'</td>';
-      if(campus==='os'||campus==='q'){const v=r.qRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
-      if(campus==='os'||campus==='n'){const v=r.nRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
-      if(campus==='os')ht+='<td>'+fN(r.qActivos)+'</td><td>'+fN(r.nActivos)+'</td>';
-      ht+='</tr>';
-    });
-    ht+='</tbody></table>';hm.innerHTML=ht;
-    hmWrap.appendChild(hm);
-    wrap.appendChild(sec(t('s_heatmap'),t('s_heatmap_meta'),hmWrap));
-  }
+  wrap.appendChild(pageHeader('Cohort Retention', 'Retención Histórica'));
+  const msg = document.createElement('div');
+  msg.innerHTML = '<p style="color:var(--gray); padding:10px"><i>Datos por cohorte no provistos en la exportación (Pestaña CALC_cohort_rates incluye tasas de transición, no heatmap).</i></p>';
+  wrap.appendChild(msg);
   return wrap;
 }
 
 function buildProyeccion(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
+  wrap.appendChild(pageHeader('Projection 2027', 'Simulador de escenarios por grado'));
 
   const py=D.proyeccion;
-  if(!py){const p=document.createElement('p');p.textContent=t('proy_not_avail');wrap.appendChild(p);return wrap;}
+  if(!py || (!py.quilmes.length && !py.north.length)){const p=document.createElement('p');p.textContent='Datos no disponibles.';wrap.appendChild(p);return wrap;}
 
   const qT=calcSimTotal('q'),nT=calcSimTotal('n');
   const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
@@ -889,18 +745,18 @@ function buildProyeccion(){
   const totDiv=document.createElement('div');totDiv.className='sim-totals';
   const mkCard=(id,cls,label,final,base,fact)=>{
     const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
-    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">&ndash;</div>')+'<div class="sim-delta">'+t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
+    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">&ndash;</div>')+'<div class="sim-delta">vs base '+fN(base)+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
   };
-  totDiv.innerHTML=mkCard('sim-q','q',t('quilmes_2027'),qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n',t('north_2027'),nT.final,nT.base,nT.facturacion)+mkCard('sim-os','',t('os_2027'),osFinal,osBase,osFact);
+  totDiv.innerHTML=mkCard('sim-q','q','Quilmes 2027',qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n','North 2027',nT.final,nT.base,nT.facturacion)+mkCard('sim-os','','One School 2027',osFinal,osBase,osFact);
   wrap.appendChild(totDiv);
 
   const ctrl=document.createElement('div');ctrl.className='sim-controls';
-  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">'+t('scenario')+'</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">'+t('btn_tendencial')+'</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="border-color:var(--green);color:var(--green)">'+t('btn_opt')+'</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="border-color:var(--red);color:var(--red)">'+t('btn_cons')+'</button>';
+  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">Escenario:</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">Tendencial (base)</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="color:var(--green);border-color:var(--green)">▲ Optimista +2</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="color:var(--red);border-color:var(--red)">▼ Conservador −2</button>';
   wrap.appendChild(ctrl);
 
   const mkTable=(title,ck,rows,color)=>{
     if(!rows||!rows.length)return'';
-    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. base</th><th class="r" style="min-width:130px">Ajuste</th><th class="r" style="min-width:90px">Final 2027</th>'+(showFact?'<th class="r fact-col">Facturación USD</th>':'')+'</tr></thead><tbody>';
     let totBase=0,totProy=0,totAdj=0,totFact=0;
     rows.forEach(r=>{
       const key=ck+'_'+r.grado;
@@ -908,16 +764,16 @@ function buildProyeccion(){
       const proy=parseFloat(r.proy)||0;
       totBase+=parseFloat(r.base2026)||0;totProy+=proy;totAdj+=adj;
       if(proy>0)totFact+=r.facturacion/proy*(proy+adj);
-      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">−</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;updateSimDisplay()">−</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
     });
     const totFinal=totProy+totAdj;
-    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">'+t('total_lbl')+'</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
+    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">TOTAL</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
     h2+='</tbody></table></div></div>';
     return h2;
   };
 
   const tables=document.createElement('div');
-  tables.innerHTML=(campus!=='n'?mkTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33'):'')+(campus!=='q'?mkTable(t('north_table'),'n',py.north,'#213463'):'');
+  tables.innerHTML=(campus!=='n'?mkTable('Quilmes - Ajuste por grado','q',py.quilmes,'#DC1E33'):'')+(campus!=='q'?mkTable('North - Ajuste por grado','n',py.north,'#213463'):'');
   wrap.appendChild(tables);
   return wrap;
 }
@@ -939,11 +795,11 @@ function drawCharts(){
     charts.enrol=new Chart(ec,{
       type:'bar',
       data:{
-        labels:spine.map(r=>String(r.yr)+(r.yr===2027?' ▸':'')),
+        labels:spine.map(r=>String(r.yr)+(r.yr==='2027'?' ▸':'')),
         datasets:[
-          {label:t('kinder'),data:getLvl('kinder'),backgroundColor:'#6AB2E2',stack:'s'},
-          {label:t('prep'),data:getLvl('prep'),backgroundColor:'#6B6EB3',stack:'s'},
-          {label:t('college'),data:getLvl('college'),backgroundColor:'#213463',stack:'s',borderRadius:{topLeft:7,topRight:7}},
+          {label:'Kinder',data:getLvl('kinder'),backgroundColor:'#6AB2E2',stack:'s'},
+          {label:'Prep',data:getLvl('prep'),backgroundColor:'#6B6EB3',stack:'s'},
+          {label:'College',data:getLvl('college'),backgroundColor:'#213463',stack:'s',borderRadius:{topLeft:7,topRight:7}},
         ]
       },
       options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{stacked:true},x:{stacked:true,grid:{display:false}}}}
@@ -954,51 +810,21 @@ function drawCharts(){
   if(qnc&&D.resumen){
     const qR=[...(D.resumen.quilmes||[])].reverse();
     const nR=[...(D.resumen.north||[])].reverse();
-    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
+    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)),datasets:[
       {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:'rgba(220,30,51,.28)',tension:.4,fill:true,borderWidth:3,pointRadius:0},
       {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213463',backgroundColor:'rgba(33,52,99,.26)',tension:.4,fill:true,borderWidth:3,pointRadius:0},
     ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{},x:{grid:{display:false}}}}});
   }
 
-  const dc=document.getElementById('chart-donut');
-  if(dc){
-    const cd=getCampusData();
-    if(cd){
-      const kTotal=parseFloat((cd.kinder&&cd.kinder.total&&cd.kinder.total.matricula)||0);
-      const pTotal=parseFloat((cd.prep&&cd.prep.total&&cd.prep.total.matricula)||0);
-      const cTotal=parseFloat((cd.college&&cd.college.total&&cd.college.total.matricula)||0);
-      const donutColors=campus==='q'?['#DC1E33','#6AB2E2','#6B6EB3']:campus==='n'?['#213463','#109AA9','#6B6EB3']:['#213463','#DC1E33','#109AA9'];
-      charts.donut=new Chart(dc,{
-        type:'bar',
-        data:{labels:[''],datasets:[
-          {label:t('kinder'),data:[kTotal],backgroundColor:donutColors[0],stack:'s',borderRadius:{topLeft:9,bottomLeft:9}},
-          {label:t('prep'),data:[pTotal],backgroundColor:donutColors[1],stack:'s'},
-          {label:t('college'),data:[cTotal],backgroundColor:donutColors[2],stack:'s',borderRadius:{topRight:9,bottomRight:9}},
-        ]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{x:{stacked:true,display:false},y:{stacked:true,display:false}}}
-      });
-    }
-  }
-
   const wrc=document.getElementById('chart-wr');
   if(wrc&&D.winrate){
+    // Agrupamos el winrate por año general (o podemos usar el campus seleccionado)
     const labels=D.winrate.map(r=>String(r.yr));
-    const F=D.winrate.map(r=>getWRF(r));
     charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[
-      {type:'bar',label:t('col_pipeline'),data:F.map(f=>parseFloat(f.pipeline)||0),backgroundColor:'rgba(26,31,53,.24)',borderRadius:6,yAxisID:'y',order:3},
-      {type:'bar',label:t('col_won'),data:F.map(f=>parseFloat(f.won)||0),backgroundColor:'#109AA9',borderRadius:6,yAxisID:'y',order:2},
-      {type:'line',label:t('col_wr'),data:F.map(f=>+(parseFloat(f.wr)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,yAxisID:'y1',order:1},
+      {type:'bar',label:'Pipeline',data:D.winrate.map(f=>parseFloat(f.pipeline)||0),backgroundColor:'rgba(26,31,53,.24)',borderRadius:6,yAxisID:'y',order:3},
+      {type:'bar',label:'Won',data:D.winrate.map(f=>parseFloat(f.won)||0),backgroundColor:'#109AA9',borderRadius:6,yAxisID:'y',order:2},
+      {type:'line',label:'Conv. Rate',data:D.winrate.map(f=>+(parseFloat(f.wr)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,yAxisID:'y1',order:1},
     ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{},y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
-  }
-
-  const coc=document.getElementById('chart-cohort');
-  if(coc&&D.cohort){
-    const labels=D.cohort.map(r=>String(r.yr));
-    const ds=campus==='os'?[
-      {label:'Quilmes',data:D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4},
-      {label:'North',data:D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)),borderColor:'#213463',backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4},
-    ]:[{label:campus==='q'?'Quilmes':'North',data:D.cohort.map(r=>campus==='q'?+(parseFloat(r.qRet)*100).toFixed(1):+(parseFloat(r.nRet)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4}];
-    charts.cohort=new Chart(coc,{type:'line',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{min:78,max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
   }
 }
 
@@ -1006,7 +832,7 @@ function drawCharts(){
 function buildSidebarNav(){
   const nav=document.getElementById('sb-nav');
   nav.innerHTML='';
-  const lbl=document.createElement('div');lbl.className='sb-lbl';lbl.innerHTML=t('nav_label');nav.appendChild(lbl);
+  const lbl=document.createElement('div');lbl.className='sb-lbl';lbl.innerHTML='Navigation';nav.appendChild(lbl);
   TABS.forEach(function(tab){
     const btn=document.createElement('button');
     btn.className='nav-item'+(tab.id===activeTab?' active':'');
