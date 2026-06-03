@@ -4,12 +4,29 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SGC — Admissions Dashboard 2026</title>
+<meta name="description" content="St. George's College Admissions Dashboard 2026 — Real-time enrollment, retention, pipeline and projection data for Quilmes and North campuses."/>
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com https://va.vercel-scripts.com https://vercel.live https://script.google.com https://script.googleusercontent.com; frame-src https://accounts.google.com https://script.google.com https://script.googleusercontent.com;">
+
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="apple-touch-icon" href="favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Asap+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <style>
-/* ─── DISEÑO ORIGINAL EXACTO ─── */
-:root{--ink:#1A1F35;--red:#DC1E33;--navy:#213463;--celeste:#6AB2E2;--violet:#6B6EB3;--teal:#109AA9;--cream:#F1EDE5;--paper:#EAE5DB;--gray:#6A655C;--line:#E6E1D6;--hairline:#EDE9E0;--white:#fff;--green:#15803d;--green-lt:#dcfce7;--amber:#b45309;--amber-lt:#fef3c7;--red-lt:#FBE9EB;--navy-lt:#E9ECF4;--ink-lt:#EDE8DE;--card-shadow:0 1px 2px rgba(40,33,28,.04),0 4px 14px rgba(40,33,28,.05);--card-shadow-hover:0 2px 6px rgba(40,33,28,.05),0 12px 30px rgba(40,33,28,.09);--r-sm:8px;--r:12px;--r-lg:16px;--sidebar-w:248px;--sidebar-collapsed:60px;--header-h:58px;}
+:root{
+  --ink:#1A1F35;--red:#DC1E33;--navy:#213463;
+  --celeste:#6AB2E2;--violet:#6B6EB3;--teal:#109AA9;
+  --cream:#F1EDE5;--paper:#EAE5DB;--gray:#6A655C;
+  --line:#E6E1D6;--hairline:#EDE9E0;--white:#fff;
+  --green:#15803d;--green-lt:#dcfce7;
+  --amber:#b45309;--amber-lt:#fef3c7;
+  --red-lt:#FBE9EB;--navy-lt:#E9ECF4;--ink-lt:#EDE8DE;
+  --card-shadow:0 1px 2px rgba(40,33,28,.04),0 4px 14px rgba(40,33,28,.05);
+  --r-sm:8px;--r:12px;--r-lg:16px;
+  --sidebar-w:248px;--sidebar-collapsed:60px;--header-h:58px;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-height:100vh;overflow-x:hidden;}
 #loading{position:fixed;inset:0;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:900;transition:opacity .4s;}
@@ -28,14 +45,12 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .btn-google:hover{border-color:var(--navy);background:#FCFBF9;box-shadow:0 4px 16px rgba(40,33,28,.1);}
 #app{display:none;}
 .hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);border-top:3px solid var(--red);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 2px 8px rgba(33,52,99,.06);}
-.hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;}
+.hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
+.hdr-logo{height:50px;width:auto;flex-shrink:0;}
 .hdr-titles{display:none;}
-.hdr-title{font-size:1rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
-.hdr-sub{font-size:.58rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-top:1px;}
 .hdr-mid{flex:1;display:flex;align-items:center;gap:10px;padding-left:4px;}
-.campus-group{display:flex;gap:5px;background:var(--cream);padding:3px;border-radius:22px;border:1px solid var(--line);}
-.campus-btn{padding:5px 13px;border-radius:20px;border:1.5px solid transparent;background:transparent;font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .18s;white-space:nowrap;}
-.campus-btn:hover:not(.active){background:var(--white);color:var(--ink);}
+.campus-group{display:flex;gap:5px;}
+.campus-btn{padding:5px 13px;border-radius:20px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.73rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .18s;white-space:nowrap;}
 .campus-btn[data-c="os"].active{background:var(--ink);border-color:var(--ink);color:#fff;}
 .campus-btn[data-c="q"].active{background:var(--red);border-color:var(--red);color:#fff;}
 .campus-btn[data-c="n"].active{background:var(--navy);border-color:var(--navy);color:#fff;}
@@ -45,42 +60,89 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .btn-logout{background:none;border:1.5px solid var(--line);color:var(--gray);padding:5px 12px;border-radius:6px;font-size:.72rem;font-family:'Asap',sans-serif;cursor:pointer;transition:all .15s;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
-.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);}
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);transition:width .25s,transform .25s ease;overflow:hidden;}
 .sb-nav{flex:1;padding:14px 10px;overflow-y:auto;overflow-x:hidden;}
 .sb-lbl{font-size:.56rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9C968B;padding:14px 10px 6px;white-space:nowrap;font-family:'Asap Condensed',sans-serif;}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--gray);font-size:.82rem;font-weight:500;white-space:nowrap;transition:all .15s;margin-bottom:3px;border:none;background:none;width:100%;text-align:left;}
 .nav-item:hover{background:var(--cream);color:var(--ink);}
 .nav-item.active{background:var(--red-lt);color:var(--red);font-weight:700;padding-left:9px;box-shadow:inset 3px 0 0 var(--red);}
-.nav-item svg{flex-shrink:0;width:18px;height:18px;}
+.nav-item.active svg{color:var(--red);}
 .content{margin-top:var(--header-h);margin-left:var(--sidebar-w);min-height:calc(100vh - var(--header-h));}
 .panel{display:none;padding:28px 32px;max-width:1520px;}
 .panel.active{display:block;}
 .sec{margin-bottom:36px;}
 .sec-hd{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid transparent;background-image:linear-gradient(90deg,var(--campus-color,var(--ink)) 0%,transparent 100%);background-repeat:no-repeat;background-size:100% 1px;background-position:bottom;}
-.sec-title{font-size:1.16rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;white-space:nowrap;}
+.sec-title{font-size:1.16rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;flex:0 0 auto;white-space:nowrap;}
+.sec-meta{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
 .page-hd{margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--line);}
+.page-hd-inner{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
 .page-title{font-size:2.15rem;font-weight:700;letter-spacing:-.045em;color:var(--ink);line-height:1.08;}
 .page-sub{font-size:.72rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
-.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));background:linear-gradient(120deg,#243a6e 0%,#1d2f5b 60%,#172548 100%);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 2px rgba(23,37,72,.18),0 16px 38px rgba(23,37,72,.22);}
+.campus-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;}
+.campus-badge.os{background:var(--ink-lt);color:var(--ink);}
+.campus-badge.q{background:var(--red-lt);color:var(--red);}
+.campus-badge.n{background:var(--navy-lt);color:var(--navy);}
+.cb-dot{width:7px;height:7px;border-radius:50%;}
+.campus-badge.os .cb-dot{background:var(--ink);}
+.campus-badge.q .cb-dot{background:var(--red);}
+.campus-badge.n .cb-dot{background:var(--navy);}
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));background:linear-gradient(120deg,#243a6e 0%,#1d2f5b 60%,#172548 100%);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 2px rgba(23,37,72,.18),0 16px 38px rgba(23,37,72,.22);position:relative;}
 .si{padding:22px 24px 20px;border-right:1px solid rgba(255,255,255,.1);text-align:center;}
+.si:last-child{border-right:none;}
 .si-lbl{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;}
-.si-val{font-size:2.2rem;font-weight:700;color:#fff;line-height:.95;letter-spacing:-.05em;}
-.si-val.neg{color:#ff7a88;} .si-val.pos{color:#5ee0a0;}
+.si-val{font-size:2.2rem;font-weight:700;color:#fff;line-height:.95;letter-spacing:-.05em;font-variant-numeric:tabular-nums;}
+.si-val.neg{color:#ff7a88;} .si-val.pos{color:#5ee0a0;} .si-val.c-red{color:#ff7a88;} .si-val.c-navy{color:#9fc0ef;}
 .si-foot{font-size:.66rem;color:rgba(255,255,255,.55);font-family:'Asap Condensed',sans-serif;margin-top:8px;}
 .comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .comm-card{background:var(--white);border:1px solid var(--hairline);border-top:3px solid var(--teal);border-radius:var(--r);padding:17px 18px;text-align:center;box-shadow:var(--card-shadow);}
 .comm-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
-.comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;}
+.comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
 .comm-foot{font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
+.cc{background:var(--white);border-radius:var(--r);padding:20px 22px 22px;box-shadow:var(--card-shadow);border:1px solid var(--hairline);}
+.cc-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--hairline);}
+.cc-ttl{font-size:.92rem;font-weight:700;color:var(--ink);font-family:'Asap',sans-serif;display:flex;align-items:center;gap:9px;}
+.cc-ttl::before{content:'';width:4px;height:15px;border-radius:3px;background:var(--campus-color,var(--navy));}
+.cc-sub{font-size:.64rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;}
+.chart-wrap{position:relative;} canvas{display:block;}
 .tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--hairline);box-shadow:var(--card-shadow);background:var(--white);}
+.tw.scroll-y{max-height:420px;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;font-size:.79rem;}
+thead{position:sticky;top:0;z-index:5;}
 thead th{background:var(--ink);color:#fff;padding:11px 14px;text-align:center;font-weight:700;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;font-family:'Asap Condensed',sans-serif;}
 thead th:first-child{text-align:left;}
 .campus-q thead th{background:var(--red);} .campus-n thead th{background:var(--navy);}
+thead th.th-q{background:var(--red) !important;} thead th.th-n{background:var(--navy) !important;}
 tbody tr{border-bottom:1px solid var(--line);}
-td{padding:9px 14px;} td:first-child{text-align:left;font-weight:500;} td.r{text-align:center;font-family:'Asap Condensed',sans-serif;}
+tbody tr.grp td{font-weight:700;font-size:.65rem;letter-spacing:.09em;text-transform:uppercase;padding:7px 14px;}
+tbody tr.grp-q td{background:var(--red-lt);color:var(--red);}
+tbody tr.grp-n td{background:var(--navy-lt);color:var(--navy);}
+tbody tr.grp-k td{background:var(--ink-lt);color:var(--ink);}
+tbody tr.tot td{font-weight:600;background:#F1EDE5;}
+tbody tr.ctot td{font-weight:700;border-top:2px solid;}
+tbody tr.ctot-q td{background:var(--red-lt);color:var(--red);border-top-color:var(--red);}
+tbody tr.ctot-n td{background:var(--navy-lt);color:var(--navy);border-top-color:var(--navy);}
+tbody tr.ctot-os td{background:var(--ink-lt);color:var(--ink);border-top-color:var(--ink);}
+tbody tr.won-row td{background:#f0fdf4;font-weight:600;}
+tbody tr.proj-row td{background:#FFFBEB;}
+td{padding:9px 14px;} td:first-child{text-align:left !important;font-weight:500;}
+td.r{text-align:center;font-family:'Asap Condensed',sans-serif;font-size:.77rem;font-variant-numeric:tabular-nums;}
+td.c-q{color:var(--red);font-weight:600;} td.c-n{color:var(--navy);font-weight:600;}
 .tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:.6rem;font-weight:700;font-family:'Asap Condensed',sans-serif;}
-.val-pos{color:var(--green);font-weight:600;} .val-neg{color:var(--red);font-weight:600;}
+.tag.nat{background:var(--green-lt);color:var(--green);}
+.tag.exo{background:var(--amber-lt);color:var(--amber);}
+.tag.act{background:#fee2e2;color:#b91c1c;}
+.badge-proj{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.57rem;font-weight:700;background:var(--amber-lt);color:var(--amber);margin-left:5px;}
+.val-pos{color:var(--green);font-weight:600;} .val-neg{color:var(--red);font-weight:600;} .val-usd{color:var(--teal);font-weight:600;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.insight-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.insight{display:flex;align-items:center;gap:11px;background:var(--white);border-radius:10px;padding:12px 16px;flex:1;min-width:160px;box-shadow:var(--card-shadow);border:1px solid var(--hairline);}
+.ins-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ins-icon.green{background:var(--green-lt);color:var(--green);}
+.ins-icon.red{background:var(--red-lt);color:var(--red);}
+.ins-icon.amber{background:var(--amber-lt);color:var(--amber);}
+.ins-icon.teal{background:#ccfbf1;color:var(--teal);}
+.ins-lbl{font-size:.62rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.ins-val{font-size:.92rem;font-weight:700;color:var(--ink);}
 .funnel{display:flex;flex-direction:column;gap:6px;}
 .f-row{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:10px 14px;}
 .f-row.won{border-left:3px solid var(--teal);}
@@ -91,23 +153,30 @@ td{padding:9px 14px;} td:first-child{text-align:left;font-weight:500;} td.r{text
 .f-row.won .f-fill{background:var(--teal) !important;}
 .f-nums{font-family:'Asap Condensed',sans-serif;font-size:.71rem;color:var(--gray);min-width:165px;text-align:right;}
 .f-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.62rem;font-weight:700;background:#fee2e2;color:#b91c1c;margin-left:4px;font-family:'Asap Condensed',sans-serif;}
+.heatmap{overflow-x:auto;}
+.hm-table{width:100%;border-collapse:collapse;font-size:.76rem;font-family:'Asap Condensed',sans-serif;}
+.hm-table th{padding:6px 10px;font-weight:700;color:var(--gray);letter-spacing:.07em;text-align:center;}
+.hm-table td{padding:7px 10px;text-align:center;font-weight:600;border:1px solid #F1EDE5;}
+.hm-cell{border-radius:6px;padding:6px 10px;display:block;}
 .sim-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
 .sim-card{background:var(--white);border-radius:12px;padding:18px 20px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--card-shadow);}
 .sim-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ink);}
 .sim-card.q::after{background:var(--red);} .sim-card.n::after{background:var(--navy);}
 .sim-lbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
-.sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.04em;}
+.sim-val{font-size:2rem;font-weight:700;color:var(--ink);letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
 .sim-fact{font-size:.8rem;font-weight:600;color:var(--teal);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-delta{font-size:.67rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 .sim-controls{display:flex;gap:6px;margin-bottom:18px;align-items:center;}
 .sim-btn{padding:5px 11px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);font-family:'Asap',sans-serif;font-size:.68rem;font-weight:500;color:var(--gray);cursor:pointer;}
+.sim-btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
 .adj-wrap{display:flex;align-items:center;justify-content:center;gap:3px;}
-.adj-btn{width:20px;height:20px;border:1px solid var(--line);border-radius:3px;background:var(--white);cursor:pointer;font-weight:700;}
+.adj-btn{width:20px;height:20px;border:1px solid var(--line);border-radius:3px;background:var(--white);cursor:pointer;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
 .adj-input{width:46px;text-align:center;border:1px solid var(--line);border-radius:3px;padding:2px 3px;}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.cc{background:var(--white);border-radius:var(--r);padding:20px 22px 22px;box-shadow:var(--card-shadow);border:1px solid var(--hairline);}
-.cc-hd{margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--hairline);}
-.cc-ttl{font-size:.92rem;font-weight:700;color:var(--ink);}
+footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;border-top:1px solid var(--line);}
+
+#main.campus-os{--campus-color:var(--navy);}
+#main.campus-q{--campus-color:var(--red);}
+#main.campus-n{--campus-color:var(--navy);}
 </style>
 </head>
 <body>
@@ -119,29 +188,34 @@ td{padding:9px 14px;} td:first-child{text-align:left;font-weight:500;} td.r{text
 
 <div id="login-screen" role="main">
   <div class="login-box">
-    <p class="login-tagline"><strong>Dashboard de Admisiones 2026</strong>Acceso restringido</p>
-    <button class="btn-google" id="btn-login">Ingresar con Google</button>
+    <div style="font-size:2rem; font-weight:700; color:var(--ink); margin-bottom:-10px;">St George's</div>
+    <div class="login-rule"></div>
+    <p class="login-tagline"><strong>Dashboard de Admisiones 2026</strong>Acceso restringido a cuentas autorizadas</p>
+    <button class="btn-google" id="btn-login">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Ingresar con Google
+    </button>
   </div>
 </div>
 
 <div id="access-denied" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:#F1EDE5;">
-  <div class="login-box" style="text-align:center;">
-    <div style="font-weight:700;font-size:1rem;color:#1A1F35;">Acceso no autorizado</div>
-    <div style="font-size:.82rem;color:#64748B;line-height:1.6">La cuenta <strong id="denied-email" style="color:#DC1E33"></strong> no tiene permisos.</div>
+  <div class="login-box" style="text-align:center;gap:20px;">
+    <div style="font-size:2rem; font-weight:700; color:var(--ink); margin-bottom:-10px;">St George's</div>
+    <div class="login-rule"></div>
+    <div style="font-weight:700;font-size:1rem;color:#1A1F35;margin-bottom:6px">Acceso no autorizado</div>
+    <div style="font-size:.82rem;color:#64748B;line-height:1.6">La cuenta <strong id="denied-email" style="color:#DC1E33"></strong><br>no tiene permisos para acceder a este dashboard.</div>
     <button class="btn-google" onclick="location.reload()">Volver al inicio</button>
   </div>
 </div>
 
 <div id="app">
   <header class="hdr">
-    <div class="hdr-brand">
-      <div class="hdr-titles" style="display:block">
-        <div class="hdr-title">Admissions</div>
-        <div class="hdr-sub">Analytics &middot; 2026</div>
-      </div>
+    <div class="hdr-brand" id="hdr-brand">
+      <div style="font-size:1.2rem; font-weight:700; color:var(--ink);">St George's</div>
     </div>
     <div class="hdr-mid">
-      <div class="campus-group">
+      <span class="hdr-context-lbl" id="hdr-viewing" style="font-family:'Asap Condensed'; font-size:0.6rem; font-weight:700; color:#9C968B; text-transform:uppercase; margin-right:5px;">Viendo</span>
+      <div class="campus-group" role="group">
         <button class="campus-btn active" data-c="os">One School</button>
         <button class="campus-btn" data-c="q">Quilmes</button>
         <button class="campus-btn" data-c="n">North</button>
@@ -160,41 +234,111 @@ td{padding:9px 14px;} td:first-child{text-align:left;font-weight:500;} td.r{text
   <main class="content" id="content">
     <div id="main" class="campus-os"></div>
   </main>
+  
+  <footer>St George's College &middot; Dashboard de Admisiones &middot; Datos en tiempo real &middot; <span id="f-time"></span></footer>
 </div>
 
 <script>
-// --- CONFIGURACIÓN PRINCIPAL ---
-const CLIENT_ID = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
-const API_URL   = 'https://script.google.com/macros/s/AKfycbx2Ad-6YTGwPTcXV2Q_Bs-dgDVsXGRwy4wR2h7uIvhGOMvgWK7G260IEDDd8prg97At/exec'; // <--- ¡PEGÁ ACÁ LA URL DE TU SCRIPT!
+const CLIENT_ID   = '451910290982-vudb6uk5047r19ruujlae16ouhdh0km8.apps.googleusercontent.com';
+const API_URL     = 'https://script.google.com/macros/s/AKfycbx2Ad-6YTGwPTcXV2Q_Bs-dgDVsXGRwy4wR2h7uIvhGOMvgWK7G260IEDDd8prg97At/exec'; // <--- ¡RECORDÁ PEGAR TU URL ACÁ!
 
-let tokenClient, accessToken, userEmail = '', D = {}, campus = 'os', activeTab = 'resumen';
-let simAdj = {}, showFact = true;
+// ── BILINGUAL STRINGS ──
+const STRINGS={
+  en:{
+    tab_resumen:'Executive Summary',tab_kpis:'KPIs 2026',tab_pipeline:'Pipeline & Conversion Rate',tab_cohort:'Cohort Retention',tab_proyeccion:'Projection 2027', tab_marketing:'Marketing', tab_alumni:'Alumni',
+    ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview — May 2026',
+    ph_kpis:'KPIs 2026',ph_kpis_sub:'Key performance indicators',
+    ph_pipeline:'Pipeline & Conversion Rate',ph_pipeline_sub:'Conversion pipeline & historical data',
+    ph_cohort:'Cohort Retention',ph_cohort_sub:'Generational loyalty — ISAMS',
+    ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
+    ph_marketing:'Marketing', ph_marketing_sub:'Pauta digital y app',
+    ph_alumni:'Alumni', ph_alumni_sub:'Métricas de egresados',
+    headline:'Headline KPIs',headline_meta:'One School — May 2026',
+    community:'Community Indicators',community_meta:'Profile 2026',
+    evol:'Enrolment Evolution 2021–2027',evol_meta:'Historical + Trend Projection',
+    s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment — Occupancy — Retention',
+    s_withdrawals:'Withdrawals by Cause',s_withdrawals_meta:'Analysis 2025 vs 2026',
+    s_pipeline:'Active Pipeline 2027',s_pipeline_meta:'Current pipeline snapshot — Insightly',
+    s_winrate:'Historical Conversion Rate',s_winrate_meta:'2021–2026',
+    s_funnel:'Conversion Pipeline',s_funnel_meta:'Historical 2021–2026',
+    s_cohort:'Cohort Retention',s_cohort_meta:'Generational loyalty — ISAMS',
+    s_heatmap:'Retention Heatmap',s_heatmap_meta:'Green ≥95% · Yellow ≥88% · Red <85%',
+    heatmap_desc:'Each cell shows the percentage of students from that cohort still enrolled today. Darker green = stronger retention.',
+    total_alumnos:'Total Students',var_anual:'Annual Variation',
+    ret_quilmes:'Quilmes Retention',ret_north:'North Retention',
+    new_students:'New Students',win_rate:'Conversion Rate 2026',prospectos:'Active Prospects',
+    ret_campus:'Retention',
+    og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',
+    foreign:'International Students',priority:'Priority Community',
+    og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Siblings + Staff',
+    col_year:'Year',col_level:'Level',col_enrol:'Enrolment',col_occ:'Occupancy',col_vac:'Vacancies',
+    col_ret:'Retention',col_new:'New Students',col_with:'Withdrawals',col_prosp:'Prospects',
+    col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',
+    col_active:'Active',col_lifespan:'Lifespan (yr)',
+    col_grade:'Year Group',col_base:'Base 2026',col_proy:'Base Proj.',
+    col_adj:'Adjustment',col_final:'Final 2027',col_fact:'Billing USD',
+    col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conversion Rate',
+    btn_tendencial:'Trend (base)',btn_opt:'▲ Optimistic +2',btn_cons:'▼ Conservative −2',
+    scenario:'Scenario:',vs_base:'vs base',
+    quilmes_table:'Quilmes — Adjustment by year group',north_table:'North — Adjustment by year group',
+    quilmes_2027:'Quilmes 2027',north_2027:'North 2027',os_2027:'One School 2027',
+    proy_not_avail:'Projection data not available.',proj_note:'proj.',
+    enrol_chart:'Enrolment One School 2021–2027',enrol_sub:'Historical bars + 2027 projection',
+    qn_chart:'Quilmes vs North',qn_sub:'Enrolment by campus',
+    wr_chart:'Conversion Rate History',wr_sub:'Pipeline vs Won vs Conv.%',
+    cohort_chart:'Retention by Cohort',cohort_sub:'Annual retention %',
+    donut_chart:'Enrolment Composition',donut_sub:'K / Prep / College by campus',
+    kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
+    nav_label:'Navigation',conn:'Connection',active:'Active',last_update:'Last sync',viewing:'Viewing',
+    fact_toggle:'Show Billing USD',sections:'Visible sections',
+    logout:'Sign out',loading:'Loading dashboard',
+    login_tagline:'Admissions Dashboard 2026<br>Restricted to authorised accounts',
+    footer_txt:'St George\'s College · Admissions Dashboard · Live data',
+    lang_switch:'Español (AR)',
+    insight_total:'Total Students',insight_var:'Annual Variation',insight_new:'New Students',insight_wr:'Conversion Rate 2026',
+    prom_ponderado:'Weighted avg.',qs_north:'Quilmes + North',pipeline_abierto:'Open pipeline',won_lost:'Won / (Won + Lost)',
+  }
+};
+let lang='en';
+const t=k=>STRINGS[lang][k]||STRINGS.en[k]||k;
 
-// Nuevos Tabs
-const TABS = [
-  {id:'resumen',   label:'Executive Summary'},
-  {id:'admissions',label:'Admissions'},
-  {id:'retention', label:'Retention & Community'},
-  {id:'marketing', label:'Marketing'},
-  {id:'proyeccion',label:'Projection 2027'},
-  {id:'alumni',    label:'Alumni'}
+const TABS=[
+  {id:'resumen',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
+  {id:'kpis',      icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
+  {id:'pipeline',  icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'},
+  {id:'cohort',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {id:'proyeccion',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
+  {id:'marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>'},
+  {id:'alumni',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>'}
 ];
+Object.defineProperty(TABS[0],'label',{get:()=>t('tab_resumen')});
+Object.defineProperty(TABS[1],'label',{get:()=>t('tab_kpis')});
+Object.defineProperty(TABS[2],'label',{get:()=>t('tab_pipeline')});
+Object.defineProperty(TABS[3],'label',{get:()=>t('tab_cohort')});
+Object.defineProperty(TABS[4],'label',{get:()=>t('tab_proyeccion')});
+Object.defineProperty(TABS[5],'label',{get:()=>t('tab_marketing')});
+Object.defineProperty(TABS[6],'label',{get:()=>t('tab_alumni')});
 
-// --- AUTENTICACIÓN ---
-function initAuth() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: 'openid email profile',
-    callback: async r => {
-      if(r.error) { alert('Error de auth'); return; }
-      accessToken = r.access_token;
-      try {
-        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
-        const info = await res.json();
-        userEmail = (info.email||'').toLowerCase().trim();
-      } catch(ex){}
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
+let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
+let charts={},simAdj={},showFact=true;
+
+// ── AUTH ──
+function initAuth(){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,
+    scope:'openid email profile',
+    callback:async r=>{
+      if(r.error){alert('Error de autenticación: '+r.error);return;}
+      accessToken=r.access_token;
+      try{
+        const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
+        const info=await res.json();
+        userEmail=(info.email||'').toLowerCase().trim();
+      }catch(ex){console.warn('userinfo error',ex);}
+      
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('access-denied').style.display='none';
+      document.getElementById('app').style.display='block';
       fetchData();
     }
   });
@@ -203,27 +347,28 @@ function initAuth() {
 document.getElementById('btn-login').addEventListener('click',()=>tokenClient.requestAccessToken({prompt:'select_account'}));
 document.getElementById('btn-out').addEventListener('click',()=>location.reload());
 window.onload=()=>{
-  const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = initAuth; document.head.appendChild(s);
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
+  s.onload=initAuth; document.head.appendChild(s);
 };
 
-// --- ADAPTADOR Y FETCH DATA ---
-async function fetchData() {
+// ── FETCH Y ADAPTADOR DE DATOS ──
+async function fetchData(){
   document.getElementById('loading').classList.remove('hidden');
   document.querySelector('.load-txt').textContent = 'Sincronizando datos...';
-  
-  const cb = 'sgcCb_'+Date.now();
-  const url = API_URL + '?callback=' + cb + '&t=' + Date.now();
 
-  const onSuccess = data => {
+  const cb='sgcCb_'+Date.now();
+  const url=API_URL+'?callback='+cb+'&t='+Date.now();
+
+  const onSuccess=data=>{
     const raw = data.data || {};
     
-    // Función adaptadora
-    const findKPI = (sheetArray, kpiName, campusCol) => {
-      if (!sheetArray) return 0;
-      const row = sheetArray.find(r => r.KPI === kpiName || r.Cause === kpiName || r.Etapa === kpiName || r.Nivel === kpiName);
-      return row ? row[campusCol] : 0;
+    // Funciones de búsqueda seguras para evitar errores JS
+    const getArr = (arr) => Array.isArray(arr) ? arr : [];
+    const safeFind = (arr, key, val, retCol) => {
+      const row = getArr(arr).find(r => String(r[key]||'').toLowerCase() === String(val).toLowerCase());
+      return row ? row[retCol] : 0;
     };
+    const findKPI = (arr, kpiName, col) => safeFind(arr, 'KPI', kpiName, col);
 
     D = {
       lastUpdate: data.lastUpdate,
@@ -237,28 +382,62 @@ async function fetchData() {
         retencion_north: findKPI(raw.ret_head, 'Retention Rate', 'North')
       },
       community: {
-        ogQuilmes: findKPI(raw.exec_comm, 'OG Parent Quilmes', 'Quilmes'),
-        ogNorth: findKPI(raw.exec_comm, 'OG Parent North', 'North'),
+        ogQuilmes: findKPI(raw.exec_comm, 'OG Parent Quilmes', 'Quilmes') || findKPI(raw.exec_comm, 'OG Parent', 'Quilmes'),
+        ogNorth: findKPI(raw.exec_comm, 'OG Parent North', 'North') || findKPI(raw.exec_comm, 'OG Parent', 'North'),
         foreignStudents: findKPI(raw.exec_comm, 'International students', 'One School'),
         priorityCommunity: findKPI(raw.exec_comm, 'Priority community', 'One School')
       },
-      funnel: (raw.adm_funnel || []).map(row => ({
-        etapa: row.Etapa || '', llegaron: row.Llegaron || 0, pctPerd: row['Drop %'] || 0,
-        isWon: String(row.Etapa || '').includes('Won') || String(row.Etapa || '').includes('Place Offering')
+      funnel: getArr(raw.adm_funnel).map(r => ({
+        etapa: r.Etapa || r.Stage || '',
+        llegaron: r.Llegaron || r.Pipeline || 0,
+        pctPerd: r['Drop %'] || r.Drop || 0,
+        isWon: String(r.Etapa || r.Stage || '').toLowerCase().includes('won') || String(r.Etapa || '').toLowerCase().includes('place offering')
       })),
-      pipeline: (raw.adm_pipe || []).map(row => ({
-        etapa: row.Nivel || '', qK: row['Consultation']||0, qP: row['Info. Meeting']||0, qC: row['Parents Interv.']||0, qT: row['TOTAL']||0, isWon: false
+      pipeline: getArr(raw.adm_pipe).map(r => ({
+        etapa: r.Nivel || r.Level || '',
+        qK: r['Consultation']||0, qP: r['Info. Meeting']||0, qC: r['Parents Interv.']||0, qT: r['TOTAL']||0,
+        isWon: false
       })),
       proyeccion: {
-        quilmes: (raw.proj || []).filter(r => r.Campus === 'Quilmes').map(r => ({ grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026'] })),
-        north: (raw.proj || []).filter(r => r.Campus === 'North').map(r => ({ grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026'] }))
+        quilmes: getArr(raw.proj).filter(r => r.Campus === 'Quilmes').map(r => ({
+          grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026']
+        })),
+        north: getArr(raw.proj).filter(r => r.Campus === 'North').map(r => ({
+          grado: r['Year Group'], proy: r['Base Projectada'], facturacion: r['Billing USD'], base2026: r['Base 2026']
+        })),
+        quilmesTotal: {alumnos: 0, facturacion: 0},
+        northTotal: {alumnos: 0, facturacion: 0}
       },
-      withdrawals: (raw.ret_with || []).map(row => ({
-        causa: row.Cause, tipo: row.Type, q2025: row['Q 2025']||0, q2026: row['Q 2026']||0, n2025: row['N 2025']||0, n2026: row['N 2026']||0, tot2025: row['OS 2025']||0, tot2026: row['OS 2026']||0
+      withdrawals: getArr(raw.ret_with).map(r => ({
+        causa: r.Cause || r.Causa, tipo: r.Type || r.Tipo,
+        q2025: r['Q 2025']||0, q2026: r['Q 2026']||0, n2025: r['N 2025']||0, n2026: r['N 2026']||0, tot2025: r['OS 2025']||0, tot2026: r['OS 2026']||0
       })),
-      // Datos directos para tablas genéricas
-      rawMarketing: raw.marketing,
-      rawAlumni: raw.alumni
+      resumen: {
+        quilmes: getArr(raw.exec_enroll).filter(r=>r.Campus==='Quilmes').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec})),
+        north: getArr(raw.exec_enroll).filter(r=>r.Campus==='North').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec})),
+        oneSchool: getArr(raw.exec_enroll).filter(r=>r.Campus==='One School').map(r=>({yr:r.Year, kinder:r.Kinder, prep:r.Prep, college:r.College, total:r.Total, crec:r.Crec}))
+      },
+      quilmes: {
+        total: {matricula:0, ocupacion:0, vacantes:0, retencion:0, new_students:0, withdrawals:0, prospectos:0},
+        kinder: {total:{}, "K1":{}, "K2":{}, "K3":{}, "K4":{}, "K5":{}},
+        prep: {total:{}, "P1":{}, "P2":{}, "P3":{}, "P4":{}, "P5":{}, "P6":{}},
+        college: {total:{}, "C1":{}, "C2":{}, "C3":{}, "C4":{}, "C5":{}, "C6":{}}
+      },
+      north: {
+        total: {matricula:0, ocupacion:0, vacantes:0, retencion:0, new_students:0, withdrawals:0, prospectos:0},
+        kinder: {total:{}, "K1":{}, "K2":{}, "K3":{}, "K4":{}, "K5":{}},
+        prep: {total:{}, "P1":{}, "P2":{}, "P3":{}, "P4":{}, "P5":{}, "P6":{}},
+        college: {total:{}, "C1":{}, "C2":{}, "C3":{}, "C4":{}, "C5":{}, "C6":{}}
+      },
+      winrate: getArr(raw.adm_hist).map(r => ({
+        yr: r.Year || r.yr, qPipeline: r.qPipeline||0, qWon: r.qWon||0, qWR: r.qWR||0, nPipeline: r.nPipeline||0, nWon: r.nWon||0, nWR: r.nWR||0, osPipeline: r.osPipeline||0, osWon: r.osWon||0, osWR: r.osWR||0
+      })),
+      cohort: getArr(raw.cohort).map(r => ({
+        yr: r.Cohort || r.yr, qIngresaron: r.qIngresaron||0, qActivos: r.qActivos||0, qRet: r.qRet||0, qLifespan: r.qLifespan||0, nIngresaron: r.nIngresaron||0, nActivos: r.nActivos||0, nRet: r.nRet||0, nLifespan: r.nLifespan||0
+      })),
+      // Datos directos para tablas de nuevas solapas
+      rawMarketing: getArr(raw.marketing),
+      rawAlumni: getArr(raw.alumni)
     };
 
     if(data.allowedEmails && data.allowedEmails.length > 0){
@@ -271,206 +450,586 @@ async function fetchData() {
       }
     }
 
-    document.getElementById('h-update').textContent = 'Actualizado: ' + D.lastUpdate;
-    initSimAdj(); render();
+    const now = D.lastUpdate || new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('h-update').textContent = 'Actualizado: ' + now;
+    document.getElementById('f-time').textContent = now;
+    
+    initSimAdj(); 
+    render();
+    
     document.getElementById('loading').classList.add('hidden');
     delete window[cb];
   };
 
-  window[cb] = onSuccess;
-  const s = document.createElement('script'); s.id = '_jp'; s.src = url;
+  const onError=()=>{
+    delete window[cb];
+    alert("Error de conexión al cargar datos.");
+    document.getElementById('loading').classList.add('hidden');
+  };
+
+  window[cb]=onSuccess;
+  const s=document.createElement('script');s.id='_jp';
+  s.src=url;
+  const guard=setTimeout(()=>{if(window[cb])onError();},15000);
+  s.onload=()=>clearTimeout(guard);
+  s.onerror=()=>{clearTimeout(guard);onError();};
   document.head.appendChild(s);
 }
 
-// --- UTILIDADES ---
-const fN = v => (v===null||v==='')?'--':Math.round(parseFloat(v)).toLocaleString('es-AR');
-const fP = v => (v===null||v==='')?'--':(parseFloat(v)*100).toFixed(1)+'%';
-const fUSD = v => (v===null||v==='')?'--':'$'+Math.round(parseFloat(v)).toLocaleString('en-US');
-function pageHeader(title,sub){ const d=document.createElement('div'); d.className='page-hd'; d.innerHTML=`<div class="page-title">${title}</div><div class="page-sub">${sub}</div>`; return d;}
-function sec(title,content){ const s=document.createElement('div'); s.className='sec'; s.innerHTML=`<div class="sec-hd"><span class="sec-title">${title}</span></div>`; s.appendChild(content); return s;}
-function buildGenericTable(data2D) {
-  if (!data2D || data2D.length < 1) return '<p style="padding:15px; color:var(--gray)">No data available.</p>';
+// ── FORMAT ──
+const escHtml=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fN=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return Math.round(n).toLocaleString('es-AR');};
+const fP=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);return(n*100).toFixed(1)+'%';};
+const fV=v=>{if(v===null||v===undefined||v==='')return'--';const n=parseFloat(v);if(isNaN(n))return String(v);if(n>-2&&n<2&&String(v).includes('.'))return fP(n);return fN(n);};
+const fCrp=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v)*100;if(isNaN(n))return'--';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">▼ '+s+'</span>':'<span class="val-pos">▲ '+s+'</span>';};
+const fUSD=v=>{if(!v&&v!==0)return'--';const n=parseFloat(v);if(isNaN(n))return'--';return'$'+Math.round(n).toLocaleString('en-US');};
+const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
+const STAGE_EN={'Prospecto':'Prospect','Prospectos':'Prospects','Primera Reunión':'First Meeting','1ª Reunión':'First Meeting','Reunión':'Meeting','Propuesta Enviada':'Proposal Sent','Propuesta enviada':'Proposal Sent','En evaluación':'Under Review','Evaluación':'Under Review','Pre-Inscripto':'Pre-Enrolled','Pre inscripto':'Pre-Enrolled','Inscripto':'Enrolled','Matrículado':'Enrolled','Ganados':'Won','Ganado':'Won','Perdidos':'Lost','Perdido':'Lost','No contactado':'Not Contacted'};
+function trStage(s){return lang==='en'?(STAGE_EN[s]||s):s;};
+
+// ── CAMPUS DATA ──
+function getCampusData(){
+  if(campus==='q')return D.quilmes;
+  if(campus==='n')return D.north;
+  const q=D.quilmes||{},n=D.north||{};
+  const m=(a,b)=>({matricula:(parseFloat(a&&a.matricula)||0)+(parseFloat(b&&b.matricula)||0),ocupacion:null,vacantes:(parseFloat(a&&a.vacantes)||0)+(parseFloat(b&&b.vacantes)||0),retencion:null,new_students:(parseFloat(a&&a.new_students)||0)+(parseFloat(b&&b.new_students)||0),withdrawals:(parseFloat(a&&a.withdrawals)||0)+(parseFloat(b&&b.withdrawals)||0),prospectos:(parseFloat(a&&a.prospectos)||0)+(parseFloat(b&&b.prospectos)||0)});
+  const mS=(sec,gr)=>{const r={total:m(q[sec]&&q[sec].total,n[sec]&&n[sec].total)};gr.forEach(g=>{r[g]=m(q[sec]&&q[sec][g],n[sec]&&n[sec][g]);});return r;};
+  return{total:m(q.total,n.total),kinder:mS('kinder',['K1','K2','K3','K4','K5']),prep:mS('prep',['P1','P2','P3','P4','P5','P6']),college:mS('college',['C1','C2','C3','C4','C5','C6'])};
+}
+function getWRF(r){if(campus==='q')return{pipeline:r.qPipeline,won:r.qWon,wr:r.qWR};if(campus==='n')return{pipeline:r.nPipeline,won:r.nWon,wr:r.nWR};return{pipeline:r.osPipeline,won:r.osWon,wr:r.osWR};}
+function getCohF(r){if(campus==='q')return{ing:r.qIngresaron,act:r.qActivos,ret:r.qRet,life:r.qLifespan};if(campus==='n')return{ing:r.nIngresaron,act:r.nActivos,ret:r.nRet,life:r.nLifespan};const i=(parseFloat(r.qIngresaron)||0)+(parseFloat(r.nIngresaron)||0);const a=(parseFloat(r.qActivos)||0)+(parseFloat(r.nActivos)||0);return{ing:i,act:a,ret:i>0?a/i:null,life:null};}
+
+const CC={os:{main:'#1A1F35'},q:{main:'#DC1E33'},n:{main:'#213463'}};
+
+// ── SIMULATOR ──
+function initSimAdj(){
+  simAdj={};
+  const py=D.proyeccion;if(!py)return;
+  (py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});
+  (py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});
+}
+function calcSimTotal(ck){
+  const py=D.proyeccion;if(!py)return{base:0,final:0,facturacion:0};
+  const rows=ck==='q'?py.quilmes:py.north;
+  const totRow=ck==='q'?py.quilmesTotal:py.northTotal;
+  let alumnos=0,factAdj=0;
+  (rows||[]).forEach(r=>{
+    const key=ck+'_'+r.grado;
+    const adj=simAdj[key]||0;
+    const proy=parseFloat(r.proy)||0;
+    const factPerAlumno=proy>0?(parseFloat(r.facturacion)||0)/proy:0;
+    alumnos+=Math.round(proy+adj);
+    factAdj+=factPerAlumno*(proy+adj);
+  });
+  return{base:parseFloat((totRow||{}).alumnos)||0,final:alumnos,facturacion:factAdj,baseFact:parseFloat((totRow||{}).facturacion)||0};
+}
+function applyScenario(type){
+  const py=D.proyeccion;if(!py)return;
+  if(type==='reset')initSimAdj();
+  else if(type==='opt'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=1;});}
+  else if(type==='cons'){(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=-2;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=-1;});}
+  updateSimDisplay();
+}
+function updateSimDisplay(){
+  const py=D.proyeccion;if(!py)return;
+  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado})),...(py.north||[]).map(r=>({key:'n_'+r.grado}))].forEach(({key})=>{
+    const el=document.getElementById('adj_'+key);if(el)el.value=simAdj[key]||0;
+  });
+  const qT=calcSimTotal('q'),nT=calcSimTotal('n');
+  const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
+  const setCard=(id,final,base,fact)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.querySelector('.sim-val').textContent=Math.round(final).toLocaleString('es-AR');
+    if(showFact)el.querySelector('.sim-fact').textContent=fUSD(fact)+' USD';
+    const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
+    el.querySelector('.sim-delta').innerHTML=t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span>';
+  };
+  setCard('sim-q',qT.final,qT.base,qT.facturacion);
+  setCard('sim-n',nT.final,nT.base,nT.facturacion);
+  setCard('sim-os',osFinal,osBase,osFact);
+  [...(py.quilmes||[]).map(r=>({key:'q_'+r.grado,proy:parseFloat(r.proy)||0,r})),...(py.north||[]).map(r=>({key:'n_'+r.grado,proy:parseFloat(r.proy)||0,r}))].forEach(({key,proy,r})=>{
+    const el=document.getElementById('final_'+key);
+    if(el)el.textContent=Math.round(proy+(simAdj[key]||0)).toLocaleString('es-AR');
+    const felt=document.getElementById('factrow_'+key);
+    if(felt&&showFact){const adj2=simAdj[key]||0;felt.textContent=proy>0?fUSD(r.facturacion/proy*(proy+adj2)):'--';}
+  });
+  ['q','n'].forEach(ck=>{
+    const rows=ck==='q'?py.quilmes:py.north;
+    if(!rows||!rows.length)return;
+    let tProy=0,tFinal=0,tFact=0;
+    rows.forEach(r=>{
+      const proy=parseFloat(r.proy)||0;
+      const adj=simAdj[ck+'_'+r.grado]||0;
+      tProy+=proy;tFinal+=Math.round(proy+adj);
+      if(proy>0)tFact+=r.facturacion/proy*(proy+adj);
+    });
+    const elP=document.getElementById('tot-proy-'+ck);if(elP)elP.textContent=fN(tProy);
+    const elF=document.getElementById('tot-final-'+ck);if(elF)elF.textContent=tFinal.toLocaleString('es-AR');
+    const elFact=document.getElementById('tot-fact-'+ck);if(elFact&&showFact)elFact.textContent=fUSD(tFact);
+  });
+}
+
+// ── RENDER Y VISTAS ──
+function render(){
+  Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
+  const main=document.getElementById('main');main.innerHTML='';
+  main.className='campus-'+campus;
+  TABS.forEach(function(tab){
+    const panel=document.createElement('div');
+    panel.className='panel'+(tab.id===activeTab?' active':'');
+    panel.id='panel-'+tab.id;
+    const content=buildPanel(tab.id);
+    if(content)panel.appendChild(content);
+    main.appendChild(panel);
+  });
+  setTimeout(()=>{document.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);
+  buildSidebarNav();drawCharts();
+}
+
+function buildPanel(id){
+  switch(id){
+    case'resumen':return buildResumen();
+    case'kpis':return buildKpis();
+    case'pipeline':return buildPipeline();
+    case'cohort':return buildCohort();
+    case'proyeccion':return buildProyeccion();
+    case'marketing':return buildMarketing();
+    case'alumni':return buildAlumni();
+  }
+}
+
+function pageHeader(title,sub){
+  const d=document.createElement('div');d.className='page-hd';
+  const campusName=campus==='os'?'One School':campus==='q'?'Quilmes':'North';
+  d.innerHTML='<div class="page-hd-inner"><div><div class="page-title">'+title+'</div><div class="page-sub">'+sub+'</div></div><div class="campus-badge '+campus+'"><span class="cb-dot"></span>'+campusName+'</div></div>';
+  return d;
+}
+function sec(title,meta,content){
+  const s=document.createElement('div');s.className='sec';
+  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
+  s.appendChild(content);return s;
+}
+
+// ARREGLO: La función genérica ahora devuelve correctamente un Node HTML y no un string.
+function buildGenericTableNode(data2D) {
+  const wrap = document.createElement('div'); 
+  wrap.className = 'tw scroll-y';
+  
+  if (!data2D || data2D.length < 1) {
+    wrap.innerHTML = '<p style="padding:15px; color:var(--gray)">No hay datos disponibles.</p>';
+    return wrap;
+  }
+  
   let html = '<table><thead><tr>';
-  Object.keys(data2D[0]).forEach(h => html += `<th>${h}</th>`);
+  Object.keys(data2D[0]).forEach(h => html += `<th>${escHtml(h)}</th>`);
   html += '</tr></thead><tbody>';
   data2D.forEach(row => {
     html += '<tr>';
     Object.values(row).forEach((val, idx) => {
       let fVal = val;
       if (typeof fVal === 'number') fVal = (fVal % 1 === 0) ? fVal.toLocaleString('es-AR') : fVal.toFixed(2);
-      html += `<td class="${idx > 0 ? 'r' : ''}">${fVal}</td>`;
+      html += `<td class="${idx > 0 ? 'r' : ''}">${escHtml(fVal)}</td>`;
     });
     html += '</tr>';
   });
   html += '</tbody></table>';
-  const wrap = document.createElement('div'); wrap.className = 'tw'; wrap.innerHTML = html; return wrap;
+  wrap.innerHTML = html; 
+  return wrap;
 }
 
-// --- SIMULADOR DE PROYECCIÓN ---
-function initSimAdj(){
-  simAdj={}; if(!D.proyeccion) return;
-  (D.proyeccion.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});
-  (D.proyeccion.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});
+function buildMarketing() {
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_marketing'),t('ph_marketing_sub')));
+  wrap.appendChild(sec('Métricas Globales', '', buildGenericTableNode(D.rawMarketing)));
+  return wrap;
 }
-function calcSimTotal(ck){
-  const rows = ck==='q' ? D.proyeccion.quilmes : D.proyeccion.north;
-  let alumnos=0, factAdj=0, base=0;
-  (rows||[]).forEach(r=>{
-    const adj = simAdj[ck+'_'+r.grado]||0; const proy = parseFloat(r.proy)||0;
-    alumnos += Math.round(proy+adj); base += parseFloat(r.base2026)||0;
-    if(proy>0) factAdj += (parseFloat(r.facturacion)||0)/proy*(proy+adj);
+
+function buildAlumni() {
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_alumni'),t('ph_alumni_sub')));
+  wrap.appendChild(sec('Demographics & KPIs', '', buildGenericTableNode(D.rawAlumni)));
+  return wrap;
+}
+
+function buildResumen(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_resumen'),t('ph_resumen_sub')));
+
+  const h=D.headline||{};
+  const varN=(parseFloat(h.variacion_anual)||0)*100;
+  const wrPct=(parseFloat(h.win_rate)||0)*100;
+
+  const ins=document.createElement('div');ins.className='insight-strip';
+  const insData=[
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:t('insight_total'),val:fN(h.total_alumnos)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:t('insight_var'),val:(varN>=0?'▲ ':'▼ ')+Math.abs(varN).toFixed(2)+'%'},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:t('insight_new'),val:fN(h.new_students)},
+    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:t('insight_wr'),val:wrPct.toFixed(1)+'%'},
+  ];
+  insData.forEach(i=>{ins.innerHTML+='<div class="insight"><div class="ins-icon '+i.cls+'">'+i.icon+'</div><div><div class="ins-lbl">'+i.lbl+'</div><div class="ins-val">'+i.val+'</div></div></div>';});
+  wrap.appendChild(ins);
+
+  const strip=document.createElement('div');strip.className='stat-strip';
+  const statItems=[
+    {lbl:t('total_alumnos'),val:fN(h.total_alumnos),foot:'One School 2026',cls:''},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 → 2026',cls:varN<0?'neg':'pos'},
+    {lbl:t('ret_quilmes'),val:fP(h.retencion_quilmes),foot:t('prom_ponderado'),cls:'c-red'},
+    {lbl:t('ret_north'),val:fP(h.retencion_north),foot:t('prom_ponderado'),cls:'c-navy'},
+    {lbl:t('new_students'),val:fN(h.new_students),foot:t('qs_north'),cls:''},
+    {lbl:t('win_rate'),val:fP(h.win_rate),foot:t('won_lost'),cls:''},
+    {lbl:t('prospectos'),val:fN(h.prospectos),foot:t('pipeline_abierto'),cls:''},
+  ];
+  statItems.forEach(s=>{
+    strip.innerHTML+='<div class="si"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+s.cls+'">'+s.val+'</div><div class="si-foot">'+s.foot+'</div></div>';
   });
-  return {base, final:alumnos, facturacion:factAdj};
+  wrap.appendChild(sec(t('headline'),t('headline_meta'),strip));
+
+  if(D.community){
+    const cg=document.createElement('div');cg.className='comm-grid';
+    [{lbl:t('og_quilmes'),val:fP(D.community.ogQuilmes),foot:t('og_foot')},
+     {lbl:t('og_north'),val:fP(D.community.ogNorth),foot:t('og_foot')},
+     {lbl:t('foreign'),val:fP(D.community.foreignStudents),foot:t('os_foot')},
+     {lbl:t('priority'),val:fP(D.community.priorityCommunity),foot:t('og_plus'),lead:true},
+    ].forEach(c=>{cg.innerHTML+='<div class="comm-card'+(c.lead?' lead':'')+'" '+(c.lead?'style="box-shadow: 0 0 0 1px rgba(16,154,169,.4)"':'')+'><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
+    wrap.appendChild(sec(t('community'),t('community_meta'),cg));
+  }
+
+  const re=D.resumen;
+  if(re && re.quilmes && re.quilmes.length > 0){
+    const tw=document.createElement('div');tw.className='tw';
+    const years=[2027,2026,2025,2024,2023,2022,2021];
+    let h2='<table><thead><tr><th>'+t('col_year')+'</th>';
+    if(campus==='os'||campus==='q')h2+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Total</th>';
+    if(campus==='os'||campus==='n')h2+='<th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Total</th>';
+    if(campus==='os')h2+='<th class="r">OS Total</th>';
+    h2+='<th class="r">Crec. %</th></tr></thead><tbody>';
+    years.forEach(yr=>{
+      const isP=yr===2027;
+      const q=(re.quilmes||[]).find(r=>r.yr===yr)||{};
+      const n=(re.north||[]).find(r=>r.yr===yr)||{};
+      const os=(re.oneSchool||[]).find(r=>r.yr===yr)||{};
+      const crec=campus==='os'?os.crec:campus==='q'?q.crec:n.crec;
+      h2+='<tr class="'+(isP?'proj-row':'')+'"><td style="font-weight:700">'+yr+(isP?'<span class="badge-proj">'+t('proj_note')+'</span>':'')+'</td>';
+      if(campus==='os'||campus==='q')h2+='<td class="r c-q">'+fN(q.kinder)+'</td><td class="r c-q">'+fN(q.prep)+'</td><td class="r c-q">'+fN(q.college)+'</td><td class="r c-q" style="font-weight:700">'+fN(q.total)+'</td>';
+      if(campus==='os'||campus==='n')h2+='<td class="r c-n">'+fN(n.kinder)+'</td><td class="r c-n">'+fN(n.prep)+'</td><td class="r c-n">'+fN(n.college)+'</td><td class="r c-n" style="font-weight:700">'+fN(n.total)+'</td>';
+      if(campus==='os')h2+='<td class="r" style="font-weight:700">'+fN(os.total)+'</td>';
+      h2+='<td class="r">'+fCrp(crec)+'</td></tr>';
+    });
+    h2+='</tbody></table>';tw.innerHTML=h2;
+    wrap.appendChild(sec(t('evol'),t('evol_meta'),tw));
+
+    const two=document.createElement('div');two.className='two';
+    const cc1=document.createElement('div');cc1.className='cc';
+    cc1.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('enrol_chart')+'</div><div class="cc-sub">'+t('enrol_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div>';
+    const cc2=document.createElement('div');cc2.className='cc';
+    cc2.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('qn_chart')+'</div><div class="cc-sub">'+t('qn_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div>';
+    two.appendChild(cc1);two.appendChild(cc2);
+    wrap.appendChild(two);
+  }
+  return wrap;
 }
-function updateSimDisplay(){
-  if(!D.proyeccion) return;
-  const qT=calcSimTotal('q'), nT=calcSimTotal('n');
-  const osFinal=qT.final+nT.final, osBase=qT.base+nT.base, osFact=qT.facturacion+nT.facturacion;
-  const setCard = (id,final,base,fact) => {
-    const el=document.getElementById(id); if(!el) return;
-    el.querySelector('.sim-val').textContent = Math.round(final).toLocaleString('es-AR');
-    el.querySelector('.sim-fact').textContent = fUSD(fact)+' USD';
-    const d=Math.round(final-base), pct=(base>0?(final-base)/base*100:0).toFixed(1), sign=d>=0?'+':'';
-    el.querySelector('.sim-delta').innerHTML = `vs base ${fN(base)} <span class="${d<0?'val-neg':'val-pos'}">${sign}${d} (${sign}${pct}%)</span>`;
+
+function buildKpis(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_kpis'),t('ph_kpis_sub')));
+  const cd=getCampusData();
+  
+  if(cd && cd.total){
+    const tw=document.createElement('div');tw.className='tw';
+    const lvls=[
+      {lbl:t('kinder'),tot:cd.kinder&&cd.kinder.total,rows:['K1','K2','K3','K4','K5'].map(k=>({k,d:cd.kinder&&cd.kinder[k]}))},
+      {lbl:t('prep'),tot:cd.prep&&cd.prep.total,rows:['P1','P2','P3','P4','P5','P6'].map(k=>({k,d:cd.prep&&cd.prep[k]}))},
+      {lbl:t('college'),tot:cd.college&&cd.college.total,rows:['C1','C2','C3','C4','C5','C6'].map(k=>({k,d:cd.college&&cd.college[k]}))},
+    ];
+    let ht='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_new')+'</th><th class="r">'+t('col_with')+'</th><th class="r">'+t('col_prosp')+'</th></tr></thead><tbody>';
+    lvls.forEach(s=>{
+      ht+='<tr class="grp"><td colspan="9">'+s.lbl+'</td></tr>';
+      const tot=s.tot||{};
+      ht+='<tr class="tot"><td></td><td style="text-align:left">'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td><td class="r">'+fV(tot.ocupacion)+'</td><td class="r">'+fN(tot.vacantes)+'</td><td class="r">'+fV(tot.retencion)+'</td><td class="r">'+fN(tot.new_students)+'</td><td class="r">'+fN(tot.withdrawals)+'</td><td class="r">'+fN(tot.prospectos)+'</td></tr>';
+      s.rows.forEach(({k,d})=>{d=d||{};ht+='<tr><td></td><td>'+k+'</td><td class="r">'+fV(d.matricula)+'</td><td class="r">'+fV(d.ocupacion)+'</td><td class="r">'+fV(d.vacantes)+'</td><td class="r">'+fV(d.retencion)+'</td><td class="r">'+fV(d.new_students)+'</td><td class="r">'+fV(d.withdrawals)+'</td><td class="r">'+fV(d.prospectos)+'</td></tr>';});
+    });
+    const ct=cd.total||{};
+    ht+='<tr class="ctot"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">'+fV(ct.ocupacion)+'</td><td class="r">'+fN(ct.vacantes)+'</td><td class="r">'+fV(ct.retencion)+'</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
+    ht+='</tbody></table>';tw.innerHTML=ht;
+    wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),tw));
+    
+    const donutWrap=document.createElement('div');
+    donutWrap.style.cssText='max-width:560px;margin:28px auto 0;';
+    const cc=document.createElement('div');cc.className='cc';
+    cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap" style="height:118px"><canvas id="chart-donut"></canvas></div>';
+    donutWrap.appendChild(cc);
+    wrap.appendChild(donutWrap);
+  }
+
+  const tw2=document.createElement('div');tw2.className='tw';
+  let h2='<table><thead><tr><th>'+t('col_cause')+'</th><th style="text-align:left">'+t('col_type')+'</th>';
+  if(campus==='os')h2+='<th class="r th-q">Q 2025</th><th class="r th-q">Q 2026</th><th class="r th-n">N 2025</th><th class="r th-n">N 2026</th><th class="r">OS 2025</th><th class="r">OS 2026</th>';
+  else h2+='<th class="r">2025</th><th class="r">2026</th>';
+  h2+='</tr></thead><tbody>';
+  (D.withdrawals||[]).forEach(w=>{
+    const tc=w.tipo==='Natural'?'nat':w.tipo==='Exogena'?'exo':'act';
+    h2+='<tr><td style="font-weight:500">'+escHtml(w.causa)+'</td><td style="text-align:left"><span class="tag '+tc+'">'+escHtml(w.tipo)+'</span></td>';
+    if(campus==='os')h2+='<td class="r c-q">'+fN(w.q2025)+'</td><td class="r c-q" style="font-weight:700">'+fN(w.q2026)+'</td><td class="r c-n">'+fN(w.n2025)+'</td><td class="r c-n" style="font-weight:700">'+fN(w.n2026)+'</td><td class="r">'+fN(w.tot2025)+'</td><td class="r" style="font-weight:700">'+fN(w.tot2026)+'</td>';
+    else if(campus==='q')h2+='<td class="r">'+fN(w.q2025)+'</td><td class="r" style="font-weight:700">'+fN(w.q2026)+'</td>';
+    else h2+='<td class="r">'+fN(w.n2025)+'</td><td class="r" style="font-weight:700">'+fN(w.n2026)+'</td>';
+    h2+='</tr>';
+  });
+  h2+='</tbody></table>';tw2.innerHTML=h2;
+  const withSec=sec(t('s_withdrawals'),t('s_withdrawals_meta'),tw2);
+  withSec.style.marginTop='36px';
+  wrap.appendChild(withSec);
+  return wrap;
+}
+
+function buildPipeline(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_pipeline'),t('ph_pipeline_sub')));
+
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_stage')+'</th>';
+  if(campus==='os')h+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Tot</th><th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Tot</th><th class="r">One School</th>';
+  else h+='<th class="r">'+t('kinder')+'</th><th class="r">'+t('prep')+'</th><th class="r">'+t('college')+'</th><th class="r">Total</th>';
+  h+='</tr></thead><tbody>';
+  (D.pipeline||[]).forEach(p=>{
+    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+escHtml(p.etapa)+'</td>';
+    if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">'+fN(p.nK)+'</td><td class="r c-n">'+fN(p.nP)+'</td><td class="r c-n">'+fN(p.nC)+'</td><td class="r c-n" style="font-weight:700">'+fN(p.nT)+'</td><td class="r" style="font-weight:700">'+fN(p.total)+'</td>';
+    else if(campus==='q')h+='<td class="r">'+fN(p.qK)+'</td><td class="r">'+fN(p.qP)+'</td><td class="r">'+fN(p.qC)+'</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
+    else h+='<td class="r">'+fN(p.nK)+'</td><td class="r">'+fN(p.nP)+'</td><td class="r">'+fN(p.nC)+'</td><td class="r" style="font-weight:700">'+fN(p.nT)+'</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  wrap.appendChild(sec(t('s_pipeline'),t('s_pipeline_meta'),tw));
+
+  const two=document.createElement('div');two.className='two';
+  const tw2=document.createElement('div');tw2.className='tw';
+  let h2='<table><thead><tr><th>'+t('col_year')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
+  (D.winrate||[]).forEach(r=>{
+    const f=getWRF(r);
+    const wr=(parseFloat(f.wr)||0)*100;
+    const cls=wr>=15?'val-pos':wr<8?'val-neg':'';
+    h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.pipeline)+'</td><td class="r">'+fN(f.won)+'</td><td class="r"><span class="'+cls+'">'+fP(f.wr)+'</span></td></tr>';
+  });
+  h2+='</tbody></table>';tw2.innerHTML=h2;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div>';
+  two.appendChild(tw2);two.appendChild(cc);
+  wrap.appendChild(sec(t('s_winrate'),t('s_winrate_meta'),two));
+
+  const fd=document.createElement('div');fd.className='funnel';
+  const maxF=Math.max(...(D.funnel||[]).map(x=>parseFloat(x.llegaron)||0),1);
+  (D.funnel||[]).forEach(item=>{
+    const pct=((parseFloat(item.llegaron)||0)/maxF*100);
+    const lp=((parseFloat(item.pctPerd)||0)*100).toFixed(0);
+    const div=document.createElement('div');
+    div.className='f-row'+(item.isWon?' won':'');
+    div.innerHTML='<div class="f-lbl">'+escHtml(trStage(item.etapa))+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
+    fd.appendChild(div);
+  });
+  wrap.appendChild(sec(t('s_funnel'),t('s_funnel_meta'),fd));
+  return wrap;
+}
+
+function buildCohort(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_cohort'),t('ph_cohort_sub')));
+
+  const two=document.createElement('div');two.className='two';
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_cohort')+'</th><th class="r">'+t('col_enrolled')+'</th><th class="r">'+t('col_active')+'</th><th class="r">'+t('col_ret')+'</th><th class="r">'+t('col_lifespan')+'</th></tr></thead><tbody>';
+  (D.cohort||[]).forEach(r=>{
+    const f=getCohF(r);
+    const ret=(parseFloat(f.ret)||0)*100;
+    const retCls=ret>=95?'val-pos':ret<85?'val-neg':'';
+    h+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.ing)+'</td><td class="r">'+fN(f.act)+'</td><td class="r"><span class="'+retCls+'">'+fP(f.ret)+'</span></td><td class="r">'+(f.life?parseFloat(f.life).toFixed(1):'--')+'</td></tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;
+  const cc=document.createElement('div');cc.className='cc';
+  cc.innerHTML='<div class="cc-hd"><div><div class="cc-ttl">'+t('cohort_chart')+'</div><div class="cc-sub">'+t('cohort_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div>';
+  two.appendChild(tw);two.appendChild(cc);
+  wrap.appendChild(sec(t('s_cohort'),t('s_cohort_meta'),two));
+
+  if(D.cohort&&D.cohort.length){
+    const hmWrap=document.createElement('div');
+    const desc=document.createElement('div');
+    desc.style.cssText='background:var(--white);border:1px solid rgba(14,22,40,.08);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.78rem;color:var(--gray);line-height:1.6;display:flex;align-items:flex-start;gap:12px;';
+    desc.innerHTML='<svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('heatmap_desc')+'</span>';
+    hmWrap.appendChild(desc);
+    const hm=document.createElement('div');hm.className='heatmap';
+    const heatColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#F0F3FA';if(n>=97)return'#15803d';if(n>=95)return'#22c55e';if(n>=92)return'#86efac';if(n>=88)return'#fef08a';if(n>=85)return'#fca5a5';return'#ef4444';};
+    const textColor=(v)=>{const n=parseFloat(v)*100;if(isNaN(n))return'#6E6A60';return n>=95?'#fff':n>=88?'#78350f':'#7f1d1d';};
+    let ht='<table class="hm-table"><thead><tr><th>'+t('col_cohort')+'</th>';
+    if(campus==='os'||campus==='q')ht+='<th>Q Ret%</th>';
+    if(campus==='os'||campus==='n')ht+='<th>N Ret%</th>';
+    if(campus==='os')ht+='<th>Q '+t('col_active')+'</th><th>N '+t('col_active')+'</th>';
+    ht+='</tr></thead><tbody>';
+    D.cohort.forEach(r=>{
+      ht+='<tr><td style="font-weight:700;text-align:left">'+r.yr+'</td>';
+      if(campus==='os'||campus==='q'){const v=r.qRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
+      if(campus==='os'||campus==='n'){const v=r.nRet;ht+='<td><span class="hm-cell" style="background:'+heatColor(v)+';color:'+textColor(v)+'">'+fP(v)+'</span></td>';}
+      if(campus==='os')ht+='<td>'+fN(r.qActivos)+'</td><td>'+fN(r.nActivos)+'</td>';
+      ht+='</tr>';
+    });
+    ht+='</tbody></table>';hm.innerHTML=ht;
+    hmWrap.appendChild(hm);
+    wrap.appendChild(sec(t('s_heatmap'),t('s_heatmap_meta'),hmWrap));
+  }
+  return wrap;
+}
+
+function buildProyeccion(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
+
+  const py=D.proyeccion;
+  if(!py){const p=document.createElement('p');p.textContent=t('proy_not_avail');wrap.appendChild(p);return wrap;}
+
+  const qT=calcSimTotal('q'),nT=calcSimTotal('n');
+  const osFinal=qT.final+nT.final,osBase=qT.base+nT.base,osFact=qT.facturacion+nT.facturacion;
+
+  const totDiv=document.createElement('div');totDiv.className='sim-totals';
+  const mkCard=(id,cls,label,final,base,fact)=>{
+    const d=Math.round(final-base),pct=(base>0?(final-base)/base*100:0).toFixed(1),sign=d>=0?'+':'';
+    return'<div class="sim-card '+cls+'" id="'+id+'"><div class="sim-lbl">'+label+'</div><div class="sim-val">'+Math.round(final).toLocaleString('es-AR')+'</div>'+(showFact?'<div class="sim-fact">'+fUSD(fact)+' USD</div>':'<div class="sim-fact" style="visibility:hidden">&ndash;</div>')+'<div class="sim-delta">'+t('vs_base')+' '+Math.round(base).toLocaleString('es-AR')+' <span class="'+(d<0?'val-neg':'val-pos')+'">'+sign+d+' ('+sign+pct+'%)</span></div></div>';
   };
-  setCard('sim-q', qT.final, qT.base, qT.facturacion);
-  setCard('sim-n', nT.final, nT.base, nT.facturacion);
-  setCard('sim-os', osFinal, osBase, osFact);
-  
-  ['q','n'].forEach(ck=>{
-    const rows = ck==='q' ? D.proyeccion.quilmes : D.proyeccion.north;
+  totDiv.innerHTML=mkCard('sim-q','q',t('quilmes_2027'),qT.final,qT.base,qT.facturacion)+mkCard('sim-n','n',t('north_2027'),nT.final,nT.base,nT.facturacion)+mkCard('sim-os','',t('os_2027'),osFinal,osBase,osFact);
+  wrap.appendChild(totDiv);
+
+  const ctrl=document.createElement('div');ctrl.className='sim-controls';
+  ctrl.innerHTML='<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-right:4px">'+t('scenario')+'</span><button class="sim-btn primary" onclick="applyScenario(\'reset\')">'+t('btn_tendencial')+'</button><button class="sim-btn" onclick="applyScenario(\'opt\')" style="border-color:var(--green);color:var(--green)">'+t('btn_opt')+'</button><button class="sim-btn" onclick="applyScenario(\'cons\')" style="border-color:var(--red);color:var(--red)">'+t('btn_cons')+'</button>';
+  wrap.appendChild(ctrl);
+
+  const mkTable=(title,ck,rows,color)=>{
+    if(!rows||!rows.length)return'';
+    let h2='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_proy')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
+    let totBase=0,totProy=0,totAdj=0,totFact=0;
     rows.forEach(r=>{
-      const key = ck+'_'+r.grado;
-      const el = document.getElementById('final_'+key); if(el) el.textContent = Math.round((parseFloat(r.proy)||0)+(simAdj[key]||0)).toLocaleString('es-AR');
-      const fEl = document.getElementById('factrow_'+key); if(fEl) fEl.textContent = r.proy>0 ? fUSD(r.facturacion/r.proy*(r.proy+(simAdj[key]||0))) : '--';
+      const key=ck+'_'+r.grado;
+      const adj=simAdj[key]||0;
+      const proy=parseFloat(r.proy)||0;
+      totBase+=parseFloat(r.base2026)||0;totProy+=proy;totAdj+=adj;
+      if(proy>0)totFact+=r.facturacion/proy*(proy+adj);
+      h2+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fN(proy)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">−</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;document.getElementById(\'adj_'+key+'\').value=simAdj[\''+key+'\'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+Math.round(proy+adj).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+(proy>0?fUSD(r.facturacion/proy*(proy+adj)):'--')+'</td>':'')+'</tr>';
     });
-  });
+    const totFinal=totProy+totAdj;
+    h2+='<tr class="tot"><td style="font-weight:700;text-align:left !important">'+t('total_lbl')+'</td><td class="r">'+fN(totBase)+'</td><td class="r" id="tot-proy-'+ck+'">'+fN(totProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+Math.round(totFinal).toLocaleString('es-AR')+'</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(totFact)+'</td>':'')+'</tr>';
+    h2+='</tbody></table></div></div>';
+    return h2;
+  };
+
+  const tables=document.createElement('div');
+  tables.innerHTML=(campus!=='n'?mkTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33'):'')+(campus!=='q'?mkTable(t('north_table'),'n',py.north,'#213463'):'');
+  wrap.appendChild(tables);
+  return wrap;
 }
-window.applyScenario = function(type){
-  if(type==='reset') initSimAdj();
-  else if(type==='opt'){ (D.proyeccion.quilmes||[]).forEach(r=>simAdj['q_'+r.grado]=2); (D.proyeccion.north||[]).forEach(r=>simAdj['n_'+r.grado]=1); }
-  else if(type==='cons'){ (D.proyeccion.quilmes||[]).forEach(r=>simAdj['q_'+r.grado]=-2); (D.proyeccion.north||[]).forEach(r=>simAdj['n_'+r.grado]=-1); }
-  updateSimDisplay();
-};
 
-// --- RENDERIZADO VISUAL ---
-function render() {
-  const main = document.getElementById('main');
-  main.innerHTML = ''; main.className = 'campus-' + campus;
+// ── CHARTS ──
+function drawCharts(){
+  Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
+  Object.keys(charts).forEach(function(k){try{if(charts[k])charts[k].destroy();}catch(e){}});
+  charts={};
+  const C=CC[campus];
+  const TTP={backgroundColor:'#213463',titleFont:{family:'Asap',size:12,weight:'700'},bodyFont:{family:'Asap Condensed',size:12},padding:14,cornerRadius:8,titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',displayColors:true,boxWidth:9,boxHeight:9,usePointStyle:true};
   
-  const panel = document.createElement('div');
-  panel.className = 'panel active';
-  
-  if (activeTab === 'resumen') {
-    panel.appendChild(pageHeader('Executive Summary', 'Panorama general 2026'));
-    const h = D.headline || {};
-    const strip = document.createElement('div'); strip.className = 'stat-strip';
-    const varN = (parseFloat(h.variacion_anual)||0)*100;
-    strip.innerHTML = `
-      <div class="si"><div class="si-lbl">Total Students</div><div class="si-val">${fN(h.total_alumnos)}</div><div class="si-foot">One School 2026</div></div>
-      <div class="si"><div class="si-lbl">Anual Var.</div><div class="si-val ${varN<0?'neg':'pos'}">${varN.toFixed(2)}%</div><div class="si-foot">2025 → 2026</div></div>
-      <div class="si"><div class="si-lbl">Ret. Quilmes</div><div class="si-val" style="color:#ff7a88">${fP(h.retencion_quilmes)}</div><div class="si-foot">Prom. Ponderado</div></div>
-      <div class="si"><div class="si-lbl">Ret. North</div><div class="si-val" style="color:#9fc0ef">${fP(h.retencion_north)}</div><div class="si-foot">Prom. Ponderado</div></div>
-      <div class="si"><div class="si-lbl">New Students</div><div class="si-val">${fN(h.new_students)}</div><div class="si-foot">Qs + North</div></div>
-    `;
-    panel.appendChild(sec('Headline KPIs', strip));
-    
-    if(D.community){
-      const cg = document.createElement('div'); cg.className = 'comm-grid';
-      cg.innerHTML = `
-        <div class="comm-card"><div class="comm-lbl">OG Quilmes</div><div class="comm-val">${fP(D.community.ogQuilmes)}</div><div class="comm-foot">Parents</div></div>
-        <div class="comm-card"><div class="comm-lbl">OG North</div><div class="comm-val">${fP(D.community.ogNorth)}</div><div class="comm-foot">Parents</div></div>
-        <div class="comm-card"><div class="comm-lbl">Int. Students</div><div class="comm-val">${fP(D.community.foreignStudents)}</div><div class="comm-foot">One School</div></div>
-        <div class="comm-card" style="box-shadow: 0 0 0 1px rgba(16,154,169,.4)"><div class="comm-lbl">Priority Comm.</div><div class="comm-val">${fP(D.community.priorityCommunity)}</div><div class="comm-foot">OG + Siblings + Staff</div></div>
-      `;
-      panel.appendChild(sec('Community Indicators', cg));
-    }
-  } 
-  else if (activeTab === 'admissions') {
-    panel.appendChild(pageHeader('Admissions', 'Embudo de conversión'));
-    const fd = document.createElement('div'); fd.className = 'funnel';
-    const maxF = Math.max(...(D.funnel||[]).map(x=>parseFloat(x.llegaron)||0),1);
-    (D.funnel||[]).forEach(item=>{
-      const pct = ((parseFloat(item.llegaron)||0)/maxF*100).toFixed(1);
-      const lp = ((parseFloat(item.pctPerd)||0)*100).toFixed(0);
-      fd.innerHTML += `<div class="f-row${item.isWon?' won':''}"><div class="f-lbl">${item.etapa}</div><div class="f-track"><div class="f-fill" style="width:${pct}%"></div></div><div class="f-nums">${fN(item.llegaron)} <span class="f-badge">${lp}% drop</span></div></div>`;
+  const ec=document.getElementById('chart-enrol');
+  if(ec&&D.resumen&&(D.resumen.quilmes||D.resumen.north)){
+    const qA=[...(D.resumen.quilmes||[])].reverse();
+    const nA=[...(D.resumen.north||[])].reverse();
+    const spine=qA.length?qA:nA;
+    const getLvl=(key)=>spine.map((row,i)=>{const q=qA[i]||{},n=nA[i]||{};if(campus==='q')return parseFloat(q[key])||0;if(campus==='n')return parseFloat(n[key])||0;return (parseFloat(q[key])||0)+(parseFloat(n[key])||0);});
+    charts.enrol=new Chart(ec,{
+      type:'bar',
+      data:{
+        labels:spine.map(r=>String(r.yr)+(r.yr===2027?' ▸':'')),
+        datasets:[
+          {label:t('kinder'),data:getLvl('kinder'),backgroundColor:'#6AB2E2',stack:'s'},
+          {label:t('prep'),data:getLvl('prep'),backgroundColor:'#6B6EB3',stack:'s'},
+          {label:t('college'),data:getLvl('college'),backgroundColor:'#213463',stack:'s',borderRadius:{topLeft:7,topRight:7}},
+        ]
+      },
+      options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{stacked:true},x:{stacked:true,grid:{display:false}}}}
     });
-    panel.appendChild(sec('Conversion Pipeline', fd));
   }
-  else if (activeTab === 'retention') {
-    panel.appendChild(pageHeader('Retention & Community', 'Fidelización y Bajas'));
-    const tw = document.createElement('div'); tw.className = 'tw';
-    let h2 = '<table><thead><tr><th>Causa</th><th style="text-align:left">Tipo</th><th>Q 2025</th><th>Q 2026</th><th>N 2025</th><th>N 2026</th><th>OS 2026</th></tr></thead><tbody>';
-    (D.withdrawals||[]).forEach(w=>{
-      h2 += `<tr><td style="font-weight:500">${w.causa}</td><td style="text-align:left"><span class="tag" style="background:#fef3c7;color:#b45309">${w.tipo}</span></td><td class="r">${fN(w.q2025)}</td><td class="r" style="color:var(--red);font-weight:700">${fN(w.q2026)}</td><td class="r">${fN(w.n2025)}</td><td class="r" style="color:var(--navy);font-weight:700">${fN(w.n2026)}</td><td class="r" style="font-weight:700">${fN(w.tot2026)}</td></tr>`;
-    });
-    h2 += '</tbody></table>'; tw.innerHTML = h2;
-    panel.appendChild(sec('Withdrawals by Cause', tw));
-  }
-  else if (activeTab === 'proyeccion') {
-    panel.appendChild(pageHeader('Projection 2027', 'Simulador de escenarios'));
-    if(!D.proyeccion) return;
-    const totDiv = document.createElement('div'); totDiv.className = 'sim-totals';
-    totDiv.innerHTML = `
-      <div class="sim-card q" id="sim-q"><div class="sim-lbl">Quilmes 2027</div><div class="sim-val">--</div><div class="sim-fact">--</div><div class="sim-delta">--</div></div>
-      <div class="sim-card n" id="sim-n"><div class="sim-lbl">North 2027</div><div class="sim-val">--</div><div class="sim-fact">--</div><div class="sim-delta">--</div></div>
-      <div class="sim-card" id="sim-os"><div class="sim-lbl">One School 2027</div><div class="sim-val">--</div><div class="sim-fact">--</div><div class="sim-delta">--</div></div>
-    `;
-    panel.appendChild(totDiv);
-    
-    const ctrl = document.createElement('div'); ctrl.className = 'sim-controls';
-    ctrl.innerHTML = `<span style="font-size:.62rem;font-weight:700;color:var(--gray);text-transform:uppercase;margin-right:10px">Escenario:</span><button class="sim-btn" onclick="applyScenario('reset')" style="background:var(--ink);color:white;border-color:var(--ink)">Tendencial</button><button class="sim-btn" onclick="applyScenario('opt')" style="color:var(--green);border-color:var(--green)">▲ Optimista +2</button><button class="sim-btn" onclick="applyScenario('cons')" style="color:var(--red);border-color:var(--red)">▼ Conservador -2</button>`;
-    panel.appendChild(ctrl);
 
-    const mkTable = (title, ck, rows, color) => {
-      let ht = `<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:${color};margin-bottom:10px">${title}</div><div class="tw"><table><thead><tr><th>Grado</th><th class="r">Base 2026</th><th class="r">Proy. Base</th><th class="r" style="min-width:130px">Ajuste</th><th class="r">Final 2027</th><th class="r">Facturación</th></tr></thead><tbody>`;
-      rows.forEach(r => {
-        const key = ck+'_'+r.grado;
-        ht += `<tr><td style="font-weight:700">${r.grado}</td><td class="r">${fN(r.base2026)}</td><td class="r">${fN(r.proy)}</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj['${key}']=(simAdj['${key}']||0)-1;document.getElementById('adj_${key}').value=simAdj['${key}'];updateSimDisplay()">-</button><input class="adj-input" id="adj_${key}" value="${simAdj[key]||0}" onchange="simAdj['${key}']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj['${key}']=(simAdj['${key}']||0)+1;document.getElementById('adj_${key}').value=simAdj['${key}'];updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:${color}" id="final_${key}">--</td><td class="r" style="color:var(--teal);font-weight:600" id="factrow_${key}">--</td></tr>`;
+  const qnc=document.getElementById('chart-qn');
+  if(qnc&&D.resumen){
+    const qR=[...(D.resumen.quilmes||[])].reverse();
+    const nR=[...(D.resumen.north||[])].reverse();
+    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
+      {label:'Quilmes',data:qR.map(r=>parseFloat(r.total)||0),borderColor:'#DC1E33',backgroundColor:'rgba(220,30,51,.28)',tension:.4,fill:true,borderWidth:3,pointRadius:0},
+      {label:'North',data:nR.map(r=>parseFloat(r.total)||0),borderColor:'#213463',backgroundColor:'rgba(33,52,99,.26)',tension:.4,fill:true,borderWidth:3,pointRadius:0},
+    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{},x:{grid:{display:false}}}}});
+  }
+
+  const dc=document.getElementById('chart-donut');
+  if(dc){
+    const cd=getCampusData();
+    if(cd){
+      const kTotal=parseFloat((cd.kinder&&cd.kinder.total&&cd.kinder.total.matricula)||0);
+      const pTotal=parseFloat((cd.prep&&cd.prep.total&&cd.prep.total.matricula)||0);
+      const cTotal=parseFloat((cd.college&&cd.college.total&&cd.college.total.matricula)||0);
+      const donutColors=campus==='q'?['#DC1E33','#6AB2E2','#6B6EB3']:campus==='n'?['#213463','#109AA9','#6B6EB3']:['#213463','#DC1E33','#109AA9'];
+      charts.donut=new Chart(dc,{
+        type:'bar',
+        data:{labels:[''],datasets:[
+          {label:t('kinder'),data:[kTotal],backgroundColor:donutColors[0],stack:'s',borderRadius:{topLeft:9,bottomLeft:9}},
+          {label:t('prep'),data:[pTotal],backgroundColor:donutColors[1],stack:'s'},
+          {label:t('college'),data:[cTotal],backgroundColor:donutColors[2],stack:'s',borderRadius:{topRight:9,bottomRight:9}},
+        ]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{x:{stacked:true,display:false},y:{stacked:true,display:false}}}
       });
-      return ht + '</tbody></table></div></div>';
-    };
-    
-    const tables = document.createElement('div');
-    tables.innerHTML = (campus!=='n' ? mkTable('Quilmes - Ajuste por grado', 'q', D.proyeccion.quilmes, 'var(--red)') : '') + 
-                       (campus!=='q' ? mkTable('North - Ajuste por grado', 'n', D.proyeccion.north, 'var(--navy)') : '');
-    panel.appendChild(tables);
-  }
-  else if (activeTab === 'marketing') {
-    panel.appendChild(pageHeader('Marketing', 'Pauta y App'));
-    panel.appendChild(sec('Métricas Globales', buildGenericTable(D.rawMarketing)));
-  }
-  else if (activeTab === 'alumni') {
-    panel.appendChild(pageHeader('Alumni', 'Egresados y Mentoring'));
-    panel.appendChild(sec('Demographics', buildGenericTable(D.rawAlumni)));
+    }
   }
 
-  main.appendChild(panel);
-  if(activeTab === 'proyeccion') updateSimDisplay();
-  buildSidebarNav();
+  const wrc=document.getElementById('chart-wr');
+  if(wrc&&D.winrate){
+    const labels=D.winrate.map(r=>String(r.yr));
+    const F=D.winrate.map(r=>getWRF(r));
+    charts.wr=new Chart(wrc,{type:'bar',data:{labels,datasets:[
+      {type:'bar',label:t('col_pipeline'),data:F.map(f=>parseFloat(f.pipeline)||0),backgroundColor:'rgba(26,31,53,.24)',borderRadius:6,yAxisID:'y',order:3},
+      {type:'bar',label:t('col_won'),data:F.map(f=>parseFloat(f.won)||0),backgroundColor:'#109AA9',borderRadius:6,yAxisID:'y',order:2},
+      {type:'line',label:t('col_wr'),data:F.map(f=>+(parseFloat(f.wr)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,yAxisID:'y1',order:1},
+    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{},y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+  }
+
+  const coc=document.getElementById('chart-cohort');
+  if(coc&&D.cohort){
+    const labels=D.cohort.map(r=>String(r.yr));
+    const ds=campus==='os'?[
+      {label:'Quilmes',data:D.cohort.map(r=>+(parseFloat(r.qRet)*100).toFixed(1)),borderColor:'#DC1E33',backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4},
+      {label:'North',data:D.cohort.map(r=>+(parseFloat(r.nRet)*100).toFixed(1)),borderColor:'#213463',backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4},
+    ]:[{label:campus==='q'?'Quilmes':'North',data:D.cohort.map(r=>campus==='q'?+(parseFloat(r.qRet)*100).toFixed(1):+(parseFloat(r.nRet)*100).toFixed(1)),borderColor:C.main,backgroundColor:'transparent',tension:.4,borderWidth:3.5,pointRadius:4}];
+    charts.cohort=new Chart(coc,{type:'line',data:{labels,datasets:ds},options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:TTP},scales:{y:{min:78,max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+  }
 }
 
-function buildSidebarNav() {
-  const nav = document.getElementById('sb-nav');
-  nav.innerHTML = '<div class="sb-lbl">Navegación</div>';
-  TABS.forEach(tab => {
-    const btn = document.createElement('button');
-    btn.className = 'nav-item' + (tab.id === activeTab ? ' active' : '');
-    btn.innerHTML = `<span>${tab.label}</span>`;
-    btn.onclick = () => { activeTab = tab.id; render(); };
+// ── SIDEBAR NAV ──
+function buildSidebarNav(){
+  const nav=document.getElementById('sb-nav');
+  nav.innerHTML='';
+  const lbl=document.createElement('div');lbl.className='sb-lbl';lbl.innerHTML=t('nav_label');nav.appendChild(lbl);
+  TABS.forEach(function(tab){
+    const btn=document.createElement('button');
+    btn.className='nav-item'+(tab.id===activeTab?' active':'');
+    btn.innerHTML=tab.icon+'<span>'+tab.label+'</span>';
+    btn.onclick=function(){
+      activeTab=tab.id;
+      render();
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
     nav.appendChild(btn);
   });
 }
 
-// Campus click
-document.querySelectorAll('.campus-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    campus = btn.dataset.c;
-    document.querySelectorAll('.campus-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.campus-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    campus=btn.dataset.c;
+    document.querySelectorAll('.campus-btn').forEach(b=>{b.classList.remove('active');});
     btn.classList.add('active');
     render();
   });
 });
+
+buildSidebarNav();
 </script>
 </body>
 </html>
