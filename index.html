@@ -724,7 +724,9 @@ const STRINGS={
     s_proj_headline:'Projection Scenarios',s_proj_headline_meta:'2027',
     s_proj_detail:'Classroom Breakdown',s_proj_detail_meta:'Proportional distribution by form',
     s_alumni_headline:'Alumni Overview',s_alumni_headline_meta:'Old Georgians',
-    s_alumni_demo:'Demographics',s_alumni_demo_meta:'Age &amp; geography',
+    s_alumni_demo:'Demographics',s_alumni_demo_meta:'Graduation decade &amp; geography',
+    al_total:'Total Alumni',al_age:'Average Age',al_age_foot:'Years',al_abroad:'Outside Argentina',al_abroad_foot:'% living abroad',
+    al_mentoring:'Mentoring Potential',al_mentoring_foot:'Opted in',al_decade:'Graduation Decade',al_count:'Alumni',al_country:'Country',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
@@ -791,7 +793,9 @@ const STRINGS={
     s_proj_headline:'Escenarios de Proyecci&oacute;n',s_proj_headline_meta:'2027',
     s_proj_detail:'Desglose por Sal&oacute;n',s_proj_detail_meta:'Distribuci&oacute;n proporcional por divisi&oacute;n',
     s_alumni_headline:'Resumen Alumni',s_alumni_headline_meta:'Old Georgians',
-    s_alumni_demo:'Demograf&iacute;a',s_alumni_demo_meta:'Edad y geograf&iacute;a',
+    s_alumni_demo:'Demograf&iacute;a',s_alumni_demo_meta:'D&eacute;cada de egreso y geograf&iacute;a',
+    al_total:'Total Alumni',al_age:'Edad Promedio',al_age_foot:'A&ntilde;os',al_abroad:'Fuera de Argentina',al_abroad_foot:'% en el exterior',
+    al_mentoring:'Potencial Mentoring',al_mentoring_foot:'Anotados',al_decade:'D&eacute;cada de Egreso',al_count:'Alumni',al_country:'Pa&iacute;s',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
@@ -1509,8 +1513,29 @@ function buildClassroom(){
 function buildAlumni(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_alumni'),t('ph_alumni_sub')));
-  wrap.appendChild(sec(t('s_alumni_headline'),t('s_alumni_headline_meta'),emptyState(t('coming_soon'),t('cs_alumni'))));
-  wrap.appendChild(sec(t('s_alumni_demo'),t('s_alumni_demo_meta'),emptyState(t('coming_soon'),t('cs_alumni_demo'))));
+  const a=D.alumni;
+  if(!a||!a.total){
+    wrap.appendChild(sec(t('s_alumni_headline'),t('s_alumni_headline_meta'),emptyState(t('coming_soon'),t('cs_alumni'))));
+    return wrap;
+  }
+  // Headline KPIs
+  wrap.appendChild(sec(t('s_alumni_headline'),t('s_alumni_headline_meta'),kpiGrid([
+    {lbl:t('al_total'),val:fN(a.total),foot:'Q '+fN(a.quilmes)+' &middot; N '+fN(a.north),accent:true},
+    {lbl:t('al_age'),val:a.avgAge!=null?num(a.avgAge).toFixed(0):'&mdash;',foot:t('al_age_foot')},
+    {lbl:t('al_abroad'),val:fP(a.pctOutsideArg),foot:t('al_abroad_foot')},
+    {lbl:t('al_mentoring'),val:fN(a.mentoring),foot:t('al_mentoring_foot')},
+  ])));
+  // Demographics: by decade + top countries
+  const two=document.createElement('div');two.className='two';
+  let h1='<div class="tw"><table><thead><tr><th>'+t('al_decade')+'</th><th class="r">'+t('al_count')+'</th></tr></thead><tbody>';
+  (a.byDecade||[]).forEach(d=>{h1+='<tr><td style="font-weight:600">'+escHtml(d.decade)+'</td><td class="r">'+fN(d.count)+'</td></tr>';});
+  h1+='</tbody></table></div>';
+  let h2='<div class="tw"><table><thead><tr><th>'+t('al_country')+'</th><th class="r">'+t('al_count')+'</th></tr></thead><tbody>';
+  (a.topCountries||[]).forEach(d=>{h2+='<tr><td style="font-weight:600">'+escHtml(d.country)+'</td><td class="r">'+fN(d.count)+'</td></tr>';});
+  h2+='</tbody></table></div>';
+  two.appendChild(elFromHTML(h1).firstChild);
+  two.appendChild(elFromHTML(h2).firstChild);
+  wrap.appendChild(sec(t('s_alumni_demo'),t('s_alumni_demo_meta'),two));
   return wrap;
 }
 
