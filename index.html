@@ -721,6 +721,12 @@ const STRINGS={
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'SGC App (Fidu)',s_app_kpis_meta:'Engagement KPIs',
     s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads',
+    s_fidu_modules:'Attention by Module',s_fidu_modules_meta:'Interactions share',
+    s_fidu_inbox:'Inbox Demand by Month',s_fidu_inbox_meta:'Messages received',
+    fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
+    fidu_loyalty:'Weekly Loyalty',fidu_loyalty_f:'Weekly recurrence',fidu_open:'Real Open Rate',fidu_open_f:'Viewed vs audience',
+    col_module:'Module',col_interactions:'Interactions',col_pct:'% of total',col_month:'Month',col_inbox:'Inbox Messages',
+    col_source:'Source',col_channel_yr:'Year',col_appl:'Application Rate',col_yield:'Yield Rate',
     s_proj_headline:'Projection Scenarios',s_proj_headline_meta:'2027',
     s_proj_detail:'Classroom Breakdown',s_proj_detail_meta:'Proportional distribution by form',
     s_alumni_headline:'Alumni Overview',s_alumni_headline_meta:'Old Georgians',
@@ -790,6 +796,12 @@ const STRINGS={
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'SGC App (Fidu)',s_app_kpis_meta:'KPIs de engagement',
     s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads',
+    s_fidu_modules:'Atenci&oacute;n por M&oacute;dulo',s_fidu_modules_meta:'Distribuci&oacute;n de interacciones',
+    s_fidu_inbox:'Term&oacute;metro de Demanda',s_fidu_inbox_meta:'Mensajes por mes (Inbox)',
+    fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
+    fidu_loyalty:'Fidelidad Semanal',fidu_loyalty_f:'Recurrencia semanal',fidu_open:'Tasa de Apertura Real',fidu_open_f:'Vistos vs audiencia',
+    col_module:'M&oacute;dulo',col_interactions:'Interacciones',col_pct:'% del total',col_month:'Mes',col_inbox:'Mensajes Inbox',
+    col_source:'Origen',col_channel_yr:'A&ntilde;o',col_appl:'Application Rate',col_yield:'Yield Rate',
     s_proj_headline:'Escenarios de Proyecci&oacute;n',s_proj_headline_meta:'2027',
     s_proj_detail:'Desglose por Sal&oacute;n',s_proj_detail_meta:'Distribuci&oacute;n proporcional por divisi&oacute;n',
     s_alumni_headline:'Resumen Alumni',s_alumni_headline_meta:'Old Georgians',
@@ -1244,9 +1256,25 @@ function buildAdmissions(){
     wrap.appendChild(sec(t('s_conv_pipeline'),t('s_conv_pipeline_meta'),fd));
   }
 
-  // Channel placeholder
-  wrap.appendChild(sec(t('s_channel'),t('s_channel_meta'),emptyState(t('coming_soon'),t('cs_channel'))));
+  // Conversion per channel
+  wrap.appendChild(sec(t('s_channel'),t('s_channel_meta'),buildChannel()));
   return wrap;
+}
+function buildChannel(){
+  const rows=D.channel||[];
+  if(!rows.length)return emptyState(t('coming_soon'),t('cs_channel'));
+  const maxYr=Math.max.apply(null,rows.map(r=>num(r.yr)));
+  const campName=campus==='q'?'Quilmes':campus==='n'?'North':null;
+  const filt=rows.filter(r=>num(r.yr)===maxYr&&(campName?r.campus===campName:true));
+  const by={};
+  filt.forEach(r=>{const s=by[r.source]||{source:r.source,pipeline:0,won:0};s.pipeline+=num(r.pipeline);s.won+=num(r.won);by[r.source]=s;});
+  const list=Object.keys(by).map(k=>by[k]).sort((a,b)=>b.won-a.won);
+  const tw=document.createElement('div');tw.className='tw';
+  let tp=0,tWon=0;
+  let h='<table><thead><tr><th>'+t('col_source')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
+  list.forEach(s=>{const wr=s.pipeline>0?s.won/s.pipeline:0;const cls=wr>=0.15?'val-pos':wr<0.05?'val-neg':'';tp+=s.pipeline;tWon+=s.won;h+='<tr><td style="font-weight:600">'+escHtml(s.source)+'</td><td class="r">'+fN(s.pipeline)+'</td><td class="r">'+fN(s.won)+'</td><td class="r"><span class="'+cls+'">'+fP(wr)+'</span></td></tr>';});
+  h+='<tr class="tot"><td>'+t('total_lbl')+' '+maxYr+'</td><td class="r">'+fN(tp)+'</td><td class="r">'+fN(tWon)+'</td><td class="r">'+fP(tp>0?tWon/tp:0)+'</td></tr>';
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
 function buildPipelineTable(){
@@ -1266,6 +1294,17 @@ function buildPipelineTable(){
 }
 
 function buildOccupancy(){
+  // Prefer official OUT_admissions_occupancy data when available
+  if(D.occupancy&&D.occupancy.length){
+    const campName=campus==='q'?'Quilmes':campus==='n'?'North':null;
+    const rows=D.occupancy.filter(r=>campName?r.campus===campName:true);
+    const showCamp=!campName;
+    const tw0=document.createElement('div');tw0.className='tw';
+    let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+t('col_prosp27_act')+'</th><th class="r">'+t('col_new26')+'</th><th class="r">'+t('col_visit')+'</th><th class="r">'+t('col_appl')+'</th><th class="r">'+t('col_yield')+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
+    rows.forEach(r=>{const vr=num(r.visitRate);const sem=vr>=0.30?'g':vr>=0.15?'y':'r';h0+='<tr>'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fP(r.visitRate)+'</td><td class="r">'+fP(r.applRate)+'</td><td class="r">'+fP(r.yieldRate)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';});
+    h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
+  }
+  // Fallback: derived approximation from pipeline
   const tw=document.createElement('div');tw.className='tw';
   const pipe=D.pipeline||[];
   const colT=p=>campus==='q'?num(p.qT):campus==='n'?num(p.nT):num(p.total);
@@ -1373,7 +1412,26 @@ function buildWithdrawals(){
 function buildMarketing(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_marketing'),t('ph_marketing_sub')));
-  wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),emptyState(t('coming_soon'),t('cs_fidu'))));
+  const mk=D.marketing&&D.marketing.fidu;
+  if(mk){
+    wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),kpiGrid([
+      {lbl:t('fidu_adoption'),val:fP(mk.adoption),foot:t('fidu_adoption_f'),accent:true},
+      {lbl:t('fidu_active'),val:fN(mk.activeUsers),foot:t('fidu_active_f')},
+      {lbl:t('fidu_loyalty'),val:fP(mk.loyalty),foot:t('fidu_loyalty_f')},
+      {lbl:t('fidu_open'),val:fP(mk.openRate),foot:t('fidu_open_f')},
+    ])));
+    const two=document.createElement('div');two.className='two';
+    let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
+    (mk.modules||[]).forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(m.name)+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
+    h1+='</tbody></table></div>';
+    let h2='<div class="tw"><table><thead><tr><th>'+t('col_month')+'</th><th class="r">'+t('col_inbox')+'</th></tr></thead><tbody>';
+    (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(m.month)+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
+    h2+='</tbody></table></div>';
+    two.appendChild(elFromHTML(h1).firstChild);two.appendChild(elFromHTML(h2).firstChild);
+    wrap.appendChild(sec(t('s_fidu_modules'),t('s_fidu_modules_meta'),two));
+  }else{
+    wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),emptyState(t('coming_soon'),t('cs_fidu'))));
+  }
   wrap.appendChild(sec(t('s_digital_ads'),t('s_digital_ads_meta'),emptyState(t('coming_soon'),t('cs_ads'))));
   return wrap;
 }
