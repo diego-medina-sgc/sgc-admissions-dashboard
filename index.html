@@ -728,7 +728,7 @@ const STRINGS={
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
-    prospectos_26:'Active Prospects 2026',prospectos_27:'Active Prospects 2027',
+    prospectos_26:'Active Prospects 2026',prospectos_27:'Active Prospects 2027',won_2026:'Won 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'OG Parents Rate',
     foreign:'International Students',priority:'Priority Community',actionable_with:'Actionable Withdrawals 2026',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Intl.',
@@ -795,7 +795,7 @@ const STRINGS={
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
-    prospectos_26:'Prospectos Activos 2026',prospectos_27:'Prospectos Activos 2027',
+    prospectos_26:'Prospectos Activos 2026',prospectos_27:'Prospectos Activos 2027',won_2026:'Ganados 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'Tasa Padres OG',
     foreign:'Estudiantes Extranjeros',priority:'Comunidad Prioritaria',actionable_with:'Bajas Accionables 2026',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Extranj.',
@@ -1170,15 +1170,15 @@ function buildAdmissions(){
   wrap.appendChild(pageHeader(t('ph_admissions'),t('ph_admissions_sub')));
   const h=D.headline||{};const cd=getCampusData()||{};
   const varN=campusVar()*100;
-  // count active prospects 2026 from pipeline (non-won rows) — approximation
-  const pipeTotal=(p)=>campus==='q'?num(p.qT):campus==='n'?num(p.nT):num(p.total);
-  const prosp26=(D.pipeline||[]).filter(p=>!p.isWon).reduce((a,p)=>a+pipeTotal(p),0);
+  // Won 2026 — exact value from pipeline (the 2026 active-prospect figure is not in the JSON)
+  const won26row=(D.pipeline||[]).find(p=>/Won\s*2026/i.test(p.etapa||''))||{};
+  const won26=campus==='q'?num(won26row.qT):campus==='n'?num(won26row.nT):num(won26row.total);
   wrap.appendChild(sec(t('headline'),t('headline_meta'),kpiGrid([
     {lbl:t('total_alumnos'),val:fN(cd.total&&cd.total.matricula),foot:'2026',accent:true},
     {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
     {lbl:t('new_students'),val:fN(cd.total&&cd.total.new_students),foot:'2026'},
     {lbl:t('win_rate'),val:fP(wr2026()),foot:'2026'},
-    {lbl:t('prospectos_26'),val:fN(prosp26),foot:t('s_active_pipeline')},
+    {lbl:t('won_2026'),val:fN(won26),foot:t('col_won')+' 2026'},
     {lbl:t('prospectos_27'),val:fN(cd.total&&cd.total.prospectos),foot:'2027'},
   ])));
 
