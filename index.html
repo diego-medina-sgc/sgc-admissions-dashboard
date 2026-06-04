@@ -740,6 +740,8 @@ const STRINGS={
     col_transition:'Transition',col_avg:'Average',col_use:'In use',col_visit:'Visit Rate',col_appl:'Application Rate',
     col_salon:'Form',col_weight:'Weight %',col_proy27:'Proj. 2027',col_delta:'Δ',
     col_prosp27_act:'Prospects 2027',col_new26:'New 2026',col_status:'Status',
+    col_occ:'Occupancy',col_vac:'Vacancies',col_reth:'Retention',col_newh:'New',col_withh:'Withdrawals',col_prosph:'Prospects',
+    s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment &mdash; Occupancy &mdash; Retention',
     kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
     btn_tendencial:'Trend (base)',btn_opt:'&#9650; Optimistic +2%',btn_cons:'&#9660; Conservative &minus;2%',scenario:'Scenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Adjustment by year group',north_table:'North &mdash; Adjustment by year group',
@@ -805,6 +807,8 @@ const STRINGS={
     col_transition:'Transici&oacute;n',col_avg:'Promedio',col_use:'A usar',col_visit:'Visit Rate',col_appl:'Application Rate',
     col_salon:'Sal&oacute;n',col_weight:'Peso %',col_proy27:'Proy. 2027',col_delta:'Δ',
     col_prosp27_act:'Prospectos 2027',col_new26:'Nuevos 2026',col_status:'Estado',
+    col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',col_reth:'Retenci&oacute;n',col_newh:'Nuevos',col_withh:'Bajas',col_prosph:'Prospectos',
+    s_kpis:'KPIs por Secci&oacute;n',s_kpis_meta:'Matr&iacute;cula &mdash; Ocupaci&oacute;n &mdash; Retenci&oacute;n',
     kinder:'KINDER',prep:'PREP',college:'COLLEGE',total_campus:'TOTAL CAMPUS',total_lbl:'TOTAL',
     btn_tendencial:'Tendencial (base)',btn_opt:'&#9650; Optimista +2%',btn_cons:'&#9660; Conservador &minus;2%',scenario:'Escenario:',vs_base:'vs base',
     quilmes_table:'Quilmes &mdash; Ajuste por grado',north_table:'North &mdash; Ajuste por grado',
@@ -1078,8 +1082,11 @@ function buildResumen(){
     wrap.appendChild(sec(t('community'),t('community_meta'),cg));
   }
 
-  // Enrolment by section & campus (collapsible 2025 vs 2026)
+  // Enrolment by section & campus (2025 vs 2026)
   wrap.appendChild(sec(t('s_enrolment'),t('s_enrolment_meta'),buildEnrolTable()));
+
+  // Rich KPIs by section/grade (enrolment, occupancy, vacancies, retention, new, withdrawals, prospects)
+  wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),buildKpiTable()));
 
   // Charts
   if(D.resumen){
@@ -1087,8 +1094,8 @@ function buildResumen(){
     two.innerHTML='<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('enrol_chart')+'</div><div class="cc-sub">'+t('enrol_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-enrol" height="200"></canvas></div></div>'
       +'<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('qn_chart')+'</div><div class="cc-sub">'+t('qn_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-qn" height="200"></canvas></div></div>';
     const evo=sec(t('evol'),t('evol_meta'),two);wrap.appendChild(evo);
-    const donutWrap=document.createElement('div');donutWrap.style.cssText='max-width:560px;margin:8px auto 0;';
-    donutWrap.innerHTML='<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap" style="height:118px"><canvas id="chart-donut"></canvas></div></div>';
+    const donutWrap=document.createElement('div');donutWrap.style.cssText='max-width:760px;margin:8px auto 0;';
+    donutWrap.innerHTML='<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('donut_chart')+'</div><div class="cc-sub">'+t('donut_sub')+'</div></div></div><div class="chart-wrap" style="height:180px"><canvas id="chart-donut"></canvas></div></div>';
     wrap.appendChild(donutWrap);
   }
   return wrap;
@@ -1096,42 +1103,52 @@ function buildResumen(){
 
 function buildEnrolTable(){
   const re=D.resumen||{};
-  const q=D.quilmes||{},n=D.north||{};
-  // per-section helper: returns {m25, m26, p26, p27} for a campus section
   const arrFor=c=>c==='q'?re.quilmes:c==='n'?re.north:null;
-  const secKeys=[{key:'kinder',lbl:t('kinder'),grades:null,cls:'grp-k'},{key:'prep',lbl:t('prep'),grades:null,cls:'grp-k'},{key:'college',lbl:t('college'),grades:null,cls:'grp-k'}];
-  // figure which grades exist per section/campus
   const tw=document.createElement('div');tw.className='tw';
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_var')+'</th><th class="r">'+t('col_prosp26')+'</th><th class="r">'+t('col_prosp27')+'</th></tr></thead><tbody>';
-  // sections
-  let tM25=0,tM26=0,tP26=0,tP27=0;
+  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_var')+'</th><th class="r">'+t('col_prosph')+'</th></tr></thead><tbody>';
+  let tM25=0,tM26=0,tP=0;
   const cd=getCampusData()||{};
-  const secDefs=[{key:'kinder',lbl:t('kinder'),grades:GR_K},{key:'prep',lbl:t('prep'),grades:GR_P},{key:'college',lbl:t('college'),grades:GR_C}];
-  secDefs.forEach((sd,si)=>{
-    const sObj=cd[sd.key]||{};const tot=sObj.total||{};
-    // 2025 from resumen
-    const m25=(()=>{
-      if(campus==='os'){const r=(re.quilmes||[]).find(x=>x.yr===2025)||{},r2=(re.north||[]).find(x=>x.yr===2025)||{};return num(r[sd.key])+num(r2[sd.key]);}
-      const arr=arrFor(campus)||[];const r=arr.find(x=>x.yr===2025)||{};return num(r[sd.key]);
-    })();
-    const m26=num(tot.matricula),p26=num(tot.prospectos);
-    // prospectos 2027 not separately in section totals -> use total.prospectos? we approximate per section prospectos = tot.prospectos (2026). 2027 we don't have per-section -> show dash
+  const secDefs=[{key:'kinder',lbl:t('kinder')},{key:'prep',lbl:t('prep')},{key:'college',lbl:t('college')}];
+  const yr=(c,y,key)=>{const arr=arrFor(c)||[];const r=arr.find(x=>x.yr===y)||{};return num(r[key]);};
+  secDefs.forEach(sd=>{
+    const tot=(cd[sd.key]||{}).total||{};
+    const m25=campus==='os'?yr('q',2025,sd.key)+yr('n',2025,sd.key):yr(campus,2025,sd.key);
+    const m26=num(tot.matricula),p=num(tot.prospectos);
     const vDec=m25>0?(m26-m25)/m25:null;
-    tM25+=m25;tM26+=m26;tP26+=p26;
-    const gid='enrolg-'+si;
-    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+(vDec===null?'&mdash;':fCrp(vDec))+'</td><td class="r">'+fN(p26)+'</td><td class="r">&mdash;</td></tr>';
-    sd.grades.forEach(g=>{
-      const gd=sObj[g];if(!gd||(gd.matricula==null&&gd.prospectos==null))return;
-      // grade 2025 not available -> dash
-      h+='<tr class="salon-row '+gid+'"><td>'+g+'</td><td class="r">&mdash;</td><td class="r">'+fN(gd.matricula)+'</td><td class="r">&mdash;</td><td class="r">'+fN(gd.prospectos)+'</td><td class="r">&mdash;</td></tr>';
-    });
+    tM25+=m25;tM26+=m26;tP+=p;
+    h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+(vDec===null?'&mdash;':fCrp(vDec))+'</td><td class="r">'+fN(p)+'</td></tr>';
   });
   const tVar=tM25>0?(tM26-tM25)/tM25:null;
-  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+(tVar===null?'&mdash;':fCrp(tVar))+'</td><td class="r">'+fN(tP26)+'</td><td class="r">&mdash;</td></tr>';
+  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+(tVar===null?'&mdash;':fCrp(tVar))+'</td><td class="r">'+fN(tP)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;
   return tw;
+}
+function buildKpiTable(){
+  const cd=getCampusData();if(!cd)return document.createElement('div');
+  const tw=document.createElement('div');tw.className='tw';
+  const lvls=[
+    {lbl:t('kinder'),obj:cd.kinder,grades:GR_K},
+    {lbl:t('prep'),obj:cd.prep,grades:GR_P},
+    {lbl:t('college'),obj:cd.college,grades:GR_C},
+  ];
+  const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
+  const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
+  let h='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_reth')+'</th><th class="r">'+t('col_newh')+'</th><th class="r">'+t('col_withh')+'</th><th class="r">'+t('col_prosph')+'</th></tr></thead><tbody>';
+  let any=false;
+  lvls.forEach((s,si)=>{
+    const obj=s.obj||{},tot=obj.total||{};
+    const gid='kpig-'+si;
+    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td><td class="r">'+fmt(tot.ocupacion,'pct')+'</td><td class="r">'+fN(tot.vacantes)+'</td><td class="r">'+fmt(tot.retencion,'pct')+'</td><td class="r">'+fN(tot.new_students)+'</td><td class="r">'+fN(tot.withdrawals)+'</td><td class="r">'+fN(tot.prospectos)+'</td></tr>';
+    s.grades.forEach(g=>{
+      const d=obj[g];if(!d)return;any=true;
+      h+='<tr class="salon-row '+gid+'"><td></td><td>'+g+'</td><td class="r">'+fN(d.matricula)+'</td><td class="r">'+fmt(d.ocupacion,'pct')+'</td><td class="r">'+fN(d.vacantes)+'</td><td class="r">'+fmt(d.retencion,'pct')+'</td><td class="r">'+fN(d.new_students)+'</td><td class="r">'+fN(d.withdrawals)+'</td><td class="r">'+fN(d.prospectos)+'</td></tr>';
+    });
+  });
+  const ct=cd.total||{};
+  h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
 /* ============================== ADMISSIONS ============================== */
