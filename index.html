@@ -1133,21 +1133,34 @@ function buildKpiTable(){
     {lbl:t('prep'),obj:cd.prep,grades:GR_P},
     {lbl:t('college'),obj:cd.college,grades:GR_C},
   ];
+  // Candidate metrics — only render a column if the source actually provides a value somewhere
+  const metrics=[
+    {key:'ocupacion',lbl:t('col_occ'),type:'pct'},
+    {key:'vacantes',lbl:t('col_vac'),type:'int'},
+    {key:'retencion',lbl:t('col_reth'),type:'pct'},
+    {key:'new_students',lbl:t('col_newh'),type:'int'},
+    {key:'withdrawals',lbl:t('col_withh'),type:'int'},
+    {key:'prospectos',lbl:t('col_prosph'),type:'int'},
+  ];
+  const hasData=m=>{
+    let found=false;
+    lvls.forEach(s=>{const o=s.obj||{};if(o.total&&o.total[m.key]!=null)found=true;s.grades.forEach(g=>{if(o[g]&&o[g][m.key]!=null)found=true;});});
+    if(cd.total&&cd.total[m.key]!=null)found=true;
+    return found;
+  };
+  const cols=metrics.filter(hasData);
+  const cell=(o,c)=>o&&o[c.key]!=null?(c.type==='pct'?fmt(o[c.key],'pct'):fN(o[c.key])):'&mdash;';
+  const colH=cols.map(c=>'<th class="r">'+c.lbl+'</th>').join('');
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th><th class="r">'+t('col_occ')+'</th><th class="r">'+t('col_vac')+'</th><th class="r">'+t('col_reth')+'</th><th class="r">'+t('col_newh')+'</th><th class="r">'+t('col_withh')+'</th><th class="r">'+t('col_prosph')+'</th></tr></thead><tbody>';
-  let any=false;
+  let h='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th>'+colH+'</tr></thead><tbody>';
   lvls.forEach((s,si)=>{
-    const obj=s.obj||{},tot=obj.total||{};
-    const gid='kpig-'+si;
-    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td><td class="r">'+fmt(tot.ocupacion,'pct')+'</td><td class="r">'+fN(tot.vacantes)+'</td><td class="r">'+fmt(tot.retencion,'pct')+'</td><td class="r">'+fN(tot.new_students)+'</td><td class="r">'+fN(tot.withdrawals)+'</td><td class="r">'+fN(tot.prospectos)+'</td></tr>';
-    s.grades.forEach(g=>{
-      const d=obj[g];if(!d)return;any=true;
-      h+='<tr class="salon-row '+gid+'"><td></td><td>'+g+'</td><td class="r">'+fN(d.matricula)+'</td><td class="r">'+fmt(d.ocupacion,'pct')+'</td><td class="r">'+fN(d.vacantes)+'</td><td class="r">'+fmt(d.retencion,'pct')+'</td><td class="r">'+fN(d.new_students)+'</td><td class="r">'+fN(d.withdrawals)+'</td><td class="r">'+fN(d.prospectos)+'</td></tr>';
-    });
+    const obj=s.obj||{},tot=obj.total||{};const gid='kpig-'+si;
+    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td>'+cols.map(c=>'<td class="r">'+cell(tot,c)+'</td>').join('')+'</tr>';
+    s.grades.forEach(g=>{const d=obj[g];if(!d)return;h+='<tr class="salon-row '+gid+'"><td></td><td>'+g+'</td><td class="r">'+fN(d.matricula)+'</td>'+cols.map(c=>'<td class="r">'+cell(d,c)+'</td>').join('')+'</tr>';});
   });
   const ct=cd.total||{};
-  h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r">'+fN(ct.new_students)+'</td><td class="r">'+fN(ct.withdrawals)+'</td><td class="r">'+fN(ct.prospectos)+'</td></tr>';
+  h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td>'+cols.map(c=>'<td class="r">'+cell(ct,c)+'</td>').join('')+'</tr>';
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
@@ -1341,8 +1354,10 @@ function buildMarketing(){
 /* ============================== PROJECTION 2027 ============================== */
 function initSimAdj(){simAdj={};const py=D.proyeccion;if(!py)return;(py.quilmes||[]).forEach(r=>{simAdj['q_'+r.grado]=0;});(py.north||[]).forEach(r=>{simAdj['n_'+r.grado]=0;});}
 function calcFinal(r,adj){
-  const base=num(r.base2026),tasa=num(r.tasa),cap=num(r.capacidad);
-  let v=Math.round(base*tasa*(1+adj/100));
+  // proy = tendential projection already computed upstream (base2026*tasa rounded),
+  // and is the only reliable figure for natural-entry grades where base2026/tasa = "—".
+  const base=num(r.proy),cap=num(r.capacidad);
+  let v=Math.round(base*(1+adj/100));
   if(cap>0)v=Math.min(v,cap);
   return v;
 }
@@ -1421,11 +1436,13 @@ function buildProyeccion(){
 function mkAdjTable(title,ck,rows,color){
   if(!rows||!rows.length)return'';
   let h='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_rate')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th><th class="r">'+t('col_cap')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
-  let tBase=0,tFinal=0,tFact=0;
+  let tBase=0,tProy=0,tFinal=0,tFact=0;
   rows.forEach(r=>{
     const key=ck+'_'+r.grado,adj=simAdj[key]||0,f=calcFinal(r,adj),fact=calcFact(r,f);
-    tBase+=num(r.base2026);tFinal+=f;tFact+=fact;
-    h+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+fN(r.base2026)+'</td><td class="r">'+fP(r.tasa)+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;updateSimDisplay()">&minus;</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+f.toLocaleString('es-AR')+'</td><td class="r">'+fN(r.capacidad)+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+fUSD(fact)+'</td>':'')+'</tr>';
+    const baseDisp=(typeof r.base2026==='number')?fN(r.base2026):escHtml(r.base2026);
+    const tasaDisp=(typeof r.tasa==='number')?fP(r.tasa):escHtml(r.tasa);
+    tBase+=num(r.base2026);tProy+=num(r.proy);tFinal+=f;tFact+=fact;
+    h+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+baseDisp+'</td><td class="r">'+tasaDisp+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;updateSimDisplay()">&minus;</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+f.toLocaleString('es-AR')+'</td><td class="r">'+fN(r.capacidad)+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+fUSD(fact)+'</td>':'')+'</tr>';
   });
   h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(tBase)+'</td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+tFinal.toLocaleString('es-AR')+'</td><td class="r">&mdash;</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(tFact)+'</td>':'')+'</tr>';
   h+='</tbody></table></div></div>';return h;
