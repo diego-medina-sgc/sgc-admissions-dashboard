@@ -1125,8 +1125,31 @@ function buildEnrolTable(){
   h+='</tbody></table>';tw.innerHTML=h;
   return tw;
 }
+function enrichOccupancy(cd){
+  // Derive occupancy% and vacancies per grade from projection capacities + 2026 enrolment
+  // (the doGet returns these as null; capacities are stable room sizes).
+  if(!cd||!D.proyeccion)return cd;
+  const py=D.proyeccion;
+  const capOf=g=>{
+    const fq=(py.quilmes||[]).find(r=>r.grado===g),fn=(py.north||[]).find(r=>r.grado===g);
+    if(campus==='q')return fq?num(fq.capacidad):null;
+    if(campus==='n')return fn?num(fn.capacidad):null;
+    const a=fq?num(fq.capacidad):0,b=fn?num(fn.capacidad):0;return(a+b)>0?(a+b):null;
+  };
+  ['kinder','prep','college'].forEach(secKey=>{
+    const obj=cd[secKey];if(!obj)return;
+    let tCap=0,tMat=0,hasCap=false;
+    Object.keys(obj).forEach(g=>{
+      if(g==='total')return;const d=obj[g];if(!d)return;
+      const cap=capOf(g);
+      if(cap!=null&&cap>0){d.ocupacion=num(d.matricula)/cap;d.vacantes=Math.max(0,cap-num(d.matricula));tCap+=cap;tMat+=num(d.matricula);hasCap=true;}
+    });
+    if(obj.total&&hasCap){obj.total.ocupacion=tCap>0?tMat/tCap:null;obj.total.vacantes=Math.max(0,tCap-tMat);}
+  });
+  return cd;
+}
 function buildKpiTable(){
-  const cd=getCampusData();if(!cd)return document.createElement('div');
+  const cd=enrichOccupancy(getCampusData());if(!cd)return document.createElement('div');
   const tw=document.createElement('div');tw.className='tw';
   const lvls=[
     {lbl:t('kinder'),obj:cd.kinder,grades:GR_K},
