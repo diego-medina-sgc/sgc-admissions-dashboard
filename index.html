@@ -960,6 +960,24 @@ const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('e
 const fCrp=v=>{if(v===null||v===undefined||v==='')return'&mdash;';const n=parseFloat(v)*100;if(isNaN(n))return'&mdash;';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">&#9660; '+s+'</span>':'<span class="val-pos">&#9650; '+s+'</span>';};
 const STAGE_EN={'Consulta':'Consultation','Pedido de Documentación':'Documentation Request','Reunión Informativa':'Informative Meeting','Entrevista de Padres':'Parents Interview','Entrevista de Alumnos':'Students Interview','Aprobación Headmaster':'Headmaster Approval','Oferta de Vacante':'Place Offering','Ganados':'Won','Perdidos':'Lost'};
 function trStage(s){return lang==='en'?(STAGE_EN[s]||s):s;}
+/* ── Data-value translations (some sheet values come in Spanish) ── */
+const MONTH_ES2EN={enero:'January',febrero:'February',marzo:'March',abril:'April',mayo:'May',junio:'June',julio:'July',agosto:'August',septiembre:'September',setiembre:'September',octubre:'October',noviembre:'November',diciembre:'December'};
+const MONTH_EN2ES={january:'Enero',february:'Febrero',march:'Marzo',april:'Abril',may:'Mayo',june:'Junio',july:'Julio',august:'Agosto',september:'Septiembre',october:'Octubre',november:'Noviembre',december:'Diciembre'};
+function trMonth(s){const p=String(s||'').trim().split(/\s+/);if(!p.length)return s;const m=p[0].toLowerCase(),rest=p.slice(1).join(' ');if(lang==='en'&&MONTH_ES2EN[m])return MONTH_ES2EN[m]+(rest?' '+rest:'');if(lang==='es'&&MONTH_EN2ES[m])return MONTH_EN2ES[m]+(rest?' '+rest:'');return s;}
+const SECTOR_EN={'Negocios / Dirección':'Business / Management','Otros':'Other','Estudiante':'Student','Sin dato':'No data','Retirado':'Retired','Tech / Nuevas profesiones':'Tech / New Professions','Médicos / Salud':'Medical / Health','Campo / Agro':'Agriculture','Abogados / Escribanos':'Lawyers / Notaries','Arquitectos':'Architects'};
+function trSector(s){return lang==='en'?(SECTOR_EN[s]||s):s;}
+const TIPO_EN={'Natural':'Natural','Exogena':'Exogenous','Exógena':'Exogenous','Accionable':'Actionable'};
+function trTipo(s){return lang==='en'?(TIPO_EN[s]||s):s;}
+const MODULE_T={'Inbox (Mensajes)':{en:'Inbox',es:'Inbox (Mensajes)'},'Behavior (Rewards & Conduct)':{en:'Behavior (Rewards & Conduct)',es:'Comportamiento (Premios y Conducta)'},'Newsfeed (Novedades)':{en:'Newsfeed',es:'Novedades'},'Groups (Grupos)':{en:'Groups',es:'Grupos'},'Events (Eventos)':{en:'Events',es:'Eventos'}};
+function trModule(s){const m=MODULE_T[s];return m?(lang==='en'?m.en:m.es):s;}
+const COUNTRY_ES={'Argentina':'Argentina','United States':'Estados Unidos','Spain':'España','United Kingdom':'Reino Unido','Chile':'Chile','Uruguay':'Uruguay','Brazil':'Brasil','Australia':'Australia','Bolivia':'Bolivia','Paraguay':'Paraguay','Other':'Otros'};
+function trCountry(s){return lang==='es'?(COUNTRY_ES[s]||s):s;}
+const NAT_ES={'Argentine':'Argentina','American':'Estadounidense','Chinese':'China','Russian':'Rusa','Brazilian':'Brasileña','Chilean':'Chilena','Uruguayan':'Uruguaya','Spanish':'Española','Mexican':'Mexicana','Italian':'Italiana','Other':'Otras'};
+function trNat(s){return lang==='es'?(NAT_ES[s]||s):s;}
+const CAUSE_ES={'Graduate':'Egreso','Exchange Student':'Intercambio','Move Abroad':'Mudanza al exterior','Moving Locally':'Mudanza local','Financial':'Financiera','Academic':'Académica','Social':'Social','Personal':'Personal','Other':'Otra'};
+function trCause(s){return lang==='es'?(CAUSE_ES[s]||s):s;}
+const SOURCE_ES={'Unknown':'Desconocido','Organic Web':'Web orgánica'};
+function trSource(s){return lang==='es'?(SOURCE_ES[s]||s):s;}
 
 /* ============================== CAMPUS DATA ============================== */
 function mergeSection(a,b){
@@ -1410,7 +1428,7 @@ function buildChannel(){
   const tw=document.createElement('div');tw.className='tw';
   let tp=0,tWon=0;
   let h='<table><thead><tr><th>'+t('col_source')+'</th><th class="r">'+t('col_opportunities')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
-  list.forEach(s=>{const wr=s.pipeline>0?s.won/s.pipeline:0;const cls=wr>=0.15?'val-pos':wr<0.05?'val-neg':'';tp+=s.pipeline;tWon+=s.won;h+='<tr><td style="font-weight:600">'+escHtml(s.source)+'</td><td class="r">'+fN(s.pipeline)+'</td><td class="r">'+fN(s.won)+'</td><td class="r"><span class="'+cls+'">'+fP(wr)+'</span></td></tr>';});
+  list.forEach(s=>{const wr=s.pipeline>0?s.won/s.pipeline:0;const cls=wr>=0.15?'val-pos':wr<0.05?'val-neg':'';tp+=s.pipeline;tWon+=s.won;h+='<tr><td style="font-weight:600">'+escHtml(trSource(s.source))+'</td><td class="r">'+fN(s.pipeline)+'</td><td class="r">'+fN(s.won)+'</td><td class="r"><span class="'+cls+'">'+fP(wr)+'</span></td></tr>';});
   h+='<tr class="tot"><td>'+t('total_lbl')+' '+yr+'</td><td class="r">'+fN(tp)+'</td><td class="r">'+fN(tWon)+'</td><td class="r">'+fP(tp>0?tWon/tp:0)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
@@ -1502,7 +1520,7 @@ function buildNationalities(){
   if(!list.length)return emptyState(t('coming_soon'),t('cs_intl'));
   const max=Math.max.apply(null,list.map(r=>r.v));
   const wrap=document.createElement('div');wrap.className='natbars';
-  wrap.innerHTML=list.map(r=>'<div class="natbar-row"><div class="natbar-lbl">'+flagImg(r.name)+escHtml(r.name)+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(r.v/max*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(r.v)+'</div></div>').join('');
+  wrap.innerHTML=list.map(r=>'<div class="natbar-row"><div class="natbar-lbl">'+flagImg(r.name)+escHtml(trNat(r.name))+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(r.v/max*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(r.v)+'</div></div>').join('');
   return wrap;
 }
 function buildRetGrades(key,title,color){
@@ -1534,7 +1552,7 @@ function buildWithdrawals(){
     const v25=campus==='q'?num(w.q2025):campus==='n'?num(w.n2025):num(w.tot2025);
     const v26=campus==='q'?num(w.q2026):campus==='n'?num(w.n2026):num(w.tot2026);
     t25+=v25;t26+=v26;
-    h+='<tr><td style="font-weight:500">'+escHtml(w.causa)+'</td><td style="text-align:left"><span class="tag '+tc+'">'+escHtml(w.tipo)+'</span></td>';
+    h+='<tr><td style="font-weight:500">'+escHtml(trCause(w.causa))+'</td><td style="text-align:left"><span class="tag '+tc+'">'+escHtml(trTipo(w.tipo))+'</span></td>';
     if(campus==='os')h+='<td class="r c-q">'+fN(w.q2025)+'</td><td class="r c-q" style="font-weight:700">'+fN(w.q2026)+'</td><td class="r c-n">'+fN(w.n2025)+'</td><td class="r c-n" style="font-weight:700">'+fN(w.n2026)+'</td><td class="r" style="font-weight:700">'+fN(w.tot2026)+'</td>';
     else h+='<td class="r">'+fN(v25)+'</td><td class="r" style="font-weight:700">'+fN(v26)+'</td>';
     h+='</tr>';
@@ -1559,10 +1577,10 @@ function buildMarketing(){
       {lbl:t('fidu_open'),val:fP(mk.openRate),foot:t('fidu_open_f')},
     ])));
     let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
-    (mk.modules||[]).forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(m.name)+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
+    (mk.modules||[]).forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(trModule(m.name))+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
     h1+='</tbody></table></div>';
     let h2='<div class="tw"><table><thead><tr><th>'+t('col_month')+'</th><th class="r">'+t('col_inbox')+'</th></tr></thead><tbody>';
-    (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(m.month)+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
+    (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(trMonth(m.month))+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
     h2+='</tbody></table></div>';
     wrap.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
     wrap.appendChild(sec(t('s_inbox'),t('s_inbox_meta'),elFromHTML(h2).firstChild));
@@ -1737,7 +1755,7 @@ function buildAlumniDist(rows,withFlags){
   const tot=list.reduce((s,b)=>s+b.v,0)||1;
   const tw=document.createElement('div');tw.className='tw';
   let h='<table><thead><tr><th>'+(withFlags?t('al_country'):t('col_sector'))+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
-  list.forEach(r=>{h+='<tr><td style="font-weight:600">'+(withFlags?flagImg(r.name):'')+escHtml(r.name)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
+  list.forEach(r=>{const nm=withFlags?trCountry(r.name):trSector(r.name);h+='<tr><td style="font-weight:600">'+(withFlags?flagImg(r.name):'')+escHtml(nm)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
