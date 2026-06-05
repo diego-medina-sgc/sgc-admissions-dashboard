@@ -732,10 +732,10 @@ const STRINGS={
     s_withdrawals:'Withdrawals by Cause',s_withdrawals_meta:'2025 vs 2026',
     s_intl_nationalities:'International Students &mdash; Nationalities',s_intl_nationalities_meta:'Demographics',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
-    s_app_kpis:'SGC App (Fidu)',s_app_kpis_meta:'Engagement KPIs',
+    s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
     s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads',
-    s_fidu_modules:'Attention by Module',s_fidu_modules_meta:'Interactions share',
-    s_fidu_inbox:'Inbox Demand by Month',s_fidu_inbox_meta:'Messages received',
+    s_modules:'Modules',s_modules_meta:'Attention distribution',
+    s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
     fidu_loyalty:'Weekly Loyalty',fidu_loyalty_f:'Weekly recurrence',fidu_open:'Real Open Rate',fidu_open_f:'Viewed vs audience',
     col_module:'Module',col_interactions:'Interactions',col_pct:'% of total',col_month:'Month',col_inbox:'Inbox Messages',
@@ -745,7 +745,9 @@ const STRINGS={
     s_alumni_headline:'Alumni Overview',s_alumni_headline_meta:'Old Georgians',
     s_alumni_demo:'Demographics',s_alumni_demo_meta:'Graduation decade &amp; geography',
     al_total:'Total Alumni',al_age:'Average Age',al_age_foot:'Years',al_abroad:'Outside Argentina',al_abroad_foot:'% living abroad',
-    al_mentoring:'Mentoring Potential',al_mentoring_foot:'Opted in',al_decade:'Graduation Decade',al_count:'Alumni',al_country:'Country',
+    al_mentoring:'Mentoring',al_mentoring_foot:'Opted in (Yes)',al_decade:'Graduation Decade',al_count:'Alumni',al_country:'Country',
+    al_male:'Male',al_female:'Female',al_withkids:'With Kids',col_sector:'Sector',col_share:'Share %',
+    s_alumni_countries:'Distribution by Country',s_alumni_sectors:'Professional Sectors',s_alumni_grad:'Form Responses',s_alumni_grad_sub:'By Graduation Year',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
@@ -813,10 +815,10 @@ const STRINGS={
     s_withdrawals:'Bajas por Causa',s_withdrawals_meta:'2025 vs 2026',
     s_intl_nationalities:'Estudiantes Extranjeros &mdash; Nacionalidades',s_intl_nationalities_meta:'Demograf&iacute;a',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
-    s_app_kpis:'SGC App (Fidu)',s_app_kpis_meta:'KPIs de engagement',
+    s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
     s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads',
-    s_fidu_modules:'Atenci&oacute;n por M&oacute;dulo',s_fidu_modules_meta:'Distribuci&oacute;n de interacciones',
-    s_fidu_inbox:'Term&oacute;metro de Demanda',s_fidu_inbox_meta:'Mensajes por mes (Inbox)',
+    s_modules:'M&oacute;dulos',s_modules_meta:'Distribuci&oacute;n de la atenci&oacute;n',
+    s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
     fidu_loyalty:'Fidelidad Semanal',fidu_loyalty_f:'Recurrencia semanal',fidu_open:'Tasa de Apertura Real',fidu_open_f:'Vistos vs audiencia',
     col_module:'M&oacute;dulo',col_interactions:'Interacciones',col_pct:'% del total',col_month:'Mes',col_inbox:'Mensajes Inbox',
@@ -826,7 +828,9 @@ const STRINGS={
     s_alumni_headline:'Resumen Alumni',s_alumni_headline_meta:'Old Georgians',
     s_alumni_demo:'Demograf&iacute;a',s_alumni_demo_meta:'D&eacute;cada de egreso y geograf&iacute;a',
     al_total:'Total Alumni',al_age:'Edad Promedio',al_age_foot:'A&ntilde;os',al_abroad:'Fuera de Argentina',al_abroad_foot:'% en el exterior',
-    al_mentoring:'Potencial Mentoring',al_mentoring_foot:'Anotados',al_decade:'D&eacute;cada de Egreso',al_count:'Alumni',al_country:'Pa&iacute;s',
+    al_mentoring:'Mentoring',al_mentoring_foot:'Anotados (Yes)',al_decade:'D&eacute;cada de Egreso',al_count:'Alumni',al_country:'Pa&iacute;s',
+    al_male:'Hombres',al_female:'Mujeres',al_withkids:'Con Hijos',col_sector:'Sector',col_share:'% del total',
+    s_alumni_countries:'Distribuci&oacute;n por Pa&iacute;s',s_alumni_sectors:'Sectores Profesionales',s_alumni_grad:'Form Responses',s_alumni_grad_sub:'Por A&ntilde;o de Egreso',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
@@ -1466,15 +1470,14 @@ function buildMarketing(){
       {lbl:t('fidu_loyalty'),val:fP(mk.loyalty),foot:t('fidu_loyalty_f')},
       {lbl:t('fidu_open'),val:fP(mk.openRate),foot:t('fidu_open_f')},
     ])));
-    const two=document.createElement('div');two.className='two';
     let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
     (mk.modules||[]).forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(m.name)+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
     h1+='</tbody></table></div>';
     let h2='<div class="tw"><table><thead><tr><th>'+t('col_month')+'</th><th class="r">'+t('col_inbox')+'</th></tr></thead><tbody>';
     (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(m.month)+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
     h2+='</tbody></table></div>';
-    two.appendChild(elFromHTML(h1).firstChild);two.appendChild(elFromHTML(h2).firstChild);
-    wrap.appendChild(sec(t('s_fidu_modules'),t('s_fidu_modules_meta'),two));
+    wrap.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
+    wrap.appendChild(sec(t('s_inbox'),t('s_inbox_meta'),elFromHTML(h2).firstChild));
   }else{
     wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),emptyState(t('coming_soon'),t('cs_fidu'))));
   }
@@ -1618,29 +1621,38 @@ function buildAlumni(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_alumni'),t('ph_alumni_sub')));
   const a=D.alumni;
-  if(!a||!a.total){
-    wrap.appendChild(sec(t('s_alumni_headline'),t('s_alumni_headline_meta'),emptyState(t('coming_soon'),t('cs_alumni'))));
+  if(!a||!a.headline){
+    wrap.appendChild(sec(t('s_alumni_headline'),'',emptyState(t('coming_soon'),t('cs_alumni'))));
     return wrap;
   }
-  // Headline KPIs
-  wrap.appendChild(sec(t('s_alumni_headline'),t('s_alumni_headline_meta'),kpiGrid([
-    {lbl:t('al_total'),val:fN(a.total),foot:'Q '+fN(a.quilmes)+' &middot; N '+fN(a.north),accent:true},
-    {lbl:t('al_age'),val:a.avgAge!=null?num(a.avgAge).toFixed(0):'&mdash;',foot:t('al_age_foot')},
-    {lbl:t('al_abroad'),val:fP(a.pctOutsideArg),foot:t('al_abroad_foot')},
-    {lbl:t('al_mentoring'),val:fN(a.mentoring),foot:t('al_mentoring_foot')},
-  ])));
-  // Demographics: by decade + top countries
-  const two=document.createElement('div');two.className='two';
-  let h1='<div class="tw"><table><thead><tr><th>'+t('al_decade')+'</th><th class="r">'+t('al_count')+'</th></tr></thead><tbody>';
-  (a.byDecade||[]).forEach(d=>{h1+='<tr><td style="font-weight:600">'+escHtml(d.decade)+'</td><td class="r">'+fN(d.count)+'</td></tr>';});
-  h1+='</tbody></table></div>';
-  let h2='<div class="tw"><table><thead><tr><th>'+t('al_country')+'</th><th class="r">'+t('al_count')+'</th></tr></thead><tbody>';
-  (a.topCountries||[]).forEach(d=>{h2+='<tr><td style="font-weight:600">'+escHtml(d.country)+'</td><td class="r">'+fN(d.count)+'</td></tr>';});
-  h2+='</tbody></table></div>';
-  two.appendChild(elFromHTML(h1).firstChild);
-  two.appendChild(elFromHTML(h2).firstChild);
-  wrap.appendChild(sec(t('s_alumni_demo'),t('s_alumni_demo_meta'),two));
+  const H=a.headline;
+  const alc=o=>!o?null:(campus==='q'?o.q:campus==='n'?o.n:o.total);
+  const grid=kpiGrid([
+    {lbl:t('al_total'),val:fN(alc(H.total)),foot:'',accent:true},
+    {lbl:t('al_male'),val:fN(alc(H.male)),foot:''},
+    {lbl:t('al_female'),val:fN(alc(H.female)),foot:''},
+    {lbl:t('al_age'),val:alc(H.avgAge)!=null?num(alc(H.avgAge)).toFixed(0):'&mdash;',foot:t('al_age_foot')},
+    {lbl:t('al_withkids'),val:fN(alc(H.withKids)),foot:''},
+    {lbl:t('al_abroad'),val:fP(alc(H.abroadPct)),foot:t('al_abroad_foot')},
+    {lbl:t('al_mentoring'),val:fN(alc(H.mentoringYes)),foot:t('al_mentoring_foot')},
+  ]);
+  grid.classList.add('kpi6');
+  wrap.appendChild(sec(t('headline'),'',grid));
+  wrap.appendChild(sec(t('s_alumni_countries'),'',buildAlumniDist(a.countries,true)));
+  wrap.appendChild(sec(t('s_alumni_sectors'),'',buildAlumniDist(a.sectors,false)));
+  const gw=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('s_alumni_grad')+'</div><div class="cc-sub">'+t('s_alumni_grad_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-grad" height="200"></canvas></div></div>').firstChild;
+  wrap.appendChild(gw);
   return wrap;
+}
+function buildAlumniDist(rows,withFlags){
+  rows=rows||[];
+  const alc=o=>campus==='q'?num(o.q):campus==='n'?num(o.n):num(o.total);
+  const list=rows.map(r=>({name:r.name,v:alc(r)})).filter(r=>r.v>0).sort((x,y)=>y.v-x.v);
+  const tot=list.reduce((s,b)=>s+b.v,0)||1;
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+(withFlags?t('al_country'):t('col_sector'))+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
+  list.forEach(r=>{h+='<tr><td style="font-weight:600">'+(withFlags?flag(r.name)+' ':'')+escHtml(r.name)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
 /* ── collapsible toggle ── */
@@ -1730,6 +1742,13 @@ function drawCharts(){
     const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
     const data=D.nationalities.filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina'&&valOf(r)>0;}).map(r=>({name:r.name,v:valOf(r)})).sort((a,b)=>b.v-a.v);
     charts.nat=new Chart(nc,{type:'bar',data:{labels:data.map(d=>flag(d.name)+' '+d.name),datasets:[{label:t('col_count'),data:data.map(d=>d.v),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},y:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Alumni graduation years (Form Responses by Graduation Year)
+  const gc=document.getElementById('chart-grad');
+  if(gc&&D.alumni&&D.alumni.gradYears){
+    const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
+    const gy=D.alumni.gradYears;
+    charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
