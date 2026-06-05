@@ -180,6 +180,8 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 
 /* ─── COMMUNITY CARDS ─── */
 .comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.comm-grid.c3{grid-template-columns:repeat(3,1fr);}
+.comm-grid.c4{grid-template-columns:repeat(4,1fr);}
 .comm-card{background:var(--white);border:1px solid var(--hairline);border-top:3px solid var(--teal);border-radius:var(--r);padding:17px 18px;text-align:center;box-shadow:var(--card-shadow);}
 .comm-card.lead{box-shadow:0 0 0 1px rgba(16,154,169,.4),var(--card-shadow);}
 .comm-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
@@ -542,9 +544,10 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   thead th:first-child{z-index:3;}
   .panel{padding:36px 14px 16px;}
   .two,.three,.col-6040{grid-template-columns:1fr;}
-  .comm-grid{grid-template-columns:repeat(2,1fr);}
+  .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
   .sim-totals{grid-template-columns:1fr;}
-  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .stat-strip{grid-template-columns:repeat(3,1fr);}
+  .kpi-grid,.kpi-grid.kpi6{grid-template-columns:repeat(3,1fr);}
   .si{border-bottom:1px solid rgba(255,255,255,.1);}
   .f-lbl{min-width:120px;font-size:.73rem;}
   .f-nums{min-width:110px;font-size:.65rem;}
@@ -558,6 +561,11 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .sidebar.collapsed .sb-lbl{opacity:1;}
   .sidebar.collapsed .sb-update{display:block;}
   .sidebar.collapsed .sb-switches{display:flex;}
+}
+@media(max-width:460px){
+  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .kpi-grid,.kpi-grid.kpi6{grid-template-columns:repeat(2,1fr);}
+  .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
 }
 @media print{
   .sidebar,.hdr,#admin-overlay,#admin-drawer,footer{display:none !important;}
@@ -1111,15 +1119,15 @@ function buildResumen(){
              {lbl:t('foreign'),val:fP(com.foreignStudents),foot:t('os_foot')},
              {lbl:t('priority'),val:fP(com.priorityCommunity),foot:t('og_plus'),lead:true}];
     }else{
-      // Per-campus OG; intl/priority per-campus not yet in data → show One School figure
       const og=campus==='q'?com.ogQuilmes:com.ogNorth;
       const ogLbl=campus==='q'?t('og_quilmes'):t('og_north');
+      const fr=campus==='q'?com.foreignQuilmes:com.foreignNorth;
+      const pr=campus==='q'?com.priorityQuilmes:com.priorityNorth;
       cards=[{lbl:ogLbl,val:fP(og),foot:t('og_foot')},
-             {lbl:t('foreign'),val:fP(com.foreignStudents),foot:t('os_foot')},
-             {lbl:t('priority'),val:fP(com.priorityCommunity),foot:t('og_plus'),lead:true}];
+             {lbl:t('foreign'),val:fP(fr!=null?fr:com.foreignStudents),foot:''},
+             {lbl:t('priority'),val:fP(pr!=null?pr:com.priorityCommunity),foot:t('og_plus'),lead:true}];
     }
-    const cg=document.createElement('div');cg.className='comm-grid';
-    cg.style.gridTemplateColumns='repeat('+cards.length+',1fr)';
+    const cg=document.createElement('div');cg.className='comm-grid c'+cards.length;
     cards.forEach(c=>{cg.innerHTML+='<div class="comm-card'+(c.lead?' lead':'')+'"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
     wrap.appendChild(sec(t('community'),t('community_meta'),cg));
   }
