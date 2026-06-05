@@ -122,7 +122,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .page-hd-inner>div:first-child{flex:1 1 auto;min-width:0;}
 .page-title{font-size:2.15rem;font-weight:700;letter-spacing:-.045em;color:var(--ink);line-height:1.08;}
 .page-sub{font-size:.72rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
-.campus-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;}
+.campus-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;white-space:nowrap;flex-shrink:0;}
 .campus-badge.os{background:var(--ink-lt);color:var(--ink);}
 .campus-badge.q{background:var(--red-lt);color:var(--red);}
 .campus-badge.n{background:var(--navy-lt);color:var(--navy);}
@@ -132,9 +132,9 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .campus-badge.n .cb-dot{background:var(--navy);}
 
 /* ─── STAT STRIP ─── */
-.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));background:linear-gradient(120deg,#243a6e 0%,#1d2f5b 60%,#172548 100%);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 2px rgba(23,37,72,.18),0 16px 38px rgba(23,37,72,.22);border:none;position:relative;}
+.stat-strip{display:flex;flex-wrap:wrap;background:linear-gradient(120deg,#243a6e 0%,#1d2f5b 60%,#172548 100%);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 2px rgba(23,37,72,.18),0 16px 38px rgba(23,37,72,.22);border:none;position:relative;}
 .stat-strip::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(220,30,51,.10));pointer-events:none;}
-.si{padding:22px 24px 20px;border-right:1px solid rgba(255,255,255,.1);transition:background .14s;position:relative;text-align:center;z-index:1;}
+.si{flex:1 1 130px;padding:22px 18px 20px;border-right:1px solid rgba(255,255,255,.1);transition:background .14s;position:relative;text-align:center;z-index:1;}
 .si-lbl,.si-val,.si-foot{text-align:center;}
 .si:last-child{border-right:none;}
 .si:hover{background:rgba(255,255,255,.05);}
@@ -287,7 +287,9 @@ tr.open .gcaret{transform:rotate(90deg);}
 .campus-q .f-fill{background:var(--red);}
 .campus-n .f-fill{background:var(--navy);}
 .f-row.won .f-fill{background:var(--teal) !important;}
-.f-nums{font-family:'Asap Condensed',sans-serif;font-size:.71rem;color:var(--gray);min-width:165px;text-align:right;}
+.f-nums{font-family:'Asap Condensed',sans-serif;font-size:.71rem;color:var(--gray);min-width:165px;display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+.f-count{min-width:48px;text-align:right;font-weight:600;}
+.f-badge-slot{min-width:96px;text-align:left;}
 .f-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.62rem;font-weight:700;background:#fee2e2;color:#b91c1c;margin-left:4px;font-family:'Asap Condensed',sans-serif;}
 .f-row.won .f-badge{background:var(--green-lt);color:var(--green);}
 
@@ -800,7 +802,7 @@ const STRINGS={
     col_year:'Year',col_section:'Section',col_level:'Level',col_enrol:'Enrolment',col_grade:'Year Group',
     col_2025:'Students 2025',col_2026:'Students 2026',col_var:'Var',col_prosp26:'Prospects 2026',col_prosp27:'Prospects 2027',
     col_cause:'Cause',col_type:'Type',col_cohort:'Cohort',col_enrolled:'Enrolled',col_active:'Active',col_lifespan:'Lifespan (yr)',
-    col_base:'Base 2026',col_rate:'Cohort Rate',col_adj:'Adjustment %',col_final:'Final 2027',col_cap:'Capacity',col_fact:'Billing USD',
+    col_base:'Base 2026',col_rate:'Cohort Rate',col_projd:'Projection',col_adj:'Adjustment %',col_final:'Final 2027',col_cap:'Capacity',col_fact:'Billing USD',
     col_stage:'Stage',col_pipeline:'Pipeline',col_won:'Won',col_wr:'Conversion Rate',
     col_transition:'Transition',col_avg:'Average',col_use:'In use',col_visit:'Visit Rate',col_appl:'Application Rate',
     col_salon:'Form',col_weight:'Weight %',col_proy27:'Proj. 2027',col_delta:'Δ',
@@ -884,7 +886,7 @@ const STRINGS={
     col_year:'A&ntilde;o',col_section:'Secci&oacute;n',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_grade:'Grado',
     col_2025:'Alumnos 2025',col_2026:'Alumnos 2026',col_var:'Var',col_prosp26:'Prospectos 2026',col_prosp27:'Prospectos 2027',
     col_cause:'Causa',col_type:'Tipo',col_cohort:'Camada',col_enrolled:'Ingresaron',col_active:'Activos',col_lifespan:'Permanencia (a&ntilde;os)',
-    col_base:'Base 2026',col_rate:'Tasa Cohorte',col_adj:'Ajuste %',col_final:'Final 2027',col_cap:'Capacidad',col_fact:'Facturaci&oacute;n USD',
+    col_base:'Base 2026',col_rate:'Tasa Cohorte',col_projd:'Proyecci&oacute;n',col_adj:'Ajuste %',col_final:'Final 2027',col_cap:'Capacidad',col_fact:'Facturaci&oacute;n USD',
     col_stage:'Etapa',col_pipeline:'Embudo',col_won:'Ganados',col_wr:'Tasa de Conversi&oacute;n',
     col_transition:'Transici&oacute;n',col_avg:'Promedio',col_use:'A usar',col_visit:'Visit Rate',col_appl:'Application Rate',
     col_salon:'Sal&oacute;n',col_weight:'Peso %',col_proy27:'Proy. 2027',col_delta:'Δ',
@@ -1217,12 +1219,22 @@ function buildEnrolTable(){
   let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_prosp26')+'</th><th class="r">'+t('col_prosp27')+'</th></tr></thead><tbody>';
   let tM25=0,tM26=0,tP26=0,tP27=0;
   const cd=getCampusData()||{};
+  const ps=D.prospectsBySection;const nivMap={kinder:'Kinder',prep:'Prep',college:'College'};
+  const pget=(niv,cyc)=>{
+    if(!ps)return null;
+    const q=(ps.Quilmes&&ps.Quilmes[niv])?num(ps.Quilmes[niv]['c'+cyc]):0;
+    const n=(ps.North&&ps.North[niv])?num(ps.North[niv]['c'+cyc]):0;
+    return campus==='q'?q:campus==='n'?n:q+n;
+  };
   const secDefs=[{key:'kinder',lbl:t('kinder')},{key:'prep',lbl:t('prep')},{key:'college',lbl:t('college')}];
   const yr=(c,y,key)=>{const arr=arrFor(c)||[];const r=arr.find(x=>x.yr===y)||{};return num(r[key]);};
   secDefs.forEach(sd=>{
     const tot=(cd[sd.key]||{}).total||{};
     const m25=campus==='os'?yr('q',2025,sd.key)+yr('n',2025,sd.key):yr(campus,2025,sd.key);
-    const m26=num(tot.matricula),p26=num(tot.prospectos_2026),p27=num(tot.prospectos);
+    const m26=num(tot.matricula);
+    const niv=nivMap[sd.key];
+    const p26=ps?pget(niv,2026):num(tot.prospectos_2026);
+    const p27=ps?pget(niv,2027):num(tot.prospectos);
     tM25+=m25;tM26+=m26;tP26+=p26;tP27+=p27;
     h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+fN(p26)+'</td><td class="r">'+fN(p27)+'</td></tr>';
   });
@@ -1276,8 +1288,8 @@ function buildKpiTable(){
     const obj=s.obj||{},tot=obj.total||{};const gid='kpig-'+si;
     let secCap=0;s.grades.forEach(g=>{const c=gradeCapacity(g);if(c!=null)secCap+=c;});
     gtCap+=secCap;gtStu+=num(tot.matricula);
-    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+sc(num(tot.matricula),secCap)+'</strong></td><td class="r">'+fN(tot.new_students)+'</td></tr>';
-    s.grades.forEach(g=>{const d=obj[g];if(!d)return;const w=gWon(g);h+='<tr class="salon-row '+gid+'"><td></td><td class="r">'+g+'</td><td class="r">'+sc(num(d.matricula),gradeCapacity(g))+'</td><td class="r">'+fN(w)+'</td></tr>';});
+    h+='<tr class="grp '+grpCls+' gtog" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+sc(num(tot.matricula),secCap)+'</strong></td><td class="r">'+fN(tot.new_students)+'</td></tr>';
+    s.grades.forEach(g=>{const d=obj[g];if(!d)return;const w=gWon(g);h+='<tr class="salon-row '+gid+'" style="display:none"><td></td><td class="r">'+g+'</td><td class="r">'+sc(num(d.matricula),gradeCapacity(g))+'</td><td class="r">'+fN(w)+'</td></tr>';});
   });
   const ct=cd.total||{};
   h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+sc(num(ct.matricula),gtCap)+'</strong></td><td class="r">'+fN(ct.new_students)+'</td></tr>';
@@ -1406,7 +1418,7 @@ function buildConvPipeline(){
     const prev=i>0?stages[i-1].n:s.n;
     const drop=prev>0?Math.round((1-s.n/prev)*100):0;
     const div=document.createElement('div');div.className='f-row'+(s.won?' won':'');
-    div.innerHTML='<div class="f-lbl">'+s.lbl+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(s.n)+(i>0?' <span class="f-badge">'+drop+'% '+(lang==='en'?'drop':'baja')+'</span>':'')+'</div>';
+    div.innerHTML='<div class="f-lbl">'+s.lbl+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums"><span class="f-count">'+fN(s.n)+'</span><span class="f-badge-slot">'+(i>0?'<span class="f-badge">'+drop+'% '+(lang==='en'?'drop':'baja')+'</span>':'')+'</span></div>';
     fd.appendChild(div);
   });
   sct.appendChild(fd);return sct;
@@ -1678,16 +1690,16 @@ function buildProyeccion(){
 }
 function mkAdjTable(title,ck,rows,color){
   if(!rows||!rows.length)return'';
-  let h='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_rate')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th><th class="r">'+t('col_cap')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
-  let tBase=0,tProy=0,tFinal=0,tFact=0;
+  let h='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+title+'</div><div class="tw"><table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_base')+'</th><th class="r">'+t('col_projd')+'</th><th class="r" style="min-width:130px">'+t('col_adj')+'</th><th class="r" style="min-width:90px">'+t('col_final')+'</th><th class="r">'+t('col_cap')+'</th>'+(showFact?'<th class="r fact-col">'+t('col_fact')+'</th>':'')+'</tr></thead><tbody>';
+  let tBase=0,tProy=0,tFinal=0,tFact=0,tCap=0;
   rows.forEach(r=>{
     const key=ck+'_'+r.grado,adj=simAdj[key]||0,f=calcFinal(r,adj),fact=calcFact(r,f);
     const baseDisp=(typeof r.base2026==='number')?fN(r.base2026):escHtml(r.base2026);
-    const tasaDisp=(typeof r.tasa==='number')?fP(r.tasa):escHtml(r.tasa);
-    tBase+=num(r.base2026);tProy+=num(r.proy);tFinal+=f;tFact+=fact;
-    h+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+baseDisp+'</td><td class="r">'+tasaDisp+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;updateSimDisplay()">&minus;</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+f.toLocaleString('es-AR')+'</td><td class="r">'+fN(r.capacidad)+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+fUSD(fact)+'</td>':'')+'</tr>';
+    const projDisp=(typeof r.proyD==='number')?fN(r.proyD):escHtml(r.proyD==null?'&mdash;':r.proyD);
+    tBase+=num(r.base2026);tProy+=num(r.proy);tFinal+=f;tFact+=fact;tCap+=num(r.capacidad);
+    h+='<tr><td style="font-weight:700">'+r.grado+'</td><td class="r">'+baseDisp+'</td><td class="r">'+projDisp+'</td><td class="r"><div class="adj-wrap"><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)-1;updateSimDisplay()">&minus;</button><input class="adj-input" id="adj_'+key+'" value="'+adj+'" type="number" onchange="simAdj[\''+key+'\']=parseInt(this.value)||0;updateSimDisplay()"/><button class="adj-btn" onclick="simAdj[\''+key+'\']=(simAdj[\''+key+'\']||0)+1;updateSimDisplay()">+</button></div></td><td class="r" style="font-weight:700;color:'+color+'" id="final_'+key+'">'+f.toLocaleString('es-AR')+'</td><td class="r">'+fN(r.capacidad)+'</td>'+(showFact?'<td class="r val-usd fact-col" id="factrow_'+key+'">'+fUSD(fact)+'</td>':'')+'</tr>';
   });
-  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(tBase)+'</td><td class="r">&mdash;</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+tFinal.toLocaleString('es-AR')+'</td><td class="r">&mdash;</td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(tFact)+'</td>':'')+'</tr>';
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(tBase)+'</td><td class="r">'+fN(tProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+tFinal.toLocaleString('es-AR')+'</td><td class="r"><strong>'+fN(tCap)+'</strong></td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(tFact)+'</td>':'')+'</tr>';
   h+='</tbody></table></div></div>';return h;
 }
 function buildClassroom(){
