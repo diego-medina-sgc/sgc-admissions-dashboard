@@ -1752,7 +1752,28 @@ function hexA(hex,a){hex=String(hex).replace('#','');if(hex.length===3)hex=hex.s
 const FLAG={Argentine:'🇦🇷',Argentina:'🇦🇷',American:'🇺🇸','United States':'🇺🇸',Chinese:'🇨🇳',China:'🇨🇳',Russian:'🇷🇺',Russia:'🇷🇺',Brazilian:'🇧🇷',Brazil:'🇧🇷',Chilean:'🇨🇱',Chile:'🇨🇱',Uruguayan:'🇺🇾',Uruguay:'🇺🇾',Spanish:'🇪🇸',Spain:'🇪🇸','United Kingdom':'🇬🇧',British:'🇬🇧',Mexican:'🇲🇽',Mexico:'🇲🇽',Italian:'🇮🇹',Italy:'🇮🇹',Australia:'🇦🇺',Australian:'🇦🇺',Bolivia:'🇧🇴',Bolivian:'🇧🇴',Paraguay:'🇵🇾',Paraguayan:'🇵🇾',Other:'🌐',Otros:'🌐'};
 function flag(n){return FLAG[n]||'🏳️';}
 const ISO2={Argentine:'ar',Argentina:'ar',American:'us','United States':'us',Chinese:'cn',China:'cn',Russian:'ru',Russia:'ru',Brazilian:'br',Brazil:'br',Chilean:'cl',Chile:'cl',Uruguayan:'uy',Uruguay:'uy',Spanish:'es',Spain:'es','United Kingdom':'gb',British:'gb',Mexican:'mx',Mexico:'mx',Italian:'it',Italy:'it',Australia:'au',Australian:'au',Bolivia:'bo',Bolivian:'bo',Paraguay:'py',Paraguayan:'py'};
-function flagImg(name){const c=ISO2[name];if(!c)return '<span style="display:inline-block;width:20px;text-align:center;margin-right:2px">🌐</span>';return '<img src="https://flagcdn.com/20x15/'+c+'.png" width="20" height="15" loading="lazy" style="vertical-align:middle;border-radius:2px;margin-right:5px;box-shadow:0 0 0 1px rgba(0,0,0,.08)" alt=""/>';}
+// Inline SVG flags (self-contained — no external requests, work in locked-down networks)
+const FLAGSVG={
+  ar:'<rect width="21" height="15" fill="#fff"/><rect width="21" height="5" fill="#74acdf"/><rect y="10" width="21" height="5" fill="#74acdf"/><circle cx="10.5" cy="7.5" r="1.5" fill="#f6b40e"/>',
+  us:'<rect width="21" height="15" fill="#fff"/><g fill="#b22234"><rect width="21" height="2" y="0"/><rect width="21" height="2" y="4"/><rect width="21" height="2" y="8"/><rect width="21" height="1.8" y="12"/></g><rect width="9" height="8" fill="#3c3b6e"/>',
+  es:'<rect width="21" height="15" fill="#c60b1e"/><rect y="4" width="21" height="7" fill="#ffc400"/>',
+  gb:'<rect width="21" height="15" fill="#012169"/><rect x="9" width="3" height="15" fill="#fff"/><rect y="6" width="21" height="3" fill="#fff"/><rect x="9.6" width="1.8" height="15" fill="#c8102e"/><rect y="6.6" width="21" height="1.8" fill="#c8102e"/>',
+  cl:'<rect width="21" height="15" fill="#fff"/><rect y="7.5" width="21" height="7.5" fill="#d52b1e"/><rect width="7.5" height="7.5" fill="#0039a6"/>',
+  uy:'<rect width="21" height="15" fill="#fff"/><g fill="#0038a8"><rect y="3.4" width="21" height="1.7"/><rect y="6.8" width="21" height="1.7"/><rect y="10.2" width="21" height="1.7"/><rect y="13.6" width="21" height="1.4"/></g><rect width="9" height="8.5" fill="#fff"/><circle cx="4.5" cy="4.2" r="1.5" fill="#f6b40e"/>',
+  br:'<rect width="21" height="15" fill="#009b3a"/><path d="M10.5 1.5 19.5 7.5 10.5 13.5 1.5 7.5Z" fill="#fedf00"/><circle cx="10.5" cy="7.5" r="3" fill="#002776"/>',
+  it:'<rect width="7" height="15" fill="#009246"/><rect x="7" width="7" height="15" fill="#fff"/><rect x="14" width="7" height="15" fill="#ce2b37"/>',
+  ru:'<rect width="21" height="15" fill="#fff"/><rect y="5" width="21" height="5" fill="#0039a6"/><rect y="10" width="21" height="5" fill="#d52b1e"/>',
+  bo:'<rect width="21" height="15" fill="#d52b1e"/><rect y="5" width="21" height="5" fill="#f9e300"/><rect y="10" width="21" height="5" fill="#007934"/>',
+  py:'<rect width="21" height="15" fill="#fff"/><rect width="21" height="5" fill="#d52b1e"/><rect y="10" width="21" height="5" fill="#0038a8"/>',
+  mx:'<rect width="7" height="15" fill="#006847"/><rect x="7" width="7" height="15" fill="#fff"/><rect x="14" width="7" height="15" fill="#ce1126"/>',
+  cn:'<rect width="21" height="15" fill="#de2910"/><circle cx="5" cy="5" r="2.4" fill="#ffde00"/>',
+  au:'<rect width="21" height="15" fill="#00247d"/><circle cx="15" cy="9" r="1.5" fill="#fff"/><circle cx="5" cy="4" r="1" fill="#fff"/>',
+};
+function flagImg(name){
+  const c=ISO2[name],s=c&&FLAGSVG[c];
+  if(!s)return '<span style="display:inline-block;width:21px;text-align:center;margin-right:5px">🌐</span>';
+  return '<svg width="21" height="15" viewBox="0 0 21 15" style="vertical-align:middle;margin-right:6px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.15)">'+s+'</svg>';
+}
 Chart.unregister(ChartDataLabels);
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
