@@ -793,7 +793,12 @@ const STRINGS={
     s_intl_nationalities:'International Students &mdash; Nationalities',s_intl_nationalities_meta:'Demographics',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
-    s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads',
+    s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads &mdash; lead acquisition',
+    s_ads_summary:'Executive Summary',s_ads_campaign:'Campaign Performance',s_ads_temporal:'Performance Over Time',s_ads_quality:'Traffic Quality',
+    ads_spend:'Total Spend',ads_clicks:'Total Clicks',ads_ctr:'Weighted CTR',ads_cpc:'Weighted CPC',
+    col_campaign:'Campaign',col_platform:'Platform',col_spend:'Spend',col_impr:'Impressions',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'Clicks %',
+    sort_by:'Sort:',sort_clicks:'Clicks',sort_eff:'Efficiency',sort_spend:'Spend',
+    ads_trend_title:'Spend &amp; Clicks by Month',ads_trend_sub:'Monthly trend (USD spend + clicks)',ads_quality_sub:'CTR, CPC &amp; efficiency flag',
     s_modules:'Modules',s_modules_meta:'Attention distribution',
     s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
@@ -877,7 +882,12 @@ const STRINGS={
     s_intl_nationalities:'Estudiantes Extranjeros &mdash; Nacionalidades',s_intl_nationalities_meta:'Demograf&iacute;a',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
-    s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads',
+    s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads &mdash; adquisici&oacute;n de leads',
+    s_ads_summary:'Resumen Ejecutivo',s_ads_campaign:'Performance por Campa&ntilde;a',s_ads_temporal:'Performance Temporal',s_ads_quality:'Calidad de Tr&aacute;fico',
+    ads_spend:'Inversi&oacute;n Total',ads_clicks:'Clicks Totales',ads_ctr:'CTR Ponderado',ads_cpc:'CPC Ponderado',
+    col_campaign:'Campa&ntilde;a',col_platform:'Plataforma',col_spend:'Inversi&oacute;n',col_impr:'Impresiones',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'% Clicks',
+    sort_by:'Orden:',sort_clicks:'Clicks',sort_eff:'Eficiencia',sort_spend:'Inversi&oacute;n',
+    ads_trend_title:'Inversi&oacute;n y Clicks por Mes',ads_trend_sub:'Tendencia mensual (inversi&oacute;n USD + clicks)',ads_quality_sub:'CTR, CPC y se&ntilde;al de eficiencia',
     s_modules:'M&oacute;dulos',s_modules_meta:'Distribuci&oacute;n de la atenci&oacute;n',
     s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
@@ -950,6 +960,10 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
+let adsMonth=null,adsSort='clicks';
+const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
 function cv(o){if(o==null)return null;return campus==='q'?o.q:campus==='n'?o.n:o.os;}
 let currentTheme=localStorage.getItem('sgc-theme')||'system';
 
@@ -1401,6 +1415,9 @@ function getFunnel(yr){
 function yearPills(cur,years,setter){
   return '<div class="cycle-pills" style="margin-left:auto">'+years.map(y=>'<button class="cycle-pill'+(num(cur)===y?' active':'')+'" onclick="'+setter+'='+y+';render()">'+y+'</button>').join('')+'</div>';
 }
+function monthPills(cur,months){
+  return '<div class="cycle-pills" style="margin-left:auto">'+months.map(m=>'<button class="cycle-pill'+(cur===m?' active':'')+'" onclick="adsMonth=\''+m+'\';render()">'+monthLabel(m)+'</button>').join('')+'</div>';
+}
 function buildConvFunnel(){
   const sct=document.createElement('div');sct.className='sec';
   const years=[2021,2022,2023,2024,2025,2026,2027];
@@ -1648,8 +1665,68 @@ function buildMarketing(){
   }else{
     wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),emptyState(t('coming_soon'),t('cs_fidu'))));
   }
-  wrap.appendChild(sec(t('s_digital_ads'),t('s_digital_ads_meta'),emptyState(t('coming_soon'),t('cs_ads'))));
+  wrap.appendChild(buildDigitalAds());
   return wrap;
+}
+function adsCampMetrics(M){
+  return (M.campaigns||[]).map(c=>{
+    const sp=num(c.spend),im=num(c.impressions),cl=num(c.clicks);
+    const ctr=im>0?cl/im:0,cpc=cl>0?sp/cl:0,eff=cpc>0?ctr/cpc:(ctr>0?1e9:0);
+    return {name:c.name,platform:c.platform,spend:sp,impr:im,clicks:cl,ctr:ctr,cpc:cpc,eff:eff};
+  });
+}
+function buildDigitalAds(){
+  const out=document.createElement('div');
+  const ads=D.ads;
+  if(!ads||!ads.months||!ads.months.length){
+    out.appendChild(sec(t('s_digital_ads'),t('s_digital_ads_meta'),emptyState(t('coming_soon'),t('cs_ads'))));
+    return out;
+  }
+  const months=ads.months.slice();
+  if(!adsMonth||months.indexOf(adsMonth)<0)adsMonth=months.length>=2?months[months.length-2]:months[months.length-1];
+  const M=ads.byMonth[adsMonth]||{spend:0,impressions:0,clicks:0,campaigns:[]};
+  // Section header with month selector
+  const hd=document.createElement('div');hd.className='sec';
+  hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_digital_ads')+'</span><span class="sec-meta">'+t('s_digital_ads_meta')+'</span>'+monthPills(adsMonth,months)+'</div>';
+  out.appendChild(hd);
+  // 1. Executive Summary
+  const tSpend=num(M.spend),tImpr=num(M.impressions),tClicks=num(M.clicks);
+  const wctr=tImpr>0?tClicks/tImpr:0,wcpc=tClicks>0?tSpend/tClicks:0;
+  out.appendChild(sec(t('s_ads_summary'),monthLabel(adsMonth),statStrip([
+    {lbl:t('ads_spend'),val:fUSD(tSpend),foot:'USD'},
+    {lbl:t('ads_clicks'),val:fN(tClicks),foot:''},
+    {lbl:t('ads_ctr'),val:fP(wctr),foot:''},
+    {lbl:t('ads_cpc'),val:fUSD(wcpc),foot:'USD/click'},
+  ])));
+  // 2. Campaign performance (sortable)
+  const sct=document.createElement('div');sct.className='sec';
+  const sorts=[['clicks',t('sort_clicks')],['eff',t('sort_eff')],['spend',t('sort_spend')]];
+  const pills='<div class="cycle-pills" style="margin-left:auto">'+sorts.map(s=>'<button class="cycle-pill'+(adsSort===s[0]?' active':'')+'" onclick="adsSort=\''+s[0]+'\';render()">'+s[1]+'</button>').join('')+'</div>';
+  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_ads_campaign')+'</span><span class="sec-meta">'+monthLabel(adsMonth)+'</span>'+pills+'</div>';
+  const camps=adsCampMetrics(M);
+  camps.sort((a,b)=>adsSort==='spend'?b.spend-a.spend:adsSort==='eff'?b.eff-a.eff:b.clicks-a.clicks);
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_campaign')+'</th><th>'+t('col_platform')+'</th><th class="r">'+t('col_spend')+'</th><th class="r">'+t('col_impr')+'</th><th class="r">'+t('col_clicks')+'</th><th class="r">'+t('col_ctr')+'</th><th class="r">'+t('col_cpc')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
+  camps.forEach(c=>{const share=tClicks>0?c.clicks/tClicks:0;h+='<tr><td style="font-weight:600">'+escHtml(c.name)+'</td><td style="text-align:left"><span class="tag '+(c.platform==='Meta'?'exo':'nat')+'">'+escHtml(c.platform)+'</span></td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.impr)+'</td><td class="r" style="font-weight:700">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r">'+fP(share)+'</td></tr>';});
+  h+='</tbody></table>';tw.innerHTML=h;sct.appendChild(tw);
+  out.appendChild(sct);
+  // 3. Temporal trend
+  const cc=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('ads_trend_title')+'</div><div class="cc-sub">'+t('ads_trend_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-ads"></canvas></div></div>').firstChild;
+  out.appendChild(sec(t('s_ads_temporal'),'',cc));
+  // 4. Traffic quality
+  out.appendChild(sec(t('s_ads_quality'),t('ads_quality_sub'),buildAdsQuality(M,wctr,wcpc)));
+  return out;
+}
+function buildAdsQuality(M,wctr,wcpc){
+  const camps=adsCampMetrics(M).sort((a,b)=>b.spend-a.spend);
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_campaign')+'</th><th class="r">'+t('col_spend')+'</th><th class="r">'+t('col_clicks')+'</th><th class="r">'+t('col_ctr')+'</th><th class="r">'+t('col_cpc')+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
+  camps.forEach(c=>{
+    const good=(c.cpc<=wcpc&&c.ctr>=wctr),bad=(c.cpc>wcpc&&c.ctr<wctr);
+    const sem=good?'g':bad?'r':'y';
+    h+='<tr'+(bad?' class="proj-row"':'')+'><td style="font-weight:600">'+escHtml(c.name)+'</td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
 /* ============================== PROJECTION 2027 ============================== */
@@ -1930,6 +2007,16 @@ function drawCharts(){
     const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
     const gy=D.alumni.gradYears;
     charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Digital Ads — spend (bars, USD) + clicks (line) by month
+  const ac=document.getElementById('chart-ads');
+  if(ac&&D.ads&&D.ads.trend&&D.ads.trend.length){
+    const tr=D.ads.trend;
+    const bg=tr.map(r=>r.month===adsMonth?kTeal:hexA(kTeal,DK?0.4:0.45));
+    charts.ads=new Chart(ac,{data:{labels:tr.map(r=>monthLabel(r.month)),datasets:[
+      {type:'bar',label:t('ads_spend'),data:tr.map(r=>Math.round(num(r.spend))),backgroundColor:bg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
+      {type:'line',label:t('ads_clicks'),data:tr.map(r=>num(r.clicks)),borderColor:Cmain,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:Cmain,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>'$'+v},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
