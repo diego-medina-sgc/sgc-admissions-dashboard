@@ -170,6 +170,13 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .kpi-foot{font-size:.66rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;text-align:left;line-height:1.35;}
 .kpi-card.accent .kpi-val{font-size:2.85rem;}
 .kpi-card.accent{background:linear-gradient(180deg,var(--surface),var(--cream));}
+/* 6-up compact KPI row (Admissions headline) */
+.kpi-grid.kpi6{grid-template-columns:repeat(6,1fr);gap:10px;}
+.kpi-grid.kpi6 .kpi-card{padding:14px 12px 12px 15px;}
+.kpi-grid.kpi6 .kpi-val{font-size:1.85rem;}
+.kpi-grid.kpi6 .kpi-card.accent .kpi-val{font-size:2.05rem;}
+.kpi-grid.kpi6 .kpi-lbl{font-size:.55rem;letter-spacing:.08em;margin-bottom:8px;}
+@media(max-width:1200px){.kpi-grid.kpi6{grid-template-columns:repeat(3,1fr);}}
 
 /* ─── COMMUNITY CARDS ─── */
 .comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
@@ -711,7 +718,12 @@ const STRINGS={
     s_breakdown:'Current Students Breakdown',s_breakdown_meta:'2026',col_studcap:'Students / Capacity',col_won26:'Won 2026',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
+    s_conv_funnel:'Conversion Funnel',s_conv_funnel_meta:'2021&ndash;2027',
+    s_forecast:'Weighted Pipeline Forecast',s_forecast_meta:'2027',
     s_occupancy:'Occupancy 2027',s_occupancy_meta:'Prospect coverage by level',
+    won:'Won',col_opportunities:'Opportunities',col_count:'Count',col_rate:'Rate %',
+    col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
+    view_table:'Table',view_chart:'Chart',
     s_historical_cr:'Historical Conversion Rate',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Conversion Pipeline',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Conversion Rate per Channel',s_channel_meta:'Source attribution',
@@ -787,7 +799,12 @@ const STRINGS={
     s_breakdown:'Detalle de Alumnos Actuales',s_breakdown_meta:'2026',col_studcap:'Alumnos / Capacidad',col_won26:'Won 2026',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
+    s_conv_funnel:'Embudo de Conversi&oacute;n',s_conv_funnel_meta:'2021&ndash;2027',
+    s_forecast:'Weighted Pipeline Forecast',s_forecast_meta:'2027',
     s_occupancy:'Ocupaci&oacute;n 2027',s_occupancy_meta:'Cobertura de prospectos por nivel',
+    won:'Won',col_opportunities:'Oportunidades',col_count:'Cantidad',col_rate:'Tasa %',
+    col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
+    view_table:'Tabla',view_chart:'Gr&aacute;fico',
     s_historical_cr:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Embudo de Conversi&oacute;n',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Tasa de Conversi&oacute;n por Canal',s_channel_meta:'Atribuci&oacute;n de origen',
@@ -867,6 +884,8 @@ let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
 let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
+let funnelYear=2027,channelYear=2026,histView='chart';
+function cv(o){if(o==null)return null;return campus==='q'?o.q:campus==='n'?o.n:o.os;}
 let currentTheme=localStorage.getItem('sgc-theme')||'system';
 
 /* ============================== THEME ============================== */
@@ -1199,89 +1218,123 @@ function buildKpiTable(){
 function buildAdmissions(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_admissions'),t('ph_admissions_sub')));
-  const h=D.headline||{};const cd=getCampusData()||{};
+  const cd=getCampusData()||{};const ad=D.admissions;
   const varN=campusVar()*100;
-  // Won 2026 — exact value from pipeline (the 2026 active-prospect figure is not in the JSON)
-  const won26row=(D.pipeline||[]).find(p=>/Won\s*2026/i.test(p.etapa||''))||{};
-  const won26=campus==='q'?num(won26row.qT):campus==='n'?num(won26row.nT):num(won26row.total);
-  wrap.appendChild(sec(t('headline'),t('headline_meta'),kpiGrid([
-    {lbl:t('total_alumnos'),val:fN(cd.total&&cd.total.matricula),foot:'2026',accent:true},
+  const total = ad?cv(ad.totalStudents):num(cd.total&&cd.total.matricula);
+  const newS  = ad?cv(ad.newStudents):num(cd.total&&cd.total.new_students);
+  const cr    = ad?cv(ad.conversionRate):wr2026();
+  const p26   = ad?cv(ad.prospects2026):null;
+  const p27   = ad?cv(ad.prospects2027):num(cd.total&&cd.total.prospectos);
+  const grid=kpiGrid([
+    {lbl:t('total_alumnos'),val:fN(total),foot:'2026',accent:true},
     {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
-    {lbl:t('new_students'),val:fN(cd.total&&cd.total.new_students),foot:'2026'},
-    {lbl:t('win_rate'),val:fP(wr2026()),foot:'2026'},
-    {lbl:t('won_2026'),val:fN(won26),foot:t('col_won')+' 2026'},
-    {lbl:t('prospectos_27'),val:fN(cd.total&&cd.total.prospectos),foot:'2027'},
-  ])));
+    {lbl:t('won'),val:fN(newS),foot:'2026'},
+    {lbl:t('win_rate'),val:fP(cr),foot:'2026'},
+    {lbl:t('prospectos_26'),val:p26==null?'&mdash;':fN(p26),foot:'2026'},
+    {lbl:t('prospectos_27'),val:fN(p27),foot:'2027'},
+  ]);
+  grid.classList.add('kpi6');
+  wrap.appendChild(sec(t('headline'),'',grid));
 
-  // Active pipeline with cycle sub-selector
-  const pipeSec=document.createElement('div');pipeSec.className='sec';
-  pipeSec.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_active_pipeline')+'</span><span class="sec-meta">'+t('s_active_pipeline_meta')+'</span><div class="cycle-pills" style="margin-left:auto"><button class="cycle-pill'+(pipelineCycle==='2026'?' active':'')+'" onclick="setCycle(\'2026\')">2026</button><button class="cycle-pill'+(pipelineCycle==='2027'?' active':'')+'" onclick="setCycle(\'2027\')">2027</button></div></div>';
-  pipeSec.appendChild(buildPipelineTable());
-  wrap.appendChild(pipeSec);
+  wrap.appendChild(buildConvFunnel());
+  wrap.appendChild(sec(t('s_forecast'),t('s_forecast_meta'),buildOccupancy()));
 
-  // Occupancy 2027 semaforo
-  wrap.appendChild(sec(t('s_occupancy'),t('s_occupancy_meta'),buildOccupancy()));
-
-  // Historical conversion rate (table + chart)
+  // Historical Conversion Rate — Opportunities + table/chart toggle
   if(D.winrate){
-    const two=document.createElement('div');two.className='two';
-    let h2='<div class="tw"><table><thead><tr><th>'+t('col_year')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
-    (D.winrate||[]).forEach(r=>{const f=getWRF(r);const wr=num(f.wr)*100;const cls=wr>=15?'val-pos':wr<8?'val-neg':'';h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.pipeline)+'</td><td class="r">'+fN(f.won)+'</td><td class="r"><span class="'+cls+'">'+fP(f.wr)+'</span></td></tr>';});
-    h2+='</tbody></table></div>';
-    const tbl=elFromHTML(h2).firstChild;
-    const cc=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="200"></canvas></div></div>').firstChild;
-    two.appendChild(tbl);two.appendChild(cc);
-    wrap.appendChild(sec(t('s_historical_cr'),t('s_historical_cr_meta'),two));
+    const sct=document.createElement('div');sct.className='sec';
+    sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_historical_cr')+'</span><span class="sec-meta">'+t('s_historical_cr_meta')+'</span><div class="cycle-pills" style="margin-left:auto"><button class="cycle-pill'+(histView==='table'?' active':'')+'" onclick="histView=\'table\';render()">'+t('view_table')+'</button><button class="cycle-pill'+(histView==='chart'?' active':'')+'" onclick="histView=\'chart\';render()">'+t('view_chart')+'</button></div></div>';
+    if(histView==='table'){
+      let h2='<div class="tw"><table><thead><tr><th>'+t('col_year')+'</th><th class="r">'+t('col_opportunities')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
+      (D.winrate||[]).forEach(r=>{const f=getWRF(r);const wr=num(f.wr)*100;const cls=wr>=15?'val-pos':wr<8?'val-neg':'';h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.pipeline)+'</td><td class="r">'+fN(f.won)+'</td><td class="r"><span class="'+cls+'">'+fP(f.wr)+'</span></td></tr>';});
+      h2+='</tbody></table></div>';
+      sct.appendChild(elFromHTML(h2).firstChild);
+    }else{
+      sct.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="220"></canvas></div></div>').firstChild);
+    }
+    wrap.appendChild(sct);
   }
 
-  // Conversion pipeline funnel
-  if(D.funnel&&D.funnel.length){
-    const fd=document.createElement('div');fd.className='funnel';
-    const maxF=Math.max(...D.funnel.map(x=>num(x.llegaron)),1);
-    D.funnel.forEach(item=>{
-      const pct=(num(item.llegaron)/maxF*100);
-      const lp=(num(item.pctPerd)*100).toFixed(0);
-      const div=document.createElement('div');div.className='f-row'+(item.isWon?' won':'');
-      div.innerHTML='<div class="f-lbl">'+escHtml(trStage(item.etapa))+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(item.llegaron)+' <span class="f-badge">'+lp+'% '+(lang==='en'?'drop':'baja')+'</span></div>';
-      fd.appendChild(div);
-    });
-    wrap.appendChild(sec(t('s_conv_pipeline'),t('s_conv_pipeline_meta'),fd));
-  }
-
-  // Conversion per channel
-  wrap.appendChild(sec(t('s_channel'),t('s_channel_meta'),buildChannel()));
+  wrap.appendChild(buildConvPipeline());
+  wrap.appendChild(buildChannelSection());
   return wrap;
+}
+
+function getFunnel(yr){
+  const rows=(D.funnelByYear||[]).filter(r=>num(r.yr)===yr);
+  if(!rows.length)return null;
+  const pick=cn=>rows.find(r=>r.campus===cn)||{};
+  let inq=0,vis=0,app=0,won=0;
+  if(campus==='q'){const r=pick('Quilmes');inq=num(r.inquiries);vis=num(r.visit);app=num(r.application);won=num(r.won);}
+  else if(campus==='n'){const r=pick('North');inq=num(r.inquiries);vis=num(r.visit);app=num(r.application);won=num(r.won);}
+  else{const q=pick('Quilmes'),n=pick('North');inq=num(q.inquiries)+num(n.inquiries);vis=num(q.visit)+num(n.visit);app=num(q.application)+num(n.application);won=num(q.won)+num(n.won);}
+  return {inquiries:inq,visit:vis,application:app,won:won,visitRate:inq>0?vis/inq:0,applRate:inq>0?app/inq:0,yieldRate:inq>0?won/inq:0};
+}
+function yearPills(cur,years,setter){
+  return '<div class="cycle-pills" style="margin-left:auto">'+years.map(y=>'<button class="cycle-pill'+(num(cur)===y?' active':'')+'" onclick="'+setter+'='+y+';render()">'+y+'</button>').join('')+'</div>';
+}
+function buildConvFunnel(){
+  const sct=document.createElement('div');sct.className='sec';
+  const years=[2021,2022,2023,2024,2025,2026,2027];
+  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_conv_funnel')+'</span><span class="sec-meta">'+t('s_conv_funnel_meta')+'</span>'+yearPills(funnelYear,years,'funnelYear')+'</div>';
+  const f=getFunnel(num(funnelYear));
+  if(!f){sct.appendChild(emptyState(t('coming_soon'),''));return sct;}
+  const rows=[
+    {lbl:t('col_inquiries'),count:f.inquiries,rate:1,won:false},
+    {lbl:t('col_visit_n'),count:f.visit,rate:f.visitRate,won:false},
+    {lbl:t('col_appl_n'),count:f.application,rate:f.applRate,won:false},
+    {lbl:t('col_yield_n'),count:f.won,rate:f.yieldRate,won:true},
+  ];
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('col_stage')+'</th><th class="r">'+t('col_count')+'</th><th class="r">'+t('col_rate')+'</th></tr></thead><tbody>';
+  rows.forEach(r=>{h+='<tr class="'+(r.won?'won-row':'')+'"><td style="font-weight:'+(r.won?700:500)+'">'+r.lbl+'</td><td class="r"'+(r.won?' style="font-weight:700"':'')+'>'+fN(r.count)+'</td><td class="r">'+fP(r.rate)+'</td></tr>';});
+  h+='</tbody></table>';tw.innerHTML=h;sct.appendChild(tw);
+  return sct;
+}
+function buildConvPipeline(){
+  const f=getFunnel(2026)||getFunnel(num(funnelYear));
+  const sct=document.createElement('div');sct.className='sec';
+  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_conv_pipeline')+'</span><span class="sec-meta">'+t('s_conv_pipeline_meta')+'</span></div>';
+  if(!f){sct.appendChild(emptyState(t('coming_soon'),''));return sct;}
+  const stages=[
+    {lbl:t('col_inquiries'),n:f.inquiries,won:false},
+    {lbl:t('col_visit_n'),n:f.visit,won:false},
+    {lbl:t('col_appl_n'),n:f.application,won:false},
+    {lbl:t('col_yield_n'),n:f.won,won:true},
+  ];
+  const maxF=Math.max(f.inquiries,1);
+  const fd=document.createElement('div');fd.className='funnel';
+  stages.forEach((s,i)=>{
+    const pct=s.n/maxF*100;
+    const prev=i>0?stages[i-1].n:s.n;
+    const drop=prev>0?Math.round((1-s.n/prev)*100):0;
+    const div=document.createElement('div');div.className='f-row'+(s.won?' won':'');
+    div.innerHTML='<div class="f-lbl">'+s.lbl+'</div><div class="f-track"><div class="f-fill" data-w="'+pct.toFixed(1)+'"></div></div><div class="f-nums">'+fN(s.n)+(i>0?' <span class="f-badge">'+drop+'% '+(lang==='en'?'drop':'baja')+'</span>':'')+'</div>';
+    fd.appendChild(div);
+  });
+  sct.appendChild(fd);return sct;
+}
+function buildChannelSection(){
+  const sct=document.createElement('div');sct.className='sec';
+  const years=[2021,2022,2023,2024,2025,2026];
+  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_channel')+'</span><span class="sec-meta">'+t('s_channel_meta')+'</span>'+yearPills(channelYear,years,'channelYear')+'</div>';
+  sct.appendChild(buildChannel());
+  return sct;
 }
 function buildChannel(){
   const rows=D.channel||[];
   if(!rows.length)return emptyState(t('coming_soon'),t('cs_channel'));
-  const maxYr=Math.max.apply(null,rows.map(r=>num(r.yr)));
+  const yr=num(channelYear);
   const campName=campus==='q'?'Quilmes':campus==='n'?'North':null;
-  const filt=rows.filter(r=>num(r.yr)===maxYr&&(campName?r.campus===campName:true));
+  const filt=rows.filter(r=>num(r.yr)===yr&&(campName?r.campus===campName:true));
   const by={};
   filt.forEach(r=>{const s=by[r.source]||{source:r.source,pipeline:0,won:0};s.pipeline+=num(r.pipeline);s.won+=num(r.won);by[r.source]=s;});
   const list=Object.keys(by).map(k=>by[k]).sort((a,b)=>b.won-a.won);
+  if(!list.length)return emptyState(t('coming_soon'),'');
   const tw=document.createElement('div');tw.className='tw';
   let tp=0,tWon=0;
-  let h='<table><thead><tr><th>'+t('col_source')+'</th><th class="r">'+t('col_pipeline')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>'+t('col_source')+'</th><th class="r">'+t('col_opportunities')+'</th><th class="r">'+t('col_won')+'</th><th class="r">'+t('col_wr')+'</th></tr></thead><tbody>';
   list.forEach(s=>{const wr=s.pipeline>0?s.won/s.pipeline:0;const cls=wr>=0.15?'val-pos':wr<0.05?'val-neg':'';tp+=s.pipeline;tWon+=s.won;h+='<tr><td style="font-weight:600">'+escHtml(s.source)+'</td><td class="r">'+fN(s.pipeline)+'</td><td class="r">'+fN(s.won)+'</td><td class="r"><span class="'+cls+'">'+fP(wr)+'</span></td></tr>';});
-  h+='<tr class="tot"><td>'+t('total_lbl')+' '+maxYr+'</td><td class="r">'+fN(tp)+'</td><td class="r">'+fN(tWon)+'</td><td class="r">'+fP(tp>0?tWon/tp:0)+'</td></tr>';
-  h+='</tbody></table>';tw.innerHTML=h;return tw;
-}
-
-function buildPipelineTable(){
-  const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+t('col_stage')+'</th>';
-  if(campus==='os')h+='<th class="r th-q">Q-K</th><th class="r th-q">Q-P</th><th class="r th-q">Q-C</th><th class="r th-q">Q Tot</th><th class="r th-n">N-K</th><th class="r th-n">N-P</th><th class="r th-n">N-C</th><th class="r th-n">N Tot</th><th class="r">One School</th>';
-  else h+='<th class="r">'+t('kinder')+'</th><th class="r">'+t('prep')+'</th><th class="r">'+t('college')+'</th><th class="r">Total</th>';
-  h+='</tr></thead><tbody>';
-  (D.pipeline||[]).forEach(p=>{
-    h+='<tr class="'+(p.isWon?'won-row':'')+'"><td style="font-weight:'+(p.isWon?700:400)+'">'+escHtml(trStage(p.etapa))+'</td>';
-    if(campus==='os')h+='<td class="r c-q">'+fN(p.qK)+'</td><td class="r c-q">'+fN(p.qP)+'</td><td class="r c-q">'+fN(p.qC)+'</td><td class="r c-q" style="font-weight:700">'+fN(p.qT)+'</td><td class="r c-n">'+fN(p.nK)+'</td><td class="r c-n">'+fN(p.nP)+'</td><td class="r c-n">'+fN(p.nC)+'</td><td class="r c-n" style="font-weight:700">'+fN(p.nT)+'</td><td class="r" style="font-weight:700">'+fN(p.total)+'</td>';
-    else if(campus==='q')h+='<td class="r">'+fN(p.qK)+'</td><td class="r">'+fN(p.qP)+'</td><td class="r">'+fN(p.qC)+'</td><td class="r" style="font-weight:700">'+fN(p.qT)+'</td>';
-    else h+='<td class="r">'+fN(p.nK)+'</td><td class="r">'+fN(p.nP)+'</td><td class="r">'+fN(p.nC)+'</td><td class="r" style="font-weight:700">'+fN(p.nT)+'</td>';
-    h+='</tr>';
-  });
+  h+='<tr class="tot"><td>'+t('total_lbl')+' '+yr+'</td><td class="r">'+fN(tp)+'</td><td class="r">'+fN(tWon)+'</td><td class="r">'+fP(tp>0?tWon/tp:0)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
