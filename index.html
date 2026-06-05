@@ -1008,9 +1008,9 @@ async function fetchData(){
     updateAdminInfo();initSimAdj();render();
     delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
   };
-  const onError=()=>{delete window[cb];if(_fetchRetry<2){_fetchRetry++;setTimeout(fetchData,3000);}else{_fetchRetry=0;showErrorBanner();}};
+  const onError=()=>{if(_fetchRetry<2){_fetchRetry++;setTimeout(fetchData,3000);}else{_fetchRetry=0;showErrorBanner();}};
   try{
-    const resp=await Promise.race([fetch(url,{cache:'no-store',redirect:'follow'}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
+    const resp=await Promise.race([fetch(url,{cache:'no-store',redirect:'follow'}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),20000))]);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const text=await resp.text();
     if(!text.startsWith(cb+'('))throw new Error('unexpected jsonp callback');
@@ -1018,9 +1018,11 @@ async function fetchData(){
     if(i<0||j<0)throw new Error('bad jsonp');
     onSuccess(JSON.parse(text.slice(i+1,j)));return;
   }catch(fetchErr){console.warn('fetch() failed, falling back to JSONP:',fetchErr.message);}
-  window[cb]=onSuccess;
+  // JSONP fallback — large payload + Apps Script cold start can be slow, so be patient.
+  // Keep the callback alive so a late response still loads (avoids "cb is not defined").
+  window[cb]=function(d){try{onSuccess(d);}catch(e){console.warn(e);}};
   const s=document.createElement('script');s.id='_jp';s.src=url;
-  const guard=setTimeout(()=>{if(window[cb])onError();},12000);
+  const guard=setTimeout(()=>{onError();},38000);
   s.onload=()=>clearTimeout(guard);s.onerror=()=>{clearTimeout(guard);onError();};
   document.head.appendChild(s);
 }
