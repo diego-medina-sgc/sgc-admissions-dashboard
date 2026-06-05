@@ -739,7 +739,7 @@ const STRINGS={
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
     fidu_loyalty:'Weekly Loyalty',fidu_loyalty_f:'Weekly recurrence',fidu_open:'Real Open Rate',fidu_open_f:'Viewed vs audience',
     col_module:'Module',col_interactions:'Interactions',col_pct:'% of total',col_month:'Month',col_inbox:'Inbox Messages',
-    col_source:'Source',col_channel_yr:'Year',col_appl:'Application Rate',col_yield:'Yield Rate',
+    col_source:'Source',col_channel_yr:'Year',col_appl:'Application Rate',col_yield:'Yield Rate',col_lost:'Lost',
     s_proj_headline:'Projection Scenarios',s_proj_headline_meta:'2027',
     s_proj_detail:'Classroom Breakdown',s_proj_detail_meta:'Proportional distribution by form',
     s_alumni_headline:'Alumni Overview',s_alumni_headline_meta:'Old Georgians',
@@ -820,7 +820,7 @@ const STRINGS={
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
     fidu_loyalty:'Fidelidad Semanal',fidu_loyalty_f:'Recurrencia semanal',fidu_open:'Tasa de Apertura Real',fidu_open_f:'Vistos vs audiencia',
     col_module:'M&oacute;dulo',col_interactions:'Interacciones',col_pct:'% del total',col_month:'Mes',col_inbox:'Mensajes Inbox',
-    col_source:'Origen',col_channel_yr:'A&ntilde;o',col_appl:'Application Rate',col_yield:'Yield Rate',
+    col_source:'Origen',col_channel_yr:'A&ntilde;o',col_appl:'Application Rate',col_yield:'Yield Rate',col_lost:'Perdidos',
     s_proj_headline:'Escenarios de Proyecci&oacute;n',s_proj_headline_meta:'2027',
     s_proj_detail:'Desglose por Sal&oacute;n',s_proj_detail_meta:'Distribuci&oacute;n proporcional por divisi&oacute;n',
     s_alumni_headline:'Resumen Alumni',s_alumni_headline_meta:'Old Georgians',
@@ -1381,46 +1381,47 @@ function setCycle(c){pipelineCycle=c;render();}
 function buildRetention(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_retention'),t('ph_retention_sub')));
-  const h=D.headline||{},com=D.community||{};
-  const retVal=fP(campus==='n'?h.retencion_north:h.retencion_quilmes);
-  const retCls=campus==='n'?'c-navy':'c-red';
-  const ogVal=fP(campus==='n'?com.ogNorth:com.ogQuilmes);
-  const actWith=(D.withdrawals||[]).filter(w=>w.tipo==='Accionable').reduce((a,w)=>a+num(w.tot2026),0);
-  wrap.appendChild(sec(t('headline'),t('headline_meta'),kpiGrid([
-    {lbl:t('ret_rate'),val:retVal,foot:campus==='n'?'North':campus==='q'?'Quilmes':'One School',cls:retCls,accent:true},
-    {lbl:t('og_rate'),val:ogVal,foot:t('og_foot')},
-    {lbl:t('foreign'),val:fP(com.foreignStudents),foot:t('os_foot')},
-    {lbl:t('priority'),val:fP(com.priorityCommunity),foot:t('og_plus')},
+  const h=D.headline||{},com=D.community||{},ret=D.retention;
+  const retVal = ret?cv(ret.rate):(campus==='n'?h.retencion_north:h.retencion_quilmes);
+  const ogVal  = ret?cv(ret.ogRate):(campus==='n'?com.ogNorth:com.ogQuilmes);
+  const intlVal= ret?cv(ret.intlRate):com.foreignStudents;
+  const priVal = campus==='q'?(com.priorityQuilmes!=null?com.priorityQuilmes:com.priorityCommunity):campus==='n'?(com.priorityNorth!=null?com.priorityNorth:com.priorityCommunity):com.priorityCommunity;
+  const actWith= ret?cv(ret.actionableWithdrawals):(D.withdrawals||[]).filter(w=>w.tipo==='Accionable').reduce((a,w)=>a+num(w.tot2026),0);
+  const retCls=campus==='n'?'c-navy':campus==='q'?'c-red':'';
+  const grid=kpiGrid([
+    {lbl:t('ret_rate'),val:fP(retVal),foot:campus==='n'?'North':campus==='q'?'Quilmes':'One School',cls:retCls,accent:true},
+    {lbl:t('og_rate'),val:fP(ogVal),foot:t('og_foot')},
+    {lbl:t('foreign'),val:fP(intlVal),foot:campus==='os'?t('os_foot'):''},
+    {lbl:t('priority'),val:fP(priVal),foot:t('og_plus')},
     {lbl:t('actionable_with'),val:fN(actWith),foot:'2026',cls:'c-red'},
-  ])));
+  ]);
+  wrap.appendChild(sec(t('headline'),'',grid));
 
-  // Cohort lifespan table + chart
-  if(D.cohort&&D.cohort.length){
-    const two=document.createElement('div');two.className='two';
-    let h2='<div class="tw"><table><thead><tr><th>'+t('col_cohort')+'</th><th class="r">'+t('col_enrolled')+'</th><th class="r">'+t('col_active')+'</th><th class="r">'+t('col_lifespan')+'</th></tr></thead><tbody>';
-    D.cohort.forEach(r=>{const f=getCohF(r);h2+='<tr><td style="font-weight:700">'+r.yr+'</td><td class="r">'+fN(f.ing)+'</td><td class="r">'+fN(f.act)+'</td><td class="r">'+(f.life!=null?num(f.life).toFixed(1):'&mdash;')+'</td></tr>';});
-    h2+='</tbody></table></div>';
-    const tbl=elFromHTML(h2).firstChild;
-    const cc=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('cohort_chart')+'</div><div class="cc-sub">'+t('cohort_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-cohort" height="200"></canvas></div></div>').firstChild;
-    two.appendChild(tbl);two.appendChild(cc);
-    wrap.appendChild(sec(t('s_cohort_lifespan'),t('s_cohort_lifespan_meta'),two));
-  }
-
-  // Grade-to-grade movement (cohortRates) — always shows Q & N
-  if(D.cohortRates){
+  // Grade-to-Grade Movement (right after headline) — CALC_retention 2026
+  if(D.retentionGrades){
     const cr=document.createElement('div');cr.className='two';
-    cr.appendChild(buildCohortRates('quilmes','Quilmes','#DC1E33'));
-    cr.appendChild(buildCohortRates('north','North','#213463'));
+    if(campus!=='n')cr.appendChild(buildRetGrades('quilmes','Quilmes','#DC1E33'));
+    if(campus!=='q')cr.appendChild(buildRetGrades('north','North','#213463'));
     wrap.appendChild(sec(t('s_cohort_rates'),t('s_cohort_rates_meta'),cr));
   }
 
   // Withdrawals
   wrap.appendChild(sec(t('s_withdrawals'),t('s_withdrawals_meta'),buildWithdrawals()));
 
-  // Placeholders
-  wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),emptyState(t('coming_soon'),t('cs_intl'))));
-  wrap.appendChild(sec(t('s_nps'),t('s_nps_meta'),emptyState(t('coming_soon'),t('cs_nps'))));
+  // International Students — Nationalities (chart with flags)
+  const natWrap=elFromHTML('<div class="cc"><div class="chart-wrap" style="height:340px"><canvas id="chart-nat"></canvas></div></div>').firstChild;
+  wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),natWrap));
   return wrap;
+}
+function buildRetGrades(key,title,color){
+  const rows=(D.retentionGrades&&D.retentionGrades[key])||[];
+  const tw=document.createElement('div');tw.className='tw';
+  let to=0,td=0,tw_=0,tl=0;
+  let h='<table><thead><tr><th style="background:'+color+'">'+title+' &middot; '+t('col_grade')+'</th><th class="r" style="background:'+color+'">2025</th><th class="r" style="background:'+color+'">2026</th><th class="r" style="background:'+color+'">'+t('col_won')+'</th><th class="r" style="background:'+color+'">'+t('col_lost')+'</th><th class="r" style="background:'+color+'">'+t('col_ret')+'</th></tr></thead><tbody>';
+  rows.forEach(r=>{to+=num(r.s2025);td+=num(r.s2026);tw_+=num(r.won);tl+=num(r.lost);const ret=num(r.ret)*100;const cls=ret>=95?'val-pos':ret<80?'val-neg':'';h+='<tr><td style="font-weight:600">'+escHtml(r.yg)+'</td><td class="r">'+fN(r.s2025)+'</td><td class="r">'+fN(r.s2026)+'</td><td class="r">'+fN(r.won)+'</td><td class="r">'+fN(r.lost)+'</td><td class="r"><span class="'+cls+'">'+fP(r.ret)+'</span></td></tr>';});
+  const totRet=to>0?(td-tw_)/to:0;
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(to)+'</td><td class="r">'+fN(td)+'</td><td class="r">'+fN(tw_)+'</td><td class="r">'+fN(tl)+'</td><td class="r"><strong>'+fP(totRet)+'</strong></td></tr>';
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 function buildCohortRates(key,title,color){
   const rows=(D.cohortRates&&D.cohortRates[key])||[];
@@ -1651,6 +1652,8 @@ function toggleGroup(gid,row){
 /* ============================== CHARTS ============================== */
 const TTP={backgroundColor:'#213463',titleFont:{family:'Asap',size:12,weight:'700'},bodyFont:{family:'Asap Condensed',size:12},padding:14,cornerRadius:8,titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',displayColors:true,boxWidth:9,boxHeight:9,usePointStyle:true,borderColor:'rgba(255,255,255,.1)',borderWidth:1};
 function hexA(hex,a){hex=String(hex).replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+const FLAG={Argentine:'🇦🇷',Argentina:'🇦🇷',American:'🇺🇸','United States':'🇺🇸',Chinese:'🇨🇳',China:'🇨🇳',Russian:'🇷🇺',Russia:'🇷🇺',Brazilian:'🇧🇷',Brazil:'🇧🇷',Chilean:'🇨🇱',Chile:'🇨🇱',Uruguayan:'🇺🇾',Uruguay:'🇺🇾',Spanish:'🇪🇸',Spain:'🇪🇸','United Kingdom':'🇬🇧',British:'🇬🇧',Mexican:'🇲🇽',Mexico:'🇲🇽',Italian:'🇮🇹',Italy:'🇮🇹',Australia:'🇦🇺',Australian:'🇦🇺',Bolivia:'🇧🇴',Bolivian:'🇧🇴',Paraguay:'🇵🇾',Paraguayan:'🇵🇾',Other:'🌐',Otros:'🌐'};
+function flag(n){return FLAG[n]||'🏳️';}
 Chart.unregister(ChartDataLabels);
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
@@ -1720,6 +1723,13 @@ function drawCharts(){
     const labels=D.cohort.map(r=>String(r.yr));
     const life=D.cohort.map(r=>{const f=getCohF(r);return f.life!=null?num(f.life):null;});
     charts.cohort=new Chart(coc,{type:'bar',data:{labels,datasets:[{label:t('col_lifespan'),data:life,backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Nationalities (International) horizontal bars with flags — excludes Argentine
+  const nc=document.getElementById('chart-nat');
+  if(nc&&D.nationalities){
+    const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
+    const data=D.nationalities.filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina'&&valOf(r)>0;}).map(r=>({name:r.name,v:valOf(r)})).sort((a,b)=>b.v-a.v);
+    charts.nat=new Chart(nc,{type:'bar',data:{labels:data.map(d=>flag(d.name)+' '+d.name),datasets:[{label:t('col_count'),data:data.map(d=>d.v),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},y:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
