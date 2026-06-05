@@ -544,48 +544,6 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] #btn-sb-toggle{background:var(--surface2);color:#EDEDF0 !important;}
 [data-theme="dark"] .skel{background:linear-gradient(90deg,#22223400 0,#2C2C42 37%,#22223400 63%);background-color:#23233A;background-size:400% 100%;}
 
-/* ═══ UX/UI ENHANCEMENTS ═══ */
-/* 5 · panel + value transitions */
-.panel.active{animation:panelIn .34s cubic-bezier(.22,.61,.36,1);}
-@keyframes panelIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-.si-val,.kpi-val,.comm-val{transition:color .2s;}
-
-/* 6 · focus-visible (a11y) */
-*:focus{outline:none;}
-*:focus-visible{outline:2.5px solid var(--navy);outline-offset:2px;border-radius:5px;}
-[data-theme="dark"] *:focus-visible{outline-color:#7C9AE0;}
-.nav-item:focus-visible{outline-offset:-2px;}
-.campus-btn:focus-visible{outline-offset:1px;}
-
-/* 2 · sticky campus context (segmented control) */
-.hdr-context-lbl{font-family:'Asap Condensed',sans-serif;font-size:.56rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9C968B;margin-right:3px;white-space:nowrap;align-self:center;}
-.campus-group{background:var(--cream);padding:3px;border-radius:22px;border:1px solid var(--line);}
-.campus-btn{border:1.5px solid transparent;background:transparent;transition:background .18s,color .18s,box-shadow .18s;}
-.campus-btn:hover:not(.active){background:var(--white);color:var(--ink);}
-.campus-btn.active{box-shadow:0 1px 4px rgba(40,33,28,.16);}
-
-/* 3 · table density toggle + sticky first column */
-#main.compact tbody td{padding-top:5px;padding-bottom:5px;}
-#main.compact thead th{padding-top:7px;padding-bottom:7px;}
-#main.compact tbody td,#main.compact td.r{font-size:.72rem;}
-
-/* 1 · skeleton loading */
-.skel-stack{display:flex;flex-direction:column;gap:22px;}
-.skel{background:linear-gradient(90deg,var(--line) 25%,var(--cream) 37%,var(--line) 63%);background-size:400% 100%;animation:skelShimmer 1.5s ease infinite;border-radius:10px;}
-[data-theme="dark"] .skel{background:linear-gradient(90deg,#22223400 0,#2C2C42 37%,#22223400 63%);background-color:#23233A;background-size:400% 100%;}
-@keyframes skelShimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
-.skel-row{display:grid;gap:14px;}
-.skel-band{height:104px;border-radius:var(--r-lg);}
-.skel-title{height:30px;width:230px;}
-.skel-card{height:130px;}
-.skel-table{height:300px;}
-.skel-chart{height:240px;}
-
-/* 4 · metric hierarchy — emphasise the lead KPI */
-.kpi-card.accent .kpi-val{font-size:2.85rem;}
-.kpi-card.accent{background:linear-gradient(180deg,var(--surface),var(--cream));}
-.comm-card.lead{box-shadow:0 0 0 1px rgba(16,154,169,.4),var(--card-shadow);}
-
 /* ─── RESPONSIVE ─── */
 @media(max-width:1024px){:root{--sidebar-w:220px;}}
 @media(max-width:768px){
