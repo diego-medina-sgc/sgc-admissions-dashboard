@@ -568,7 +568,12 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .two,.three,.col-6040{grid-template-columns:1fr;}
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
   .sim-totals{grid-template-columns:1fr;}
-  .stat-strip{grid-template-columns:repeat(3,1fr);}
+  /* Key Highlights mobile: 3 per row, trailing items centered */
+  .stat-strip{display:flex;flex-wrap:wrap;justify-content:center;}
+  .stat-strip .si{flex:1 0 33.33%;max-width:33.33%;padding:14px 6px 12px;border-bottom:1px solid rgba(255,255,255,.1);}
+  .stat-strip .si-val{font-size:1.5rem;}
+  .stat-strip .si-lbl{font-size:.52rem;letter-spacing:.06em;margin-bottom:6px;}
+  .stat-strip .si-foot{font-size:.58rem;}
   .kpi-grid,.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(3,1fr);}
   .si{border-bottom:1px solid rgba(255,255,255,.1);}
   .f-lbl{min-width:120px;font-size:.73rem;}
@@ -585,7 +590,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .sidebar.collapsed .sb-switches{display:flex;}
 }
 @media(max-width:460px){
-  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .stat-strip .si{padding:12px 4px 10px;}
+  .stat-strip .si-val{font-size:1.3rem;}
   .kpi-grid,.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(2,1fr);}
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
 }
@@ -920,7 +926,7 @@ let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
 let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
-let funnelYear=2027,channelYear=2026,histView='chart';
+let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 function cv(o){if(o==null)return null;return campus==='q'?o.q:campus==='n'?o.n:o.os;}
 let currentTheme=localStorage.getItem('sgc-theme')||'system';
 
@@ -1268,16 +1274,14 @@ function buildAdmissions(){
   const cr    = ad?cv(ad.conversionRate):wr2026();
   const p26   = ad?cv(ad.prospects2026):null;
   const p27   = ad?cv(ad.prospects2027):num(cd.total&&cd.total.prospectos);
-  const grid=kpiGrid([
-    {lbl:t('total_alumnos'),val:fN(total),foot:'2026',accent:true},
+  wrap.appendChild(sec(t('headline'),'',statStrip([
+    {lbl:t('total_alumnos'),val:fN(total),foot:'2026'},
     {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
     {lbl:t('won'),val:fN(newS),foot:'2026'},
     {lbl:t('win_rate'),val:fP(cr),foot:'2026'},
     {lbl:t('prospectos_26'),val:p26==null?'&mdash;':fN(p26),foot:'2026'},
     {lbl:t('prospectos_27'),val:fN(p27),foot:'2027'},
-  ]);
-  grid.classList.add('kpi6');
-  wrap.appendChild(sec(t('headline'),'',grid));
+  ])));
 
   wrap.appendChild(buildConvFunnel());
   const fcWrap=document.createElement('div');
@@ -1340,8 +1344,8 @@ function buildConvFunnel(){
         let li=0,lvv=0,la=0,lw=0;list.forEach(r=>{li+=num(r.inquiries);lvv+=num(r.visit);la+=num(r.application);lw+=num(r.won);});
         TI+=li;TV+=lvv;TA+=la;TW+=lw;
         const gid='fg-'+lv;
-        h+='<tr class="grp grp-k gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+t(lv)+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
-        list.forEach(r=>{h+='<tr class="salon-row '+gid+'"><td>'+escHtml(r.grade)+'</td><td class="r">'+fN(r.inquiries)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.won)+'</td></tr>';});
+        h+='<tr class="grp grp-k gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+t(lv)+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
+        list.forEach(r=>{h+='<tr class="salon-row '+gid+'" style="display:none"><td>'+escHtml(r.grade)+'</td><td class="r">'+fN(r.inquiries)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.won)+'</td></tr>';});
       });
       h+='<tr class="tot won-row"><td>'+t('total_lbl')+'</td><td class="r"><strong>'+fN(TI)+'</strong></td><td class="r">'+fN(TV)+'</td><td class="r">'+fN(TA)+'</td><td class="r"><strong>'+fN(TW)+'</strong></td></tr>';
       h+='</tbody></table>';tw.innerHTML=h;sct.appendChild(tw);
@@ -1467,15 +1471,14 @@ function buildRetention(){
   const intlVal= ret?cv(ret.intlRate):com.foreignStudents;
   const priVal = campus==='q'?(com.priorityQuilmes!=null?com.priorityQuilmes:com.priorityCommunity):campus==='n'?(com.priorityNorth!=null?com.priorityNorth:com.priorityCommunity):com.priorityCommunity;
   const actWith= ret?cv(ret.actionableWithdrawals):(D.withdrawals||[]).filter(w=>w.tipo==='Accionable').reduce((a,w)=>a+num(w.tot2026),0);
-  const retCls=campus==='n'?'c-navy':campus==='q'?'c-red':'';
-  const grid=kpiGrid([
-    {lbl:t('ret_rate'),val:fP(retVal),foot:campus==='n'?'North':campus==='q'?'Quilmes':'One School',cls:retCls,accent:true},
+  const retCls=campus==='n'?'c-navy':'c-red';
+  wrap.appendChild(sec(t('headline'),'',statStrip([
+    {lbl:t('ret_rate'),val:fP(retVal),foot:campus==='n'?'North':campus==='q'?'Quilmes':'One School',cls:retCls},
     {lbl:t('og_rate'),val:fP(ogVal),foot:t('og_foot')},
     {lbl:t('foreign'),val:fP(intlVal),foot:campus==='os'?t('os_foot'):''},
     {lbl:t('priority'),val:fP(priVal),foot:t('og_plus')},
     {lbl:t('actionable_with'),val:fN(actWith),foot:'2026',cls:'c-red'},
-  ]);
-  wrap.appendChild(sec(t('headline'),'',grid));
+  ])));
 
   // Grade-to-Grade Movement (right after headline) — CALC_retention 2026
   if(D.retentionGrades){
@@ -1643,8 +1646,8 @@ function buildProyeccion(){
   tables.innerHTML=(campus!=='n'?mkAdjTable(t('quilmes_table'),'q',py.quilmes,'#DC1E33'):'')+(campus!=='q'?mkAdjTable(t('north_table'),'n',py.north,'#213463'):'');
   wrap.appendChild(tables);
 
-  // Classroom breakdown
-  if(D.proyeccionDetalle&&D.proyeccionDetalle.length){
+  // Classroom breakdown (hidden unless enabled from admin panel)
+  if(showClassroom&&D.proyeccionDetalle&&D.proyeccionDetalle.length){
     const note=elFromHTML('<div style="background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:.74rem;color:var(--gray);line-height:1.5;font-family:Asap Condensed,sans-serif;display:flex;gap:10px;align-items:flex-start"><svg style="flex-shrink:0;margin-top:1px" width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('classroom_note')+'</span></div>');
     const cwrap=document.createElement('div');cwrap.appendChild(note);
     cwrap.appendChild(buildClassroom());
@@ -1712,17 +1715,15 @@ function buildAlumni(){
   }
   const H=a.headline;
   const alc=o=>!o?null:(campus==='q'?o.q:campus==='n'?o.n:o.total);
-  const grid=kpiGrid([
-    {lbl:t('al_total'),val:fN(alc(H.total)),foot:'',accent:true},
+  wrap.appendChild(sec(t('headline'),'',statStrip([
+    {lbl:t('al_total'),val:fN(alc(H.total)),foot:''},
     {lbl:t('al_male'),val:fN(alc(H.male)),foot:''},
     {lbl:t('al_female'),val:fN(alc(H.female)),foot:''},
     {lbl:t('al_age'),val:alc(H.avgAge)!=null?num(alc(H.avgAge)).toFixed(0):'&mdash;',foot:t('al_age_foot')},
     {lbl:t('al_withkids'),val:fN(alc(H.withKids)),foot:''},
     {lbl:t('al_abroad'),val:fP(alc(H.abroadPct)),foot:t('al_abroad_foot')},
     {lbl:t('al_mentoring'),val:fN(alc(H.mentoringYes)),foot:t('al_mentoring_foot')},
-  ]);
-  grid.classList.add('kpi7');
-  wrap.appendChild(sec(t('headline'),'',grid));
+  ])));
   wrap.appendChild(sec(t('s_alumni_countries'),'',buildAlumniDist(a.countries,true)));
   wrap.appendChild(sec(t('s_alumni_sectors'),'',buildAlumniDist(a.sectors,false)));
   const gw=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('s_alumni_grad')+'</div><div class="cc-sub">'+t('s_alumni_grad_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-grad"></canvas></div></div>').firstChild;
@@ -1955,6 +1956,12 @@ function buildAdmin(){
     render();
   };
   fw.appendChild(fp);
+  // Classroom breakdown toggle (Projection 2027)
+  const cp=document.createElement('div');
+  cp.className='pill teal-pill'+(showClassroom?' active':'');
+  cp.innerHTML='<span class="dot"></span>'+(lang==='en'?'Show Classroom Breakdown':'Mostrar Desglose por Sal&oacute;n');
+  cp.onclick=()=>{showClassroom=!showClassroom;cp.classList.toggle('active',showClassroom);render();};
+  fw.appendChild(cp);
 }
 function updateAdminInfo(){
   const el=document.getElementById('adm-info');if(!el)return;
