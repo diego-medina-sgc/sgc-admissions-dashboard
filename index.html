@@ -176,7 +176,12 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .kpi-grid.kpi6 .kpi-val{font-size:1.85rem;}
 .kpi-grid.kpi6 .kpi-card.accent .kpi-val{font-size:2.05rem;}
 .kpi-grid.kpi6 .kpi-lbl{font-size:.55rem;letter-spacing:.08em;margin-bottom:8px;}
-@media(max-width:1200px){.kpi-grid.kpi6{grid-template-columns:repeat(3,1fr);}}
+.kpi-grid.kpi7{grid-template-columns:repeat(7,1fr);gap:9px;}
+.kpi-grid.kpi7 .kpi-card{padding:13px 10px 11px 14px;}
+.kpi-grid.kpi7 .kpi-val{font-size:1.6rem;}
+.kpi-grid.kpi7 .kpi-card.accent .kpi-val{font-size:1.8rem;}
+.kpi-grid.kpi7 .kpi-lbl{font-size:.52rem;letter-spacing:.06em;margin-bottom:7px;}
+@media(max-width:1200px){.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(3,1fr);}}
 
 /* ─── COMMUNITY CARDS ─── */
 .comm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
@@ -313,6 +318,23 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .cycle-pills{display:inline-flex;gap:4px;background:var(--cream);padding:3px;border-radius:20px;border:1px solid var(--line);}
 .cycle-pill{padding:4px 13px;border-radius:16px;border:none;background:transparent;font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;color:var(--gray);cursor:pointer;transition:all .15s;}
 .cycle-pill.active{background:var(--ink);color:#fff;box-shadow:0 1px 3px rgba(40,33,28,.18);}
+
+/* ─── INFO NOTE ─── */
+.info-note{background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:.74rem;color:var(--gray);line-height:1.5;font-family:'Asap Condensed',sans-serif;display:flex;gap:10px;align-items:flex-start;box-shadow:var(--card-shadow);}
+.info-note svg{flex-shrink:0;margin-top:1px;}
+.info-note b{color:var(--text);font-weight:700;}
+[data-theme="dark"] .info-note{background:var(--surface);border-color:var(--border);color:var(--text-muted);}
+
+/* ─── NATIONALITY BARS ─── */
+.natbars{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);padding:16px 18px;box-shadow:var(--card-shadow);}
+.natbar-row{display:flex;align-items:center;gap:12px;}
+.natbar-lbl{min-width:150px;font-size:.8rem;font-weight:500;color:var(--text);display:flex;align-items:center;}
+.natbar-track{flex:1;height:11px;background:var(--paper);border-radius:6px;overflow:hidden;}
+.natbar-fill{height:100%;border-radius:6px;background:var(--campus-color,var(--teal));transition:width .8s cubic-bezier(.4,0,.2,1);}
+.campus-q .natbar-fill{background:var(--red);}.campus-n .natbar-fill{background:var(--navy);}.campus-os .natbar-fill{background:var(--teal);}
+.natbar-val{min-width:42px;text-align:right;font-family:'Asap Condensed',sans-serif;font-size:.78rem;font-weight:600;color:var(--text-muted);}
+[data-theme="dark"] .natbars{background:var(--surface);border-color:var(--border);}
+[data-theme="dark"] .natbar-track{background:rgba(255,255,255,.08);}
 
 /* ─── EMPTY STATE ─── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:52px 24px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--r);text-align:center;box-shadow:var(--card-shadow);}
@@ -547,7 +569,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
   .sim-totals{grid-template-columns:1fr;}
   .stat-strip{grid-template-columns:repeat(3,1fr);}
-  .kpi-grid,.kpi-grid.kpi6{grid-template-columns:repeat(3,1fr);}
+  .kpi-grid,.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(3,1fr);}
   .si{border-bottom:1px solid rgba(255,255,255,.1);}
   .f-lbl{min-width:120px;font-size:.73rem;}
   .f-nums{min-width:110px;font-size:.65rem;}
@@ -564,7 +586,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 }
 @media(max-width:460px){
   .stat-strip{grid-template-columns:repeat(2,1fr);}
-  .kpi-grid,.kpi-grid.kpi6{grid-template-columns:repeat(2,1fr);}
+  .kpi-grid,.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(2,1fr);}
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
 }
 @media print{
@@ -732,6 +754,7 @@ const STRINGS={
     won:'Won',col_opportunities:'Opportunities',col_count:'Count',col_rate:'Rate %',
     col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
     view_table:'Table',view_chart:'Chart',col_forecast:'Forecast Won',col_gap:'Gap vs 2026',
+    forecast_note:'Estimated 2027 intake from the active pipeline, weighting each prospect by the <b>historical conversion rate</b> of its stage (Visit&rarr;Won and Application&rarr;Won) per campus &amp; level. Only prospects past Visit count, so early in the cycle the forecast (and the Gap vs 2026) is naturally low &mdash; it rises as the funnel advances. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;99% &middot; 🔴 &lt;80%.',
     s_historical_cr:'Historical Conversion Rate',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Conversion Pipeline',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Conversion Rate per Channel',s_channel_meta:'Source attribution',
@@ -815,6 +838,7 @@ const STRINGS={
     won:'Won',col_opportunities:'Oportunidades',col_count:'Cantidad',col_rate:'Tasa %',
     col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
     view_table:'Tabla',view_chart:'Gr&aacute;fico',col_forecast:'Forecast Won',col_gap:'Gap vs 2026',
+    forecast_note:'Ingreso 2027 estimado desde el pipeline activo, ponderando cada prospecto por la <b>tasa de conversi&oacute;n hist&oacute;rica</b> de su etapa (Visit&rarr;Won y Application&rarr;Won) por campus y nivel. Solo cuentan los prospectos que pasaron Visit, as&iacute; que al inicio del ciclo el forecast (y el Gap vs 2026) es bajo &mdash; sube a medida que avanza el funnel. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;99% &middot; 🔴 &lt;80%.',
     s_historical_cr:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Embudo de Conversi&oacute;n',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Tasa de Conversi&oacute;n por Canal',s_channel_meta:'Atribuci&oacute;n de origen',
@@ -1214,6 +1238,9 @@ function buildKpiTable(){
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
   const sc=(stu,cap)=>fN(stu)+' / '+(cap!=null?fN(cap):'&mdash;');
+  // Won 2026 by grade (from funnelGrade WON counts)
+  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026)wonMap[r.grade]=(wonMap[r.grade]||0)+num(r.won);});
+  const gWon=g=>campus==='q'?num(wonMap['Q'+g]):campus==='n'?num(wonMap['N'+g]):num(wonMap['Q'+g])+num(wonMap['N'+g]);
   let h='<table><thead><tr><th>'+t('col_level')+'</th><th class="r">'+t('col_grade')+'</th><th class="r">'+t('col_studcap')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
   let gtCap=0,gtStu=0;
   lvls.forEach((s,si)=>{
@@ -1221,7 +1248,7 @@ function buildKpiTable(){
     let secCap=0;s.grades.forEach(g=>{const c=gradeCapacity(g);if(c!=null)secCap+=c;});
     gtCap+=secCap;gtStu+=num(tot.matricula);
     h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+sc(num(tot.matricula),secCap)+'</strong></td><td class="r">'+fN(tot.new_students)+'</td></tr>';
-    s.grades.forEach(g=>{const d=obj[g];if(!d)return;h+='<tr class="salon-row '+gid+'"><td></td><td class="r">'+g+'</td><td class="r">'+sc(num(d.matricula),gradeCapacity(g))+'</td><td class="r">&mdash;</td></tr>';});
+    s.grades.forEach(g=>{const d=obj[g];if(!d)return;const w=gWon(g);h+='<tr class="salon-row '+gid+'"><td></td><td class="r">'+g+'</td><td class="r">'+sc(num(d.matricula),gradeCapacity(g))+'</td><td class="r">'+fN(w)+'</td></tr>';});
   });
   const ct=cd.total||{};
   h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+sc(num(ct.matricula),gtCap)+'</strong></td><td class="r">'+fN(ct.new_students)+'</td></tr>';
@@ -1251,7 +1278,10 @@ function buildAdmissions(){
   wrap.appendChild(sec(t('headline'),'',grid));
 
   wrap.appendChild(buildConvFunnel());
-  wrap.appendChild(sec(t('s_forecast'),t('s_forecast_meta'),buildOccupancy()));
+  const fcWrap=document.createElement('div');
+  fcWrap.appendChild(elFromHTML('<div class="info-note"><svg width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('forecast_note')+'</span></div>').firstChild);
+  fcWrap.appendChild(buildOccupancy());
+  wrap.appendChild(sec(t('s_forecast'),t('s_forecast_meta'),fcWrap));
 
   // Historical Conversion Rate — Opportunities + table/chart toggle
   if(D.winrate){
@@ -1263,7 +1293,7 @@ function buildAdmissions(){
       h2+='</tbody></table></div>';
       sct.appendChild(elFromHTML(h2).firstChild);
     }else{
-      sct.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-wr" height="220"></canvas></div></div>').firstChild);
+      sct.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('wr_chart')+'</div><div class="cc-sub">'+t('wr_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-wr"></canvas></div></div>').firstChild);
     }
     wrap.appendChild(sct);
   }
@@ -1447,7 +1477,7 @@ function buildRetention(){
 
   // Grade-to-Grade Movement (right after headline) — CALC_retention 2026
   if(D.retentionGrades){
-    const cr=document.createElement('div');cr.className='two';
+    const cr=document.createElement('div');cr.className=(campus==='os')?'two':'';
     if(campus!=='n')cr.appendChild(buildRetGrades('quilmes','Quilmes','#DC1E33'));
     if(campus!=='q')cr.appendChild(buildRetGrades('north','North','#213463'));
     wrap.appendChild(sec(t('s_cohort_rates'),t('s_cohort_rates_meta'),cr));
@@ -1456,16 +1486,25 @@ function buildRetention(){
   // Withdrawals
   wrap.appendChild(sec(t('s_withdrawals'),t('s_withdrawals_meta'),buildWithdrawals()));
 
-  // International Students — Nationalities (chart with flags)
-  const natWrap=elFromHTML('<div class="cc"><div class="chart-wrap" style="height:340px"><canvas id="chart-nat"></canvas></div></div>').firstChild;
-  wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),natWrap));
+  // International Students — Nationalities (HTML bars with flag images, excludes Argentine)
+  wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),buildNationalities()));
+  return wrap;
+}
+function buildNationalities(){
+  const nats=(D.nationalities||[]).filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina';});
+  const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
+  const list=nats.map(r=>({name:r.name,v:valOf(r)})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
+  if(!list.length)return emptyState(t('coming_soon'),t('cs_intl'));
+  const max=Math.max.apply(null,list.map(r=>r.v));
+  const wrap=document.createElement('div');wrap.className='natbars';
+  wrap.innerHTML=list.map(r=>'<div class="natbar-row"><div class="natbar-lbl">'+flagImg(r.name)+escHtml(r.name)+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(r.v/max*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(r.v)+'</div></div>').join('');
   return wrap;
 }
 function buildRetGrades(key,title,color){
   const rows=(D.retentionGrades&&D.retentionGrades[key])||[];
   const tw=document.createElement('div');tw.className='tw';
   let to=0,td=0,tw_=0,tl=0;
-  let h='<table><thead><tr><th style="background:'+color+'">'+title+' &middot; '+t('col_grade')+'</th><th class="r" style="background:'+color+'">2025</th><th class="r" style="background:'+color+'">2026</th><th class="r" style="background:'+color+'">'+t('col_won')+'</th><th class="r" style="background:'+color+'">'+t('col_lost')+'</th><th class="r" style="background:'+color+'">'+t('col_ret')+'</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th style="background:'+color+'">'+title+' &middot; '+t('col_grade')+'</th><th class="r" style="background:'+color+'">2025</th><th class="r" style="background:'+color+'">2026</th><th class="r" style="background:'+color+'">'+t('col_won')+'</th><th class="r" style="background:'+color+'">'+t('col_lost')+'</th><th class="r" style="background:'+color+'">'+t('col_reth')+'</th></tr></thead><tbody>';
   rows.forEach(r=>{to+=num(r.s2025);td+=num(r.s2026);tw_+=num(r.won);tl+=num(r.lost);const ret=num(r.ret)*100;const cls=ret>=95?'val-pos':ret<80?'val-neg':'';h+='<tr><td style="font-weight:600">'+escHtml(r.yg)+'</td><td class="r">'+fN(r.s2025)+'</td><td class="r">'+fN(r.s2026)+'</td><td class="r">'+fN(r.won)+'</td><td class="r">'+fN(r.lost)+'</td><td class="r"><span class="'+cls+'">'+fP(r.ret)+'</span></td></tr>';});
   const totRet=to>0?(td-tw_)/to:0;
   h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(to)+'</td><td class="r">'+fN(td)+'</td><td class="r">'+fN(tw_)+'</td><td class="r">'+fN(tl)+'</td><td class="r"><strong>'+fP(totRet)+'</strong></td></tr>';
@@ -1646,7 +1685,7 @@ function buildClassroom(){
       const gP=list.reduce((a,d)=>a+num(d.proySalon),0);
       const gD=gP-gM;cM+=gM;cP+=gP;
       const dCls=gD>0?'val-pos':gD<0?'val-neg':'';
-      h+='<tr class="tot gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+escHtml(g)+'</td><td class="r"><strong>'+fN(gM)+'</strong></td><td class="r">100%</td><td class="r"><strong>'+fN(gP)+'</strong></td><td class="r '+dCls+'">'+fSign(gD)+'</td></tr>';
+      h+='<tr class="tot gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+escHtml(g)+'</td><td class="r"><strong>'+fN(gM)+'</strong></td><td class="r">&mdash;</td><td class="r"><strong>'+fN(gP)+'</strong></td><td class="r '+dCls+'">'+fSign(gD)+'</td></tr>';
       list.forEach(d=>{const dd=num(d.delta),dc=dd>0?'val-pos':dd<0?'val-neg':'';h+='<tr class="salon-row '+gid+'" style="display:none"><td>'+escHtml(d.salon)+'</td><td class="r">'+fN(d.alumnos2026)+'</td><td class="r">'+fP(d.peso)+'</td><td class="r">'+fN(d.proySalon)+'</td><td class="r '+dc+'">'+fSign(dd)+'</td></tr>';});
     });
     const cD=cP-cM;const cdc=cD>0?'val-pos':cD<0?'val-neg':'';
@@ -1680,11 +1719,11 @@ function buildAlumni(){
     {lbl:t('al_abroad'),val:fP(alc(H.abroadPct)),foot:t('al_abroad_foot')},
     {lbl:t('al_mentoring'),val:fN(alc(H.mentoringYes)),foot:t('al_mentoring_foot')},
   ]);
-  grid.classList.add('kpi6');
+  grid.classList.add('kpi7');
   wrap.appendChild(sec(t('headline'),'',grid));
   wrap.appendChild(sec(t('s_alumni_countries'),'',buildAlumniDist(a.countries,true)));
   wrap.appendChild(sec(t('s_alumni_sectors'),'',buildAlumniDist(a.sectors,false)));
-  const gw=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('s_alumni_grad')+'</div><div class="cc-sub">'+t('s_alumni_grad_sub')+'</div></div></div><div class="chart-wrap"><canvas id="chart-grad" height="200"></canvas></div></div>').firstChild;
+  const gw=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('s_alumni_grad')+'</div><div class="cc-sub">'+t('s_alumni_grad_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-grad"></canvas></div></div>').firstChild;
   wrap.appendChild(gw);
   return wrap;
 }
@@ -1695,7 +1734,7 @@ function buildAlumniDist(rows,withFlags){
   const tot=list.reduce((s,b)=>s+b.v,0)||1;
   const tw=document.createElement('div');tw.className='tw';
   let h='<table><thead><tr><th>'+(withFlags?t('al_country'):t('col_sector'))+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
-  list.forEach(r=>{h+='<tr><td style="font-weight:600">'+(withFlags?flag(r.name)+' ':'')+escHtml(r.name)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
+  list.forEach(r=>{h+='<tr><td style="font-weight:600">'+(withFlags?flagImg(r.name):'')+escHtml(r.name)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
@@ -1710,6 +1749,8 @@ const TTP={backgroundColor:'#213463',titleFont:{family:'Asap',size:12,weight:'70
 function hexA(hex,a){hex=String(hex).replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 const FLAG={Argentine:'🇦🇷',Argentina:'🇦🇷',American:'🇺🇸','United States':'🇺🇸',Chinese:'🇨🇳',China:'🇨🇳',Russian:'🇷🇺',Russia:'🇷🇺',Brazilian:'🇧🇷',Brazil:'🇧🇷',Chilean:'🇨🇱',Chile:'🇨🇱',Uruguayan:'🇺🇾',Uruguay:'🇺🇾',Spanish:'🇪🇸',Spain:'🇪🇸','United Kingdom':'🇬🇧',British:'🇬🇧',Mexican:'🇲🇽',Mexico:'🇲🇽',Italian:'🇮🇹',Italy:'🇮🇹',Australia:'🇦🇺',Australian:'🇦🇺',Bolivia:'🇧🇴',Bolivian:'🇧🇴',Paraguay:'🇵🇾',Paraguayan:'🇵🇾',Other:'🌐',Otros:'🌐'};
 function flag(n){return FLAG[n]||'🏳️';}
+const ISO2={Argentine:'ar',Argentina:'ar',American:'us','United States':'us',Chinese:'cn',China:'cn',Russian:'ru',Russia:'ru',Brazilian:'br',Brazil:'br',Chilean:'cl',Chile:'cl',Uruguayan:'uy',Uruguay:'uy',Spanish:'es',Spain:'es','United Kingdom':'gb',British:'gb',Mexican:'mx',Mexico:'mx',Italian:'it',Italy:'it',Australia:'au',Australian:'au',Bolivia:'bo',Bolivian:'bo',Paraguay:'py',Paraguayan:'py'};
+function flagImg(name){const c=ISO2[name];if(!c)return '<span style="display:inline-block;width:20px;text-align:center;margin-right:2px">🌐</span>';return '<img src="https://flagcdn.com/20x15/'+c+'.png" width="20" height="15" loading="lazy" style="vertical-align:middle;border-radius:2px;margin-right:5px;box-shadow:0 0 0 1px rgba(0,0,0,.08)" alt=""/>';}
 Chart.unregister(ChartDataLabels);
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
@@ -1771,7 +1812,7 @@ function drawCharts(){
       {type:'bar',label:t('col_pipeline'),data:F.map(f=>num(f.pipeline)),backgroundColor:pipeBg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:3},
       {type:'bar',label:t('col_won'),data:F.map(f=>num(f.won)),backgroundColor:kTeal,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
       {type:'line',label:t('col_wr'),data:F.map(f=>+(num(f.wr)*100).toFixed(1)),borderColor:Cmain,backgroundColor:'transparent',tension:.45,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:Cmain,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
-    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>v+'%'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
   // Cohort lifespan bars
   const coc=document.getElementById('chart-cohort');
@@ -1780,19 +1821,12 @@ function drawCharts(){
     const life=D.cohort.map(r=>{const f=getCohF(r);return f.life!=null?num(f.life):null;});
     charts.cohort=new Chart(coc,{type:'bar',data:{labels,datasets:[{label:t('col_lifespan'),data:life,backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
-  // Nationalities (International) horizontal bars with flags — excludes Argentine
-  const nc=document.getElementById('chart-nat');
-  if(nc&&D.nationalities){
-    const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
-    const data=D.nationalities.filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina'&&valOf(r)>0;}).map(r=>({name:r.name,v:valOf(r)})).sort((a,b)=>b.v-a.v);
-    charts.nat=new Chart(nc,{type:'bar',data:{labels:data.map(d=>flag(d.name)+' '+d.name),datasets:[{label:t('col_count'),data:data.map(d=>d.v),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},y:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
-  }
   // Alumni graduation years (Form Responses by Graduation Year)
   const gc=document.getElementById('chart-grad');
   if(gc&&D.alumni&&D.alumni.gradYears){
     const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
     const gy=D.alumni.gradYears;
-    charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
