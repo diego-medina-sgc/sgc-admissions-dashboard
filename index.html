@@ -565,6 +565,11 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   tbody td:first-child{background:var(--surface);box-shadow:1px 0 0 var(--line);}
   thead th:first-child{z-index:3;}
   .panel{padding:36px 14px 16px;}
+  /* compact tables so they fit the viewport width on mobile */
+  table{font-size:.72rem;}
+  thead th{padding:8px 5px;font-size:.55rem;letter-spacing:.04em;}
+  td{padding:7px 5px;}
+  td.r{font-size:.7rem;}
   .two,.three,.col-6040{grid-template-columns:1fr;}
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
   .sim-totals{grid-template-columns:1fr;}
@@ -750,7 +755,7 @@ const STRINGS={
     ph_alumni:'Alumni',ph_alumni_sub:'Old Georgian community',
     headline:'Key Highlights',headline_meta:'',
     community:'Community Indicators',community_meta:'',
-    s_enrolment:'Enrolment',s_enrolment_meta:'2025 vs 2026',
+    s_enrolment:'Enrolment',s_enrolment_meta:'Status',
     s_breakdown:'Current Students Breakdown',s_breakdown_meta:'2026',col_studcap:'Students / Capacity',col_won26:'Won 2026',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
@@ -834,7 +839,7 @@ const STRINGS={
     ph_alumni:'Alumni',ph_alumni_sub:'Comunidad Old Georgian',
     headline:'Indicadores Clave',headline_meta:'',
     community:'Indicadores de Comunidad',community_meta:'',
-    s_enrolment:'Matr&iacute;cula',s_enrolment_meta:'2025 vs 2026',
+    s_enrolment:'Matr&iacute;cula',s_enrolment_meta:'Estado',
     s_breakdown:'Detalle de Alumnos Actuales',s_breakdown_meta:'2026',col_studcap:'Alumnos / Capacidad',col_won26:'Won 2026',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
@@ -983,7 +988,7 @@ function trSource(s){return lang==='es'?(SOURCE_ES[s]||s):s;}
 function mergeSection(a,b){
   a=a||{};b=b||{};const out={};
   const keys=new Set([...Object.keys(a),...Object.keys(b)]);
-  keys.forEach(k=>{const av=a[k]||{},bv=b[k]||{};out[k]={matricula:num(av.matricula)+num(bv.matricula),ocupacion:null,vacantes:num(av.vacantes)+num(bv.vacantes),retencion:null,new_students:num(av.new_students)+num(bv.new_students),withdrawals:num(av.withdrawals)+num(bv.withdrawals),prospectos:num(av.prospectos)+num(bv.prospectos)};});
+  keys.forEach(k=>{const av=a[k]||{},bv=b[k]||{};out[k]={matricula:num(av.matricula)+num(bv.matricula),ocupacion:null,vacantes:num(av.vacantes)+num(bv.vacantes),retencion:null,new_students:num(av.new_students)+num(bv.new_students),withdrawals:num(av.withdrawals)+num(bv.withdrawals),prospectos:num(av.prospectos)+num(bv.prospectos),prospectos_2026:num(av.prospectos_2026)+num(bv.prospectos_2026)};});
   return out;
 }
 function getCampusData(){
@@ -1209,21 +1214,19 @@ function buildEnrolTable(){
   const tw=document.createElement('div');tw.className='tw';
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_var')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
-  let tM25=0,tM26=0,tW=0;
+  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_prosp26')+'</th><th class="r">'+t('col_prosp27')+'</th></tr></thead><tbody>';
+  let tM25=0,tM26=0,tP26=0,tP27=0;
   const cd=getCampusData()||{};
   const secDefs=[{key:'kinder',lbl:t('kinder')},{key:'prep',lbl:t('prep')},{key:'college',lbl:t('college')}];
   const yr=(c,y,key)=>{const arr=arrFor(c)||[];const r=arr.find(x=>x.yr===y)||{};return num(r[key]);};
   secDefs.forEach(sd=>{
     const tot=(cd[sd.key]||{}).total||{};
     const m25=campus==='os'?yr('q',2025,sd.key)+yr('n',2025,sd.key):yr(campus,2025,sd.key);
-    const m26=num(tot.matricula),won=num(tot.new_students);
-    const vDec=m25>0?(m26-m25)/m25:null;
-    tM25+=m25;tM26+=m26;tW+=won;
-    h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+(vDec===null?'&mdash;':fCrp(vDec))+'</td><td class="r">'+fN(won)+'</td></tr>';
+    const m26=num(tot.matricula),p26=num(tot.prospectos_2026),p27=num(tot.prospectos);
+    tM25+=m25;tM26+=m26;tP26+=p26;tP27+=p27;
+    h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+fN(p26)+'</td><td class="r">'+fN(p27)+'</td></tr>';
   });
-  const tVar=tM25>0?(tM26-tM25)/tM25:null;
-  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+(tVar===null?'&mdash;':fCrp(tVar))+'</td><td class="r">'+fN(tW)+'</td></tr>';
+  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+fN(tP26)+'</td><td class="r">'+fN(tP27)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;
   return tw;
 }
