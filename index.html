@@ -699,15 +699,16 @@ const STRINGS={
     nav_label:'Navigation',viewing:'Viewing',logout:'Sign out',
     ui_language:'Language',ui_theme:'Theme',ui_density:'Density',
     tab_resumen:'Executive Summary',tab_admissions:'Admissions',tab_retention:'Retention &amp; Community',tab_marketing:'Marketing',tab_proyeccion:'Projection 2027',tab_alumni:'Alumni',
-    ph_resumen:'Executive Summary',ph_resumen_sub:'Admissions overview &mdash; 2026',
+    ph_resumen:'Executive Summary',ph_resumen_sub:'Current students &amp; Admissions overview',
     ph_admissions:'Admissions',ph_admissions_sub:'Pipeline &amp; conversion',
     ph_retention:'Retention &amp; Community',ph_retention_sub:'Loyalty, cohorts &amp; community profile',
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     ph_alumni:'Alumni',ph_alumni_sub:'Old Georgian community',
-    headline:'Headline KPIs',headline_meta:'2026',
-    community:'Community Indicators',community_meta:'Profile 2026 &mdash; One School',
-    s_enrolment:'Enrolment by Section &amp; Campus',s_enrolment_meta:'2025 vs 2026',
+    headline:'Key Highlights',headline_meta:'',
+    community:'Community Indicators',community_meta:'',
+    s_enrolment:'Enrolment',s_enrolment_meta:'2025 vs 2026',
+    s_breakdown:'Current Students Breakdown',s_breakdown_meta:'2026',col_studcap:'Students / Capacity',col_won26:'Won 2026',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
     s_occupancy:'Occupancy 2027',s_occupancy_meta:'Prospect coverage by level',
@@ -755,7 +756,7 @@ const STRINGS={
     quilmes_table:'Quilmes &mdash; Adjustment by year group',north_table:'North &mdash; Adjustment by year group',
     quilmes_2027:'Quilmes 2027',north_2027:'North 2027',os_2027:'One School 2027',
     enrol_chart:'Enrolment One School',enrol_sub:'Bars 2021&ndash;2026 + 2027 projection',
-    qn_chart:'Quilmes vs North',qn_sub:'Enrolment by campus',
+    qn_chart:'Enrolment by Campus',qn_sub:'Lines 2021&ndash;2026 + 2027 projection',
     donut_chart:'Enrolment Composition',donut_sub:'K / Prep / College',
     wr_chart:'Conversion Rate History',wr_sub:'Pipeline vs Won vs Rate %',
     cohort_chart:'Cohort Lifespan',cohort_sub:'Years enrolled by entry year',
@@ -774,15 +775,16 @@ const STRINGS={
     nav_label:'Navegaci&oacute;n',viewing:'Viendo',logout:'Salir',
     ui_language:'Idioma',ui_theme:'Tema',ui_density:'Densidad',
     tab_resumen:'Resumen Ejecutivo',tab_admissions:'Admisiones',tab_retention:'Retenci&oacute;n y Comunidad',tab_marketing:'Marketing',tab_proyeccion:'Proyecci&oacute;n 2027',tab_alumni:'Alumni',
-    ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Panorama de admisiones &mdash; 2026',
+    ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Alumnos actuales y panorama de Admisiones',
     ph_admissions:'Admisiones',ph_admissions_sub:'Embudo y conversi&oacute;n',
     ph_retention:'Retenci&oacute;n y Comunidad',ph_retention_sub:'Fidelizaci&oacute;n, camadas y comunidad',
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
     ph_alumni:'Alumni',ph_alumni_sub:'Comunidad Old Georgian',
-    headline:'Indicadores Destacados',headline_meta:'2026',
-    community:'Indicadores de Comunidad',community_meta:'Perfil 2026 &mdash; One School',
-    s_enrolment:'Matr&iacute;cula por Secci&oacute;n y Campus',s_enrolment_meta:'2025 vs 2026',
+    headline:'Indicadores Clave',headline_meta:'',
+    community:'Indicadores de Comunidad',community_meta:'',
+    s_enrolment:'Matr&iacute;cula',s_enrolment_meta:'2025 vs 2026',
+    s_breakdown:'Detalle de Alumnos Actuales',s_breakdown_meta:'2026',col_studcap:'Alumnos / Capacidad',col_won26:'Won 2026',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
     s_occupancy:'Ocupaci&oacute;n 2027',s_occupancy_meta:'Cobertura de prospectos por nivel',
@@ -830,7 +832,7 @@ const STRINGS={
     quilmes_table:'Quilmes &mdash; Ajuste por grado',north_table:'North &mdash; Ajuste por grado',
     quilmes_2027:'Quilmes 2027',north_2027:'North 2027',os_2027:'One School 2027',
     enrol_chart:'Matr&iacute;cula One School',enrol_sub:'Barras 2021&ndash;2026 + proyecci&oacute;n 2027',
-    qn_chart:'Quilmes vs North',qn_sub:'Matr&iacute;cula por campus',
+    qn_chart:'Matr&iacute;cula por Campus',qn_sub:'L&iacute;neas 2021&ndash;2026 + proyecci&oacute;n 2027',
     donut_chart:'Composici&oacute;n de Matr&iacute;cula',donut_sub:'K / Prep / College',
     wr_chart:'Evoluci&oacute;n Tasa de Conversi&oacute;n',wr_sub:'Pipeline vs Ganados vs Tasa %',
     cohort_chart:'Permanencia de Camadas',cohort_sub:'A&ntilde;os en el colegio por a&ntilde;o de entrada',
@@ -854,8 +856,8 @@ const TABS=[
   {id:'resumen',   icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
   {id:'admissions',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
   {id:'retention', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 10-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>'},
-  {id:'marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
   {id:'proyeccion',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
+  {id:'marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
   {id:'alumni',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>'},
 ];
 TABS.forEach(tab=>Object.defineProperty(tab,'label',{get:()=>t('tab_'+tab.id)}));
@@ -1064,17 +1066,6 @@ function buildResumen(){
   const newStudents=campus==='os'?h.new_students:(cd.total&&cd.total.new_students);
   const prosp=campus==='os'?h.prospectos:(cd.total&&cd.total.prospectos);
 
-  // Insight strip
-  const ins=document.createElement('div');ins.className='insight-strip';
-  const insData=[
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',cls:'teal',lbl:t('total_alumnos'),val:fN(totalStudents)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',cls:varN>=0?'green':'red',lbl:t('var_anual'),val:(varN>=0?'&#9650; ':'&#9660; ')+Math.abs(varN).toFixed(2)+'%'},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',cls:'amber',lbl:t('new_students'),val:fN(newStudents)},
-    {icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',cls:'teal',lbl:t('win_rate'),val:fP(wr2026())},
-  ];
-  insData.forEach(i=>{ins.innerHTML+='<div class="insight"><div class="ins-icon '+i.cls+'">'+i.icon+'</div><div><div class="ins-lbl">'+i.lbl+'</div><div class="ins-val">'+i.val+'</div></div></div>';});
-  wrap.appendChild(ins);
-
   // Headline stat-strip (campus-aware)
   const items=[
     {lbl:t('total_alumnos'),val:fN(totalStudents),foot:campus==='os'?'One School 2026':(campus==='q'?'Quilmes 2026':'North 2026')},
@@ -1087,22 +1078,34 @@ function buildResumen(){
   items.push({lbl:t('prospectos_27'),val:fN(prosp),foot:'2027'});
   wrap.appendChild(sec(t('headline'),t('headline_meta'),statStrip(items)));
 
-  // Community (always One School)
+  // Community indicators — card set depends on campus
   if(D.community){
+    const com=D.community;
+    let cards;
+    if(campus==='os'){
+      cards=[{lbl:t('og_quilmes'),val:fP(com.ogQuilmes),foot:t('og_foot')},
+             {lbl:t('og_north'),val:fP(com.ogNorth),foot:t('og_foot')},
+             {lbl:t('foreign'),val:fP(com.foreignStudents),foot:t('os_foot')},
+             {lbl:t('priority'),val:fP(com.priorityCommunity),foot:t('og_plus'),lead:true}];
+    }else{
+      // Per-campus OG; intl/priority per-campus not yet in data → show One School figure
+      const og=campus==='q'?com.ogQuilmes:com.ogNorth;
+      const ogLbl=campus==='q'?t('og_quilmes'):t('og_north');
+      cards=[{lbl:ogLbl,val:fP(og),foot:t('og_foot')},
+             {lbl:t('foreign'),val:fP(com.foreignStudents),foot:t('os_foot')},
+             {lbl:t('priority'),val:fP(com.priorityCommunity),foot:t('og_plus'),lead:true}];
+    }
     const cg=document.createElement('div');cg.className='comm-grid';
-    [{lbl:t('og_quilmes'),val:fP(D.community.ogQuilmes),foot:t('og_foot')},
-     {lbl:t('og_north'),val:fP(D.community.ogNorth),foot:t('og_foot')},
-     {lbl:t('foreign'),val:fP(D.community.foreignStudents),foot:t('os_foot')},
-     {lbl:t('priority'),val:fP(D.community.priorityCommunity),foot:t('og_plus'),lead:true},
-    ].forEach(c=>{cg.innerHTML+='<div class="comm-card'+(c.lead?' lead':'')+'"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
+    cg.style.gridTemplateColumns='repeat('+cards.length+',1fr)';
+    cards.forEach(c=>{cg.innerHTML+='<div class="comm-card'+(c.lead?' lead':'')+'"><div class="comm-lbl">'+c.lbl+'</div><div class="comm-val">'+c.val+'</div><div class="comm-foot">'+c.foot+'</div></div>';});
     wrap.appendChild(sec(t('community'),t('community_meta'),cg));
   }
 
-  // Enrolment by section & campus (2025 vs 2026)
+  // Enrolment by section (2025 vs 2026)
   wrap.appendChild(sec(t('s_enrolment'),t('s_enrolment_meta'),buildEnrolTable()));
 
-  // Rich KPIs by section/grade (enrolment, occupancy, vacancies, retention, new, withdrawals, prospects)
-  wrap.appendChild(sec(t('s_kpis'),t('s_kpis_meta'),buildKpiTable()));
+  // Current Students Breakdown — Students/Capacity by grade
+  wrap.appendChild(sec(t('s_breakdown'),t('s_breakdown_meta'),buildKpiTable()));
 
   // Charts
   if(D.resumen){
@@ -1123,21 +1126,21 @@ function buildEnrolTable(){
   const tw=document.createElement('div');tw.className='tw';
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_var')+'</th><th class="r">'+t('col_prosph')+'</th></tr></thead><tbody>';
-  let tM25=0,tM26=0,tP=0;
+  let h='<table><thead><tr><th>'+t('col_section')+'</th><th class="r">'+t('col_2025')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_var')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
+  let tM25=0,tM26=0,tW=0;
   const cd=getCampusData()||{};
   const secDefs=[{key:'kinder',lbl:t('kinder')},{key:'prep',lbl:t('prep')},{key:'college',lbl:t('college')}];
   const yr=(c,y,key)=>{const arr=arrFor(c)||[];const r=arr.find(x=>x.yr===y)||{};return num(r[key]);};
   secDefs.forEach(sd=>{
     const tot=(cd[sd.key]||{}).total||{};
     const m25=campus==='os'?yr('q',2025,sd.key)+yr('n',2025,sd.key):yr(campus,2025,sd.key);
-    const m26=num(tot.matricula),p=num(tot.prospectos);
+    const m26=num(tot.matricula),won=num(tot.new_students);
     const vDec=m25>0?(m26-m25)/m25:null;
-    tM25+=m25;tM26+=m26;tP+=p;
-    h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+(vDec===null?'&mdash;':fCrp(vDec))+'</td><td class="r">'+fN(p)+'</td></tr>';
+    tM25+=m25;tM26+=m26;tW+=won;
+    h+='<tr class="grp '+grpCls+'"><td>'+sd.lbl+'</td><td class="r">'+fN(m25)+'</td><td class="r">'+fN(m26)+'</td><td class="r">'+(vDec===null?'&mdash;':fCrp(vDec))+'</td><td class="r">'+fN(won)+'</td></tr>';
   });
   const tVar=tM25>0?(tM26-tM25)/tM25:null;
-  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+(tVar===null?'&mdash;':fCrp(tVar))+'</td><td class="r">'+fN(tP)+'</td></tr>';
+  h+='<tr class="ctot '+ctotCls+'"><td>'+t('total_campus')+'</td><td class="r">'+fN(tM25)+'</td><td class="r"><strong>'+fN(tM26)+'</strong></td><td class="r">'+(tVar===null?'&mdash;':fCrp(tVar))+'</td><td class="r">'+fN(tW)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;
   return tw;
 }
@@ -1164,42 +1167,31 @@ function enrichOccupancy(cd){
   });
   return cd;
 }
+function gradeCapacity(g){
+  const py=D.proyeccion||{};
+  const fq=(py.quilmes||[]).find(r=>r.grado===g),fn=(py.north||[]).find(r=>r.grado===g);
+  if(campus==='q')return fq?num(fq.capacidad):null;
+  if(campus==='n')return fn?num(fn.capacidad):null;
+  const a=fq?num(fq.capacidad):0,b=fn?num(fn.capacidad):0;return(a+b)>0?(a+b):null;
+}
 function buildKpiTable(){
-  const cd=enrichOccupancy(getCampusData());if(!cd)return document.createElement('div');
+  const cd=getCampusData();if(!cd)return document.createElement('div');
   const tw=document.createElement('div');tw.className='tw';
-  const lvls=[
-    {lbl:t('kinder'),obj:cd.kinder,grades:GR_K},
-    {lbl:t('prep'),obj:cd.prep,grades:GR_P},
-    {lbl:t('college'),obj:cd.college,grades:GR_C},
-  ];
-  // Candidate metrics — only render a column if the source actually provides a value somewhere
-  const metrics=[
-    {key:'ocupacion',lbl:t('col_occ'),type:'pct'},
-    {key:'vacantes',lbl:t('col_vac'),type:'int'},
-    {key:'retencion',lbl:t('col_reth'),type:'pct'},
-    {key:'new_students',lbl:t('col_newh'),type:'int'},
-    {key:'withdrawals',lbl:t('col_withh'),type:'int'},
-    {key:'prospectos',lbl:t('col_prosph'),type:'int'},
-  ];
-  const hasData=m=>{
-    let found=false;
-    lvls.forEach(s=>{const o=s.obj||{};if(o.total&&o.total[m.key]!=null)found=true;s.grades.forEach(g=>{if(o[g]&&o[g][m.key]!=null)found=true;});});
-    if(cd.total&&cd.total[m.key]!=null)found=true;
-    return found;
-  };
-  const cols=metrics.filter(hasData);
-  const cell=(o,c)=>o&&o[c.key]!=null?(c.type==='pct'?fmt(o[c.key],'pct'):fN(o[c.key])):'&mdash;';
-  const colH=cols.map(c=>'<th class="r">'+c.lbl+'</th>').join('');
+  const lvls=[{lbl:t('kinder'),obj:cd.kinder,grades:GR_K},{lbl:t('prep'),obj:cd.prep,grades:GR_P},{lbl:t('college'),obj:cd.college,grades:GR_C}];
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
-  let h='<table><thead><tr><th>'+t('col_level')+'</th><th>'+t('col_grade')+'</th><th class="r">'+t('col_enrol')+'</th>'+colH+'</tr></thead><tbody>';
+  const sc=(stu,cap)=>fN(stu)+' / '+(cap!=null?fN(cap):'&mdash;');
+  let h='<table><thead><tr><th>'+t('col_level')+'</th><th class="r">'+t('col_grade')+'</th><th class="r">'+t('col_studcap')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
+  let gtCap=0,gtStu=0;
   lvls.forEach((s,si)=>{
     const obj=s.obj||{},tot=obj.total||{};const gid='kpig-'+si;
-    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+fN(tot.matricula)+'</strong></td>'+cols.map(c=>'<td class="r">'+cell(tot,c)+'</td>').join('')+'</tr>';
-    s.grades.forEach(g=>{const d=obj[g];if(!d)return;h+='<tr class="salon-row '+gid+'"><td></td><td>'+g+'</td><td class="r">'+fN(d.matricula)+'</td>'+cols.map(c=>'<td class="r">'+cell(d,c)+'</td>').join('')+'</tr>';});
+    let secCap=0;s.grades.forEach(g=>{const c=gradeCapacity(g);if(c!=null)secCap+=c;});
+    gtCap+=secCap;gtStu+=num(tot.matricula);
+    h+='<tr class="grp '+grpCls+' gtog open" onclick="toggleGroup(\''+gid+'\',this)"><td colspan="2"><span class="gcaret"></span>'+t('total_lbl')+' '+s.lbl+'</td><td class="r"><strong>'+sc(num(tot.matricula),secCap)+'</strong></td><td class="r">'+fN(tot.new_students)+'</td></tr>';
+    s.grades.forEach(g=>{const d=obj[g];if(!d)return;h+='<tr class="salon-row '+gid+'"><td></td><td class="r">'+g+'</td><td class="r">'+sc(num(d.matricula),gradeCapacity(g))+'</td><td class="r">&mdash;</td></tr>';});
   });
   const ct=cd.total||{};
-  h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+fN(ct.matricula)+'</strong></td>'+cols.map(c=>'<td class="r">'+cell(ct,c)+'</td>').join('')+'</tr>';
+  h+='<tr class="ctot '+ctotCls+'"><td colspan="2">'+t('total_campus')+'</td><td class="r"><strong>'+sc(num(ct.matricula),gtCap)+'</strong></td><td class="r">'+fN(ct.new_students)+'</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
@@ -1605,6 +1597,7 @@ function toggleGroup(gid,row){
 
 /* ============================== CHARTS ============================== */
 const TTP={backgroundColor:'#213463',titleFont:{family:'Asap',size:12,weight:'700'},bodyFont:{family:'Asap Condensed',size:12},padding:14,cornerRadius:8,titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',displayColors:true,boxWidth:9,boxHeight:9,usePointStyle:true,borderColor:'rgba(255,255,255,.1)',borderWidth:1};
+function hexA(hex,a){hex=String(hex).replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 Chart.unregister(ChartDataLabels);
 function drawCharts(){
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
@@ -1619,26 +1612,29 @@ function drawCharts(){
   const TCK=DK?{font:{family:'Asap Condensed',size:11},color:'#9A9AB8'}:{font:{family:'Asap Condensed',size:11},color:'#8C857A'};
   const LEG=pos=>({position:pos||'bottom',labels:{font:{family:'Asap Condensed',size:11},color:kGray,padding:14,usePointStyle:true,pointStyle:'circle'}});
 
-  // Enrolment stacked bars
+  // Enrolment stacked bars (2021 -> 2027 ascending; 2027 dimmed = projection)
   const ec=document.getElementById('chart-enrol');
   if(ec&&D.resumen){
-    const qA=[...(D.resumen.quilmes||[])].reverse(),nA=[...(D.resumen.north||[])].reverse();
+    const qA=(D.resumen.quilmes||[]),nA=(D.resumen.north||[]);
     const spine=qA.length?qA:nA;
     const getLvl=key=>spine.map((row,i)=>{const q=qA[i]||{},n=nA[i]||{};if(campus==='q')return num(q[key]);if(campus==='n')return num(n[key]);return num(q[key])+num(n[key]);});
+    const dim=DK?0.40:0.45;
+    const bg=col=>spine.map(r=>r.yr===2027?hexA(col,dim):col);
     charts.enrol=new Chart(ec,{type:'bar',data:{labels:spine.map(r=>String(r.yr)+(r.yr===2027?' ▸':'')),datasets:[
-      {label:t('kinder'),data:getLvl('kinder'),backgroundColor:kCel,stack:'s',borderSkipped:false},
-      {label:t('prep'),data:getLvl('prep'),backgroundColor:kViolet,stack:'s',borderSkipped:false},
-      {label:t('college'),data:getLvl('college'),backgroundColor:kNavy,stack:'s',borderRadius:{topLeft:7,topRight:7},borderSkipped:false},
+      {label:t('kinder'),data:getLvl('kinder'),backgroundColor:bg(kCel),stack:'s',borderSkipped:false},
+      {label:t('prep'),data:getLvl('prep'),backgroundColor:bg(kViolet),stack:'s',borderSkipped:false},
+      {label:t('college'),data:getLvl('college'),backgroundColor:bg(kNavy),stack:'s',borderRadius:{topLeft:7,topRight:7},borderSkipped:false},
     ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false}},x:{stacked:true,grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
-  // Q vs N line
+  // Enrolment by campus — lines (per-campus toggle)
   const qnc=document.getElementById('chart-qn');
   if(qnc&&D.resumen){
-    const qR=[...(D.resumen.quilmes||[])].reverse(),nR=[...(D.resumen.north||[])].reverse();
-    charts.qn=new Chart(qnc,{type:'line',data:{labels:qR.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:[
-      {label:'Quilmes',data:qR.map(r=>num(r.total)),borderColor:kRed,backgroundColor:DK?'rgba(255,99,113,.22)':'rgba(220,30,51,.28)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2.5},
-      {label:'North',data:nR.map(r=>num(r.total)),borderColor:kNavy,backgroundColor:DK?'rgba(124,154,224,.24)':'rgba(33,52,99,.26)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kNavy,pointBorderColor:PBC,pointBorderWidth:2},
-    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:false},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    const qR=(D.resumen.quilmes||[]),nR=(D.resumen.north||[]);
+    const spine=qR.length?qR:nR;
+    const ds=[];
+    if(campus!=='n')ds.push({label:'Quilmes',data:qR.map(r=>num(r.total)),borderColor:kRed,backgroundColor:DK?'rgba(255,99,113,.22)':'rgba(220,30,51,.28)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2.5});
+    if(campus!=='q')ds.push({label:'North',data:nR.map(r=>num(r.total)),borderColor:kNavy,backgroundColor:DK?'rgba(124,154,224,.24)':'rgba(33,52,99,.26)',tension:.4,fill:true,borderWidth:3,pointRadius:0,pointHoverRadius:7,pointBackgroundColor:kNavy,pointBorderColor:PBC,pointBorderWidth:2});
+    charts.qn=new Chart(qnc,{type:'line',data:{labels:spine.map(r=>String(r.yr)+(r.yr===2027?' (p)':'')),datasets:ds},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:false},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
   // Donut (horizontal stacked bar)
   const dc=document.getElementById('chart-donut');
