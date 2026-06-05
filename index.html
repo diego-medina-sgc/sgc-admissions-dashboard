@@ -1015,7 +1015,8 @@ document.getElementById('btn-out').addEventListener('click',()=>{
 let _fetchRetry=0;
 async function fetchData(){
   var appVisible=document.getElementById('app')&&document.getElementById('app').style.display!=='none';
-  if(appVisible){hideLoad();showSkeleton();}else{showLoad('Syncing data...');}
+  // Only show skeleton/spinner if we have nothing on screen yet (cache already rendered = silent refresh)
+  if(appVisible){hideLoad();if(!(D&&D.headline))showSkeleton();}else{showLoad('Syncing data...');}
   const old=document.getElementById('_jp');if(old)old.remove();
   const cb='sgcCb_'+Date.now();
   const url=API_URL+'?callback='+cb+'&t='+Date.now();
@@ -1029,6 +1030,7 @@ async function fetchData(){
     document.getElementById('h-update').textContent='Updated: '+now;
     document.getElementById('f-time').textContent=now;
     if(D.config&&typeof D.config.showFact!=='undefined')showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
+    try{localStorage.setItem('sgc_data',JSON.stringify(data));localStorage.setItem('sgc_data_t',String(Date.now()));}catch(e){}
     updateAdminInfo();initSimAdj();render();
     delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
   };
@@ -1960,13 +1962,30 @@ setInterval(updateClock,30000);
 function saveSession(){try{sessionStorage.setItem('sgc_token',accessToken);localStorage.setItem('sgc_email',userEmail);localStorage.setItem('sgc_exp',String(Date.now()+55*60*1000));}catch(e){}}
 function loadSession(){try{const tok=sessionStorage.getItem('sgc_token');const exp=parseInt(localStorage.getItem('sgc_exp')||'0');const em=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();if(tok&&exp>Date.now()&&em){accessToken=tok;userEmail=em;return true;}}catch(e){}return false;}
 function clearSession(){try{sessionStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}}
+// Instant render from the last cached payload (so reloads feel immediate); fresh data refreshes in the background.
+function tryRenderCache(){
+  try{
+    const c=localStorage.getItem('sgc_data');if(!c)return false;
+    const d=JSON.parse(c);if(!d||!d.headline)return false;
+    D=d;
+    if(D.config&&typeof D.config.showFact!=='undefined')showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
+    const now=D.lastUpdate||'';
+    const hu=document.getElementById('h-update');if(hu)hu.textContent='Updated: '+now;
+    const ft=document.getElementById('f-time');if(ft)ft.textContent=now;
+    updateAdminInfo();initSimAdj();render();
+    return true;
+  }catch(e){return false;}
+}
 
 /* ============================== INIT ============================== */
 buildSidebarNav();
 window.onload=()=>{
   if(loadSession()){
     if(userEmail===ADMIN_EMAIL)document.getElementById('btn-admin').style.display='flex';
-    showApp();fetchData();return;
+    showApp();
+    tryRenderCache();   // paint last data instantly, then refresh
+    fetchData();
+    return;
   }
   const to=setTimeout(()=>{hideLoad();document.getElementById('login-screen').style.display='flex';},10000);
   const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
