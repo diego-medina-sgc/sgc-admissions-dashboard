@@ -709,7 +709,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print / Export PDF
         </button>
-        <button class="adm-btn" onclick="fetchData()">
+        <button class="adm-btn" onclick="fetchData(true)">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           Force refresh
         </button>
@@ -1013,13 +1013,13 @@ document.getElementById('btn-out').addEventListener('click',()=>{
 
 /* ============================== DATA ============================== */
 let _fetchRetry=0;
-async function fetchData(){
+async function fetchData(force){
   var appVisible=document.getElementById('app')&&document.getElementById('app').style.display!=='none';
   // Only show skeleton/spinner if we have nothing on screen yet (cache already rendered = silent refresh)
-  if(appVisible){hideLoad();if(!(D&&D.headline))showSkeleton();}else{showLoad('Syncing data...');}
+  if(appVisible){hideLoad();if(force||!(D&&D.headline))showSkeleton();}else{showLoad('Syncing data...');}
   const old=document.getElementById('_jp');if(old)old.remove();
   const cb='sgcCb_'+Date.now();
-  const url=API_URL+'?callback='+cb+'&t='+Date.now();
+  const url=API_URL+'?callback='+cb+'&t='+Date.now()+(force?'&nocache=1':'');
   const onSuccess=data=>{
     _fetchRetry=0;D=data;
     if(D.allowed_emails&&Array.isArray(D.allowed_emails)&&D.allowed_emails.length>0){
