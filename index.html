@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SGC — Marketing &amp; Admissions Dashboard</title>
-<meta name="description" content="St. George's College Marketing &amp; Admissions Dashboard"/>
+<title>SGC — Admissions Dashboard 2026</title>
+<meta name="description" content="St. George's College Admissions Dashboard 2026"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com https://va.vercel-scripts.com https://vercel.live https://script.google.com https://script.googleusercontent.com; frame-src https://accounts.google.com https://script.google.com https://script.googleusercontent.com;">
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="apple-touch-icon" href="favicon.png"/>
@@ -114,16 +114,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .sec{margin-bottom:36px;}
 .sec-hd{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid transparent;background-image:linear-gradient(90deg,var(--campus-color,var(--ink)) 0%,transparent 100%);background-repeat:no-repeat;background-size:100% 1px;background-position:bottom;}
 .sec-title{font-size:1.16rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;flex:0 0 auto;white-space:nowrap;}
-.sec-meta{font-size:.68rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
-/* collapsible section */
-details.sec-collapsible>summary{cursor:pointer;list-style:none;outline:none;}
-details.sec-collapsible>summary::-webkit-details-marker{display:none;}
-details.sec-collapsible>summary:focus-visible{outline:2.5px solid var(--navy);outline-offset:3px;border-radius:6px;}
-.sec-toggle-hint{margin-left:auto;align-self:center;font-family:'Asap Condensed',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
-.sec-toggle-hint::after{content:'\\25BE';font-size:.9em;transition:transform .2s;}
-details[open].sec-collapsible>summary .sec-toggle-hint::after{transform:rotate(180deg);}
-details.sec-collapsible>summary:hover .sec-toggle-hint{filter:brightness(1.1);}
-[data-theme="dark"] .sec-toggle-hint{color:#26C6D6;}
+.sec-meta{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
 
 /* ─── PAGE HEADER ─── */
 .page-hd{margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--line);}
@@ -147,13 +138,13 @@ details.sec-collapsible>summary:hover .sec-toggle-hint{filter:brightness(1.1);}
 .si-lbl,.si-val,.si-foot{text-align:center;}
 .si:last-child{border-right:none;}
 .si:hover{background:rgba(255,255,255,.05);}
-.si-lbl{font-size:.63rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;}
+.si-lbl{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;}
 .si-val{font-size:2.2rem;font-weight:700;color:#fff;line-height:.95;letter-spacing:-.05em;font-variant-numeric:tabular-nums;transition:color .2s;}
 .si-val.neg{color:#ff7a88;}
 .si-val.pos{color:#5ee0a0;}
 .si-val.c-red{color:#ff7a88;}
 .si-val.c-navy{color:#9fc0ef;}
-.si-foot{font-size:.69rem;color:rgba(255,255,255,.6);font-family:'Asap Condensed',sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.si-foot{font-size:.66rem;color:rgba(255,255,255,.55);font-family:'Asap Condensed',sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:5px;}
 
 /* ─── KPI CARDS ─── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:14px;}
@@ -170,13 +161,13 @@ details.sec-collapsible>summary:hover .sec-toggle-hint{filter:brightness(1.1);}
 .campus-n .kpi-card.accent::before{background:var(--navy);}
 .kpi-card:hover{box-shadow:var(--card-shadow-hover);border-color:var(--line);transform:translateY(-2px);}
 .kpi-card:hover::before{opacity:1;}
-.kpi-lbl{font-size:.63rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gray);margin-bottom:11px;font-family:'Asap Condensed',sans-serif;text-align:left;}
+.kpi-lbl{font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gray);margin-bottom:11px;font-family:'Asap Condensed',sans-serif;text-align:left;}
 .kpi-val{font-size:2.45rem;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:8px;letter-spacing:-.05em;font-variant-numeric:tabular-nums;text-align:left;transition:color .2s;}
 .kpi-val.neg{color:var(--red);}
 .kpi-val.pos{color:var(--green);}
 .kpi-val.c-red{color:var(--red);}
 .kpi-val.c-navy{color:var(--navy);}
-.kpi-foot{font-size:.69rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;text-align:left;line-height:1.35;}
+.kpi-foot{font-size:.66rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;text-align:left;line-height:1.35;}
 .kpi-card.accent .kpi-val{font-size:2.85rem;}
 .kpi-card.accent{background:linear-gradient(180deg,var(--surface),var(--cream));}
 /* 6-up compact KPI row (Admissions headline) */
@@ -198,9 +189,9 @@ details.sec-collapsible>summary:hover .sec-toggle-hint{filter:brightness(1.1);}
 .comm-grid.c4{grid-template-columns:repeat(4,1fr);}
 .comm-card{background:var(--white);border:1px solid var(--hairline);border-top:3px solid var(--teal);border-radius:var(--r);padding:17px 18px;text-align:center;box-shadow:var(--card-shadow);}
 .comm-card.lead{box-shadow:0 0 0 1px rgba(16,154,169,.4),var(--card-shadow);}
-.comm-lbl{font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
+.comm-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;font-family:'Asap Condensed',sans-serif;}
 .comm-val{font-size:1.7rem;font-weight:700;color:var(--teal);letter-spacing:-.02em;font-variant-numeric:tabular-nums;transition:color .2s;}
-.comm-foot{font-size:.69rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
+.comm-foot{font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;margin-top:3px;}
 
 /* ─── CHART CARD ─── */
 .cc{background:var(--surface);border-radius:var(--r);padding:20px 22px 22px;box-shadow:var(--card-shadow);border:1px solid var(--hairline);transition:box-shadow .2s;}
@@ -208,7 +199,7 @@ details.sec-collapsible>summary:hover .sec-toggle-hint{filter:brightness(1.1);}
 .cc-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--hairline);}
 .cc-ttl{font-size:.92rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;font-family:'Asap',sans-serif;display:flex;align-items:center;gap:9px;line-height:1.2;}
 .cc-ttl::before{content:'';width:4px;height:15px;border-radius:3px;background:var(--campus-color,var(--navy));flex-shrink:0;}
-.cc-sub{font-size:.68rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.03em;text-align:right;flex-shrink:0;}
+.cc-sub{font-size:.64rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.03em;text-align:right;flex-shrink:0;}
 .chart-wrap{position:relative;}
 canvas{display:block;}
 
@@ -243,14 +234,6 @@ tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot
 td{padding:9px 14px;}
 td:first-child{text-align:left !important;font-weight:500;}
 td.r{text-align:center;font-family:'Asap Condensed',sans-serif;font-size:.77rem;font-variant-numeric:tabular-nums;}
-/* ─── STICKY FIRST COLUMN (all viewports) ─── */
-.tw{position:relative;}
-thead th:first-child,tbody td:first-child{position:sticky;left:0;}
-thead th:first-child{z-index:7;}
-tbody td:first-child{z-index:3;background:var(--white);box-shadow:1px 0 0 var(--line);}
-tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row):hover td:first-child{background:#F4F0E9;}
-.tw.has-overflow::after{content:'';position:absolute;top:0;right:0;bottom:0;width:22px;border-radius:0 var(--r) var(--r) 0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(40,33,28,.10));opacity:1;transition:opacity .2s;z-index:6;}
-.tw.has-overflow.scrolled-end::after{opacity:0;}
 td.c-q{color:var(--red);font-weight:600;}
 td.c-n{color:var(--navy);font-weight:600;}
 .tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:.6rem;font-weight:700;font-family:'Asap Condensed',sans-serif;}
@@ -463,8 +446,6 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 [data-theme="dark"] tbody tr{border-color:var(--border);}
 [data-theme="dark"] td,[data-theme="dark"] .kpi-lbl,[data-theme="dark"] .sim-lbl{color:var(--text-muted);}
 [data-theme="dark"] td:first-child{color:var(--text);}
-[data-theme="dark"] tbody td:first-child{background:var(--surface);box-shadow:1px 0 0 var(--border);}
-[data-theme="dark"] .tw.has-overflow::after{background:linear-gradient(90deg,transparent,rgba(0,0,0,.35));}
 [data-theme="dark"] .kpi-val,[data-theme="dark"] .sim-val,
 [data-theme="dark"] .sec-title,[data-theme="dark"] .page-title,[data-theme="dark"] .kpi-foot{color:var(--text);}
 [data-theme="dark"] .sec-hd,[data-theme="dark"] .page-hd{border-color:var(--border);}
@@ -582,6 +563,9 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .28s;z-index:499;}
   #mob-overlay.active{opacity:1;pointer-events:auto !important;}
   .content{margin-left:0 !important;}
+  thead th:first-child,tbody td:first-child{position:sticky;left:0;z-index:2;}
+  tbody td:first-child{background:var(--surface);box-shadow:1px 0 0 var(--line);}
+  thead th:first-child{z-index:3;}
   .panel{padding:36px 14px 16px;}
   /* compact tables so they fit the viewport width on mobile */
   table{font-size:.72rem;}
@@ -640,7 +624,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   <div class="login-box">
     <img class="login-logo" src="logo-v.png" alt="St George's College" width="220" height="155"/>
     <div class="login-rule"></div>
-    <p class="login-tagline"><strong>Marketing &amp; Admissions Dashboard</strong>Restricted to authorised accounts</p>
+    <p class="login-tagline"><strong>Admissions Dashboard 2026</strong>Restricted to authorised accounts</p>
     <button class="btn-google" id="btn-login">
       <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Sign in with Google
@@ -793,12 +777,7 @@ const STRINGS={
     s_intl_nationalities:'International Students &mdash; Nationalities',s_intl_nationalities_meta:'Demographics',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
-    s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads &mdash; lead acquisition',
-    s_ads_summary:'Executive Summary',s_ads_campaign:'Campaign Performance',s_ads_temporal:'Performance Over Time',s_ads_quality:'Traffic Quality',
-    ads_spend:'Total Spend',ads_clicks:'Total Clicks',ads_ctr:'Weighted CTR',ads_cpc:'Weighted CPC',
-    col_campaign:'Campaign',col_platform:'Platform',col_spend:'Spend',col_impr:'Impressions',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'Clicks %',
-    sort_by:'Sort:',sort_clicks:'Clicks',sort_eff:'Efficiency',sort_spend:'Spend',
-    ads_trend_title:'Spend &amp; Clicks by Month',ads_trend_sub:'Monthly trend (USD spend + clicks)',ads_quality_sub:'CTR, CPC &amp; efficiency flag',
+    s_digital_ads:'Digital Advertising',s_digital_ads_meta:'Meta &amp; Google Ads',
     s_modules:'Modules',s_modules_meta:'Attention distribution',
     s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
@@ -841,13 +820,13 @@ const STRINGS={
     cohort_chart:'Cohort Lifespan',cohort_sub:'Years enrolled by entry year',
     proy_not_avail:'Projection data not available.',cycle:'Cycle:',
     coming_soon:'Coming soon',
-    cs_channel:'Source breakdown available soon',
-    cs_intl:'Demographic data available soon',
-    cs_nps:'Satisfaction metrics available soon',
-    cs_fidu:'Engagement metrics available soon',
-    cs_ads:'Paid-media metrics available soon',
-    cs_alumni:'Alumni data available soon',
-    cs_alumni_demo:'Demographic breakdown available soon',
+    cs_channel:'Source data being validated',
+    cs_intl:'Demographics data pending ISAMS export',
+    cs_nps:'NPS integration pending',
+    cs_fidu:'Fidu KPIs pending doGet integration',
+    cs_ads:'Meta Ads &amp; Google Ads integration pending',
+    cs_alumni:'Alumni data pending Alumnia integration',
+    cs_alumni_demo:'Demographic breakdown pending',
     classroom_note:'Proportional distribution by current form weight. Does not reflect pedagogical decisions on opening/closing divisions.',
   },
   es:{
@@ -882,12 +861,7 @@ const STRINGS={
     s_intl_nationalities:'Estudiantes Extranjeros &mdash; Nacionalidades',s_intl_nationalities_meta:'Demograf&iacute;a',
     s_nps:'NPS',s_nps_meta:'Net Promoter Score',
     s_app_kpis:'St George&rsquo;s College App',s_app_kpis_meta:'Key Highlights',
-    s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads &mdash; adquisici&oacute;n de leads',
-    s_ads_summary:'Resumen Ejecutivo',s_ads_campaign:'Performance por Campa&ntilde;a',s_ads_temporal:'Performance Temporal',s_ads_quality:'Calidad de Tr&aacute;fico',
-    ads_spend:'Inversi&oacute;n Total',ads_clicks:'Clicks Totales',ads_ctr:'CTR Ponderado',ads_cpc:'CPC Ponderado',
-    col_campaign:'Campa&ntilde;a',col_platform:'Plataforma',col_spend:'Inversi&oacute;n',col_impr:'Impresiones',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'% Clicks',
-    sort_by:'Orden:',sort_clicks:'Clicks',sort_eff:'Eficiencia',sort_spend:'Inversi&oacute;n',
-    ads_trend_title:'Inversi&oacute;n y Clicks por Mes',ads_trend_sub:'Tendencia mensual (inversi&oacute;n USD + clicks)',ads_quality_sub:'CTR, CPC y se&ntilde;al de eficiencia',
+    s_digital_ads:'Pauta Digital',s_digital_ads_meta:'Meta y Google Ads',
     s_modules:'M&oacute;dulos',s_modules_meta:'Distribuci&oacute;n de la atenci&oacute;n',
     s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
@@ -930,13 +904,13 @@ const STRINGS={
     cohort_chart:'Permanencia de Camadas',cohort_sub:'A&ntilde;os en el colegio por a&ntilde;o de entrada',
     proy_not_avail:'Datos de proyecci&oacute;n no disponibles.',cycle:'Ciclo:',
     coming_soon:'Pr&oacute;ximamente',
-    cs_channel:'Desglose por origen disponible pr&oacute;ximamente',
-    cs_intl:'Datos demogr&aacute;ficos disponibles pr&oacute;ximamente',
-    cs_nps:'M&eacute;tricas de satisfacci&oacute;n disponibles pr&oacute;ximamente',
-    cs_fidu:'M&eacute;tricas de participaci&oacute;n disponibles pr&oacute;ximamente',
-    cs_ads:'M&eacute;tricas de medios pagos disponibles pr&oacute;ximamente',
-    cs_alumni:'Datos de exalumnos disponibles pr&oacute;ximamente',
-    cs_alumni_demo:'Desglose demogr&aacute;fico disponible pr&oacute;ximamente',
+    cs_channel:'Datos de origen en validaci&oacute;n',
+    cs_intl:'Datos demogr&aacute;ficos pendientes de exportaci&oacute;n ISAMS',
+    cs_nps:'Integraci&oacute;n de NPS pendiente',
+    cs_fidu:'KPIs de Fidu pendientes de integraci&oacute;n al doGet',
+    cs_ads:'Integraci&oacute;n de Meta Ads y Google Ads pendiente',
+    cs_alumni:'Datos de alumni pendientes de integraci&oacute;n Alumnia',
+    cs_alumni_demo:'Desglose demogr&aacute;fico pendiente',
     classroom_note:'Distribuci&oacute;n proporcional seg&uacute;n el peso actual de cada sal&oacute;n. No refleja decisiones pedag&oacute;gicas sobre apertura/cierre de divisiones.',
   }
 };
@@ -960,10 +934,6 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
-let adsMonth=null,adsSort='clicks';
-const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
-const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
 function cv(o){if(o==null)return null;return campus==='q'?o.q:campus==='n'?o.n:o.os;}
 let currentTheme=localStorage.getItem('sgc-theme')||'system';
 
@@ -1133,32 +1103,8 @@ function render(){
     main.appendChild(panel);
   });
   animateFunnels();
-  buildSidebarNav();drawCharts();applyDensity();applyHeaderStrings();markTableOverflow();applyA11y();hideLoad();
+  buildSidebarNav();drawCharts();applyDensity();applyHeaderStrings();hideLoad();
 }
-function applyA11y(){
-  // tables: header/row scopes
-  document.querySelectorAll('#main thead th').forEach(function(th){if(!th.getAttribute('scope'))th.setAttribute('scope','col');});
-  document.querySelectorAll('#main tbody td:first-child').forEach(function(td){if(!td.getAttribute('scope'))td.setAttribute('scope','row');});
-  // charts: expose a text alternative built from the card title + subtitle
-  document.querySelectorAll('#main canvas').forEach(function(cv){
-    var card=cv.closest('.cc')||cv.parentElement;
-    var ttl=card&&card.querySelector('.cc-ttl');var sub=card&&card.querySelector('.cc-sub');
-    var label=(ttl?ttl.textContent.trim():'Chart')+(sub?' — '+sub.textContent.trim():'');
-    cv.setAttribute('role','img');cv.setAttribute('aria-label',label);
-  });
-}
-function markTableOverflow(){
-  document.querySelectorAll('.tw').forEach(function(tw){
-    function upd(){
-      var of=tw.scrollWidth-tw.clientWidth;
-      if(of>4){tw.classList.add('has-overflow');tw.classList.toggle('scrolled-end',tw.scrollLeft>=of-2);}
-      else{tw.classList.remove('has-overflow','scrolled-end');}
-    }
-    upd();
-    if(!tw.__ovBound){tw.addEventListener('scroll',upd,{passive:true});tw.__ovBound=true;}
-  });
-}
-window.addEventListener('resize',function(){if(typeof markTableOverflow==='function')markTableOverflow();});
 function buildPanel(id){
   switch(id){
     case'resumen':return buildResumen();
@@ -1182,12 +1128,6 @@ function sec(title,meta,content){
   const s=document.createElement('div');s.className='sec';
   s.innerHTML='<div class="sec-hd"><span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'</div>';
   s.appendChild(content);return s;
-}
-function secCollapsible(title,meta,content,open){
-  const s=document.createElement('details');s.className='sec sec-collapsible';if(open)s.open=true;
-  const sum=document.createElement('summary');sum.className='sec-hd';
-  sum.innerHTML='<span class="sec-title">'+title+'</span>'+(meta?'<span class="sec-meta">'+meta+'</span>':'')+'<span class="sec-toggle-hint">'+(lang==='en'?'Detail':'Detalle')+'</span>';
-  s.appendChild(sum);s.appendChild(content);return s;
 }
 function elFromHTML(html){const d=document.createElement('div');d.innerHTML=html;return d;}
 function kpiGrid(cards){
@@ -1219,7 +1159,7 @@ function buildResumen(){
   // Headline stat-strip (campus-aware)
   const items=[
     {lbl:t('total_alumnos'),val:fN(totalStudents),foot:campus==='os'?'One School 2026':(campus==='q'?'Quilmes 2026':'North 2026')},
-    {lbl:t('var_anual'),val:(varN<0?'&#9660; ':'&#9650; ')+Math.abs(varN).toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
     {lbl:t('new_students'),val:fN(newStudents),foot:'2026'},
     {lbl:t('win_rate'),val:fP(wr2026()),foot:'2026'},
   ];
@@ -1254,8 +1194,8 @@ function buildResumen(){
   // Enrolment by section (2025 vs 2026)
   wrap.appendChild(sec(t('s_enrolment'),t('s_enrolment_meta'),buildEnrolTable()));
 
-  // Current Students Breakdown — Students/Capacity by grade (secondary detail, collapsed)
-  wrap.appendChild(secCollapsible(t('s_breakdown'),t('s_breakdown_meta'),buildKpiTable(),false));
+  // Current Students Breakdown — Students/Capacity by grade
+  wrap.appendChild(sec(t('s_breakdown'),t('s_breakdown_meta'),buildKpiTable()));
 
   // Charts
   if(D.resumen){
@@ -1369,7 +1309,7 @@ function buildAdmissions(){
   const p27   = ad?cv(ad.prospects2027):num(cd.total&&cd.total.prospectos);
   wrap.appendChild(sec(t('headline'),'',statStrip([
     {lbl:t('total_alumnos'),val:fN(total),foot:'2026'},
-    {lbl:t('var_anual'),val:(varN<0?'&#9660; ':'&#9650; ')+Math.abs(varN).toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
+    {lbl:t('var_anual'),val:varN.toFixed(2)+'%',foot:'2025 &rarr; 2026',cls:varN<0?'neg':'pos'},
     {lbl:t('won'),val:fN(newS),foot:'2026'},
     {lbl:t('win_rate'),val:fP(cr),foot:'2026'},
     {lbl:t('prospectos_26'),val:p26==null?'&mdash;':fN(p26),foot:'2026'},
@@ -1414,9 +1354,6 @@ function getFunnel(yr){
 }
 function yearPills(cur,years,setter){
   return '<div class="cycle-pills" style="margin-left:auto">'+years.map(y=>'<button class="cycle-pill'+(num(cur)===y?' active':'')+'" onclick="'+setter+'='+y+';render()">'+y+'</button>').join('')+'</div>';
-}
-function monthPills(cur,months){
-  return '<div class="cycle-pills" style="margin-left:auto">'+months.map(m=>'<button class="cycle-pill'+(cur===m?' active':'')+'" onclick="adsMonth=\''+m+'\';render()">'+monthLabel(m)+'</button>').join('')+'</div>';
 }
 function buildConvFunnel(){
   const sct=document.createElement('div');sct.className='sec';
@@ -1665,68 +1602,8 @@ function buildMarketing(){
   }else{
     wrap.appendChild(sec(t('s_app_kpis'),t('s_app_kpis_meta'),emptyState(t('coming_soon'),t('cs_fidu'))));
   }
-  wrap.appendChild(buildDigitalAds());
+  wrap.appendChild(sec(t('s_digital_ads'),t('s_digital_ads_meta'),emptyState(t('coming_soon'),t('cs_ads'))));
   return wrap;
-}
-function adsCampMetrics(M){
-  return (M.campaigns||[]).map(c=>{
-    const sp=num(c.spend),im=num(c.impressions),cl=num(c.clicks);
-    const ctr=im>0?cl/im:0,cpc=cl>0?sp/cl:0,eff=cpc>0?ctr/cpc:(ctr>0?1e9:0);
-    return {name:c.name,platform:c.platform,spend:sp,impr:im,clicks:cl,ctr:ctr,cpc:cpc,eff:eff};
-  });
-}
-function buildDigitalAds(){
-  const out=document.createElement('div');
-  const ads=D.ads;
-  if(!ads||!ads.months||!ads.months.length){
-    out.appendChild(sec(t('s_digital_ads'),t('s_digital_ads_meta'),emptyState(t('coming_soon'),t('cs_ads'))));
-    return out;
-  }
-  const months=ads.months.slice();
-  if(!adsMonth||months.indexOf(adsMonth)<0)adsMonth=months.length>=2?months[months.length-2]:months[months.length-1];
-  const M=ads.byMonth[adsMonth]||{spend:0,impressions:0,clicks:0,campaigns:[]};
-  // Section header with month selector
-  const hd=document.createElement('div');hd.className='sec';
-  hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_digital_ads')+'</span><span class="sec-meta">'+t('s_digital_ads_meta')+'</span>'+monthPills(adsMonth,months)+'</div>';
-  out.appendChild(hd);
-  // 1. Executive Summary
-  const tSpend=num(M.spend),tImpr=num(M.impressions),tClicks=num(M.clicks);
-  const wctr=tImpr>0?tClicks/tImpr:0,wcpc=tClicks>0?tSpend/tClicks:0;
-  out.appendChild(sec(t('s_ads_summary'),monthLabel(adsMonth),statStrip([
-    {lbl:t('ads_spend'),val:fUSD(tSpend),foot:'USD'},
-    {lbl:t('ads_clicks'),val:fN(tClicks),foot:''},
-    {lbl:t('ads_ctr'),val:fP(wctr),foot:''},
-    {lbl:t('ads_cpc'),val:fUSD(wcpc),foot:'USD/click'},
-  ])));
-  // 2. Campaign performance (sortable)
-  const sct=document.createElement('div');sct.className='sec';
-  const sorts=[['clicks',t('sort_clicks')],['eff',t('sort_eff')],['spend',t('sort_spend')]];
-  const pills='<div class="cycle-pills" style="margin-left:auto">'+sorts.map(s=>'<button class="cycle-pill'+(adsSort===s[0]?' active':'')+'" onclick="adsSort=\''+s[0]+'\';render()">'+s[1]+'</button>').join('')+'</div>';
-  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_ads_campaign')+'</span><span class="sec-meta">'+monthLabel(adsMonth)+'</span>'+pills+'</div>';
-  const camps=adsCampMetrics(M);
-  camps.sort((a,b)=>adsSort==='spend'?b.spend-a.spend:adsSort==='eff'?b.eff-a.eff:b.clicks-a.clicks);
-  const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+t('col_campaign')+'</th><th>'+t('col_platform')+'</th><th class="r">'+t('col_spend')+'</th><th class="r">'+t('col_impr')+'</th><th class="r">'+t('col_clicks')+'</th><th class="r">'+t('col_ctr')+'</th><th class="r">'+t('col_cpc')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
-  camps.forEach(c=>{const share=tClicks>0?c.clicks/tClicks:0;h+='<tr><td style="font-weight:600">'+escHtml(c.name)+'</td><td style="text-align:left"><span class="tag '+(c.platform==='Meta'?'exo':'nat')+'">'+escHtml(c.platform)+'</span></td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.impr)+'</td><td class="r" style="font-weight:700">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r">'+fP(share)+'</td></tr>';});
-  h+='</tbody></table>';tw.innerHTML=h;sct.appendChild(tw);
-  out.appendChild(sct);
-  // 3. Temporal trend
-  const cc=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('ads_trend_title')+'</div><div class="cc-sub">'+t('ads_trend_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-ads"></canvas></div></div>').firstChild;
-  out.appendChild(sec(t('s_ads_temporal'),'',cc));
-  // 4. Traffic quality
-  out.appendChild(sec(t('s_ads_quality'),t('ads_quality_sub'),buildAdsQuality(M,wctr,wcpc)));
-  return out;
-}
-function buildAdsQuality(M,wctr,wcpc){
-  const camps=adsCampMetrics(M).sort((a,b)=>b.spend-a.spend);
-  const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+t('col_campaign')+'</th><th class="r">'+t('col_spend')+'</th><th class="r">'+t('col_clicks')+'</th><th class="r">'+t('col_ctr')+'</th><th class="r">'+t('col_cpc')+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
-  camps.forEach(c=>{
-    const good=(c.cpc<=wcpc&&c.ctr>=wctr),bad=(c.cpc>wcpc&&c.ctr<wctr);
-    const sem=good?'g':bad?'r':'y';
-    h+='<tr'+(bad?' class="proj-row"':'')+'><td style="font-weight:600">'+escHtml(c.name)+'</td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';
-  });
-  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
 /* ============================== PROJECTION 2027 ============================== */
@@ -2007,16 +1884,6 @@ function drawCharts(){
     const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
     const gy=D.alumni.gradYears;
     charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
-  }
-  // Digital Ads — spend (bars, USD) + clicks (line) by month
-  const ac=document.getElementById('chart-ads');
-  if(ac&&D.ads&&D.ads.trend&&D.ads.trend.length){
-    const tr=D.ads.trend;
-    const bg=tr.map(r=>r.month===adsMonth?kTeal:hexA(kTeal,DK?0.4:0.45));
-    charts.ads=new Chart(ac,{data:{labels:tr.map(r=>monthLabel(r.month)),datasets:[
-      {type:'bar',label:t('ads_spend'),data:tr.map(r=>Math.round(num(r.spend))),backgroundColor:bg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
-      {type:'line',label:t('ads_clicks'),data:tr.map(r=>num(r.clicks)),borderColor:Cmain,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:Cmain,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
-    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>'$'+v},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
