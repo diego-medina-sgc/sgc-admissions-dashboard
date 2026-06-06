@@ -330,6 +330,10 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 [data-theme="dark"] .mkt-group{border-top-color:var(--border-strong);}
 [data-theme="dark"] .mkt-group-ttl{color:var(--text);}
 [data-theme="dark"] .mkt-group-sub{color:var(--text-muted);}
+.tag.plat-meta{background:rgba(107,110,179,.16);color:#5558a8;}
+.tag.plat-google{background:rgba(16,154,169,.16);color:#0e7d89;}
+[data-theme="dark"] .tag.plat-meta{background:rgba(158,161,228,.22);color:#9ea1e4;}
+[data-theme="dark"] .tag.plat-google{background:rgba(38,198,214,.2);color:#26C6D6;}
 
 /* ─── INFO NOTE ─── */
 .info-note{background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:.74rem;color:var(--gray);line-height:1.5;font-family:'Asap Condensed',sans-serif;display:flex;gap:10px;align-items:flex-start;box-shadow:var(--card-shadow);}
@@ -987,6 +991,7 @@ function fmt(val,type){
 const fN=v=>fmt(v,'int');
 const fP=v=>fmt(v,'pct');
 const fUSD=v=>fmt(v,'usd');
+const fUSDd=v=>{if(v===null||v===undefined||v==='')return'&mdash;';const n=parseFloat(v);if(isNaN(n))return'&mdash;';return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
 const fSign=v=>{const n=parseFloat(v)||0;return(n>=0?'+':'')+n.toLocaleString('es-AR');};
 const fCrp=v=>{if(v===null||v===undefined||v==='')return'&mdash;';const n=parseFloat(v)*100;if(isNaN(n))return'&mdash;';const s=Math.abs(n).toFixed(2)+'%';return n<0?'<span class="val-neg">&#9660; '+s+'</span>':'<span class="val-pos">&#9650; '+s+'</span>';};
 const STAGE_EN={'Consulta':'Consultation','Pedido de Documentación':'Documentation Request','Reunión Informativa':'Informative Meeting','Entrevista de Padres':'Parents Interview','Entrevista de Alumnos':'Students Interview','Aprobación Headmaster':'Headmaster Approval','Oferta de Vacante':'Place Offering','Ganados':'Won','Perdidos':'Lost'};
@@ -1050,7 +1055,7 @@ function initAuth(){
       accessToken=r.access_token;
       try{const res=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}});const info=await res.json();userEmail=(info.email||'').toLowerCase().trim();}catch(ex){console.warn('userinfo error',ex);}
       if(userEmail===ADMIN_EMAIL)document.getElementById('btn-admin').style.display='flex';
-      saveSession();showApp();fetchData();
+      saveSession();showApp();tryRenderCache();fetchData();
     }
   });
   hideLoad();
@@ -1116,7 +1121,15 @@ function showErrorBanner(){
 }
 
 /* ============================== RENDER ============================== */
+function syncCampusUI(){
+  const mkt=activeTab==='marketing';
+  document.querySelectorAll('.campus-btn').forEach(b=>{
+    if(b.dataset.c!=='os')b.style.display=mkt?'none':'';
+    if(mkt){b.classList.toggle('active',b.dataset.c==='os');b.setAttribute('aria-pressed',b.dataset.c==='os'?'true':'false');}
+  });
+}
 function render(){
+  if(activeTab==='marketing')campus='os';
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
   const main=document.getElementById('main');main.innerHTML='';main.className='campus-'+campus;
   TABS.forEach(function(tab){
@@ -1127,7 +1140,7 @@ function render(){
     main.appendChild(panel);
   });
   animateFunnels();
-  buildSidebarNav();drawCharts();applyDensity();applyHeaderStrings();hideLoad();
+  buildSidebarNav();drawCharts();applyDensity();applyHeaderStrings();syncCampusUI();hideLoad();
 }
 function buildPanel(id){
   switch(id){
@@ -1154,9 +1167,9 @@ function sec(title,meta,content){
   s.appendChild(content);return s;
 }
 function elFromHTML(html){const d=document.createElement('div');d.innerHTML=html;return d;}
-function groupHeader(title,sub,first){
+function groupHeader(title,sub,first,color){
   const d=document.createElement('div');d.className='mkt-group'+(first?' first':'');
-  d.innerHTML='<div class="mkt-group-bar"></div><div><div class="mkt-group-ttl">'+title+'</div>'+(sub?'<div class="mkt-group-sub">'+sub+'</div>':'')+'</div>';
+  d.innerHTML='<div class="mkt-group-bar" style="background:'+(color||'var(--teal)')+'"></div><div><div class="mkt-group-ttl">'+title+'</div>'+(sub?'<div class="mkt-group-sub">'+sub+'</div>':'')+'</div>';
   return d;
 }
 function kpiGrid(cards){
@@ -1618,8 +1631,8 @@ function buildMarketing(){
   const mk=D.marketing&&D.marketing.fidu;
   wrap.appendChild(groupHeader(t('s_app_kpis'),t('s_app_kpis_meta'),true));
   if(mk){
-    wrap.appendChild(sec(t('headline'),'',kpiGrid([
-      {lbl:t('fidu_adoption'),val:fP(mk.adoption),foot:t('fidu_adoption_f'),accent:true},
+    wrap.appendChild(sec(t('headline'),'',statStrip([
+      {lbl:t('fidu_adoption'),val:fP(mk.adoption),foot:t('fidu_adoption_f')},
       {lbl:t('fidu_active'),val:fN(mk.activeUsers),foot:t('fidu_active_f')},
       {lbl:t('fidu_loyalty'),val:fP(mk.loyalty),foot:t('fidu_loyalty_f')},
       {lbl:t('fidu_open'),val:fP(mk.openRate),foot:t('fidu_open_f')},
@@ -1649,7 +1662,7 @@ function buildDigitalAds(){
   const out=document.createElement('div');
   const ads=D.ads;
   if(!ads||!ads.months||!ads.months.length){
-    out.appendChild(groupHeader(t('s_digital_ads'),t('s_digital_ads_meta')));
+    out.appendChild(groupHeader(t('s_digital_ads'),t('s_digital_ads_meta'),false,'var(--violet)'));
     out.appendChild(sec(t('s_ads_summary'),'',emptyState(t('coming_soon'),t('cs_ads'))));
     return out;
   }
@@ -1660,12 +1673,12 @@ function buildDigitalAds(){
   const tSpend=num(M.spend),tImpr=num(M.impressions),tClicks=num(M.clicks);
   const wctr=tImpr>0?tClicks/tImpr:0,wcpc=tClicks>0?tSpend/tClicks:0;
   const ex=document.createElement('div');ex.className='sec';
-  ex.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_ads_summary')+'</span><span class="sec-meta">'+monthLabel(adsMonth)+'</span>'+monthPills(adsMonth,months)+'</div>';
+  ex.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('headline')+'</span><span class="sec-meta">'+monthLabel(adsMonth)+'</span>'+monthPills(adsMonth,months)+'</div>';
   ex.appendChild(statStrip([
     {lbl:t('ads_spend'),val:fUSD(tSpend),foot:'USD'},
     {lbl:t('ads_clicks'),val:fN(tClicks),foot:''},
     {lbl:t('ads_ctr'),val:fP(wctr),foot:''},
-    {lbl:t('ads_cpc'),val:fUSD(wcpc),foot:'USD/click'},
+    {lbl:t('ads_cpc'),val:fUSDd(wcpc),foot:'USD/click'},
   ]));
   out.appendChild(ex);
   // Campaign performance
@@ -1677,8 +1690,8 @@ function buildDigitalAds(){
   camps.sort((a,b)=>adsSort==='spend'?b.spend-a.spend:adsSort==='eff'?b.eff-a.eff:b.clicks-a.clicks);
   const tw=document.createElement('div');tw.className='tw';
   let h='<table><thead><tr><th>'+t('col_campaign')+'</th><th>'+t('col_platform')+'</th><th class="r">'+t('col_spend')+'</th><th class="r">'+t('col_impr')+'</th><th class="r">'+t('col_clicks')+'</th><th class="r">'+t('col_ctr')+'</th><th class="r">'+t('col_cpc')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
-  camps.forEach(c=>{const share=tClicks>0?c.clicks/tClicks:0;h+='<tr><td style="font-weight:600">'+escHtml(c.name)+'</td><td style="text-align:left"><span class="tag '+(c.platform==='Meta'?'exo':'nat')+'">'+escHtml(c.platform)+'</span></td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.impr)+'</td><td class="r" style="font-weight:700">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r">'+fP(share)+'</td></tr>';});
-  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td></td><td class="r val-usd">'+fUSD(tSpend)+'</td><td class="r">'+fN(tImpr)+'</td><td class="r"><strong>'+fN(tClicks)+'</strong></td><td class="r">'+fP(wctr)+'</td><td class="r val-usd">'+fUSD(wcpc)+'</td><td class="r">100%</td></tr>';
+  camps.forEach(c=>{const share=tClicks>0?c.clicks/tClicks:0;h+='<tr><td style="font-weight:600">'+escHtml(c.name)+'</td><td style="text-align:left"><span class="tag '+(c.platform==='Meta'?'plat-meta':'plat-google')+'">'+escHtml(c.platform)+'</span></td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.impr)+'</td><td class="r" style="font-weight:700">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSDd(c.cpc)+'</td><td class="r">'+fP(share)+'</td></tr>';});
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td></td><td class="r val-usd">'+fUSD(tSpend)+'</td><td class="r">'+fN(tImpr)+'</td><td class="r"><strong>'+fN(tClicks)+'</strong></td><td class="r">'+fP(wctr)+'</td><td class="r val-usd">'+fUSDd(wcpc)+'</td><td class="r">100%</td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;sct.appendChild(tw);
   out.appendChild(sct);
   // Temporal trend
@@ -1695,10 +1708,10 @@ function buildAdsQuality(M,wctr,wcpc){
   camps.forEach(c=>{
     const good=(c.cpc<=wcpc&&c.ctr>=wctr),bad=(c.cpc>wcpc&&c.ctr<wctr);
     const sem=good?'g':bad?'r':'y';
-    h+='<tr'+(bad?' class="proj-row"':'')+'><td style="font-weight:600">'+escHtml(c.name)+'</td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSD(c.cpc)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';
+    h+='<tr'+(bad?' class="proj-row"':'')+'><td style="font-weight:600">'+escHtml(c.name)+'</td><td class="r val-usd">'+fUSD(c.spend)+'</td><td class="r">'+fN(c.clicks)+'</td><td class="r">'+fP(c.ctr)+'</td><td class="r val-usd">'+fUSDd(c.cpc)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';
   });
   var tS=camps.reduce((a,c)=>a+c.spend,0),tC=camps.reduce((a,c)=>a+c.clicks,0),tI=camps.reduce((a,c)=>a+c.impr,0);
-  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r val-usd">'+fUSD(tS)+'</td><td class="r"><strong>'+fN(tC)+'</strong></td><td class="r">'+fP(tI>0?tC/tI:0)+'</td><td class="r val-usd">'+fUSD(tC>0?tS/tC:0)+'</td><td class="r"></td></tr>';
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r val-usd">'+fUSD(tS)+'</td><td class="r"><strong>'+fN(tC)+'</strong></td><td class="r">'+fP(tI>0?tC/tI:0)+'</td><td class="r val-usd">'+fUSDd(tC>0?tS/tC:0)+'</td><td class="r"></td></tr>';
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
@@ -1988,7 +2001,7 @@ function drawCharts(){
     const bg=tr.map(r=>r.month===adsMonth?kTeal:hexA(kTeal,DK?0.4:0.45));
     charts.ads=new Chart(ac,{data:{labels:tr.map(r=>monthLabel(r.month)),datasets:[
       {type:'bar',label:t('ads_spend'),data:tr.map(r=>Math.round(num(r.spend))),backgroundColor:bg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
-      {type:'line',label:t('ads_clicks'),data:tr.map(r=>num(r.clicks)),borderColor:Cmain,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:Cmain,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
+      {type:'line',label:t('ads_clicks'),data:tr.map(r=>num(r.clicks)),borderColor:kRed,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
     ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>'$'+v},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
@@ -2005,13 +2018,16 @@ function buildSidebarNav(){
     btn.innerHTML=tab.icon+'<span>'+tab.label+'</span>';
     btn.onclick=function(){
       activeTab=tab.id;
+      if(isMobile()){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('mob-overlay').classList.remove('active');}
+      // Marketing is One School only → if campus differs, re-render fully
+      if(tab.id==='marketing'&&campus!=='os'){campus='os';render();window.scrollTo({top:0,behavior:'smooth'});return;}
       document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
       const panel=document.getElementById('panel-'+tab.id);
-      if(panel){panel.classList.add('active');animateFunnels();}
+      if(panel){panel.classList.add('active');animateFunnels();drawCharts();}
+      syncCampusUI();
       window.scrollTo({top:0,behavior:'smooth'});
-      if(isMobile()){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('mob-overlay').classList.remove('active');}
     };
     nav.appendChild(btn);
   });
