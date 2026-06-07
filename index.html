@@ -330,6 +330,10 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 [data-theme="dark"] .mkt-group{border-top-color:var(--border-strong);}
 [data-theme="dark"] .mkt-group-ttl{color:var(--text);}
 [data-theme="dark"] .mkt-group-sub{color:var(--text-muted);}
+.al-coverage{display:flex;align-items:center;gap:9px;background:rgba(16,154,169,.10);border:1px solid rgba(16,154,169,.30);border-left:4px solid var(--teal);border-radius:9px;padding:11px 15px;margin:4px 0 20px;font-size:.82rem;color:var(--text-muted);font-family:'Asap Condensed',sans-serif;line-height:1.35;}
+.al-coverage svg{color:var(--teal);flex-shrink:0;}
+.al-coverage b{color:var(--text);font-weight:700;}
+[data-theme="dark"] .al-coverage{background:rgba(38,198,214,.10);border-color:rgba(38,198,214,.28);}
 .tag.plat-meta{background:rgba(107,110,179,.16);color:#5558a8;}
 .tag.plat-google{background:rgba(16,154,169,.16);color:#0e7d89;}
 [data-theme="dark"] .tag.plat-meta{background:rgba(158,161,228,.22);color:#9ea1e4;}
@@ -809,8 +813,19 @@ const STRINGS={
     s_alumni_demo:'Demographics',s_alumni_demo_meta:'Graduation decade &amp; geography',
     al_total:'Total Alumni',al_age:'Average Age',al_age_foot:'Years',al_abroad:'Outside Argentina',al_abroad_foot:'% living abroad',
     al_mentoring:'Mentoring',al_mentoring_foot:'Opted in (Yes)',al_decade:'Graduation Decade',al_count:'Alumni',al_country:'Country',
-    al_male:'Male',al_female:'Female',al_withkids:'With Kids',col_sector:'Sector',col_share:'Share %',
+    al_male:'Male',al_female:'Female',al_withkids:'With Kids',al_withkids_foot:'Have children',col_sector:'Sector',col_share:'Share %',
     s_alumni_countries:'Distribution by Country',s_alumni_sectors:'Professional Sectors',s_alumni_grad:'Form Responses',s_alumni_grad_sub:'By Graduation Year',
+    al_cov_note:'Based on <b>{r}</b> respondents to the alumni data-update form &mdash; about <b>{p}</b> of the <b>{b}</b> total alumni base. All figures below are over respondents, not the full base.',
+    s_alumni_analysis:'Alumni Analysis',s_alumni_analysis_meta:'Switch category',
+    al_cat_overview:'Overview',al_cat_demo:'Demographics',al_cat_geo:'Geography',al_cat_community:'Community',al_cat_heritage:'School Heritage',
+    al_engagement:'Engagement &amp; Reach',al_engagement_meta:'Share of respondents',
+    al_contactable:'Contactable',al_contactable_foot:'Email or LinkedIn',al_mentoring_pct:'Mentoring (Yes)',al_withkids_pct:'With Kids',al_liaison_pct:'Liaison Interest',
+    al_age_dist:'Age Distribution',al_age_dist_sub:'Respondents by age range',al_gender:'Gender',al_gender_meta:'Respondents by gender',
+    al_regions:'Distribution by Region',al_regions_meta:'Respondents by world region',al_region:'Region',
+    al_mentoring_dist:'Mentoring Willingness',al_mentoring_dist_meta:'Would mentor a current student',al_liaison:'Liaison Interest',al_liaison_meta:'Interested in being a class liaison',
+    al_companies:'Top Employers',al_companies_meta:'Most frequent companies',al_company:'Company',
+    al_dayboarding:'Day vs Boarding',al_dayboarding_meta:'Student type while enrolled',al_studenttype:'Student Type',
+    al_houses:'Houses',al_houses_meta:'House membership',al_house:'House',al_heritage_pending:'House &amp; boarding data pending in the import',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
@@ -898,8 +913,19 @@ const STRINGS={
     s_alumni_demo:'Demograf&iacute;a',s_alumni_demo_meta:'D&eacute;cada de egreso y geograf&iacute;a',
     al_total:'Total Alumni',al_age:'Edad Promedio',al_age_foot:'A&ntilde;os',al_abroad:'Fuera de Argentina',al_abroad_foot:'% en el exterior',
     al_mentoring:'Mentoring',al_mentoring_foot:'Anotados (Yes)',al_decade:'D&eacute;cada de Egreso',al_count:'Alumni',al_country:'Pa&iacute;s',
-    al_male:'Hombres',al_female:'Mujeres',al_withkids:'Con Hijos',col_sector:'Sector',col_share:'% del total',
+    al_male:'Hombres',al_female:'Mujeres',al_withkids:'Con Hijos',al_withkids_foot:'Tienen hijos',col_sector:'Sector',col_share:'% del total',
     s_alumni_countries:'Distribuci&oacute;n por Pa&iacute;s',s_alumni_sectors:'Sectores Profesionales',s_alumni_grad:'Form Responses',s_alumni_grad_sub:'Por A&ntilde;o de Egreso',
+    al_cov_note:'Basado en <b>{r}</b> respondentes del formulario de actualizaci&oacute;n de datos &mdash; aprox. <b>{p}</b> de la base total de <b>{b}</b> alumni. Todos los valores son sobre respondentes, no sobre la base completa.',
+    s_alumni_analysis:'An&aacute;lisis de Alumni',s_alumni_analysis_meta:'Cambiar categor&iacute;a',
+    al_cat_overview:'Resumen',al_cat_demo:'Demograf&iacute;a',al_cat_geo:'Geograf&iacute;a',al_cat_community:'Comunidad',al_cat_heritage:'Trayectoria',
+    al_engagement:'Engagement y Alcance',al_engagement_meta:'Sobre respondentes',
+    al_contactable:'Contactables',al_contactable_foot:'Email o LinkedIn',al_mentoring_pct:'Mentoring (S&iacute;)',al_withkids_pct:'Con Hijos',al_liaison_pct:'Inter&eacute;s Liaison',
+    al_age_dist:'Distribuci&oacute;n por Edad',al_age_dist_sub:'Respondentes por rango etario',al_gender:'G&eacute;nero',al_gender_meta:'Respondentes por g&eacute;nero',
+    al_regions:'Distribuci&oacute;n por Regi&oacute;n',al_regions_meta:'Respondentes por regi&oacute;n del mundo',al_region:'Regi&oacute;n',
+    al_mentoring_dist:'Disposici&oacute;n a Mentorear',al_mentoring_dist_meta:'Mentorear&iacute;a a un alumno actual',al_liaison:'Inter&eacute;s Liaison',al_liaison_meta:'Inter&eacute;s en ser liaison de su camada',
+    al_companies:'Principales Empleadores',al_companies_meta:'Empresas m&aacute;s frecuentes',al_company:'Empresa',
+    al_dayboarding:'Externo vs Pupilo',al_dayboarding_meta:'Tipo de alumno durante la cursada',al_studenttype:'Tipo de Alumno',
+    al_houses:'Casas',al_houses_meta:'Pertenencia a casas',al_house:'Casa',al_heritage_pending:'Datos de casas y pupilos pendientes en el import',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
@@ -959,6 +985,7 @@ let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 let adsMonth=null,adsSort='clicks';
+let alView='overview';
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
@@ -1010,6 +1037,12 @@ const COUNTRY_ES={'Argentina':'Argentina','United States':'Estados Unidos','Spai
 function trCountry(s){return lang==='es'?(COUNTRY_ES[s]||s):s;}
 const NAT_ES={'Argentine':'Argentina','American':'Estadounidense','Chinese':'China','Russian':'Rusa','Brazilian':'Brasileña','Chilean':'Chilena','Uruguayan':'Uruguaya','Spanish':'Española','Mexican':'Mexicana','Italian':'Italiana','Other':'Otras'};
 function trNat(s){return lang==='es'?(NAT_ES[s]||s):s;}
+const REGION_ES={'Argentina':'Argentina','Americas':'Resto de América','Rest of Americas':'Resto de América','Europe':'Europa','Oceania':'Oceanía','Asia':'Asia','Africa':'África','Other':'Otros'};
+function trRegion(s){return lang==='es'?(REGION_ES[s]||s):s;}
+const YESNO_ES={'Yes':'Sí','No':'No','Maybe':'Tal vez','Sí':'Sí','Tal vez':'Tal vez'};
+function trYesNo(s){return lang==='es'?(YESNO_ES[s]||s):s;}
+const DAYBOARD_ES={'Day Student':'Externo','Boarding Student':'Pupilo','Boarder':'Pupilo','Day':'Externo','Boarding':'Pupilo'};
+function trDayBoard(s){return lang==='es'?(DAYBOARD_ES[s]||s):s;}
 const CAUSE_ES={'Graduate':'Egreso','Exchange Student':'Intercambio','Move Abroad':'Mudanza al exterior','Moving Locally':'Mudanza local','Financial':'Financiera','Academic':'Académica','Social':'Social','Personal':'Personal','Other':'Otra'};
 function trCause(s){return lang==='es'?(CAUSE_ES[s]||s):s;}
 const SOURCE_ES={'Unknown':'Desconocido','Organic Web':'Web orgánica'};
@@ -1847,6 +1880,27 @@ function buildClassroom(){
 }
 
 /* ============================== ALUMNI ============================== */
+/* ── Alumni: campus value picker (q/n/total) ── */
+function alcV(o){return o==null?null:(campus==='q'?o.q:campus==='n'?o.n:o.total);}
+/* ── Alumni: generic distribution table (sorted desc, with share) ── */
+function alTable(rows,opts){
+  opts=opts||{};rows=rows||[];
+  const list=rows.map(r=>({name:r.name,v:num(alcV(r))})).filter(r=>r.v>0).sort((x,y)=>y.v-x.v);
+  const tot=list.reduce((s,b)=>s+b.v,0)||1;
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+(opts.label||'')+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
+  list.forEach(r=>{const nm=opts.tr?opts.tr(r.name):r.name;h+='<tr><td style="font-weight:600">'+(opts.flags?flagImg(r.name):'')+escHtml(nm)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
+}
+/* ── Alumni: chart card shell ── */
+function alChartCard(id,ttl,sub,h){
+  return elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+ttl+'</div><div class="cc-sub">'+(sub||'')+'</div></div></div><div class="chart-wrap" style="height:'+(h||300)+'px"><canvas id="'+id+'"></canvas></div></div>').firstChild;
+}
+/* ── Alumni: category toggle pills ── */
+function alPills(){
+  const cats=[['overview',t('al_cat_overview')],['demo',t('al_cat_demo')],['geo',t('al_cat_geo')],['community',t('al_cat_community')],['heritage',t('al_cat_heritage')]];
+  return '<div class="cycle-pills" style="margin-left:auto;flex-wrap:wrap">'+cats.map(c=>'<button class="cycle-pill'+(alView===c[0]?' active':'')+'" onclick="alView=\''+c[0]+'\';render()">'+c[1]+'</button>').join('')+'</div>';
+}
 function buildAlumni(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_alumni'),t('ph_alumni_sub')));
@@ -1855,32 +1909,62 @@ function buildAlumni(){
     wrap.appendChild(sec(t('s_alumni_headline'),'',emptyState(t('coming_soon'),t('cs_alumni'))));
     return wrap;
   }
-  const H=a.headline;
-  const alc=o=>!o?null:(campus==='q'?o.q:campus==='n'?o.n:o.total);
-  wrap.appendChild(sec(t('headline'),'',statStrip([
-    {lbl:t('al_total'),val:fN(alc(H.total)),foot:''},
-    {lbl:t('al_male'),val:fN(alc(H.male)),foot:''},
-    {lbl:t('al_female'),val:fN(alc(H.female)),foot:''},
-    {lbl:t('al_age'),val:alc(H.avgAge)!=null?num(alc(H.avgAge)).toFixed(0):'&mdash;',foot:t('al_age_foot')},
-    {lbl:t('al_withkids'),val:fN(alc(H.withKids)),foot:''},
-    {lbl:t('al_abroad'),val:fP(alc(H.abroadPct)),foot:t('al_abroad_foot')},
-    {lbl:t('al_mentoring'),val:fN(alc(H.mentoringYes)),foot:t('al_mentoring_foot')},
-  ])));
-  wrap.appendChild(sec(t('s_alumni_countries'),'',buildAlumniDist(a.countries,true)));
-  wrap.appendChild(sec(t('s_alumni_sectors'),'',buildAlumniDist(a.sectors,false)));
-  const gw=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('s_alumni_grad')+'</div><div class="cc-sub">'+t('s_alumni_grad_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-grad"></canvas></div></div>').firstChild;
-  wrap.appendChild(gw);
+  // Coverage disclaimer — data comes from the alumni data-update form (subset of the real base)
+  const cv=a.coverage;
+  if(cv){
+    const note=t('al_cov_note').replace('{r}',fN(cv.respondents)).replace('{b}',fN(cv.base)).replace('{p}',fP(cv.pct));
+    const banner=document.createElement('div');banner.className='al-coverage';
+    banner.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>'+note+'</span>';
+    wrap.appendChild(banner);
+  }
+  // Category toggle header
+  const hd=document.createElement('div');hd.className='sec';
+  hd.innerHTML='<div class="sec-hd" style="flex-wrap:wrap;gap:8px"><span class="sec-title">'+t('s_alumni_analysis')+'</span><span class="sec-meta">'+t('s_alumni_analysis_meta')+'</span>'+alPills()+'</div>';
+  wrap.appendChild(hd);
+  if(alView==='demo')buildAlDemo(wrap,a);
+  else if(alView==='geo')buildAlGeo(wrap,a);
+  else if(alView==='community')buildAlCommunity(wrap,a);
+  else if(alView==='heritage')buildAlHeritage(wrap,a);
+  else buildAlOverview(wrap,a);
   return wrap;
 }
-function buildAlumniDist(rows,withFlags){
-  rows=rows||[];
-  const alc=o=>campus==='q'?num(o.q):campus==='n'?num(o.n):num(o.total);
-  const list=rows.map(r=>({name:r.name,v:alc(r)})).filter(r=>r.v>0).sort((x,y)=>y.v-x.v);
-  const tot=list.reduce((s,b)=>s+b.v,0)||1;
-  const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+(withFlags?t('al_country'):t('col_sector'))+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
-  list.forEach(r=>{const nm=withFlags?trCountry(r.name):trSector(r.name);h+='<tr><td style="font-weight:600">'+(withFlags?flagImg(r.name):'')+escHtml(nm)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
-  h+='</tbody></table>';tw.innerHTML=h;return tw;
+function buildAlOverview(wrap,a){
+  const H=a.headline;
+  wrap.appendChild(sec(t('headline'),'',statStrip([
+    {lbl:t('al_total'),val:fN(alcV(H.total))},
+    {lbl:t('al_male'),val:fN(alcV(H.male))},
+    {lbl:t('al_female'),val:fN(alcV(H.female))},
+    {lbl:t('al_age'),val:alcV(H.avgAge)!=null?num(alcV(H.avgAge)).toFixed(0):'&mdash;',foot:t('al_age_foot')},
+    {lbl:t('al_withkids'),val:fN(alcV(H.withKids)),foot:t('al_withkids_foot')},
+    {lbl:t('al_abroad'),val:fP(alcV(H.abroadPct)),foot:t('al_abroad_foot')},
+    {lbl:t('al_mentoring'),val:fN(alcV(H.mentoringYes)),foot:t('al_mentoring_foot')},
+  ])));
+  const cards=[];
+  if(H.contactablePct!=null)cards.push({lbl:t('al_contactable'),val:fP(alcV(H.contactablePct)),foot:t('al_contactable_foot')});
+  if(H.mentoringYesPct!=null)cards.push({lbl:t('al_mentoring_pct'),val:fP(alcV(H.mentoringYesPct)),foot:t('al_mentoring')});
+  if(H.withKidsPct!=null)cards.push({lbl:t('al_withkids_pct'),val:fP(alcV(H.withKidsPct)),foot:t('al_withkids')});
+  if(H.liaisonYesPct!=null)cards.push({lbl:t('al_liaison_pct'),val:fP(alcV(H.liaisonYesPct)),foot:t('al_liaison')});
+  if(cards.length)wrap.appendChild(sec(t('al_engagement'),t('al_engagement_meta'),kpiGrid(cards)));
+}
+function buildAlDemo(wrap,a){
+  if(a.age&&a.age.length)wrap.appendChild(alChartCard('chart-age',t('al_age_dist'),t('al_age_dist_sub'),300));
+  if(a.gender&&a.gender.length)wrap.appendChild(sec(t('al_gender'),t('al_gender_meta'),alTable(a.gender,{label:t('al_gender'),tr:trYesNo})));
+  if(a.gradYears&&a.gradYears.length)wrap.appendChild(alChartCard('chart-grad',t('s_alumni_grad'),t('s_alumni_grad_sub'),300));
+}
+function buildAlGeo(wrap,a){
+  if(a.regions&&a.regions.length)wrap.appendChild(sec(t('al_regions'),t('al_regions_meta'),alTable(a.regions,{label:t('al_region'),tr:trRegion})));
+  if(a.countries&&a.countries.length)wrap.appendChild(sec(t('s_alumni_countries'),'',alTable(a.countries,{label:t('al_country'),flags:true,tr:trCountry})));
+}
+function buildAlCommunity(wrap,a){
+  if(a.mentoring&&a.mentoring.length)wrap.appendChild(sec(t('al_mentoring_dist'),t('al_mentoring_dist_meta'),alTable(a.mentoring,{label:t('al_mentoring'),tr:trYesNo})));
+  if(a.liaison&&a.liaison.length)wrap.appendChild(sec(t('al_liaison'),t('al_liaison_meta'),alTable(a.liaison,{label:t('al_liaison'),tr:trYesNo})));
+  if(a.sectors&&a.sectors.length)wrap.appendChild(sec(t('s_alumni_sectors'),'',alTable(a.sectors,{label:t('col_sector'),tr:trSector})));
+  if(a.companies&&a.companies.length)wrap.appendChild(sec(t('al_companies'),t('al_companies_meta'),alTable(a.companies,{label:t('al_company')})));
+}
+function buildAlHeritage(wrap,a){
+  if(a.dayBoarding&&a.dayBoarding.length)wrap.appendChild(sec(t('al_dayboarding'),t('al_dayboarding_meta'),alTable(a.dayBoarding,{label:t('al_studenttype'),tr:trDayBoard})));
+  if(a.houses&&a.houses.length)wrap.appendChild(sec(t('al_houses'),t('al_houses_meta'),alTable(a.houses,{label:t('al_house')})));
+  if(!(a.dayBoarding&&a.dayBoarding.length)&&!(a.houses&&a.houses.length))wrap.appendChild(sec(t('al_houses'),'',emptyState(t('coming_soon'),t('al_heritage_pending'))));
 }
 
 /* ── collapsible toggle ── */
@@ -1993,6 +2077,12 @@ function drawCharts(){
     const valOf=r=>campus==='q'?num(r.q):campus==='n'?num(r.n):num(r.total);
     const gy=D.alumni.gradYears;
     charts.grad=new Chart(gc,{type:'bar',data:{labels:gy.map(r=>String(r.year).replace('.0','')),datasets:[{label:t('al_count'),data:gy.map(valOf),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Alumni age distribution (respondents by age bucket)
+  const agc=document.getElementById('chart-age');
+  if(agc&&D.alumni&&D.alumni.age){
+    const av=D.alumni.age;
+    charts.age=new Chart(agc,{type:'bar',data:{labels:av.map(r=>r.bucket),datasets:[{label:t('al_count'),data:av.map(r=>num(alcV(r))),backgroundColor:Cmain,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
   // Digital Ads — spend (bars, USD) + clicks (line) by month
   const ac=document.getElementById('chart-ads');
