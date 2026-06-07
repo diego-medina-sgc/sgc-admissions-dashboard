@@ -826,6 +826,7 @@ const STRINGS={
     al_companies:'Top Employers',al_companies_meta:'Most frequent companies',al_company:'Company',
     al_dayboarding:'Day vs Boarding',al_dayboarding_meta:'Student type while enrolled',al_studenttype:'Student Type',
     al_houses:'Houses',al_houses_meta:'House membership',al_house:'House',al_heritage_pending:'House &amp; boarding data pending in the import',
+    al_houses_prep:'Prep Houses',al_houses_college:'College Houses',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
@@ -926,6 +927,7 @@ const STRINGS={
     al_companies:'Principales Empleadores',al_companies_meta:'Empresas m&aacute;s frecuentes',al_company:'Empresa',
     al_dayboarding:'Externo vs Pupilo',al_dayboarding_meta:'Tipo de alumno durante la cursada',al_studenttype:'Tipo de Alumno',
     al_houses:'Casas',al_houses_meta:'Pertenencia a casas',al_house:'Casa',al_heritage_pending:'Datos de casas y pupilos pendientes en el import',
+    al_houses_prep:'Casas Prep',al_houses_college:'Casas College',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
@@ -1967,8 +1969,11 @@ function buildAlGeo(wrap,a){
 function buildAlHeritage(wrap,a){
   wrap.appendChild(groupHeader(t('al_cat_heritage'),t('al_dayboarding_meta'),true,'var(--violet)'));
   if(a.dayBoarding&&a.dayBoarding.length)wrap.appendChild(sec(t('al_dayboarding'),t('al_dayboarding_meta'),alTable(a.dayBoarding,{label:t('al_studenttype'),tr:trDayBoard})));
-  if(a.houses&&a.houses.length)wrap.appendChild(sec(t('al_houses'),t('al_houses_meta'),alTable(a.houses,{label:t('al_house')})));
-  if(!(a.dayBoarding&&a.dayBoarding.length)&&!(a.houses&&a.houses.length))wrap.appendChild(sec(t('al_houses'),'',emptyState(t('coming_soon'),t('al_heritage_pending'))));
+  const hasP=a.housesPrep&&a.housesPrep.length,hasC=a.housesCollege&&a.housesCollege.length;
+  if(hasP)wrap.appendChild(sec(t('al_houses_prep'),t('al_houses_meta'),alTable(a.housesPrep,{label:t('al_house')})));
+  if(hasC)wrap.appendChild(sec(t('al_houses_college'),t('al_houses_meta'),alTable(a.housesCollege,{label:t('al_house')})));
+  if(!hasP&&!hasC&&a.houses&&a.houses.length)wrap.appendChild(sec(t('al_houses'),t('al_houses_meta'),alTable(a.houses,{label:t('al_house')})));
+  if(!hasP&&!hasC&&!(a.houses&&a.houses.length)&&!(a.dayBoarding&&a.dayBoarding.length))wrap.appendChild(sec(t('al_houses'),'',emptyState(t('coming_soon'),t('al_heritage_pending'))));
 }
 
 /* ── collapsible toggle ── */
@@ -1982,7 +1987,7 @@ const TTP={backgroundColor:'#213463',titleFont:{family:'Asap',size:12,weight:'70
 function hexA(hex,a){hex=String(hex).replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 const FLAG={Argentine:'🇦🇷',Argentina:'🇦🇷',American:'🇺🇸','United States':'🇺🇸',Chinese:'🇨🇳',China:'🇨🇳',Russian:'🇷🇺',Russia:'🇷🇺',Brazilian:'🇧🇷',Brazil:'🇧🇷',Chilean:'🇨🇱',Chile:'🇨🇱',Uruguayan:'🇺🇾',Uruguay:'🇺🇾',Spanish:'🇪🇸',Spain:'🇪🇸','United Kingdom':'🇬🇧',British:'🇬🇧',Mexican:'🇲🇽',Mexico:'🇲🇽',Italian:'🇮🇹',Italy:'🇮🇹',Australia:'🇦🇺',Australian:'🇦🇺',Bolivia:'🇧🇴',Bolivian:'🇧🇴',Paraguay:'🇵🇾',Paraguayan:'🇵🇾',Other:'🌐',Otros:'🌐'};
 function flag(n){return FLAG[n]||'🏳️';}
-const ISO2={Argentine:'ar',Argentina:'ar',American:'us','United States':'us',Chinese:'cn',China:'cn',Russian:'ru',Russia:'ru',Brazilian:'br',Brazil:'br',Chilean:'cl',Chile:'cl',Uruguayan:'uy',Uruguay:'uy',Spanish:'es',Spain:'es','United Kingdom':'gb',British:'gb',Mexican:'mx',Mexico:'mx',Italian:'it',Italy:'it',Australia:'au',Australian:'au',Bolivia:'bo',Bolivian:'bo',Paraguay:'py',Paraguayan:'py',France:'fr',French:'fr',Switzerland:'ch',Swiss:'ch',Netherlands:'nl',Dutch:'nl',Germany:'de',German:'de',Canada:'ca',Canadian:'ca',Belgium:'be',Belgian:'be',Portugal:'pt',Portuguese:'pt',Peru:'pe',Peruvian:'pe',Ecuador:'ec',Ecuadorian:'ec','New Zealand':'nz',Ireland:'ie','Ireland (Republic)':'ie',Irish:'ie',Luxembourg:'lu',Panama:'pa',Sweden:'se',Swedish:'se',Austria:'at',Austrian:'at',Colombia:'co',Colombian:'co',Venezuela:'ve',Venezuelan:'ve'};
+const ISO2={Argentine:'ar',Argentina:'ar',American:'us','United States':'us',Chinese:'cn',China:'cn',Russian:'ru',Russia:'ru',Brazilian:'br',Brazil:'br',Chilean:'cl',Chile:'cl',Uruguayan:'uy',Uruguay:'uy',Spanish:'es',Spain:'es','United Kingdom':'gb',British:'gb',Mexican:'mx',Mexico:'mx',Italian:'it',Italy:'it',Australia:'au',Australian:'au',Bolivia:'bo',Bolivian:'bo',Paraguay:'py',Paraguayan:'py',France:'fr',French:'fr',Switzerland:'ch',Swiss:'ch',Netherlands:'nl',Dutch:'nl',Germany:'de',German:'de',Canada:'ca',Canadian:'ca',Belgium:'be',Belgian:'be',Portugal:'pt',Portuguese:'pt',Peru:'pe',Peruvian:'pe',Ecuador:'ec',Ecuadorian:'ec','New Zealand':'nz',Ireland:'ie','Ireland (Republic)':'ie',Irish:'ie',Luxembourg:'lu',Panama:'pa',Sweden:'se',Swedish:'se',Austria:'at',Austrian:'at',Colombia:'co',Colombian:'co',Venezuela:'ve',Venezuelan:'ve','Ireland {Republic}':'ie',Denmark:'dk',Danish:'dk','Costa Rica':'cr','Dominican Republic':'do',Guatemala:'gt',Honduras:'hn',Aruba:'aw','United Arab Emirates':'ae',Belarus:'by',Zambia:'zm','Korea South':'kr','South Korea':'kr',Korean:'kr',Singapore:'sg',Armenia:'am',Indonesia:'id',Ukraine:'ua',Ukrainian:'ua',Japan:'jp',Japanese:'jp',India:'in',Indian:'in',Israel:'il'};
 // Inline SVG flags (self-contained — no external requests, work in locked-down networks)
 const FLAGSVG={
   ar:'<rect width="21" height="15" fill="#fff"/><rect width="21" height="5" fill="#74acdf"/><rect y="10" width="21" height="5" fill="#74acdf"/><circle cx="10.5" cy="7.5" r="1.5" fill="#f6b40e"/>',
@@ -2016,6 +2021,23 @@ const FLAGSVG={
   at:'<rect width="21" height="15" fill="#fff"/><rect width="21" height="5" fill="#ED2939"/><rect y="10" width="21" height="5" fill="#ED2939"/>',
   co:'<rect width="21" height="15" fill="#FCD116"/><rect y="7.5" width="21" height="3.75" fill="#003893"/><rect y="11.25" width="21" height="3.75" fill="#CE1126"/>',
   ve:'<rect width="21" height="15" fill="#CF142B"/><rect width="21" height="5" fill="#FFCC00"/><rect y="5" width="21" height="5" fill="#00247d"/>',
+  dk:'<rect width="21" height="15" fill="#C8102E"/><rect x="6" width="3" height="15" fill="#fff"/><rect y="6" width="21" height="3" fill="#fff"/>',
+  cr:'<rect width="21" height="15" fill="#002B7F"/><rect y="2.5" width="21" height="10" fill="#fff"/><rect y="5" width="21" height="5" fill="#CE1126"/>',
+  do:'<rect width="21" height="15" fill="#fff"/><rect width="9" height="6" fill="#002D62"/><rect x="12" width="9" height="6" fill="#CE1126"/><rect y="9" width="9" height="6" fill="#CE1126"/><rect x="12" y="9" width="9" height="6" fill="#002D62"/>',
+  gt:'<rect width="21" height="15" fill="#fff"/><rect width="7" height="15" fill="#4997D0"/><rect x="14" width="7" height="15" fill="#4997D0"/>',
+  hn:'<rect width="21" height="15" fill="#fff"/><rect width="21" height="5" fill="#0073CF"/><rect y="10" width="21" height="5" fill="#0073CF"/>',
+  aw:'<rect width="21" height="15" fill="#4EADE7"/><rect y="10.5" width="21" height="1.4" fill="#F9D616"/><rect y="12.4" width="21" height="1.4" fill="#F9D616"/>',
+  ae:'<rect width="21" height="5" fill="#00732F"/><rect y="5" width="21" height="5" fill="#fff"/><rect y="10" width="21" height="5" fill="#000"/><rect width="5" height="15" fill="#FF0000"/>',
+  by:'<rect width="21" height="15" fill="#C8313E"/><rect y="10" width="21" height="5" fill="#4AA657"/>',
+  zm:'<rect width="21" height="15" fill="#198A00"/><rect x="15" width="2" height="15" fill="#EF7D00"/><rect x="17" width="2" height="15" fill="#000"/><rect x="19" width="2" height="15" fill="#DE2010"/>',
+  kr:'<rect width="21" height="15" fill="#fff"/><circle cx="10.5" cy="7.5" r="3" fill="#CD2E3A"/><path d="M10.5 4.5a3 3 0 0 0 0 6 1.5 1.5 0 0 0 0-3 1.5 1.5 0 0 1 0-3z" fill="#0047A0"/>',
+  sg:'<rect width="21" height="15" fill="#EF3340"/><rect y="7.5" width="21" height="7.5" fill="#fff"/>',
+  am:'<rect width="21" height="5" fill="#D90012"/><rect y="5" width="21" height="5" fill="#0033A0"/><rect y="10" width="21" height="5" fill="#F2A800"/>',
+  id:'<rect width="21" height="15" fill="#CE1126"/><rect y="7.5" width="21" height="7.5" fill="#fff"/>',
+  ua:'<rect width="21" height="15" fill="#0057B7"/><rect y="7.5" width="21" height="7.5" fill="#FFD700"/>',
+  jp:'<rect width="21" height="15" fill="#fff"/><circle cx="10.5" cy="7.5" r="3.5" fill="#BC002D"/>',
+  in:'<rect width="21" height="5" fill="#FF9933"/><rect y="5" width="21" height="5" fill="#fff"/><rect y="10" width="21" height="5" fill="#138808"/><circle cx="10.5" cy="7.5" r="1.4" fill="none" stroke="#000080" stroke-width=".4"/>',
+  il:'<rect width="21" height="15" fill="#fff"/><rect y="2" width="21" height="2" fill="#0038B8"/><rect y="11" width="21" height="2" fill="#0038B8"/>',
 };
 function flagImg(name){
   const c=ISO2[name],s=c&&FLAGSVG[c];
