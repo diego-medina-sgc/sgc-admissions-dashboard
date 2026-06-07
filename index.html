@@ -777,6 +777,7 @@ const STRINGS={
     community:'Community Indicators',community_meta:'',
     s_enrolment:'Enrolment',s_enrolment_meta:'Status',
     s_breakdown:'Current Students Breakdown',s_breakdown_meta:'2026',col_studcap:'Students / Capacity',col_won26:'Won 2026',
+    s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Weekly',bd_full:'Full',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
     s_conv_funnel:'Conversion Funnel',s_conv_funnel_meta:'2021&ndash;2027',
@@ -878,6 +879,7 @@ const STRINGS={
     community:'Indicadores de Comunidad',community_meta:'',
     s_enrolment:'Matr&iacute;cula',s_enrolment_meta:'Estado',
     s_breakdown:'Detalle de Alumnos Actuales',s_breakdown_meta:'2026',col_studcap:'Alumnos / Capacidad',col_won26:'Won 2026',
+    s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Semanal',bd_full:'Completo',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
     s_conv_funnel:'Embudo de Conversi&oacute;n',s_conv_funnel_meta:'2021&ndash;2027',
@@ -1274,6 +1276,9 @@ function buildResumen(){
   // Current Students Breakdown — Students/Capacity by grade
   wrap.appendChild(sec(t('s_breakdown'),t('s_breakdown_meta'),buildKpiTable()));
 
+  // Boarding (Quilmes) — Weekly/Full by gender & Year Group; hidden on North
+  if(campus!=='n'){const bt=buildBoarding();if(bt)wrap.appendChild(sec(t('s_boarding'),t('s_boarding_meta'),bt));}
+
   // Charts
   if(D.resumen){
     const two=document.createElement('div');two.className='two';
@@ -1348,6 +1353,23 @@ function gradeCapacity(g){
   if(campus==='q')return fq?num(fq.capacidad):null;
   if(campus==='n')return fn?num(fn.capacidad):null;
   const a=fq?num(fq.capacidad):0,b=fn?num(fn.capacidad):0;return(a+b)>0?(a+b):null;
+}
+function buildBoarding(){
+  const src=(D.boarding||[]).filter(r=>campus==='q'?r.campus==='Quilmes':campus==='n'?false:true);
+  if(!src.length)return null;
+  const order=['K1','K2','K3','K4','K5','P1','P2','P3','P4','P5','P6','C1','C2','C3','C4','C5','C6'];
+  const map={};
+  src.forEach(r=>{const k=r.yg;if(!map[k])map[k]={yg:k,wM:0,wF:0,fM:0,fF:0};map[k].wM+=num(r.weeklyM);map[k].wF+=num(r.weeklyF);map[k].fM+=num(r.fullM);map[k].fF+=num(r.fullF);});
+  const list=Object.keys(map).map(k=>map[k]).sort((a,b)=>{const ia=order.indexOf(a.yg),ib=order.indexOf(b.yg);return (ia<0?99:ia)-(ib<0?99:ib);});
+  if(!list.length)return null;
+  const tw=document.createElement('div');tw.className='tw';
+  const MS='&#9794;',FS='&#9792;';
+  let h='<table><thead><tr><th>'+t('col_yeargroup')+'</th><th class="r">'+t('bd_weekly')+' '+MS+'</th><th class="r">'+t('bd_weekly')+' '+FS+'</th><th class="r">'+t('bd_full')+' '+MS+'</th><th class="r">'+t('bd_full')+' '+FS+'</th><th class="r">'+t('total_lbl')+'</th></tr></thead><tbody>';
+  let tWM=0,tWF=0,tFM=0,tFF=0;
+  list.forEach(r=>{const tot=r.wM+r.wF+r.fM+r.fF;tWM+=r.wM;tWF+=r.wF;tFM+=r.fM;tFF+=r.fF;h+='<tr><td style="font-weight:600">'+escHtml(r.yg)+'</td><td class="r">'+fN(r.wM)+'</td><td class="r">'+fN(r.wF)+'</td><td class="r">'+fN(r.fM)+'</td><td class="r">'+fN(r.fF)+'</td><td class="r" style="font-weight:700">'+fN(tot)+'</td></tr>';});
+  const gt=tWM+tWF+tFM+tFF;
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(tWM)+'</td><td class="r">'+fN(tWF)+'</td><td class="r">'+fN(tFM)+'</td><td class="r">'+fN(tFF)+'</td><td class="r">'+fN(gt)+'</td></tr>';
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 function buildKpiTable(){
   const cd=getCampusData();if(!cd)return document.createElement('div');
