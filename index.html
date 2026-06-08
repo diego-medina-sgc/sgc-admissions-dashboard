@@ -788,6 +788,7 @@ const STRINGS={
     col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
     view_table:'Table',view_chart:'Chart',col_forecast:'Forecast Won',col_gap:'Gap vs 2026',
     forecast_note:'Estimated 2027 intake from the active pipeline, weighting each prospect by the <b>historical conversion rate</b> of its stage (Visit&rarr;Won and Application&rarr;Won) per campus &amp; level. Only prospects past Visit count, so <b>early in the cycle the forecast (and the Gap vs 2026) is naturally low</b> &mdash; it rises as the funnel advances. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;&lt;100% &middot; 🔴 &lt;80%.',
+    forecast_note_open:'Current cycle ({y}) &mdash; still open until Aug/Sep. Shows the <b>additional students that can still enter</b> from the active pipeline, weighting each prospect by the <b>historical conversion rate</b> of its stage per campus &amp; level. These are incremental late entries (no prior-year target applies).',
     s_historical_cr:'Historical Conversion Rate',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Conversion Pipeline',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Conversion Rate per Channel',s_channel_meta:'Source attribution',
@@ -890,6 +891,7 @@ const STRINGS={
     col_inquiries:'Inquiries',col_visit_n:'Visit',col_appl_n:'Application',col_yield_n:'Yield',
     view_table:'Tabla',view_chart:'Gr&aacute;fico',col_forecast:'Forecast Won',col_gap:'Gap vs 2026',
     forecast_note:'Ingreso 2027 estimado desde el pipeline activo, ponderando cada prospecto por la <b>tasa de conversi&oacute;n hist&oacute;rica</b> de su etapa (Visit&rarr;Won y Application&rarr;Won) por campus y nivel. Solo cuentan los prospectos que pasaron Visit, as&iacute; que <b>al inicio del ciclo el forecast (y el Gap vs 2026) es naturalmente bajo</b> &mdash; sube a medida que avanza el funnel. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;&lt;100% &middot; 🔴 &lt;80%.',
+    forecast_note_open:'Ciclo en curso ({y}) &mdash; abierto hasta ago/sep. Muestra los <b>alumnos adicionales que todav&iacute;a pueden ingresar</b> desde el pipeline activo, ponderando cada prospecto por la <b>tasa de conversi&oacute;n hist&oacute;rica</b> de su etapa por campus y nivel. Son ingresos tard&iacute;os incrementales (no aplica objetivo vs a&ntilde;o previo).',
     s_historical_cr:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_historical_cr_meta:'2021&ndash;2026',
     s_conv_pipeline:'Embudo de Conversi&oacute;n',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
     s_channel:'Tasa de Conversi&oacute;n por Canal',s_channel_meta:'Atribuci&oacute;n de origen',
@@ -1428,7 +1430,8 @@ function buildAdmissions(){
   if(!fcYears.length)fcYears.push(2027);
   if(fcYear==null||fcYears.indexOf(fcYear)<0)fcYear=fcYears[fcYears.length-1];
   const fcWrap=document.createElement('div');
-  fcWrap.appendChild(elFromHTML('<div class="info-note"><svg width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('forecast_note')+'</span></div>').firstChild);
+  const fcNote=fcIsBuildYear()?t('forecast_note'):t('forecast_note_open').replace('{y}',fcYear);
+  fcWrap.appendChild(elFromHTML('<div class="info-note"><svg width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+fcNote+'</span></div>').firstChild);
   fcWrap.appendChild(buildOccupancy());
   const fcSec=document.createElement('div');fcSec.className='sec';
   let fcPills='';
@@ -1566,6 +1569,11 @@ function buildChannel(){
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
 
+function fcIsBuildYear(){
+  const yrs=(D.occupancy||[]).map(r=>r.yr).filter(y=>y!=null);
+  if(!yrs.length)return true;
+  return fcYear===Math.max.apply(null,yrs);
+}
 function buildOccupancy(){
   // Official OUT_admissions_occupancy — Weighted Pipeline Forecast
   if(D.occupancy&&D.occupancy.length){
@@ -1577,11 +1585,13 @@ function buildOccupancy(){
     const lblNew=(lang==='es'?'Nuevos ':'New ')+_prev;
     const lblGap='Gap vs '+_prev;
     const hasForecast=rows.some(r=>r.forecast!=null);
+    const build=fcIsBuildYear();   // año "objetivo" (el mayor) muestra comparativa vs año previo; el ciclo en curso no
     const tw0=document.createElement('div');tw0.className='tw';
     if(hasForecast){
       const fcArr='<span class="fc-arrow">&#10142;</span>';
-      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
-      rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);h0+='<tr class="'+(sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td><td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';});
+      const cmpHead=build?('<th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th>'):'';
+      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th>'+cmpHead+'</tr></thead><tbody>';
+      rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);const cmpCells=build?('<td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td>'):'';h0+='<tr class="'+(build&&sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td>'+cmpCells+'</tr>';});
       h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
     }
     // legacy rate-based layout (pre-forecast sheet)
