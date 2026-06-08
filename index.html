@@ -991,6 +991,7 @@ let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 let adsMonth=null,adsSort='clicks';
 let alView='community';
+let fcYear=null;
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
@@ -1422,10 +1423,19 @@ function buildAdmissions(){
   ])));
 
   wrap.appendChild(buildConvFunnel());
+  // Forecast year toggle (2026/2027) — years available from occupancy data
+  const fcYears=Array.from(new Set((D.occupancy||[]).map(r=>r.yr).filter(y=>y!=null))).sort((a,b)=>a-b);
+  if(!fcYears.length)fcYears.push(2027);
+  if(fcYear==null||fcYears.indexOf(fcYear)<0)fcYear=fcYears[fcYears.length-1];
   const fcWrap=document.createElement('div');
   fcWrap.appendChild(elFromHTML('<div class="info-note"><svg width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('forecast_note')+'</span></div>').firstChild);
   fcWrap.appendChild(buildOccupancy());
-  wrap.appendChild(sec(t('s_forecast'),t('s_forecast_meta'),fcWrap));
+  const fcSec=document.createElement('div');fcSec.className='sec';
+  let fcPills='';
+  if(fcYears.length>1)fcPills='<div class="cycle-pills" style="margin-left:auto">'+fcYears.map(y=>'<button class="cycle-pill'+(fcYear===y?' active':'')+'" onclick="fcYear='+y+';render()">'+y+'</button>').join('')+'</div>';
+  fcSec.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_forecast')+'</span><span class="sec-meta">'+fcYear+'</span>'+fcPills+'</div>';
+  fcSec.appendChild(fcWrap);
+  wrap.appendChild(fcSec);
 
   // Historical Conversion Rate — Opportunities + table/chart toggle
   if(D.winrate){
@@ -1560,13 +1570,17 @@ function buildOccupancy(){
   // Official OUT_admissions_occupancy — Weighted Pipeline Forecast
   if(D.occupancy&&D.occupancy.length){
     const campName=campus==='q'?'Quilmes':campus==='n'?'North':null;
-    const rows=D.occupancy.filter(r=>campName?r.campus===campName:true);
+    const rows=D.occupancy.filter(r=>(campName?r.campus===campName:true)&&(r.yr==null||r.yr===fcYear));
     const showCamp=!campName;
+    const _py=fcYear||2027,_prev=_py-1;
+    const lblProsp=(lang==='es'?'Prospectos ':'Prospects ')+_py;
+    const lblNew=(lang==='es'?'Nuevos ':'New ')+_prev;
+    const lblGap='Gap vs '+_prev;
     const hasForecast=rows.some(r=>r.forecast!=null);
     const tw0=document.createElement('div');tw0.className='tw';
     if(hasForecast){
       const fcArr='<span class="fc-arrow">&#10142;</span>';
-      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+t('col_prosp27_act')+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">'+t('col_new26')+'</th><th class="r">'+t('col_gap')+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
+      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th></tr></thead><tbody>';
       rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);h0+='<tr class="'+(sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td><td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td></tr>';});
       h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
     }
