@@ -773,6 +773,12 @@ const STRINGS={
     ph_retention:'Retention &amp; Community',ph_retention_sub:'Loyalty, cohorts &amp; community profile',
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
+    pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',
+    pd_note:'2027 cohort projection by class. Adjust <b>Projected</b> (per year group), <b>Capacity</b> (per class) and <b>Teachers</b> (per year group) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Class-level projection distributes the year-group total by each class&rsquo;s 2026 weight. &#9888; marks classes projected above capacity.',
+    pd_pending:'Cohort/Teachers data pending in CALC_projection_detail',
+    pd_reset:'Reset adjustments',pd_salon:'Year Group / Class',pd_2027:'2027 (Projected)',
+    pd_students:'Students',pd_teachers:'Teachers',pd_ratio:'Ratio',pd_proy:'Projected',pd_cap:'Capacity',pd_delta:'&Delta; vs 2026 (class)',
+    quilmes_table_pd:'Quilmes &mdash; Cohort / Teachers',north_table_pd:'North &mdash; Cohort / Teachers',
     ph_alumni:'Alumni',ph_alumni_sub:'Old Georgian community',
     headline:'Key Highlights',headline_meta:'',
     community:'Community Indicators',community_meta:'',
@@ -876,6 +882,12 @@ const STRINGS={
     ph_retention:'Retenci&oacute;n y Comunidad',ph_retention_sub:'Fidelizaci&oacute;n, camadas y comunidad',
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
+    pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',
+    pd_note:'Proyecci&oacute;n de cohortes 2027 por sal&oacute;n. Ajust&aacute; <b>Proyectado</b> (por grado), <b>Capacidad</b> (por sal&oacute;n) y <b>Teachers</b> (por grado) para probar el <b>ratio alumnos/docente</b> resultante y la <b>&Delta; vs 2026 por sal&oacute;n</b>. La proyecci&oacute;n por sal&oacute;n distribuye el total del grado seg&uacute;n el peso 2026 de cada sal&oacute;n. &#9888; marca salones proyectados por encima de la capacidad.',
+    pd_pending:'Datos de Cohortes/Teachers pendientes en CALC_projection_detail',
+    pd_reset:'Restablecer ajustes',pd_salon:'Grado / Sal&oacute;n',pd_2027:'2027 (Proyectado)',
+    pd_students:'Alumnos',pd_teachers:'Teachers',pd_ratio:'Ratio',pd_proy:'Proyectado',pd_cap:'Capacidad',pd_delta:'&Delta; vs 2026 (sal&oacute;n)',
+    quilmes_table_pd:'Quilmes &mdash; Cohortes / Teachers',north_table_pd:'North &mdash; Cohortes / Teachers',
     ph_alumni:'Alumni',ph_alumni_sub:'Comunidad Old Georgian',
     headline:'Indicadores Clave',headline_meta:'',
     community:'Indicadores de Comunidad',community_meta:'',
@@ -994,6 +1006,7 @@ let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 let adsMonth=null,adsSort='clicks';
 let alView='community';
 let fcYear=null;
+let projView='billing',pdAdj={};
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
@@ -1857,6 +1870,12 @@ function updateSimDisplay(){
 function buildProyeccion(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
+  // View toggle: Billing by Year Group | Cohort/Teachers Projection
+  const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]];
+  const pvBar=document.createElement('div');pvBar.style.cssText='display:flex;justify-content:flex-end;margin:-6px 0 16px;';
+  pvBar.innerHTML='<div class="cycle-pills" style="flex-wrap:wrap">'+views.map(v=>'<button class="cycle-pill'+(projView===v[0]?' active':'')+'" onclick="projView=\''+v[0]+'\';render()">'+v[1]+'</button>').join('')+'</div>';
+  wrap.appendChild(pvBar);
+  if(projView==='cohort'){buildTeachersProj(wrap);return wrap;}
   const py=D.proyeccion;
   if(!py){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
   const qT=calcSimTotal('q'),nT=calcSimTotal('n');
@@ -1898,6 +1917,63 @@ function mkAdjTable(title,ck,rows,color){
   });
   h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(tBase)+'</td><td class="r">'+fN(tProy)+'</td><td class="r">&mdash;</td><td class="r" style="font-weight:700;color:'+color+'" id="tot-final-'+ck+'">'+tFinal.toLocaleString('es-AR')+'</td><td class="r"><strong>'+fN(tCap)+'</strong></td>'+(showFact?'<td class="r val-usd fact-col" id="tot-fact-'+ck+'">'+fUSD(tFact)+'</td>':'')+'</tr>';
   h+='</tbody></table></div></div>';return h;
+}
+/* ── Cohort / Teachers Projection (CALC_projection_detail enriquecida) ── */
+function pdGet(key,def){const v=pdAdj[key];return (v===undefined||v===null||v==='')?def:v;}
+function pdSet(key,val){
+  const n=parseFloat(val);
+  if(val===''||isNaN(n))delete pdAdj[key];else pdAdj[key]=n;
+  render();
+}
+function pdRatio(al,te){if(!te||te<=0)return'&mdash;';return (al/te).toFixed(1);}
+function buildTeachersProj(wrap){
+  const det=D.proyeccionDetalle||[];
+  if(!det.length||det[0].teachers26===undefined){wrap.appendChild(emptyState(t('coming_soon'),t('pd_pending')));return;}
+  wrap.appendChild(elFromHTML('<div class="info-note"><svg width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('pd_note')+'</span></div>').firstChild);
+  const rst=document.createElement('div');rst.className='sim-controls';
+  rst.innerHTML='<button class="sim-btn" onclick="pdAdj={};render()">'+t('pd_reset')+'</button>';
+  wrap.appendChild(rst);
+  const campuses=campus==='q'?['Quilmes']:campus==='n'?['North']:['Quilmes','North'];
+  campuses.forEach(cn=>{
+    const rows=det.filter(d=>d.campus===cn);
+    if(!rows.length)return;
+    const color=cn==='Quilmes'?'#DC1E33':'#213463';
+    // group by grado preserving order
+    const grades=[];const map={};
+    rows.forEach(d=>{if(!map[d.grado]){map[d.grado]=[];grades.push(d.grado);}map[d.grado].push(d);});
+    let h='<div style="margin-bottom:26px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+(cn==='Quilmes'?t('quilmes_table_pd'):t('north_table_pd'))+'</div><div class="tw"><table>';
+    h+='<thead><tr><th rowspan="2" style="vertical-align:bottom">'+t('pd_salon')+'</th><th colspan="3" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">2026</th><th colspan="5" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">'+t('pd_2027')+'</th></tr>';
+    h+='<tr><th class="r">'+t('pd_students')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th><th class="r">'+t('pd_proy')+'</th><th class="r">'+t('pd_cap')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th><th class="r">'+t('pd_delta')+'</th></tr></thead><tbody>';
+    let tAl26=0,tT26=0,tProy=0,tCap=0,tT27=0;
+    grades.forEach(g=>{
+      const list=map[g];const f=list[0];
+      const alG=num(f.gradoTotal2026)||list.reduce((a,d)=>a+num(d.alumnos2026),0);
+      const t26=num(f.teachers26);
+      const kP='g_'+cn+'_'+g+'_proy',kT='g_'+cn+'_'+g+'_teach';
+      const proyG=pdGet(kP,num(f.proyGrado));
+      const t27=pdGet(kT,f.teachers27!=null?num(f.teachers27):null);
+      const capG=list.reduce((a,d)=>a+num(pdGet('s_'+d.salon+'_cap',num(d.capacidad))),0);
+      const dG=Math.round(proyG)-alG;
+      tAl26+=alG;tT26+=t26;tProy+=num(proyG);tCap+=capG;tT27+=num(t27);
+      const inp=(key,val,w)=>'<input class="adj-input" style="width:'+(w||58)+'px" type="number" min="0" value="'+(val==null?'':val)+'" onchange="pdSet(\''+key+'\',this.value)"/>';
+      h+='<tr class="tot"><td style="font-weight:700">'+escHtml(g)+'</td><td class="r"><strong>'+fN(alG)+'</strong></td><td class="r">'+(t26>0?fN(t26):'&mdash;')+'</td><td class="r">'+pdRatio(alG,t26)+'</td>'
+        +'<td class="r">'+inp(kP,proyG)+'</td><td class="r">'+fN(capG)+'</td><td class="r">'+inp(kT,t27,48)+'</td><td class="r" style="font-weight:700">'+pdRatio(proyG,t27)+'</td><td class="r '+(dG>0?'val-pos':dG<0?'val-neg':'')+'">'+fSign(dG)+'</td></tr>';
+      list.forEach(d=>{
+        const kC='s_'+d.salon+'_cap';
+        const cap=pdGet(kC,num(d.capacidad));
+        const peso=num(d.peso);
+        const pS=Math.round(num(proyG)*peso);
+        const dd=pS-num(d.alumnos2026);
+        const over=cap>0&&pS>cap;
+        h+='<tr><td style="padding-left:26px;color:var(--gray)">'+escHtml(d.salon)+'</td><td class="r">'+fN(d.alumnos2026)+'</td><td class="r"></td><td class="r"></td>'
+          +'<td class="r'+(over?' val-neg':'')+'" style="font-weight:600">'+fN(pS)+(over?' &#9888;':'')+'</td><td class="r"><input class="adj-input" style="width:52px" type="number" min="0" value="'+(cap||'')+'" onchange="pdSet(\''+kC+'\',this.value)"/></td><td class="r"></td><td class="r"></td><td class="r '+(dd>0?'val-pos':dd<0?'val-neg':'')+'">'+fSign(dd)+'</td></tr>';
+      });
+    });
+    const tD=Math.round(tProy)-tAl26;
+    h+='<tr class="ctot '+(cn==='Quilmes'?'ctot-q':'ctot-n')+'"><td>'+t('total_lbl')+' '+escHtml(cn)+'</td><td class="r">'+fN(tAl26)+'</td><td class="r">'+(tT26>0?fN(tT26):'&mdash;')+'</td><td class="r">'+pdRatio(tAl26,tT26)+'</td><td class="r"><strong>'+fN(tProy)+'</strong></td><td class="r">'+fN(tCap)+'</td><td class="r">'+(tT27>0?fN(tT27):'&mdash;')+'</td><td class="r">'+pdRatio(tProy,tT27)+'</td><td class="r '+(tD>0?'val-pos':tD<0?'val-neg':'')+'">'+fSign(tD)+'</td></tr>';
+    h+='</tbody></table></div></div>';
+    wrap.appendChild(elFromHTML(h).firstChild);
+  });
 }
 function buildClassroom(){
   const det=D.proyeccionDetalle||[];
