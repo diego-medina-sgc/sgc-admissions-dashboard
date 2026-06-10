@@ -781,8 +781,9 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',
-    pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. &#9888; marks classes projected above capacity.',
+    pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. In <b>College</b> there are no fixed classes &mdash; students rotate across subject sets &mdash; so Teachers and Ratio are computed on the <b>College total</b>. &#9888; marks classes projected above capacity.',
     pd_pending:'Cohort/Teachers data pending in CALC_projection_detail',
+    pd_college_total:'College (total)',
     pd_expand:'Expand all',pd_collapse:'Collapse all',
     pd_reset:'Reset adjustments',pd_salon:'Year Group / Class',pd_2027:'2027 (Projected)',
     pd_students:'Students',pd_teachers:'Teachers',pd_ratio:'Ratio',pd_proy:'Projected',pd_cap:'Capacity',pd_delta:'&Delta; vs 2026 (class)',
@@ -891,8 +892,9 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
     pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',
-    pd_note:'Proyecci&oacute;n de cohortes 2027 por sal&oacute;n. Ajust&aacute; <b>Proyectado</b>, <b>Capacidad</b> y <b>Teachers</b> por sal&oacute;n (los valores por defecto vienen pre-cargados del sheet) para probar el <b>ratio alumnos/docente</b> resultante y la <b>&Delta; vs 2026 por sal&oacute;n</b>. Los totales por grado se recalculan como la <b>suma de sus salones</b>. &#9888; marca salones proyectados por encima de la capacidad.',
+    pd_note:'Proyecci&oacute;n de cohortes 2027 por sal&oacute;n. Ajust&aacute; <b>Proyectado</b>, <b>Capacidad</b> y <b>Teachers</b> por sal&oacute;n (los valores por defecto vienen pre-cargados del sheet) para probar el <b>ratio alumnos/docente</b> resultante y la <b>&Delta; vs 2026 por sal&oacute;n</b>. Los totales por grado se recalculan como la <b>suma de sus salones</b>. En <b>College</b> no hay salones fijos &mdash; los alumnos rotan por materias y niveles (sets) &mdash; por eso Teachers y Ratio se calculan sobre el <b>total de College</b>. &#9888; marca salones proyectados por encima de la capacidad.',
     pd_pending:'Datos de Cohortes/Teachers pendientes en CALC_projection_detail',
+    pd_college_total:'College (total)',
     pd_expand:'Expandir todo',pd_collapse:'Colapsar todo',
     pd_reset:'Restablecer ajustes',pd_salon:'Grado / Sal&oacute;n',pd_2027:'2027 (Proyectado)',
     pd_students:'Alumnos',pd_teachers:'Teachers',pd_ratio:'Ratio',pd_proy:'Proyectado',pd_cap:'Capacidad',pd_delta:'&Delta; vs 2026 (sal&oacute;n)',
@@ -1953,7 +1955,9 @@ function buildTeachersProj(wrap){
   const inp=(key,val,w)=>'<input class="adj-input" style="width:'+(w||54)+'px" type="number" min="0" step="any" value="'+(val==null||val===''?'':val)+'" onclick="event.stopPropagation()" onchange="pdSet(\''+key+'\',this.value)"/>';
   const campuses=campus==='q'?['Quilmes']:campus==='n'?['North']:['Quilmes','North'];
   campuses.forEach(cn=>{
-    const rows=det.filter(d=>d.campus===cn);
+    const all=det.filter(d=>d.campus===cn);
+    const secTot={};all.filter(d=>d.salon==='__TOT__').forEach(d=>{secTot[d.seccion]=d;});
+    const rows=all.filter(d=>d.salon!=='__TOT__');
     if(!rows.length)return;
     const color=cn==='Quilmes'?'#DC1E33':'#213463';
     // group by grado preserving order
@@ -1962,9 +1966,26 @@ function buildTeachersProj(wrap){
     let h='<div style="margin-bottom:26px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+(cn==='Quilmes'?t('quilmes_table_pd'):t('north_table_pd'))+'</div><div class="tw"><table>';
     h+='<thead><tr><th rowspan="2" style="vertical-align:bottom">'+t('pd_salon')+'</th><th colspan="3" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">2026</th><th colspan="4" class="pd-hsep" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">'+t('pd_2027')+'</th><th rowspan="2" class="r" style="vertical-align:bottom">'+t('pd_delta')+'</th></tr>';
     h+='<tr><th class="r">'+t('pd_students')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th><th class="r pd-hsep">'+t('pd_proy')+'</th><th class="r">'+t('pd_cap')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th></tr></thead><tbody>';
-    let tAl26=0,tT26=0,tProy=0,tCap=0,tT27=0;
+    let tAl26=0,tT26=0,tProy=0,tCap=0,tT27=0,colAl=0,colProy=0,colCap=0;
     grades.forEach(g=>{
       const list=map[g];const f=list[0];
+      // College: divisiones únicas, sin salones fijos (sets por materia) — fila simple, teachers a nivel College
+      if(f.seccion==='College'){
+        const kP='s_'+f.salon+'_proy',kC='s_'+f.salon+'_cap';
+        const p=num(pdGet(kP,num(f.proySalon)));
+        const cDef=f.capacidad!=null?num(f.capacidad):null;
+        const cv=pdGet(kC,cDef);const c=cv==null?0:num(cv);
+        const alG=num(f.gradoTotal2026)||num(f.alumnos2026);
+        const dd=Math.round(p)-alG;const over=c>0&&p>c;
+        tAl26+=alG;tProy+=p;tCap+=c;colAl+=alG;colProy+=p;colCap+=c;
+        h+='<tr><td style="font-weight:700">'+escHtml(g)+'</td>'
+          +'<td class="r pd-c26"><strong>'+fN(alG)+'</strong></td><td class="r pd-c26">&mdash;</td><td class="r pd-c26">&mdash;</td>'
+          +'<td class="r pd-c27 pd-sep'+(over?' val-neg':'')+'">'+inp(kP,p)+(over?' &#9888;':'')+'</td>'
+          +'<td class="r pd-c27">'+inp(kC,cv==null?'':c,50)+'</td>'
+          +'<td class="r pd-c27">&mdash;</td><td class="r pd-c27">&mdash;</td>'
+          +'<td class="r '+(dd>0?'val-pos':dd<0?'val-neg':'')+'">'+fSign(dd)+'</td></tr>';
+        return;
+      }
       const gid='pd-'+cn+'-'+g;
       const coll=!!pdColl[gid];
       // per-class adjusted values; year-group totals = sum of classes
@@ -1997,6 +2018,21 @@ function buildTeachersProj(wrap){
         +'<td class="r '+(dG>0?'val-pos':dG<0?'val-neg':'')+'">'+fSign(dG)+'</td></tr>';
       h+=rowsH;
     });
+    // College — teachers y ratio a nivel sección (sets por materia, no salones)
+    const cs=secTot['College'];
+    if(cs&&colAl>0){
+      const kT='sec_'+cn+'_College_teach';
+      const t26c=cs.teachers26!=null?num(cs.teachers26):0;
+      const t27v=pdGet(kT,cs.teachers27!=null?num(cs.teachers27):null);
+      if(t26c>0)tT26+=t26c;
+      if(t27v!=null&&t27v!=='')tT27+=num(t27v);
+      const cD=Math.round(colProy)-colAl;
+      h+='<tr class="tot"><td style="font-weight:700">'+t('pd_college_total')+'</td>'
+        +'<td class="r pd-c26"><strong>'+fN(colAl)+'</strong></td><td class="r pd-c26">'+(t26c>0?String(cs.teachers26):'&mdash;')+'</td><td class="r pd-c26">'+pdRatio(colAl,t26c)+'</td>'
+        +'<td class="r pd-c27 pd-sep" style="font-weight:700">'+fN(Math.round(colProy))+'</td><td class="r pd-c27">'+fN(colCap)+'</td>'
+        +'<td class="r pd-c27">'+inp(kT,t27v,46)+'</td><td class="r pd-c27" style="font-weight:700">'+pdRatio(colProy,t27v)+'</td>'
+        +'<td class="r '+(cD>0?'val-pos':cD<0?'val-neg':'')+'">'+fSign(cD)+'</td></tr>';
+    }
     const tD=Math.round(tProy)-tAl26;
     h+='<tr class="ctot '+(cn==='Quilmes'?'ctot-q':'ctot-n')+'"><td>'+t('total_lbl')+' '+escHtml(cn)+'</td><td class="r">'+fN(tAl26)+'</td><td class="r">'+(tT26>0?fN(tT26):'&mdash;')+'</td><td class="r">'+pdRatio(tAl26,tT26)+'</td><td class="r pd-sep"><strong>'+fN(Math.round(tProy))+'</strong></td><td class="r">'+fN(tCap)+'</td><td class="r">'+(tT27>0?fN(tT27):'&mdash;')+'</td><td class="r">'+pdRatio(tProy,tT27)+'</td><td class="r '+(tD>0?'val-pos':tD<0?'val-neg':'')+'">'+fSign(tD)+'</td></tr>';
     h+='</tbody></table></div></div>';
@@ -2004,7 +2040,7 @@ function buildTeachersProj(wrap){
   });
 }
 function buildClassroom(){
-  const det=D.proyeccionDetalle||[];
+  const det=(D.proyeccionDetalle||[]).filter(d=>d.salon!=='__TOT__');
   // group by campus->grado (ordered)
   const tw=document.createElement('div');tw.className='tw';
   let h='<table><thead><tr><th>'+t('col_salon')+'</th><th class="r">'+t('col_2026')+'</th><th class="r">'+t('col_weight')+'</th><th class="r">'+t('col_proy27')+'</th><th class="r">'+t('col_delta')+'</th></tr></thead><tbody>';
