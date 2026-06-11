@@ -781,7 +781,7 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',
-    pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. In <b>College</b> there are no fixed classes &mdash; students rotate across subject sets &mdash; so Teachers and Ratio are computed on the <b>College total</b>. &#9888; marks classes projected above capacity.',
+    pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. In <b>College</b> there are no fixed classes &mdash; students rotate across subject sets &mdash; so Teachers and Ratio are tracked on the <b>College total</b>; per-grade Teachers start empty for what-if testing. &#9888; marks classes projected above capacity.',
     pd_pending:'Cohort/Teachers data pending in CALC_projection_detail',
     pd_college_total:'College (total)',
     pd_expand:'Expand all',pd_collapse:'Collapse all',
@@ -1966,23 +1966,28 @@ function buildTeachersProj(wrap){
     let h='<div style="margin-bottom:26px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+(cn==='Quilmes'?t('quilmes_table_pd'):t('north_table_pd'))+'</div><div class="tw"><table>';
     h+='<thead><tr><th rowspan="2" style="vertical-align:bottom">'+t('pd_salon')+'</th><th colspan="3" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">2026</th><th colspan="4" class="pd-hsep" style="text-align:center;border-bottom:1px solid rgba(255,255,255,.25)">'+t('pd_2027')+'</th><th rowspan="2" class="r" style="vertical-align:bottom">'+t('pd_delta')+'</th></tr>';
     h+='<tr><th class="r">'+t('pd_students')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th><th class="r pd-hsep">'+t('pd_proy')+'</th><th class="r">'+t('pd_cap')+'</th><th class="r">'+t('pd_teachers')+'</th><th class="r">'+t('pd_ratio')+'</th></tr></thead><tbody>';
-    let tAl26=0,tT26=0,tProy=0,tCap=0,tT27=0,colAl=0,colProy=0,colCap=0;
+    let tAl26=0,tT26=0,tProy=0,tCap=0,tT27=0,colAl=0,colProy=0,colCap=0,colRows='';
+    const colGid='pd-'+cn+'-College';
+    const colColl=!!pdColl[colGid];
     grades.forEach(g=>{
       const list=map[g];const f=list[0];
-      // College: divisiones únicas, sin salones fijos (sets por materia) — fila simple, teachers a nivel College
+      // College: grupo colapsable único — sin salones fijos (sets por materia); teachers por grado para what-if (default vacío)
       if(f.seccion==='College'){
-        const kP='s_'+f.salon+'_proy',kC='s_'+f.salon+'_cap';
+        const kP='s_'+f.salon+'_proy',kC='s_'+f.salon+'_cap',kT='s_'+f.salon+'_teach';
         const p=num(pdGet(kP,num(f.proySalon)));
         const cDef=f.capacidad!=null?num(f.capacidad):null;
         const cv=pdGet(kC,cDef);const c=cv==null?0:num(cv);
+        const tt=pdGet(kT,f.teachers27!=null?num(f.teachers27):null);
         const alG=num(f.gradoTotal2026)||num(f.alumnos2026);
         const dd=Math.round(p)-alG;const over=c>0&&p>c;
         tAl26+=alG;tProy+=p;tCap+=c;colAl+=alG;colProy+=p;colCap+=c;
-        h+='<tr><td style="font-weight:700">'+escHtml(g)+'</td>'
-          +'<td class="r pd-c26"><strong>'+fN(alG)+'</strong></td><td class="r pd-c26">&mdash;</td><td class="r pd-c26">&mdash;</td>'
+        colRows+='<tr class="salon-row '+colGid+'" style="display:'+(colColl?'none':'')+'">'
+          +'<td style="padding-left:26px;color:var(--gray);font-weight:600">'+escHtml(g)+'</td>'
+          +'<td class="r pd-c26">'+fN(alG)+'</td><td class="r pd-c26">&mdash;</td><td class="r pd-c26">&mdash;</td>'
           +'<td class="r pd-c27 pd-sep'+(over?' val-neg':'')+'">'+inp(kP,p)+(over?' &#9888;':'')+'</td>'
           +'<td class="r pd-c27">'+inp(kC,cv==null?'':c,50)+'</td>'
-          +'<td class="r pd-c27">&mdash;</td><td class="r pd-c27">&mdash;</td>'
+          +'<td class="r pd-c27">'+inp(kT,tt,46)+'</td>'
+          +'<td class="r pd-c27">'+pdRatio(p,tt)+'</td>'
           +'<td class="r '+(dd>0?'val-pos':dd<0?'val-neg':'')+'">'+fSign(dd)+'</td></tr>';
         return;
       }
@@ -2018,20 +2023,20 @@ function buildTeachersProj(wrap){
         +'<td class="r '+(dG>0?'val-pos':dG<0?'val-neg':'')+'">'+fSign(dG)+'</td></tr>';
       h+=rowsH;
     });
-    // College — teachers y ratio a nivel sección (sets por materia, no salones)
+    // College — grupo colapsable: header = totales de sección (teachers de las filas TOTAL del sheet), hijos = C1..C6
     const cs=secTot['College'];
-    if(cs&&colAl>0){
+    if(colRows){
       const kT='sec_'+cn+'_College_teach';
-      const t26c=cs.teachers26!=null?num(cs.teachers26):0;
-      const t27v=pdGet(kT,cs.teachers27!=null?num(cs.teachers27):null);
+      const t26c=(cs&&cs.teachers26!=null)?num(cs.teachers26):0;
+      const t27v=pdGet(kT,(cs&&cs.teachers27!=null)?num(cs.teachers27):null);
       if(t26c>0)tT26+=t26c;
       if(t27v!=null&&t27v!=='')tT27+=num(t27v);
       const cD=Math.round(colProy)-colAl;
-      h+='<tr class="tot"><td style="font-weight:700">'+t('pd_college_total')+'</td>'
-        +'<td class="r pd-c26"><strong>'+fN(colAl)+'</strong></td><td class="r pd-c26">'+(t26c>0?String(cs.teachers26):'&mdash;')+'</td><td class="r pd-c26">'+pdRatio(colAl,t26c)+'</td>'
+      h+='<tr class="tot gtog pd-grp'+(colColl?'':' open')+'" data-gid="'+colGid+'" onclick="pdToggle(\''+colGid+'\',this)"><td style="font-weight:700"><span class="gcaret"></span>'+t('pd_college_total')+'</td>'
+        +'<td class="r pd-c26"><strong>'+fN(colAl)+'</strong></td><td class="r pd-c26">'+(t26c>0?String(t26c):'&mdash;')+'</td><td class="r pd-c26">'+pdRatio(colAl,t26c)+'</td>'
         +'<td class="r pd-c27 pd-sep" style="font-weight:700">'+fN(Math.round(colProy))+'</td><td class="r pd-c27">'+fN(colCap)+'</td>'
         +'<td class="r pd-c27">'+inp(kT,t27v,46)+'</td><td class="r pd-c27" style="font-weight:700">'+pdRatio(colProy,t27v)+'</td>'
-        +'<td class="r '+(cD>0?'val-pos':cD<0?'val-neg':'')+'">'+fSign(cD)+'</td></tr>';
+        +'<td class="r '+(cD>0?'val-pos':cD<0?'val-neg':'')+'">'+fSign(cD)+'</td></tr>'+colRows;
     }
     const tD=Math.round(tProy)-tAl26;
     h+='<tr class="ctot '+(cn==='Quilmes'?'ctot-q':'ctot-n')+'"><td>'+t('total_lbl')+' '+escHtml(cn)+'</td><td class="r">'+fN(tAl26)+'</td><td class="r">'+(tT26>0?fN(tT26):'&mdash;')+'</td><td class="r">'+pdRatio(tAl26,tT26)+'</td><td class="r pd-sep"><strong>'+fN(Math.round(tProy))+'</strong></td><td class="r">'+fN(tCap)+'</td><td class="r">'+(tT27>0?fN(tT27):'&mdash;')+'</td><td class="r">'+pdRatio(tProy,tT27)+'</td><td class="r '+(tD>0?'val-pos':tD<0?'val-neg':'')+'">'+fSign(tD)+'</td></tr>';
