@@ -316,6 +316,12 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .adj-input::-webkit-inner-spin-button,.adj-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .adj-input{-moz-appearance:textfield;appearance:textfield;}
 
+/* ─── MARKETING SOURCE TOGGLE ─── */
+.mk-src-bar{display:flex;gap:10px;margin:-4px 0 22px;flex-wrap:wrap;}
+.mk-src-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:12px;border:2px solid var(--mk-accent,var(--teal));background:transparent;color:var(--mk-accent,var(--teal));font-family:'Asap Condensed',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.03em;cursor:pointer;transition:background .15s,color .15s;}
+.mk-src-btn.active{background:var(--mk-accent,var(--teal));color:#fff;}
+.mk-src-btn:hover:not(.active){background:color-mix(in srgb,var(--mk-accent,var(--teal)) 10%,transparent);}
+[data-theme="dark"] .mk-src-btn.active{color:#fff;}
 /* ─── CYCLE / SUB-SELECTOR PILLS ─── */
 .cycle-pills{display:inline-flex;gap:4px;background:var(--cream);padding:3px;border-radius:20px;border:1px solid var(--line);}
 .cycle-pill{padding:4px 13px;border-radius:16px;border:none;background:transparent;font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;color:var(--gray);cursor:pointer;transition:all .15s;}
@@ -819,6 +825,11 @@ const STRINGS={
     col_campaign:'Campaign',col_platform:'Platform',col_spend:'Spend',col_impr:'Impressions',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'Clicks %',
     sort_by:'Sort:',sort_clicks:'Clicks',sort_eff:'Efficiency',sort_spend:'Spend',
     ads_trend_title:'Spend &amp; Clicks by Month',ads_trend_sub:'Monthly trend (USD spend + clicks)',ads_quality_sub:'CTR, CPC &amp; efficiency flag',
+    mk_tab_app:'SGC App',mk_tab_ads:'Digital Advertising',mk_tab_web:'Website Analytics',
+    s_website:'SGC Website',s_website_meta:'stgeorges.edu.ar &mdash; Google Analytics',
+    web_sessions:'Total Sessions',web_users:'Unique Users',web_new_pct:'New Visitors',web_bounce:'Avg Bounce Rate',web_duration:'Avg Session Time',
+    web_trend_title:'Traffic Trend',web_trend_sub:'Sessions &amp; unique users by month',
+    web_bounce_title:'Engagement Quality',web_bounce_sub:'Bounce rate (%) &amp; avg session duration (min) by month',
     s_modules:'Modules',s_modules_meta:'Attention distribution',
     s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
@@ -930,6 +941,11 @@ const STRINGS={
     col_campaign:'Campa&ntilde;a',col_platform:'Plataforma',col_spend:'Inversi&oacute;n',col_impr:'Impresiones',col_clicks:'Clicks',col_ctr:'CTR',col_cpc:'CPC',col_share:'% Clicks',
     sort_by:'Orden:',sort_clicks:'Clicks',sort_eff:'Eficiencia',sort_spend:'Inversi&oacute;n',
     ads_trend_title:'Inversi&oacute;n y Clicks por Mes',ads_trend_sub:'Tendencia mensual (inversi&oacute;n USD + clicks)',ads_quality_sub:'CTR, CPC y se&ntilde;al de eficiencia',
+    mk_tab_app:'SGC App',mk_tab_ads:'Pauta Digital',mk_tab_web:'Website Analytics',
+    s_website:'SGC Website',s_website_meta:'stgeorges.edu.ar &mdash; Google Analytics',
+    web_sessions:'Sesiones Totales',web_users:'Usuarios &Uacute;nicos',web_new_pct:'Visitantes Nuevos',web_bounce:'Bounce Rate Prom.',web_duration:'Duraci&oacute;n Prom.',
+    web_trend_title:'Tendencia de Tr&aacute;fico',web_trend_sub:'Sesiones y usuarios &uacute;nicos por mes',
+    web_bounce_title:'Calidad de Engagement',web_bounce_sub:'Bounce rate (%) y duraci&oacute;n promedio (min) por mes',
     s_modules:'M&oacute;dulos',s_modules_meta:'Distribuci&oacute;n de la atenci&oacute;n',
     s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
@@ -1014,7 +1030,7 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
-let adsMonth=null,adsSort='clicks';
+let adsMonth=null,adsSort='clicks',mkView='app';
 let alView='community';
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
@@ -1740,10 +1756,33 @@ function buildWithdrawals(){
 function buildMarketing(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_marketing'),t('ph_marketing_sub')));
+  // Source toggle — 3 prominent buttons
+  const srcs=[
+    ['app','&#128241; '+t('mk_tab_app'),'var(--teal)'],
+    ['ads','&#128226; '+t('mk_tab_ads'),'var(--violet)'],
+    ['web','&#127760; '+t('mk_tab_web'),'var(--navy)'],
+  ];
+  const tb=document.createElement('div');tb.className='mk-src-bar';
+  srcs.forEach(([id,label,color])=>{
+    const btn=document.createElement('button');
+    btn.className='mk-src-btn'+(mkView===id?' active':'');
+    btn.style.setProperty('--mk-accent',color);
+    btn.innerHTML=label;
+    btn.onclick=()=>{mkView=id;render();};
+    tb.appendChild(btn);
+  });
+  wrap.appendChild(tb);
+  if(mkView==='app') wrap.appendChild(buildMkApp());
+  else if(mkView==='ads') wrap.appendChild(buildDigitalAds());
+  else wrap.appendChild(buildMkWeb());
+  return wrap;
+}
+function buildMkApp(){
+  const out=document.createElement('div');
   const mk=D.marketing&&D.marketing.fidu;
-  wrap.appendChild(groupHeader(t('s_app_kpis'),t('s_app_kpis_meta'),true));
+  out.appendChild(groupHeader(t('s_app_kpis'),t('s_app_kpis_meta'),true,'var(--teal)'));
   if(mk){
-    wrap.appendChild(sec(t('headline'),'',statStrip([
+    out.appendChild(sec(t('headline'),'',statStrip([
       {lbl:t('fidu_adoption'),val:fP(mk.adoption),foot:t('fidu_adoption_f')},
       {lbl:t('fidu_active'),val:fN(mk.activeUsers),foot:t('fidu_active_f')},
       {lbl:t('fidu_loyalty'),val:fP(mk.loyalty),foot:t('fidu_loyalty_f')},
@@ -1755,13 +1794,35 @@ function buildMarketing(){
     let h2='<div class="tw"><table><thead><tr><th>'+t('col_month')+'</th><th class="r">'+t('col_inbox')+'</th></tr></thead><tbody>';
     (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(trMonth(m.month))+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
     h2+='</tbody></table></div>';
-    wrap.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
-    wrap.appendChild(sec(t('s_inbox'),t('s_inbox_meta'),elFromHTML(h2).firstChild));
+    out.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
+    out.appendChild(sec(t('s_inbox'),t('s_inbox_meta'),elFromHTML(h2).firstChild));
   }else{
-    wrap.appendChild(sec(t('headline'),'',emptyState(t('coming_soon'),t('cs_fidu'))));
+    out.appendChild(sec(t('headline'),'',emptyState(t('coming_soon'),t('cs_fidu'))));
   }
-  wrap.appendChild(buildDigitalAds());
-  return wrap;
+  return out;
+}
+function buildMkWeb(){
+  const out=document.createElement('div');
+  const wb=D.website;
+  out.appendChild(groupHeader(t('s_website'),t('s_website_meta'),true,'var(--navy)'));
+  if(!wb||!wb.trend||!wb.trend.length){
+    out.appendChild(sec(t('headline'),'',emptyState(t('coming_soon'),'Google Analytics')));
+    return out;
+  }
+  const H=wb.headline;
+  function fDur(s){const m=Math.floor(s/60),sc=Math.round(s%60);return m+'m '+String(sc).padStart(2,'0')+'s';}
+  out.appendChild(sec(t('headline'),t('s_website_meta'),statStrip([
+    {lbl:t('web_sessions'),val:fN(H.totalSessions),foot:''},
+    {lbl:t('web_users'),val:fN(H.totalUsers),foot:''},
+    {lbl:t('web_new_pct'),val:fP(H.newUsersPct),foot:''},
+    {lbl:t('web_bounce'),val:fP(H.avgBounceRate),foot:''},
+    {lbl:t('web_duration'),val:fDur(H.avgDuration),foot:''},
+  ])));
+  const cc1=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('web_trend_title')+'</div><div class="cc-sub">'+t('web_trend_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-web-traffic"></canvas></div></div>').firstChild;
+  out.appendChild(sec(t('web_trend_title'),'',cc1));
+  const cc2=elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('web_bounce_title')+'</div><div class="cc-sub">'+t('web_bounce_sub')+'</div></div></div><div class="chart-wrap" style="height:260px"><canvas id="chart-web-quality"></canvas></div></div>').firstChild;
+  out.appendChild(sec(t('web_bounce_title'),'',cc2));
+  return out;
 }
 function adsCampMetrics(M){
   return (M.campaigns||[]).map(c=>{
@@ -2334,6 +2395,25 @@ function drawCharts(){
       {type:'bar',label:t('ads_spend'),data:tr.map(r=>Math.round(num(r.spend))),backgroundColor:bg,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
       {type:'line',label:t('ads_clicks'),data:tr.map(r=>num(r.clicks)),borderColor:kRed,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1',order:1},
     ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:TTP},scales:{y:{grid:GRD,ticks:{font:{family:'Asap Condensed',size:11},color:kGray,callback:v=>'$'+v},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Website Analytics — sessions (bars) + users (line) by month
+  const wt=document.getElementById('chart-web-traffic');
+  if(wt&&D.website&&D.website.trend&&D.website.trend.length){
+    const tr=D.website.trend;
+    const navyFill=DK?'rgba(124,154,224,.45)':'rgba(33,52,99,.22)';
+    charts['web-traffic']=new Chart(wt,{data:{labels:tr.map(r=>monthLabel(r.month)),datasets:[
+      {type:'bar',label:t('web_sessions'),data:tr.map(r=>r.sessions),backgroundColor:navyFill,borderRadius:6,borderSkipped:false,yAxisID:'y',order:2},
+      {type:'line',label:t('web_users'),data:tr.map(r=>r.users),borderColor:kNavy,backgroundColor:'transparent',tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kNavy,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y',order:1},
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{grid:GRD,ticks:TCK,border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // Website Analytics — bounce rate (line, %) + avg duration (line, min)
+  const wq=document.getElementById('chart-web-quality');
+  if(wq&&D.website&&D.website.trend&&D.website.trend.length){
+    const tr=D.website.trend;
+    charts['web-quality']=new Chart(wq,{type:'line',data:{labels:tr.map(r=>monthLabel(r.month)),datasets:[
+      {label:t('web_bounce'),data:tr.map(r=>parseFloat((r.bounceRate*100).toFixed(1))),borderColor:kRed,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y'},
+      {label:t('web_duration'),data:tr.map(r=>parseFloat((r.avgDuration/60).toFixed(2))),borderColor:kTeal,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kTeal,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1'},
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.datasetIndex===0?ctx.raw+'%':ctx.raw+'m')}}},scales:{y:{position:'left',grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{...TCK,callback:v=>v+'m'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
   }
 }
 
