@@ -802,7 +802,7 @@ const STRINGS={
     s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Weekly Boarders',bd_full:'Full Boarders',bd_boys:'Boys',bd_girls:'Girls',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
-    s_conv_funnel:'Conversion Funnel',s_conv_funnel_meta:'2021&ndash;2027',
+    s_conv_funnel:'Conversion Funnel',s_conv_funnel_meta:'2021&ndash;2028',
     s_forecast:'Weighted Pipeline Forecast',s_forecast_meta:'2027',
     s_occupancy:'Occupancy 2027',s_occupancy_meta:'Prospect coverage by level',
     won:'Won',col_opportunities:'Opportunities',col_count:'Count',col_rate:'Rate %',
@@ -918,7 +918,7 @@ const STRINGS={
     s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Weekly Boarders',bd_full:'Full Boarders',bd_boys:'Boys',bd_girls:'Girls',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
-    s_conv_funnel:'Embudo de Conversi&oacute;n',s_conv_funnel_meta:'2021&ndash;2027',
+    s_conv_funnel:'Embudo de Conversi&oacute;n',s_conv_funnel_meta:'2021&ndash;2028',
     s_forecast:'Weighted Pipeline Forecast',s_forecast_meta:'2027',
     s_occupancy:'Ocupaci&oacute;n 2027',s_occupancy_meta:'Cobertura de prospectos por nivel',
     won:'Won',col_opportunities:'Oportunidades',col_count:'Cantidad',col_rate:'Tasa %',
@@ -1518,7 +1518,7 @@ function monthPills(cur,months){
 }
 function buildConvFunnel(){
   const sct=document.createElement('div');sct.className='sec';
-  const years=[2021,2022,2023,2024,2025,2026,2027];
+  const years=[2021,2022,2023,2024,2025,2026,2027,2028];
   sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_conv_funnel')+'</span><span class="sec-meta">'+t('s_conv_funnel_meta')+'</span>'+yearPills(funnelYear,years,'funnelYear')+'</div>';
   const yr=num(funnelYear);
   // Expandable breakdown by Year Group (when funnelGrade is available)
@@ -1630,8 +1630,10 @@ function buildOccupancy(){
     if(hasForecast){
       const fcArr='<span class="fc-arrow">&#10142;</span>';
       const cmpHead=build?('<th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th>'):'';
-      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th>'+cmpHead+'</tr></thead><tbody>';
-      rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);const cmpCells=build?('<td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td>'):'';h0+='<tr class="'+(build&&sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td>'+cmpCells+'</tr>';});
+      // Won (agosto): desde funnelGrade, ya filtrado por lógica May+ para 2026
+      const wonFC={};(D.funnelGrade||[]).filter(r=>num(r.yr)===fcYear).forEach(r=>{const g=String(r.grade);const lv=g.match(/^[QN]K/)?'Kinder':g.match(/^[QN]P/)?'Prep':'College';const ck=r.campus+'|'+lv;wonFC[ck]=(wonFC[ck]||0)+num(r.won);});
+      let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">Won</th>'+cmpHead+'</tr></thead><tbody>';
+      rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);const cmpCells=build?('<td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td>'):'';const wonVal=wonFC[r.campus+'|'+r.nivel]||0;h0+='<tr class="'+(build&&sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td><td class="r" style="font-weight:700">'+fN(wonVal)+'</td>'+cmpCells+'</tr>';});
       h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
     }
     // legacy rate-based layout (pre-forecast sheet)
