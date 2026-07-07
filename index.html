@@ -352,6 +352,13 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .rb-fill{height:100%;border-radius:5px;transition:width .3s;}
 .rb-val{font-size:.85rem;font-weight:700;color:var(--text);text-align:right;font-family:'Asap',sans-serif;}
 .rb-n{font-size:.62rem;color:var(--gray);margin-left:4px;font-weight:500;}
+/* ─── SATISFACTION: "(?)" survey-question help badge (hover on desktop, tap on mobile) ─── */
+.help-q{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-left:6px;cursor:pointer;vertical-align:middle;}
+.help-q-mark{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--gray);font-size:.62rem;font-weight:700;font-family:'Asap',sans-serif;line-height:1;transition:background .15s,color .15s,border-color .15s;}
+.help-q:hover .help-q-mark,.help-q.open .help-q-mark{background:var(--teal);border-color:var(--teal);color:#fff;}
+.help-q-pop{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 9px);width:230px;max-width:64vw;background:var(--ink);color:#fff;font-size:.72rem;font-weight:400;line-height:1.42;padding:9px 12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:50;text-align:left;font-family:'Asap Condensed',sans-serif;}
+.help-q-pop::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);}
+.help-q:hover .help-q-pop,.help-q.open .help-q-pop{display:block;}
 /* ─── SATISFACTION: comment feed ─── */
 .cmt-list{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;}
 .cmt-item{background:var(--surface2);border-radius:8px;padding:11px 14px;border:1px solid var(--hairline);}
@@ -2296,16 +2303,50 @@ function buildAlHeritage(wrap,a){
 function alcVn(o){ if(o==null||!o.count)return null; return campus==='q'?o.count.q:campus==='n'?o.count.n:o.count.total; }
 /* ── bilingual "EN text / ES text" survey options → picks the right half ── */
 function bilFromSlash(str){ const p=String(str||'').split(' / '); return lang==='en'?p[0]:(p[1]||p[0]); }
+/* ── verbatim survey question text, per rating/table key, for the "(?)" help badge ── */
+const SAT_QUESTIONS={
+  academicExcellence:{en:'How would you rate the quality of teaching at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a la calidad de la ense&ntilde;anza en St George&rsquo;s College?'},
+  academicRigour:{en:'How would you rate the academic rigour of St George&rsquo;s College&rsquo;s educational programme?',es:'&iquest;C&oacute;mo calificar&iacute;a la exigencia acad&eacute;mica de la propuesta educativa de St George&rsquo;s College?'},
+  communication:{en:'How would you rate the clarity and frequency of the school&rsquo;s communication with families?',es:'&iquest;C&oacute;mo calificar&iacute;a la claridad y frecuencia de la comunicaci&oacute;n del colegio hacia las familias?'},
+  app:{en:'How would you rate your experience using the St George&rsquo;s College App?',es:'&iquest;C&oacute;mo calificar&iacute;a su experiencia utilizando la App de St George&rsquo;s College?'},
+  wellbeing:{en:'How would you rate your child&rsquo;s overall wellbeing and sense of belonging at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a el bienestar general y el sentido de pertenencia de su hijo/a en St George&rsquo;s College?'},
+  community:{en:'How would you rate the sense of community and belonging that St George&rsquo;s College creates for your family?',es:'&iquest;C&oacute;mo calificar&iacute;a el sentido de comunidad y pertenencia que St George&rsquo;s College genera para su familia?'},
+  facilities:{en:'How would you rate the facilities and resources available at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a las instalaciones y los recursos disponibles en St George&rsquo;s College?'},
+  sportsVariety:{en:'How would you rate the variety of sports offered at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a la variedad deportiva ofrecida en St George&rsquo;s College?'},
+  coaching:{en:'How would you rate the quality of coaching and training at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a la calidad del entrenamiento deportivo en St George&rsquo;s College?'},
+  extracurricular:{en:'How would you rate the extracurricular activities offered at St George&rsquo;s College?',es:'&iquest;C&oacute;mo calificar&iacute;a las actividades extracurriculares ofrecidas en St George&rsquo;s College?'},
+  foodQuality:{en:'How would you rate the quality of the food served at school? (taste, temperature and presentation)',es:'&iquest;C&oacute;mo calificar&iacute;a la calidad de la comida servida en el colegio? (sabor, temperatura y presentaci&oacute;n)'},
+  menuVariety:{en:'How would you rate the variety of the menu offered?',es:'&iquest;C&oacute;mo calificar&iacute;a la variedad del men&uacute; ofrecido?'},
+  nutritionalBalance:{en:'How would you rate the nutritional balance of the meals served at school?',es:'&iquest;C&oacute;mo calificar&iacute;a el equilibrio nutricional de las comidas servidas en el colegio?'},
+  recommendation:{en:'On a scale of 0 to 10, how likely are you to recommend St George&rsquo;s College to another family?',es:'En una escala de 0 a 10, &iquest;qu&eacute; probabilidad hay de que recomiende St George&rsquo;s College a otra familia?'},
+  facilitiesPriority:{en:'Which of the following would you recommend we prioritise to improve?',es:'&iquest;Cu&aacute;l de las siguientes &aacute;reas recomendar&iacute;a priorizar para mejorar?'},
+  reasonsChose:{en:'What were the main reasons you chose St George&rsquo;s College?',es:'&iquest;Cu&aacute;les fueron los principales motivos por los que eligi&oacute; St George&rsquo;s College?'},
+  lunchStatus:{en:'Does your child have lunch at school?',es:'&iquest;Su hijo/a almuerza en el colegio?'},
+  section:{en:'What section(s) is your child/children currently in? Select all that apply.',es:'&iquest;En qu&eacute; secci&oacute;n/es se encuentra/n su/s hijo/as actualmente? Seleccione todas las que correspondan.'},
+};
+/* ── "(?)" badge: hover (desktop) or click/tap (mobile) shows the verbatim survey question ── */
+function qHelp(key){
+  const q=SAT_QUESTIONS[key]; if(!q)return '';
+  const txt=lang==='en'?q.en:q.es;
+  return '<span class="help-q" tabindex="0" onclick="event.stopPropagation();toggleHelpQ(this)"><span class="help-q-mark">?</span><span class="help-q-pop">'+txt+'</span></span>';
+}
+function toggleHelpQ(el){
+  document.querySelectorAll('.help-q.open').forEach(function(o){ if(o!==el)o.classList.remove('open'); });
+  el.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.help-q'))document.querySelectorAll('.help-q.open').forEach(function(o){o.classList.remove('open');});
+});
 function satNpsBucket(nps){ return (nps&&nps[campus==='os'?'total':campus])||{score:null,promoters:0,passives:0,detractors:0,n:0}; }
 function satRatingColor(v){ return v==null?'var(--gray)':(v>=8?'var(--teal)':v>=6?'#F59E0B':'var(--red)'); }
 function satBandColor(band){ return band==='promoter'?'var(--teal)':band==='passive'?'#F59E0B':'var(--red)'; }
-function ratingBarRow(label,v,n){
+function ratingBarRow(label,v,n,helpKey){
   const pct=v==null?0:Math.max(0,Math.min(100,v*10));
   const val=v==null?'&mdash;':v.toFixed(1);
-  return '<div class="rb-row"><div class="rb-lbl">'+label+'</div><div class="rb-track"><div class="rb-fill" style="width:'+pct+'%;background:'+satRatingColor(v)+'"></div></div><div class="rb-val">'+val+(n?'<span class="rb-n">n='+n+'</span>':'')+'</div></div>';
+  return '<div class="rb-row"><div class="rb-lbl">'+label+(helpKey?qHelp(helpKey):'')+'</div><div class="rb-track"><div class="rb-fill" style="width:'+pct+'%;background:'+satRatingColor(v)+'"></div></div><div class="rb-val">'+val+(n?'<span class="rb-n">n='+n+'</span>':'')+'</div></div>';
 }
 function ratingBarsCard(rows){
-  return elFromHTML('<div class="cc rb-card"><div class="rb-list">'+rows.map(r=>ratingBarRow(r.label,r.val,r.n)).join('')+'</div></div>').firstChild;
+  return elFromHTML('<div class="cc rb-card"><div class="rb-list">'+rows.map(r=>ratingBarRow(r.label,r.val,r.n,r.help)).join('')+'</div></div>').firstChild;
 }
 function satPills(feedId){
   const bands=[['all',t('sat_filter_all')],['detractor',t('sat_detractors')],['passive',t('sat_passives')],['promoter',t('sat_promoters')]];
@@ -2350,7 +2391,7 @@ function buildSatisfaction(){
 
   // NPS destacado
   const nps=satNpsBucket(s.nps);
-  wrap.appendChild(sec(t('s_sat_nps'),t('s_sat_nps_meta'),statStrip([
+  wrap.appendChild(sec(t('s_sat_nps')+qHelp('recommendation'),t('s_sat_nps_meta'),statStrip([
     {lbl:t('sat_detractors'),val:fN(nps.detractors),cls:'neg'},
     {lbl:t('sat_passives'),val:fN(nps.passives),cls:'amber'},
     {lbl:t('sat_promoters'),val:fN(nps.promoters),cls:'pos'},
@@ -2361,37 +2402,37 @@ function buildSatisfaction(){
   // Académico
   wrap.appendChild(groupHeader(t('s_sat_academic'),t('sat_scale'),true,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_academic_excellence'),val:alcV(s.ratings.academicExcellence),n:alcVn(s.ratings.academicExcellence)},
-    {label:t('sat_academic_rigour'),val:alcV(s.ratings.academicRigour),n:alcVn(s.ratings.academicRigour)},
+    {label:t('sat_academic_excellence'),val:alcV(s.ratings.academicExcellence),n:alcVn(s.ratings.academicExcellence),help:'academicExcellence'},
+    {label:t('sat_academic_rigour'),val:alcV(s.ratings.academicRigour),n:alcVn(s.ratings.academicRigour),help:'academicRigour'},
   ]));
 
   // Comunicación
   wrap.appendChild(groupHeader(t('s_sat_communication'),t('sat_scale'),false,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_communication'),val:alcV(s.ratings.communication),n:alcVn(s.ratings.communication)},
-    {label:t('sat_app'),val:alcV(s.ratings.app),n:alcVn(s.ratings.app)},
+    {label:t('sat_communication'),val:alcV(s.ratings.communication),n:alcVn(s.ratings.communication),help:'communication'},
+    {label:t('sat_app'),val:alcV(s.ratings.app),n:alcVn(s.ratings.app),help:'app'},
   ]));
 
   // Bienestar y Comunidad
   wrap.appendChild(groupHeader(t('s_sat_wellbeing'),t('sat_scale'),false,'var(--red)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_wellbeing_rating'),val:alcV(s.ratings.wellbeing),n:alcVn(s.ratings.wellbeing)},
-    {label:t('sat_community_rating'),val:alcV(s.ratings.community),n:alcVn(s.ratings.community)},
+    {label:t('sat_wellbeing_rating'),val:alcV(s.ratings.wellbeing),n:alcVn(s.ratings.wellbeing),help:'wellbeing'},
+    {label:t('sat_community_rating'),val:alcV(s.ratings.community),n:alcVn(s.ratings.community),help:'community'},
   ]));
 
   // Instalaciones
   wrap.appendChild(groupHeader(t('s_sat_facilities'),t('sat_scale'),false,'var(--violet)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_facilities_rating'),val:alcV(s.ratings.facilities),n:alcVn(s.ratings.facilities)},
+    {label:t('sat_facilities_rating'),val:alcV(s.ratings.facilities),n:alcVn(s.ratings.facilities),help:'facilities'},
   ]));
-  if(s.facilitiesPriority&&s.facilitiesPriority.length)wrap.appendChild(sec(t('sat_facilities_priority'),t('sat_facilities_priority_meta'),alTable(s.facilitiesPriority,{label:t('sat_facilities_priority'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+  if(s.facilitiesPriority&&s.facilitiesPriority.length)wrap.appendChild(sec(t('sat_facilities_priority')+qHelp('facilitiesPriority'),t('sat_facilities_priority_meta'),alTable(s.facilitiesPriority,{label:t('sat_facilities_priority'),tr:bilFromSlash,countLabel:'sat_respondents'})));
 
   // Deportes y Extracurriculares
   wrap.appendChild(groupHeader(t('s_sat_sports'),t('sat_scale'),false,'var(--teal)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_sports_variety'),val:alcV(s.ratings.sportsVariety),n:alcVn(s.ratings.sportsVariety)},
-    {label:t('sat_coaching'),val:alcV(s.ratings.coaching),n:alcVn(s.ratings.coaching)},
-    {label:t('sat_extracurricular'),val:alcV(s.ratings.extracurricular),n:alcVn(s.ratings.extracurricular)},
+    {label:t('sat_sports_variety'),val:alcV(s.ratings.sportsVariety),n:alcVn(s.ratings.sportsVariety),help:'sportsVariety'},
+    {label:t('sat_coaching'),val:alcV(s.ratings.coaching),n:alcVn(s.ratings.coaching),help:'coaching'},
+    {label:t('sat_extracurricular'),val:alcV(s.ratings.extracurricular),n:alcVn(s.ratings.extracurricular),help:'extracurricular'},
   ]));
 
   // Almuerzo — Food quality/Menu variety/Nutritional balance las responden ambas sedes
@@ -2399,21 +2440,21 @@ function buildSatisfaction(){
   // es exclusiva de North (Quilmes no tiene opt-out de comedor, así que no se le pregunta).
   wrap.appendChild(groupHeader(t('s_sat_lunch'),t('sat_scale'),false,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_food_quality'),val:alcV(s.ratings.foodQuality),n:alcVn(s.ratings.foodQuality)},
-    {label:t('sat_menu_variety'),val:alcV(s.ratings.menuVariety),n:alcVn(s.ratings.menuVariety)},
-    {label:t('sat_nutritional_balance'),val:alcV(s.ratings.nutritionalBalance),n:alcVn(s.ratings.nutritionalBalance)},
+    {label:t('sat_food_quality'),val:alcV(s.ratings.foodQuality),n:alcVn(s.ratings.foodQuality),help:'foodQuality'},
+    {label:t('sat_menu_variety'),val:alcV(s.ratings.menuVariety),n:alcVn(s.ratings.menuVariety),help:'menuVariety'},
+    {label:t('sat_nutritional_balance'),val:alcV(s.ratings.nutritionalBalance),n:alcVn(s.ratings.nutritionalBalance),help:'nutritionalBalance'},
   ]));
   var hasLunchStatus=(s.lunchStatus||[]).some(function(r){return alcV(r)>0;});
-  if(hasLunchStatus)wrap.appendChild(sec(t('sat_lunch_status'),t('sat_lunch_status_meta'),alTable(s.lunchStatus,{label:t('sat_lunch_status'),countLabel:'sat_respondents'})));
+  if(hasLunchStatus)wrap.appendChild(sec(t('sat_lunch_status')+qHelp('lunchStatus'),t('sat_lunch_status_meta'),alTable(s.lunchStatus,{label:t('sat_lunch_status'),countLabel:'sat_respondents'})));
   wrap.appendChild(commentFeedCard('lunch',t('sat_comments_lunch'),s.comments&&s.comments.lunch,t('cs_sat_lunch')));
 
   // Motivos de elección de SGC
-  if(s.reasonsChose&&s.reasonsChose.length)wrap.appendChild(sec(t('s_sat_reasons'),t('s_sat_reasons_meta'),alTable(s.reasonsChose,{label:t('s_sat_reasons'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+  if(s.reasonsChose&&s.reasonsChose.length)wrap.appendChild(sec(t('s_sat_reasons')+qHelp('reasonsChose'),t('s_sat_reasons_meta'),alTable(s.reasonsChose,{label:t('s_sat_reasons'),tr:bilFromSlash,countLabel:'sat_respondents'})));
 
   // Respondentes por sección
   if(s.section&&s.section.length){
     const secRows=s.section.map(row=>({name:row.name==='Kinder'?t('kinder'):row.name==='Prep School'?t('prep'):row.name==='College'?t('college'):row.name,q:row.q,n:row.n,total:row.total}));
-    wrap.appendChild(sec(t('s_sat_section'),t('s_sat_section_meta'),alTable(secRows,{label:t('s_sat_section'),countLabel:'sat_respondents'})));
+    wrap.appendChild(sec(t('s_sat_section')+qHelp('section'),t('s_sat_section_meta'),alTable(secRows,{label:t('s_sat_section'),countLabel:'sat_respondents'})));
   }
 
   return wrap;
