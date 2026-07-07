@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -340,6 +340,21 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .al-coverage svg{color:var(--teal);flex-shrink:0;}
 .al-coverage b{color:var(--text);font-weight:700;}
 [data-theme="dark"] .al-coverage{background:rgba(38,198,214,.10);border-color:rgba(38,198,214,.28);}
+/* ─── SATISFACTION: rating bars ─── */
+.rb-list{display:flex;flex-direction:column;gap:13px;}
+.rb-row{display:grid;grid-template-columns:minmax(120px,180px) 1fr 44px;align-items:center;gap:12px;}
+.rb-lbl{font-size:.79rem;color:var(--text);font-family:'Asap Condensed',sans-serif;font-weight:600;}
+.rb-track{height:9px;border-radius:5px;background:var(--surface2);overflow:hidden;}
+.rb-fill{height:100%;border-radius:5px;transition:width .3s;}
+.rb-val{font-size:.85rem;font-weight:700;color:var(--text);text-align:right;font-family:'Asap',sans-serif;}
+.rb-n{font-size:.62rem;color:var(--gray);margin-left:4px;font-weight:500;}
+/* ─── SATISFACTION: comment feed ─── */
+.cmt-list{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;}
+.cmt-item{background:var(--surface2);border-radius:8px;padding:11px 14px;border:1px solid var(--hairline);}
+.cmt-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.cmt-score{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:20px;padding:0 6px;border-radius:10px;color:#fff;font-size:.7rem;font-weight:700;font-family:'Asap',sans-serif;}
+.cmt-campus{font-size:.62rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;font-weight:600;}
+.cmt-text{font-size:.82rem;color:var(--text);line-height:1.45;font-family:'Asap',sans-serif;}
 .fc-arrow{color:var(--teal);margin-right:3px;opacity:.85;font-size:.92em;vertical-align:middle;}
 /* Cohort/Teachers projection — 2026 vs 2027 column groups */
 td.pd-c26{background:rgba(140,133,122,.07);}
@@ -780,7 +795,7 @@ const STRINGS={
   en:{
     nav_label:'Navigation',viewing:'Viewing',logout:'Sign out',
     ui_language:'Language',ui_theme:'Theme',ui_density:'Density',
-    tab_resumen:'Executive Summary',tab_admissions:'Admissions',tab_retention:'Retention &amp; Community',tab_marketing:'Marketing',tab_proyeccion:'Projection 2027',tab_alumni:'Alumni',
+    tab_resumen:'Executive Summary',tab_admissions:'Admissions',tab_retention:'Retention &amp; Community',tab_marketing:'Marketing',tab_proyeccion:'Projection 2027',tab_alumni:'Alumni',tab_satisfaction:'Family Satisfaction',
     ph_resumen:'Executive Summary',ph_resumen_sub:'Current students &amp; Admissions overview',
     ph_admissions:'Admissions',ph_admissions_sub:'Pipeline &amp; conversion',
     ph_retention:'Retention &amp; Community',ph_retention_sub:'Loyalty, cohorts &amp; community profile',
@@ -856,6 +871,22 @@ const STRINGS={
     al_dayboarding:'Day vs Boarding',al_dayboarding_meta:'Student type while enrolled',al_studenttype:'Student Type',
     al_houses:'Houses',al_houses_meta:'House membership',al_house:'House',al_heritage_pending:'House &amp; boarding data pending in the import',
     al_houses_prep:'Prep Houses',al_houses_college:'College Houses',
+    ph_satisfaction:'Family Satisfaction Survey',ph_satisfaction_sub:'Continuous Improvement Survey &mdash; live results',
+    sat_cov_note:'Based on <b>{r}</b> responses collected so far (Quilmes {q} &middot; North {n}) &mdash; approx. <b>{p}</b> of enrolled families. The survey is open and this section updates automatically as new responses arrive.',
+    s_sat_nps:'Recommendation (NPS)',s_sat_nps_meta:'Net Promoter Score &mdash; 0 to 10 scale',
+    sat_nps_score:'NPS Score',sat_promoters:'Promoters (9&ndash;10)',sat_passives:'Passives (7&ndash;8)',sat_detractors:'Detractors (0&ndash;6)',
+    s_sat_lunch:'Lunch Service',sat_lunch_status:'Has Lunch at School? (North)',sat_lunch_status_meta:'North families only &mdash; Quilmes has no opt-out',
+    s_sat_academic:'Academic &amp; Communication',s_sat_wellbeing:'Wellbeing &amp; Community',s_sat_facilities:'Facilities',s_sat_sports:'Sports &amp; Extracurricular',
+    sat_food_quality:'Food Quality',sat_menu_variety:'Menu Variety',sat_nutritional_balance:'Nutritional Balance',
+    sat_academic_excellence:'Academic Excellence',sat_academic_rigour:'Academic Rigour',sat_communication:'Communication',sat_app:'SGC App',
+    sat_wellbeing_rating:'Wellbeing &amp; School Climate',sat_community_rating:'Community &amp; Belonging',
+    sat_facilities_rating:'Facilities &amp; Resources',sat_sports_variety:'Sports Programme',sat_coaching:'Quality of Coaching',sat_extracurricular:'Extracurricular Activities',
+    sat_facilities_priority:'Priority Areas to Improve',sat_facilities_priority_meta:'What families would prioritise',
+    s_sat_reasons:'Why Families Chose SGC',s_sat_reasons_meta:'Select all that apply',
+    s_sat_section:'Respondents by Section',s_sat_section_meta:'Kinder / Prep / College',
+    sat_comments_lunch:'Lunch Service Comments',sat_comments_nps:'Reasons Behind the Score',
+    sat_filter_all:'All',sat_scale:'0&ndash;10 scale',sat_respondents:'Respondents',
+    cs_satisfaction:'No survey responses yet',cs_sat_lunch:'No lunch comments in this band',cs_sat_nps:'No comments in this band',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
     new_students:'New Students',win_rate:'Conversion Rate',prospectos:'Active Prospects',
@@ -896,7 +927,7 @@ const STRINGS={
   es:{
     nav_label:'Navegaci&oacute;n',viewing:'Viendo',logout:'Salir',
     ui_language:'Idioma',ui_theme:'Tema',ui_density:'Densidad',
-    tab_resumen:'Resumen Ejecutivo',tab_admissions:'Admisiones',tab_retention:'Retenci&oacute;n y Comunidad',tab_marketing:'Marketing',tab_proyeccion:'Proyecci&oacute;n 2027',tab_alumni:'Alumni',
+    tab_resumen:'Resumen Ejecutivo',tab_admissions:'Admisiones',tab_retention:'Retenci&oacute;n y Comunidad',tab_marketing:'Marketing',tab_proyeccion:'Proyecci&oacute;n 2027',tab_alumni:'Alumni',tab_satisfaction:'Satisfacci&oacute;n Familias',
     ph_resumen:'Resumen Ejecutivo',ph_resumen_sub:'Alumnos actuales y panorama de Admisiones',
     ph_admissions:'Admisiones',ph_admissions_sub:'Embudo y conversi&oacute;n',
     ph_retention:'Retenci&oacute;n y Comunidad',ph_retention_sub:'Fidelizaci&oacute;n, camadas y comunidad',
@@ -972,6 +1003,22 @@ const STRINGS={
     al_dayboarding:'Externo vs Pupilo',al_dayboarding_meta:'Tipo de alumno durante la cursada',al_studenttype:'Tipo de Alumno',
     al_houses:'Casas',al_houses_meta:'Pertenencia a casas',al_house:'Casa',al_heritage_pending:'Datos de casas y pupilos pendientes en el import',
     al_houses_prep:'Casas Prep',al_houses_college:'Casas College',
+    ph_satisfaction:'Encuesta de Satisfacci&oacute;n Familiar',ph_satisfaction_sub:'Encuesta de Mejora Continua &mdash; resultados en vivo',
+    sat_cov_note:'Basado en <b>{r}</b> respuestas recibidas hasta el momento (Quilmes {q} &middot; North {n}) &mdash; aprox. <b>{p}</b> de las familias matriculadas. La encuesta est&aacute; abierta y esta secci&oacute;n se actualiza autom&aacute;ticamente con cada respuesta nueva.',
+    s_sat_nps:'Recomendaci&oacute;n (NPS)',s_sat_nps_meta:'Net Promoter Score &mdash; escala de 0 a 10',
+    sat_nps_score:'Puntaje NPS',sat_promoters:'Promotores (9&ndash;10)',sat_passives:'Pasivos (7&ndash;8)',sat_detractors:'Detractores (0&ndash;6)',
+    s_sat_lunch:'Servicio de Almuerzo',sat_lunch_status:'&iquest;Almuerza en el colegio? (North)',sat_lunch_status_meta:'Solo familias de North &mdash; Quilmes no tiene opt-out',
+    s_sat_academic:'Acad&eacute;mico y Comunicaci&oacute;n',s_sat_wellbeing:'Bienestar y Comunidad',s_sat_facilities:'Instalaciones',s_sat_sports:'Deportes y Extracurriculares',
+    sat_food_quality:'Calidad de la Comida',sat_menu_variety:'Variedad del Men&uacute;',sat_nutritional_balance:'Equilibrio Nutricional',
+    sat_academic_excellence:'Excelencia Acad&eacute;mica',sat_academic_rigour:'Exigencia Acad&eacute;mica',sat_communication:'Comunicaci&oacute;n',sat_app:'App SGC',
+    sat_wellbeing_rating:'Bienestar y Clima Escolar',sat_community_rating:'Comunidad y Pertenencia',
+    sat_facilities_rating:'Instalaciones y Recursos',sat_sports_variety:'Propuesta Deportiva',sat_coaching:'Calidad del Entrenamiento',sat_extracurricular:'Actividades Extracurriculares',
+    sat_facilities_priority:'&Aacute;reas Prioritarias a Mejorar',sat_facilities_priority_meta:'Qu&eacute; priorizar&iacute;an las familias',
+    s_sat_reasons:'Por Qu&eacute; Eligieron SGC',s_sat_reasons_meta:'Selecci&oacute;n m&uacute;ltiple',
+    s_sat_section:'Respondentes por Secci&oacute;n',s_sat_section_meta:'Kinder / Prep / College',
+    sat_comments_lunch:'Comentarios sobre el Almuerzo',sat_comments_nps:'Motivos detr&aacute;s del Puntaje',
+    sat_filter_all:'Todos',sat_scale:'Escala 0&ndash;10',sat_respondents:'Respondentes',
+    cs_satisfaction:'A&uacute;n no hay respuestas de la encuesta',cs_sat_lunch:'Sin comentarios en esta banda',cs_sat_nps:'Sin comentarios en esta banda',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
     new_students:'Nuevos Alumnos',win_rate:'Tasa de Conversi&oacute;n',prospectos:'Prospectos Activos',
@@ -1021,6 +1068,7 @@ const TABS=[
   {id:'proyeccion',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
   {id:'marketing', icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'},
   {id:'alumni',    icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>'},
+  {id:'satisfaction',icon:'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>'},
 ];
 TABS.forEach(tab=>Object.defineProperty(tab,'label',{get:()=>t('tab_'+tab.id)}));
 
@@ -1032,6 +1080,7 @@ let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 let adsMonth=null,adsSort='clicks',mkView='app';
 let alView='community';
+let satCommentFilter={lunch:'all',nps:'all'};
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1231,6 +1280,7 @@ function buildPanel(id){
     case'marketing':return buildMarketing();
     case'proyeccion':return buildProyeccion();
     case'alumni':return buildAlumni();
+    case'satisfaction':return buildSatisfaction();
   }
 }
 function animateFunnels(){setTimeout(()=>{document.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);}
@@ -2151,7 +2201,7 @@ function alTable(rows,opts){
   const list=rows.map(r=>({name:r.name,v:num(alcV(r))})).filter(r=>r.v>0).sort((x,y)=>y.v-x.v);
   const tot=list.reduce((s,b)=>s+b.v,0)||1;
   const tw=document.createElement('div');tw.className='tw';
-  let h='<table><thead><tr><th>'+(opts.label||'')+'</th><th class="r">'+t('al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>'+(opts.label||'')+'</th><th class="r">'+t(opts.countLabel||'al_count')+'</th><th class="r">'+t('col_share')+'</th></tr></thead><tbody>';
   list.forEach(r=>{const nm=opts.tr?opts.tr(r.name):r.name;h+='<tr><td style="font-weight:600">'+(opts.flags?flagImg(r.name):'')+escHtml(nm)+'</td><td class="r">'+fN(r.v)+'</td><td class="r">'+fP(r.v/tot)+'</td></tr>';});
   h+='</tbody></table>';tw.innerHTML=h;return tw;
 }
@@ -2235,6 +2285,129 @@ function buildAlHeritage(wrap,a){
   if(hasC)wrap.appendChild(sec(t('al_houses_college'),t('al_houses_meta'),alTable(a.housesCollege,{label:t('al_house')})));
   if(!hasP&&!hasC&&a.houses&&a.houses.length)wrap.appendChild(sec(t('al_houses'),t('al_houses_meta'),alTable(a.houses,{label:t('al_house')})));
   if(!hasP&&!hasC&&!(a.houses&&a.houses.length)&&!(a.dayBoarding&&a.dayBoarding.length))wrap.appendChild(sec(t('al_houses'),'',emptyState(t('coming_soon'),t('al_heritage_pending'))));
+}
+
+/* ============================== FAMILY SATISFACTION SURVEY ============================== */
+/* ── campus-aware sample size picker (mirrors alcV, but for {count:{q,n,total}}) ── */
+function alcVn(o){ if(o==null||!o.count)return null; return campus==='q'?o.count.q:campus==='n'?o.count.n:o.count.total; }
+/* ── bilingual "EN text / ES text" survey options → picks the right half ── */
+function bilFromSlash(str){ const p=String(str||'').split(' / '); return lang==='en'?p[0]:(p[1]||p[0]); }
+function satNpsBucket(nps){ return (nps&&nps[campus==='os'?'total':campus])||{score:null,promoters:0,passives:0,detractors:0,n:0}; }
+function satRatingColor(v){ return v==null?'var(--gray)':(v>=8?'var(--teal)':v>=6?'#F59E0B':'var(--red)'); }
+function satBandColor(band){ return band==='promoter'?'var(--teal)':band==='passive'?'#F59E0B':'var(--red)'; }
+function ratingBarRow(label,v,n){
+  const pct=v==null?0:Math.max(0,Math.min(100,v*10));
+  const val=v==null?'&mdash;':v.toFixed(1);
+  return '<div class="rb-row"><div class="rb-lbl">'+label+'</div><div class="rb-track"><div class="rb-fill" style="width:'+pct+'%;background:'+satRatingColor(v)+'"></div></div><div class="rb-val">'+val+(n?'<span class="rb-n">n='+n+'</span>':'')+'</div></div>';
+}
+function ratingBarsCard(rows){
+  return elFromHTML('<div class="cc"><div class="rb-list">'+rows.map(r=>ratingBarRow(r.label,r.val,r.n)).join('')+'</div></div>').firstChild;
+}
+function satPills(feedId){
+  const bands=[['all',t('sat_filter_all')],['promoter',t('sat_promoters')],['passive',t('sat_passives')],['detractor',t('sat_detractors')]];
+  return '<div class="cycle-pills" style="margin-left:auto;flex-wrap:wrap">'+bands.map(b=>'<button class="cycle-pill'+(satCommentFilter[feedId]===b[0]?' active':'')+'" onclick="satCommentFilter[\''+feedId+'\']=\''+b[0]+'\';render()">'+b[1]+'</button>').join('')+'</div>';
+}
+/* ── comment feed: score-band filter pills (Mercado Libre style) + comment list, no PII ── */
+function commentFeedCard(feedId,title,comments,emptySub){
+  const filt=satCommentFilter[feedId]||'all';
+  const rows=(comments||[]).filter(c=>filt==='all'||c.band===filt);
+  const hd=document.createElement('div');hd.className='sec';
+  hd.innerHTML='<div class="sec-hd" style="flex-wrap:wrap;gap:8px"><span class="sec-title">'+title+'</span>'+satPills(feedId)+'</div>';
+  if(!rows.length){
+    hd.appendChild(emptyState(t('coming_soon'),emptySub));
+  }else{
+    const list=document.createElement('div');list.className='cc';
+    list.innerHTML='<div class="cmt-list">'+rows.map(c=>{
+      const campusLbl=c.campus==='q'?'Quilmes':c.campus==='n'?'North':'';
+      return '<div class="cmt-item"><div class="cmt-top"><span class="cmt-score" style="background:'+satBandColor(c.band)+'">'+c.score.toFixed(1)+'</span><span class="cmt-campus">'+campusLbl+'</span></div><div class="cmt-text">'+escHtml(c.text)+'</div></div>';
+    }).join('')+'</div>';
+    hd.appendChild(list);
+  }
+  return hd;
+}
+function buildSatisfaction(){
+  const wrap=document.createElement('div');
+  wrap.appendChild(pageHeader(t('ph_satisfaction'),t('ph_satisfaction_sub')));
+  const s=D.satisfaction;
+  if(!s||!s.respondents||!s.respondents.total){
+    wrap.appendChild(sec(t('s_sat_nps'),'',emptyState(t('coming_soon'),t('cs_satisfaction'))));
+    return wrap;
+  }
+  // Coverage banner — encuesta abierta; universo aproximado = familias con hijos matriculados
+  const qTot=num(D.quilmes&&D.quilmes.total&&D.quilmes.total.matricula);
+  const nTot=num(D.north&&D.north.total&&D.north.total.matricula);
+  const base=qTot+nTot;
+  const r=s.respondents;
+  const covPct=base>0?fP(r.total/base):'&mdash;';
+  const note=t('sat_cov_note').replace('{r}',fN(r.total)).replace('{q}',fN(r.q)).replace('{n}',fN(r.n)).replace('{p}',covPct);
+  const banner=document.createElement('div');banner.className='al-coverage';
+  banner.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>'+note+'</span>';
+  wrap.appendChild(banner);
+
+  // NPS destacado
+  const nps=satNpsBucket(s.nps);
+  wrap.appendChild(sec(t('s_sat_nps'),t('s_sat_nps_meta'),statStrip([
+    {lbl:t('sat_nps_score'),val:nps.score==null?'&mdash;':fSign(nps.score),cls:nps.score>=0?'pos':'neg'},
+    {lbl:t('sat_promoters'),val:fN(nps.promoters)},
+    {lbl:t('sat_passives'),val:fN(nps.passives)},
+    {lbl:t('sat_detractors'),val:fN(nps.detractors)},
+  ])));
+  wrap.appendChild(commentFeedCard('nps',t('sat_comments_nps'),s.comments&&s.comments.nps,t('cs_sat_nps')));
+
+  // Académico y Comunicación
+  wrap.appendChild(groupHeader(t('s_sat_academic'),t('sat_scale'),true,'var(--navy)'));
+  wrap.appendChild(ratingBarsCard([
+    {label:t('sat_academic_excellence'),val:alcV(s.ratings.academicExcellence),n:alcVn(s.ratings.academicExcellence)},
+    {label:t('sat_academic_rigour'),val:alcV(s.ratings.academicRigour),n:alcVn(s.ratings.academicRigour)},
+    {label:t('sat_communication'),val:alcV(s.ratings.communication),n:alcVn(s.ratings.communication)},
+    {label:t('sat_app'),val:alcV(s.ratings.app),n:alcVn(s.ratings.app)},
+  ]));
+
+  // Bienestar y Comunidad
+  wrap.appendChild(groupHeader(t('s_sat_wellbeing'),t('sat_scale'),false,'var(--red)'));
+  wrap.appendChild(ratingBarsCard([
+    {label:t('sat_wellbeing_rating'),val:alcV(s.ratings.wellbeing),n:alcVn(s.ratings.wellbeing)},
+    {label:t('sat_community_rating'),val:alcV(s.ratings.community),n:alcVn(s.ratings.community)},
+  ]));
+
+  // Instalaciones
+  wrap.appendChild(groupHeader(t('s_sat_facilities'),t('sat_scale'),false,'var(--violet)'));
+  wrap.appendChild(ratingBarsCard([
+    {label:t('sat_facilities_rating'),val:alcV(s.ratings.facilities),n:alcVn(s.ratings.facilities)},
+  ]));
+  if(s.facilitiesPriority&&s.facilitiesPriority.length)wrap.appendChild(sec(t('sat_facilities_priority'),t('sat_facilities_priority_meta'),alTable(s.facilitiesPriority,{label:t('sat_facilities_priority'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+
+  // Deportes y Extracurriculares
+  wrap.appendChild(groupHeader(t('s_sat_sports'),t('sat_scale'),false,'var(--teal)'));
+  wrap.appendChild(ratingBarsCard([
+    {label:t('sat_sports_variety'),val:alcV(s.ratings.sportsVariety),n:alcVn(s.ratings.sportsVariety)},
+    {label:t('sat_coaching'),val:alcV(s.ratings.coaching),n:alcVn(s.ratings.coaching)},
+    {label:t('sat_extracurricular'),val:alcV(s.ratings.extracurricular),n:alcVn(s.ratings.extracurricular)},
+  ]));
+
+  // Almuerzo — Food quality/Menu variety/Nutritional balance las responden ambas sedes
+  // (Quilmes salta directo a estas preguntas). Sólo "¿Su hijo almuerza en el colegio?"
+  // es exclusiva de North (Quilmes no tiene opt-out de comedor, así que no se le pregunta).
+  wrap.appendChild(groupHeader(t('s_sat_lunch'),t('sat_scale'),false,'var(--navy)'));
+  wrap.appendChild(ratingBarsCard([
+    {label:t('sat_food_quality'),val:alcV(s.ratings.foodQuality),n:alcVn(s.ratings.foodQuality)},
+    {label:t('sat_menu_variety'),val:alcV(s.ratings.menuVariety),n:alcVn(s.ratings.menuVariety)},
+    {label:t('sat_nutritional_balance'),val:alcV(s.ratings.nutritionalBalance),n:alcVn(s.ratings.nutritionalBalance)},
+  ]));
+  var hasLunchStatus=(s.lunchStatus||[]).some(function(r){return alcV(r)>0;});
+  if(hasLunchStatus)wrap.appendChild(sec(t('sat_lunch_status'),t('sat_lunch_status_meta'),alTable(s.lunchStatus,{label:t('sat_lunch_status'),countLabel:'sat_respondents'})));
+  wrap.appendChild(commentFeedCard('lunch',t('sat_comments_lunch'),s.comments&&s.comments.lunch,t('cs_sat_lunch')));
+
+  // Motivos de elección de SGC
+  if(s.reasonsChose&&s.reasonsChose.length)wrap.appendChild(sec(t('s_sat_reasons'),t('s_sat_reasons_meta'),alTable(s.reasonsChose,{label:t('s_sat_reasons'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+
+  // Respondentes por sección
+  if(s.section&&s.section.length){
+    const secRows=s.section.map(row=>({name:row.name==='Kinder'?t('kinder'):row.name==='Prep School'?t('prep'):row.name==='College'?t('college'):row.name,q:row.q,n:row.n,total:row.total}));
+    wrap.appendChild(sec(t('s_sat_section'),t('s_sat_section_meta'),alTable(secRows,{label:t('s_sat_section'),countLabel:'sat_respondents'})));
+  }
+
+  return wrap;
 }
 
 /* ── collapsible toggle ── */
