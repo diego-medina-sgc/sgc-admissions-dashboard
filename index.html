@@ -144,7 +144,10 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .si-val.pos{color:#5ee0a0;}
 .si-val.c-red{color:#ff7a88;}
 .si-val.c-navy{color:#9fc0ef;}
+.si-val.amber{color:#ffc078;}
 .si-foot{font-size:.66rem;color:rgba(255,255,255,.55);font-family:'Asap Condensed',sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.si-accent{background:rgba(255,255,255,.07);}
+.si-accent::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),#5ee0a0);}
 
 /* ─── KPI CARDS ─── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:14px;}
@@ -341,6 +344,7 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .al-coverage b{color:var(--text);font-weight:700;}
 [data-theme="dark"] .al-coverage{background:rgba(38,198,214,.10);border-color:rgba(38,198,214,.28);}
 /* ─── SATISFACTION: rating bars ─── */
+.rb-card{margin-bottom:24px;}
 .rb-list{display:flex;flex-direction:column;gap:13px;}
 .rb-row{display:grid;grid-template-columns:minmax(120px,180px) 1fr 44px;align-items:center;gap:12px;}
 .rb-lbl{font-size:.79rem;color:var(--text);font-family:'Asap Condensed',sans-serif;font-weight:600;}
@@ -876,7 +880,7 @@ const STRINGS={
     s_sat_nps:'Recommendation (NPS)',s_sat_nps_meta:'Net Promoter Score &mdash; 0 to 10 scale',
     sat_nps_score:'NPS Score',sat_promoters:'Promoters (9&ndash;10)',sat_passives:'Passives (7&ndash;8)',sat_detractors:'Detractors (0&ndash;6)',
     s_sat_lunch:'Lunch Service',sat_lunch_status:'Has Lunch at School? (North)',sat_lunch_status_meta:'North families only &mdash; Quilmes has no opt-out',
-    s_sat_academic:'Academic &amp; Communication',s_sat_wellbeing:'Wellbeing &amp; Community',s_sat_facilities:'Facilities',s_sat_sports:'Sports &amp; Extracurricular',
+    s_sat_academic:'Academic',s_sat_communication:'Communication',s_sat_wellbeing:'Wellbeing &amp; Community',s_sat_facilities:'Facilities',s_sat_sports:'Sports &amp; Extracurricular',
     sat_food_quality:'Food Quality',sat_menu_variety:'Menu Variety',sat_nutritional_balance:'Nutritional Balance',
     sat_academic_excellence:'Academic Excellence',sat_academic_rigour:'Academic Rigour',sat_communication:'Communication',sat_app:'SGC App',
     sat_wellbeing_rating:'Wellbeing &amp; School Climate',sat_community_rating:'Community &amp; Belonging',
@@ -1008,7 +1012,7 @@ const STRINGS={
     s_sat_nps:'Recomendaci&oacute;n (NPS)',s_sat_nps_meta:'Net Promoter Score &mdash; escala de 0 a 10',
     sat_nps_score:'Puntaje NPS',sat_promoters:'Promotores (9&ndash;10)',sat_passives:'Pasivos (7&ndash;8)',sat_detractors:'Detractores (0&ndash;6)',
     s_sat_lunch:'Servicio de Almuerzo',sat_lunch_status:'&iquest;Almuerza en el colegio? (North)',sat_lunch_status_meta:'Solo familias de North &mdash; Quilmes no tiene opt-out',
-    s_sat_academic:'Acad&eacute;mico y Comunicaci&oacute;n',s_sat_wellbeing:'Bienestar y Comunidad',s_sat_facilities:'Instalaciones',s_sat_sports:'Deportes y Extracurriculares',
+    s_sat_academic:'Acad&eacute;mico',s_sat_communication:'Comunicaci&oacute;n',s_sat_wellbeing:'Bienestar y Comunidad',s_sat_facilities:'Instalaciones',s_sat_sports:'Deportes y Extracurriculares',
     sat_food_quality:'Calidad de la Comida',sat_menu_variety:'Variedad del Men&uacute;',sat_nutritional_balance:'Equilibrio Nutricional',
     sat_academic_excellence:'Excelencia Acad&eacute;mica',sat_academic_rigour:'Exigencia Acad&eacute;mica',sat_communication:'Comunicaci&oacute;n',sat_app:'App SGC',
     sat_wellbeing_rating:'Bienestar y Clima Escolar',sat_community_rating:'Comunidad y Pertenencia',
@@ -1310,7 +1314,7 @@ function kpiGrid(cards){
 }
 function statStrip(items){
   const strip=document.createElement('div');strip.className='stat-strip';
-  strip.innerHTML=items.map(s=>'<div class="si"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+(s.cls||'')+'">'+s.val+'</div><div class="si-foot">'+(s.foot||'')+'</div></div>').join('');
+  strip.innerHTML=items.map(s=>'<div class="si'+(s.accent?' si-accent':'')+'"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+(s.cls||'')+'">'+s.val+'</div><div class="si-foot">'+(s.foot||'')+'</div></div>').join('');
   return strip;
 }
 function emptyState(title,sub){
@@ -2301,10 +2305,10 @@ function ratingBarRow(label,v,n){
   return '<div class="rb-row"><div class="rb-lbl">'+label+'</div><div class="rb-track"><div class="rb-fill" style="width:'+pct+'%;background:'+satRatingColor(v)+'"></div></div><div class="rb-val">'+val+(n?'<span class="rb-n">n='+n+'</span>':'')+'</div></div>';
 }
 function ratingBarsCard(rows){
-  return elFromHTML('<div class="cc"><div class="rb-list">'+rows.map(r=>ratingBarRow(r.label,r.val,r.n)).join('')+'</div></div>').firstChild;
+  return elFromHTML('<div class="cc rb-card"><div class="rb-list">'+rows.map(r=>ratingBarRow(r.label,r.val,r.n)).join('')+'</div></div>').firstChild;
 }
 function satPills(feedId){
-  const bands=[['all',t('sat_filter_all')],['promoter',t('sat_promoters')],['passive',t('sat_passives')],['detractor',t('sat_detractors')]];
+  const bands=[['all',t('sat_filter_all')],['detractor',t('sat_detractors')],['passive',t('sat_passives')],['promoter',t('sat_promoters')]];
   return '<div class="cycle-pills" style="margin-left:auto;flex-wrap:wrap">'+bands.map(b=>'<button class="cycle-pill'+(satCommentFilter[feedId]===b[0]?' active':'')+'" onclick="satCommentFilter[\''+feedId+'\']=\''+b[0]+'\';render()">'+b[1]+'</button>').join('')+'</div>';
 }
 /* ── comment feed: score-band filter pills (Mercado Libre style) + comment list, no PII ── */
@@ -2347,18 +2351,23 @@ function buildSatisfaction(){
   // NPS destacado
   const nps=satNpsBucket(s.nps);
   wrap.appendChild(sec(t('s_sat_nps'),t('s_sat_nps_meta'),statStrip([
-    {lbl:t('sat_nps_score'),val:nps.score==null?'&mdash;':fSign(nps.score),cls:nps.score>=0?'pos':'neg'},
-    {lbl:t('sat_promoters'),val:fN(nps.promoters)},
-    {lbl:t('sat_passives'),val:fN(nps.passives)},
-    {lbl:t('sat_detractors'),val:fN(nps.detractors)},
+    {lbl:t('sat_detractors'),val:fN(nps.detractors),cls:'neg'},
+    {lbl:t('sat_passives'),val:fN(nps.passives),cls:'amber'},
+    {lbl:t('sat_promoters'),val:fN(nps.promoters),cls:'pos'},
+    {lbl:t('sat_nps_score'),val:nps.score==null?'&mdash;':fSign(nps.score),accent:true},
   ])));
   wrap.appendChild(commentFeedCard('nps',t('sat_comments_nps'),s.comments&&s.comments.nps,t('cs_sat_nps')));
 
-  // Académico y Comunicación
+  // Académico
   wrap.appendChild(groupHeader(t('s_sat_academic'),t('sat_scale'),true,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
     {label:t('sat_academic_excellence'),val:alcV(s.ratings.academicExcellence),n:alcVn(s.ratings.academicExcellence)},
     {label:t('sat_academic_rigour'),val:alcV(s.ratings.academicRigour),n:alcVn(s.ratings.academicRigour)},
+  ]));
+
+  // Comunicación
+  wrap.appendChild(groupHeader(t('s_sat_communication'),t('sat_scale'),false,'var(--navy)'));
+  wrap.appendChild(ratingBarsCard([
     {label:t('sat_communication'),val:alcV(s.ratings.communication),n:alcVn(s.ratings.communication)},
     {label:t('sat_app'),val:alcV(s.ratings.app),n:alcVn(s.ratings.app)},
   ]));
