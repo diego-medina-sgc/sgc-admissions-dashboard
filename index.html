@@ -356,9 +356,10 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .help-q{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-left:6px;cursor:pointer;vertical-align:middle;}
 .help-q-mark{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--gray);font-size:.62rem;font-weight:700;font-family:'Asap',sans-serif;line-height:1;transition:background .15s,color .15s,border-color .15s;}
 .help-q:hover .help-q-mark,.help-q.open .help-q-mark{background:var(--teal);border-color:var(--teal);color:#fff;}
-.help-q-pop{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 9px);width:230px;max-width:64vw;background:var(--ink);color:#fff;font-size:.72rem;font-weight:400;line-height:1.42;padding:9px 12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:50;text-align:left;font-family:'Asap Condensed',sans-serif;}
-.help-q-pop::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);}
-.help-q:hover .help-q-pop,.help-q.open .help-q-pop{display:block;}
+.help-q-pop{display:none;position:fixed;width:230px;max-width:calc(100vw - 20px);background:var(--ink);color:#fff;font-size:.72rem;font-weight:400;line-height:1.42;padding:9px 12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.32);z-index:2000;text-align:left;font-family:'Asap Condensed',sans-serif;}
+.help-q-pop::after{content:'';position:absolute;left:var(--arrow-x,50%);transform:translateX(-50%);border:5px solid transparent;}
+.help-q-pop:not(.help-q-pop-below)::after{top:100%;border-top-color:var(--ink);}
+.help-q-pop.help-q-pop-below::after{bottom:100%;border-bottom-color:var(--ink);}
 /* ─── SATISFACTION: comment feed ─── */
 .cmt-list{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;}
 .cmt-item{background:var(--surface2);border-radius:8px;padding:11px 14px;border:1px solid var(--hairline);}
@@ -1270,6 +1271,7 @@ function syncCampusUI(){
   });
 }
 function render(){
+  if(typeof hideHelpQ==='function')hideHelpQ(); // evita que quede un tooltip huérfano tras rebuild del panel
   if(activeTab==='marketing')campus='os';
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
   const main=document.getElementById('main');main.innerHTML='';main.className='campus-'+campus;
@@ -2324,18 +2326,61 @@ const SAT_QUESTIONS={
   lunchStatus:{en:'Does your child have lunch at school?',es:'&iquest;Su hijo/a almuerza en el colegio?'},
   section:{en:'What section(s) is your child/children currently in? Select all that apply.',es:'&iquest;En qu&eacute; secci&oacute;n/es se encuentra/n su/s hijo/as actualmente? Seleccione todas las que correspondan.'},
 };
-/* ── "(?)" badge: hover (desktop) or click/tap (mobile) shows the verbatim survey question ── */
+/* ── "(?)" badge: hover (desktop) or click/tap (mobile) shows the verbatim survey question.
+   Uses ONE shared tooltip node appended directly to <body> (not nested in .panel) — .panel's
+   entrance animation briefly animates `transform`, which would otherwise hijack position:fixed
+   on any descendant and throw it thousands of px off-screen while the animation is running. ── */
 function qHelp(key){
-  const q=SAT_QUESTIONS[key]; if(!q)return '';
-  const txt=lang==='en'?q.en:q.es;
-  return '<span class="help-q" tabindex="0" onclick="event.stopPropagation();toggleHelpQ(this)"><span class="help-q-mark">?</span><span class="help-q-pop">'+txt+'</span></span>';
+  if(!SAT_QUESTIONS[key])return '';
+  return '<span class="help-q" tabindex="0" data-help="'+key+'" onclick="event.stopPropagation();toggleHelpQ(this)"><span class="help-q-mark">?</span></span>';
+}
+function getHelpTip(){
+  let tip=document.getElementById('sat-help-tip');
+  if(!tip){ tip=document.createElement('div'); tip.id='sat-help-tip'; tip.className='help-q-pop'; document.body.appendChild(tip); }
+  return tip;
+}
+function showHelpQ(el){
+  const q=SAT_QUESTIONS[el.dataset.help]; if(!q)return;
+  const tip=getHelpTip();
+  tip.innerHTML=(lang==='en'?q.en:q.es);
+  tip.style.display='block';
+  const rect=el.getBoundingClientRect();
+  const popW=Math.min(230,window.innerWidth-20);
+  tip.style.width=popW+'px';
+  let left=rect.left+rect.width/2-popW/2;
+  left=Math.max(10,Math.min(left,window.innerWidth-popW-10));
+  const popH=tip.offsetHeight||50;
+  const spaceAbove=rect.top,spaceBelow=window.innerHeight-rect.bottom;
+  const below=spaceAbove<(popH+16)&&spaceBelow>spaceAbove;
+  tip.style.left=left+'px';
+  tip.classList.toggle('help-q-pop-below',below);
+  if(below){ tip.style.top=(rect.bottom+9)+'px'; tip.style.bottom='auto'; }
+  else { tip.style.bottom=(window.innerHeight-rect.top+9)+'px'; tip.style.top='auto'; }
+  tip.style.setProperty('--arrow-x',(rect.left+rect.width/2-left)+'px');
+  tip._openFor=el;
+}
+function hideHelpQ(){
+  const tip=document.getElementById('sat-help-tip');
+  if(tip){ tip.style.display='none'; tip._openFor=null; }
+  document.querySelectorAll('.help-q.open').forEach(function(o){o.classList.remove('open');});
 }
 function toggleHelpQ(el){
-  document.querySelectorAll('.help-q.open').forEach(function(o){ if(o!==el)o.classList.remove('open'); });
-  el.classList.toggle('open');
+  const tip=getHelpTip();
+  if(tip._openFor===el&&tip.style.display==='block'){ hideHelpQ(); return; }
+  document.querySelectorAll('.help-q.open').forEach(function(o){o.classList.remove('open');});
+  el.classList.add('open');
+  showHelpQ(el);
 }
+document.addEventListener('mouseover',function(e){
+  const el=e.target.closest&&e.target.closest('.help-q');
+  if(el)showHelpQ(el);
+});
+document.addEventListener('mouseout',function(e){
+  const el=e.target.closest&&e.target.closest('.help-q');
+  if(el&&!el.contains(e.relatedTarget)&&!el.classList.contains('open'))hideHelpQ();
+});
 document.addEventListener('click',function(e){
-  if(!e.target.closest('.help-q'))document.querySelectorAll('.help-q.open').forEach(function(o){o.classList.remove('open');});
+  if(!e.target.closest('.help-q'))hideHelpQ();
 });
 function satNpsBucket(nps){ return (nps&&nps[campus==='os'?'total':campus])||{score:null,promoters:0,passives:0,detractors:0,n:0}; }
 function satRatingColor(v){ return v==null?'var(--gray)':(v>=8?'var(--teal)':v>=6?'#F59E0B':'var(--red)'); }
