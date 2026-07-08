@@ -1085,7 +1085,10 @@ const TABS=[
 TABS.forEach(tab=>Object.defineProperty(tab,'label',{get:()=>t('tab_'+tab.id)}));
 
 /* ============================== GLOBALS ============================== */
-let tokenClient,accessToken,userEmail='',D={},campus='os',activeTab='resumen';
+const _savedTab=localStorage.getItem('sgc-tab'),_savedCampus=localStorage.getItem('sgc-campus');
+let tokenClient,accessToken,userEmail='',D={},
+    campus=(_savedCampus==='q'||_savedCampus==='n'||_savedCampus==='os')?_savedCampus:'os',
+    activeTab=(_savedTab&&TABS.some(t=>t.id===_savedTab))?_savedTab:'resumen';
 let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
@@ -1268,7 +1271,9 @@ function syncCampusUI(){
   const mkt=activeTab==='marketing';
   document.querySelectorAll('.campus-btn').forEach(b=>{
     if(b.dataset.c!=='os')b.style.display=mkt?'none':'';
-    if(mkt){b.classList.toggle('active',b.dataset.c==='os');b.setAttribute('aria-pressed',b.dataset.c==='os'?'true':'false');}
+    const isActive=mkt?(b.dataset.c==='os'):(b.dataset.c===campus);
+    b.classList.toggle('active',isActive);
+    b.setAttribute('aria-pressed',isActive?'true':'false');
   });
 }
 function render(){
@@ -2729,9 +2734,10 @@ function buildSidebarNav(){
     btn.innerHTML=tab.icon+'<span>'+tab.label+'</span>';
     btn.onclick=function(){
       activeTab=tab.id;
+      localStorage.setItem('sgc-tab',activeTab);
       if(isMobile()){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('mob-overlay').classList.remove('active');}
       // Marketing is One School only → if campus differs, re-render fully
-      if(tab.id==='marketing'&&campus!=='os'){campus='os';render();window.scrollTo({top:0,behavior:'smooth'});return;}
+      if(tab.id==='marketing'&&campus!=='os'){campus='os';localStorage.setItem('sgc-campus','os');render();window.scrollTo({top:0,behavior:'smooth'});return;}
       document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -2778,6 +2784,7 @@ function buildSidebarNav(){
 document.querySelectorAll('.campus-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     campus=btn.dataset.c;
+    localStorage.setItem('sgc-campus',campus);
     document.querySelectorAll('.campus-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false');});
     btn.classList.add('active');btn.setAttribute('aria-pressed','true');
     render();
