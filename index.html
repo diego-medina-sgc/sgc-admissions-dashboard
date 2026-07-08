@@ -897,7 +897,7 @@ const STRINGS={
     s_sat_reasons:'Why Families Chose SGC',s_sat_reasons_meta:'Select all that apply',
     s_sat_section:'Respondents by Section',s_sat_section_meta:'Kinder / Prep / College',
     sat_comments_lunch:'Lunch Service Comments',sat_comments_nps:'Reasons Behind the Score',
-    sat_filter_all:'All',sat_scale:'0&ndash;10 scale',sat_respondents:'Respondents',
+    sat_filter_all:'All',sat_scale:'0&ndash;10 scale',sat_respondents:'Respondents',sat_whole_school:'Whole School',
     cs_satisfaction:'No survey responses yet',cs_sat_lunch:'No lunch comments in this band',cs_sat_nps:'No comments in this band',
     total_alumnos:'Total Students',var_anual:'Annual Variation',
     ret_quilmes:'Quilmes Retention',ret_north:'North Retention',ret_rate:'Retention Rate',
@@ -1029,7 +1029,7 @@ const STRINGS={
     s_sat_reasons:'Por Qu&eacute; Eligieron SGC',s_sat_reasons_meta:'Selecci&oacute;n m&uacute;ltiple',
     s_sat_section:'Respondentes por Secci&oacute;n',s_sat_section_meta:'Kinder / Prep / College',
     sat_comments_lunch:'Comentarios sobre el Almuerzo',sat_comments_nps:'Motivos detr&aacute;s del Puntaje',
-    sat_filter_all:'Todos',sat_scale:'Escala 0&ndash;10',sat_respondents:'Respondentes',
+    sat_filter_all:'Todos',sat_scale:'Escala 0&ndash;10',sat_respondents:'Respondentes',sat_whole_school:'Todo el Colegio',
     cs_satisfaction:'A&uacute;n no hay respuestas de la encuesta',cs_sat_lunch:'Sin comentarios en esta banda',cs_sat_nps:'Sin comentarios en esta banda',
     total_alumnos:'Total Alumnos',var_anual:'Variaci&oacute;n Anual',
     ret_quilmes:'Retenci&oacute;n Quilmes',ret_north:'Retenci&oacute;n North',ret_rate:'Tasa de Retenci&oacute;n',
@@ -1093,6 +1093,7 @@ let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
 let adsMonth=null,adsSort='clicks',mkView='app';
 let alView='community';
 let satCommentFilter={lunch:'all',nps:'all'};
+let satSection='all'; // 'all' | 'Kinder' | 'Prep School' | 'College' — filtro de sección en Family Satisfaction
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1299,10 +1300,11 @@ function buildPanel(id){
 function animateFunnels(){setTimeout(()=>{document.querySelectorAll('.f-fill').forEach(el=>{const w=el.dataset.w;if(w)el.style.width=w+'%';});},100);}
 
 /* ── shared builders ── */
-function pageHeader(title,sub){
+function pageHeader(title,sub,badgeHTML){
   const d=document.createElement('div');d.className='page-hd';
-  const campusName=campus==='os'?'One School':campus==='q'?'Quilmes':'North';
-  d.innerHTML='<div class="page-hd-inner"><div><div class="page-title">'+title+'</div><div class="page-sub">'+sub+'</div></div><div class="campus-badge '+campus+'"><span class="cb-dot"></span>'+campusName+'</div></div>';
+  let badge=badgeHTML;
+  if(!badge){ const campusName=campus==='os'?'One School':campus==='q'?'Quilmes':'North'; badge='<div class="campus-badge '+campus+'"><span class="cb-dot"></span>'+campusName+'</div>'; }
+  d.innerHTML='<div class="page-hd-inner"><div><div class="page-title">'+title+'</div><div class="page-sub">'+sub+'</div></div>'+badge+'</div>';
   return d;
 }
 function sec(title,meta,content){
@@ -2382,7 +2384,19 @@ document.addEventListener('mouseout',function(e){
 document.addEventListener('click',function(e){
   if(!e.target.closest('.help-q'))hideHelpQ();
 });
-function satNpsBucket(nps){ return (nps&&nps[campus==='os'?'total':campus])||{score:null,promoters:0,passives:0,detractors:0,n:0}; }
+/* ── section toggle (Whole School / Kinder / Prep School / College) — replaces the campus
+   badge on the Family Satisfaction page header; filters every metric on the page ── */
+function satSectionToggle(){
+  const opts=[['all',t('sat_whole_school')],['Kinder',t('kinder')],['Prep School',t('prep')],['College',t('college')]];
+  return '<div class="cycle-pills">'+opts.map(o=>'<button class="cycle-pill'+(satSection===o[0]?' active':'')+'" onclick="satSection=\''+o[0]+'\';render()">'+o[1]+'</button>').join('')+'</div>';
+}
+/* ── resolves a rating object to the current section (if any) before picking campus q/n/total ── */
+function satScope(o){ if(o==null)return null; return satSection==='all'?o:(o.bySection&&o.bySection[satSection]); }
+function satVal(o){ return alcV(satScope(o)); }
+function satValN(o){ return alcVn(satScope(o)); }
+/* ── resolves a bag array (facilitiesPriority/reasonsChose/lunchStatus) to the current section ── */
+function satBag(all,bySection){ return satSection==='all'?(all||[]):((bySection&&bySection[satSection])||[]); }
+function satNpsBucket(nps){ const scoped=satScope(nps); return (scoped&&scoped[campus==='os'?'total':campus])||{score:null,promoters:0,passives:0,detractors:0,n:0}; }
 function satRatingColor(v){ return v==null?'var(--gray)':(v>=8?'var(--teal)':v>=6?'#F59E0B':'var(--red)'); }
 function satBandColor(band){ return band==='promoter'?'var(--teal)':band==='passive'?'#F59E0B':'var(--red)'; }
 function ratingBarRow(label,v,n,helpKey){
@@ -2417,22 +2431,30 @@ function commentFeedCard(feedId,title,comments,emptySub){
 }
 function buildSatisfaction(){
   const wrap=document.createElement('div');
-  wrap.appendChild(pageHeader(t('ph_satisfaction'),t('ph_satisfaction_sub')));
+  wrap.appendChild(pageHeader(t('ph_satisfaction'),t('ph_satisfaction_sub'),satSectionToggle()));
   const s=D.satisfaction;
   if(!s||!s.respondents||!s.respondents.total){
     wrap.appendChild(sec(t('s_sat_nps'),'',emptyState(t('coming_soon'),t('cs_satisfaction'))));
     return wrap;
   }
-  // Coverage banner — encuesta abierta; universo aproximado = familias con hijos matriculados
-  const qTot=num(D.quilmes&&D.quilmes.total&&D.quilmes.total.matricula);
-  const nTot=num(D.north&&D.north.total&&D.north.total.matricula);
-  const base=qTot+nTot;
-  const r=s.respondents;
+  // Coverage banner — encuesta abierta; universo = matrícula (total o de la sección elegida)
+  const SEC_KEY={all:null,Kinder:'kinder','Prep School':'prep',College:'college'};
+  const mk=SEC_KEY[satSection];
+  function matr(campusObj){
+    if(!campusObj)return 0;
+    if(mk)return num(campusObj[mk]&&campusObj[mk].total&&campusObj[mk].total.matricula);
+    return num(campusObj.total&&campusObj.total.matricula);
+  }
+  const base=matr(D.quilmes)+matr(D.north);
+  const r=satSection==='all'?s.respondents:((s.section||[]).find(x=>x.name===satSection)||{q:0,n:0,total:0});
   const covPct=base>0?fP(r.total/base):'&mdash;';
   const note=t('sat_cov_note').replace('{r}',fN(r.total)).replace('{q}',fN(r.q)).replace('{n}',fN(r.n)).replace('{p}',covPct);
   const banner=document.createElement('div');banner.className='al-coverage';
   banner.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>'+note+'</span>';
   wrap.appendChild(banner);
+
+  const npsCommentsFiltered=(s.comments&&s.comments.nps||[]).filter(c=>satSection==='all'||(c.sections||[]).indexOf(satSection)>-1);
+  const lunchCommentsFiltered=(s.comments&&s.comments.lunch||[]).filter(c=>satSection==='all'||(c.sections||[]).indexOf(satSection)>-1);
 
   // NPS destacado
   const nps=satNpsBucket(s.nps);
@@ -2442,42 +2464,43 @@ function buildSatisfaction(){
     {lbl:t('sat_promoters'),val:fN(nps.promoters),cls:'pos'},
     {lbl:t('sat_nps_score'),val:nps.score==null?'&mdash;':fSign(nps.score),accent:true},
   ])));
-  wrap.appendChild(commentFeedCard('nps',t('sat_comments_nps'),s.comments&&s.comments.nps,t('cs_sat_nps')));
+  wrap.appendChild(commentFeedCard('nps',t('sat_comments_nps'),npsCommentsFiltered,t('cs_sat_nps')));
 
   // Académico
   wrap.appendChild(groupHeader(t('s_sat_academic'),t('sat_scale'),true,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_academic_excellence'),val:alcV(s.ratings.academicExcellence),n:alcVn(s.ratings.academicExcellence),help:'academicExcellence'},
-    {label:t('sat_academic_rigour'),val:alcV(s.ratings.academicRigour),n:alcVn(s.ratings.academicRigour),help:'academicRigour'},
+    {label:t('sat_academic_excellence'),val:satVal(s.ratings.academicExcellence),n:satValN(s.ratings.academicExcellence),help:'academicExcellence'},
+    {label:t('sat_academic_rigour'),val:satVal(s.ratings.academicRigour),n:satValN(s.ratings.academicRigour),help:'academicRigour'},
   ]));
 
   // Comunicación
   wrap.appendChild(groupHeader(t('s_sat_communication'),t('sat_scale'),false,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_communication'),val:alcV(s.ratings.communication),n:alcVn(s.ratings.communication),help:'communication'},
-    {label:t('sat_app'),val:alcV(s.ratings.app),n:alcVn(s.ratings.app),help:'app'},
+    {label:t('sat_communication'),val:satVal(s.ratings.communication),n:satValN(s.ratings.communication),help:'communication'},
+    {label:t('sat_app'),val:satVal(s.ratings.app),n:satValN(s.ratings.app),help:'app'},
   ]));
 
   // Bienestar y Comunidad
   wrap.appendChild(groupHeader(t('s_sat_wellbeing'),t('sat_scale'),false,'var(--red)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_wellbeing_rating'),val:alcV(s.ratings.wellbeing),n:alcVn(s.ratings.wellbeing),help:'wellbeing'},
-    {label:t('sat_community_rating'),val:alcV(s.ratings.community),n:alcVn(s.ratings.community),help:'community'},
+    {label:t('sat_wellbeing_rating'),val:satVal(s.ratings.wellbeing),n:satValN(s.ratings.wellbeing),help:'wellbeing'},
+    {label:t('sat_community_rating'),val:satVal(s.ratings.community),n:satValN(s.ratings.community),help:'community'},
   ]));
 
   // Instalaciones
   wrap.appendChild(groupHeader(t('s_sat_facilities'),t('sat_scale'),false,'var(--violet)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_facilities_rating'),val:alcV(s.ratings.facilities),n:alcVn(s.ratings.facilities),help:'facilities'},
+    {label:t('sat_facilities_rating'),val:satVal(s.ratings.facilities),n:satValN(s.ratings.facilities),help:'facilities'},
   ]));
-  if(s.facilitiesPriority&&s.facilitiesPriority.length)wrap.appendChild(sec(t('sat_facilities_priority')+qHelp('facilitiesPriority'),t('sat_facilities_priority_meta'),alTable(s.facilitiesPriority,{label:t('sat_facilities_priority'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+  const facilitiesPriorityRows=satBag(s.facilitiesPriority,s.facilitiesPriorityBySection);
+  if(facilitiesPriorityRows.length)wrap.appendChild(sec(t('sat_facilities_priority')+qHelp('facilitiesPriority'),t('sat_facilities_priority_meta'),alTable(facilitiesPriorityRows,{label:t('sat_facilities_priority'),tr:bilFromSlash,countLabel:'sat_respondents'})));
 
   // Deportes y Extracurriculares
   wrap.appendChild(groupHeader(t('s_sat_sports'),t('sat_scale'),false,'var(--teal)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_sports_variety'),val:alcV(s.ratings.sportsVariety),n:alcVn(s.ratings.sportsVariety),help:'sportsVariety'},
-    {label:t('sat_coaching'),val:alcV(s.ratings.coaching),n:alcVn(s.ratings.coaching),help:'coaching'},
-    {label:t('sat_extracurricular'),val:alcV(s.ratings.extracurricular),n:alcVn(s.ratings.extracurricular),help:'extracurricular'},
+    {label:t('sat_sports_variety'),val:satVal(s.ratings.sportsVariety),n:satValN(s.ratings.sportsVariety),help:'sportsVariety'},
+    {label:t('sat_coaching'),val:satVal(s.ratings.coaching),n:satValN(s.ratings.coaching),help:'coaching'},
+    {label:t('sat_extracurricular'),val:satVal(s.ratings.extracurricular),n:satValN(s.ratings.extracurricular),help:'extracurricular'},
   ]));
 
   // Almuerzo — Food quality/Menu variety/Nutritional balance las responden ambas sedes
@@ -2485,18 +2508,20 @@ function buildSatisfaction(){
   // es exclusiva de North (Quilmes no tiene opt-out de comedor, así que no se le pregunta).
   wrap.appendChild(groupHeader(t('s_sat_lunch'),t('sat_scale'),false,'var(--navy)'));
   wrap.appendChild(ratingBarsCard([
-    {label:t('sat_food_quality'),val:alcV(s.ratings.foodQuality),n:alcVn(s.ratings.foodQuality),help:'foodQuality'},
-    {label:t('sat_menu_variety'),val:alcV(s.ratings.menuVariety),n:alcVn(s.ratings.menuVariety),help:'menuVariety'},
-    {label:t('sat_nutritional_balance'),val:alcV(s.ratings.nutritionalBalance),n:alcVn(s.ratings.nutritionalBalance),help:'nutritionalBalance'},
+    {label:t('sat_food_quality'),val:satVal(s.ratings.foodQuality),n:satValN(s.ratings.foodQuality),help:'foodQuality'},
+    {label:t('sat_menu_variety'),val:satVal(s.ratings.menuVariety),n:satValN(s.ratings.menuVariety),help:'menuVariety'},
+    {label:t('sat_nutritional_balance'),val:satVal(s.ratings.nutritionalBalance),n:satValN(s.ratings.nutritionalBalance),help:'nutritionalBalance'},
   ]));
-  var hasLunchStatus=(s.lunchStatus||[]).some(function(r){return alcV(r)>0;});
-  if(hasLunchStatus)wrap.appendChild(sec(t('sat_lunch_status')+qHelp('lunchStatus'),t('sat_lunch_status_meta'),alTable(s.lunchStatus,{label:t('sat_lunch_status'),countLabel:'sat_respondents'})));
-  wrap.appendChild(commentFeedCard('lunch',t('sat_comments_lunch'),s.comments&&s.comments.lunch,t('cs_sat_lunch')));
+  const lunchStatusRows=satBag(s.lunchStatus,s.lunchStatusBySection);
+  const hasLunchStatus=lunchStatusRows.some(function(row){return alcV(row)>0;});
+  if(hasLunchStatus)wrap.appendChild(sec(t('sat_lunch_status')+qHelp('lunchStatus'),t('sat_lunch_status_meta'),alTable(lunchStatusRows,{label:t('sat_lunch_status'),countLabel:'sat_respondents'})));
+  wrap.appendChild(commentFeedCard('lunch',t('sat_comments_lunch'),lunchCommentsFiltered,t('cs_sat_lunch')));
 
   // Motivos de elección de SGC
-  if(s.reasonsChose&&s.reasonsChose.length)wrap.appendChild(sec(t('s_sat_reasons')+qHelp('reasonsChose'),t('s_sat_reasons_meta'),alTable(s.reasonsChose,{label:t('s_sat_reasons'),tr:bilFromSlash,countLabel:'sat_respondents'})));
+  const reasonsChoseRows=satBag(s.reasonsChose,s.reasonsChoseBySection);
+  if(reasonsChoseRows.length)wrap.appendChild(sec(t('s_sat_reasons')+qHelp('reasonsChose'),t('s_sat_reasons_meta'),alTable(reasonsChoseRows,{label:t('s_sat_reasons'),tr:bilFromSlash,countLabel:'sat_respondents'})));
 
-  // Respondentes por sección
+  // Respondentes por sección (siempre completo — sin filtrar por satSection, es la referencia del desglose)
   if(s.section&&s.section.length){
     const secRows=s.section.map(row=>({name:row.name==='Kinder'?t('kinder'):row.name==='Prep School'?t('prep'):row.name==='College'?t('college'):row.name,q:row.q,n:row.n,total:row.total}));
     wrap.appendChild(sec(t('s_sat_section')+qHelp('section'),t('s_sat_section_meta'),alTable(secRows,{label:t('s_sat_section'),countLabel:'sat_respondents'})));
