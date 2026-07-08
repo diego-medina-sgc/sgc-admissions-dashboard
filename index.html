@@ -2453,8 +2453,13 @@ function buildSatisfaction(){
   banner.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>'+note+'</span>';
   wrap.appendChild(banner);
 
-  const npsCommentsFiltered=(s.comments&&s.comments.nps||[]).filter(c=>satSection==='all'||(c.sections||[]).indexOf(satSection)>-1);
-  const lunchCommentsFiltered=(s.comments&&s.comments.lunch||[]).filter(c=>satSection==='all'||(c.sections||[]).indexOf(satSection)>-1);
+  function satCommentMatch(c){
+    if(campus!=='os'&&c.campus!==campus)return false;
+    if(satSection!=='all'&&(c.sections||[]).indexOf(satSection)<0)return false;
+    return true;
+  }
+  const npsCommentsFiltered=(s.comments&&s.comments.nps||[]).filter(satCommentMatch);
+  const lunchCommentsFiltered=(s.comments&&s.comments.lunch||[]).filter(satCommentMatch);
 
   // NPS destacado
   const nps=satNpsBucket(s.nps);
