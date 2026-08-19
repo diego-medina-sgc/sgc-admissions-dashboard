@@ -1338,6 +1338,39 @@ function emptyState(title,sub){
 }
 const GR_K=['K1','K2','K3','K4','K5'],GR_P=['P1','P2','P3','P4','P5','P6'],GR_C=['C1','C2','C3','C4','C5','C6'];
 
+/* --- Nomenclatura de grados: Insightly (CRM, vieja) -> ISAMS (oficial) ---
+   Fuente: pestana CAL_mapeo_nomenclaturas del Sheet.
+   Quilmes: K1/K2/K3      -> QK3/QK4/QK5   (Quilmes no tiene Toddlers ni PK)
+   North:   Toddlers/PK/K1/K2/K3 -> NK1/NK2/NK3/NK4/NK5
+   Ambos:   Y1..Y6 -> P1..P6 (Prep) | S1..S6 -> C1..C6 (College)
+   OJO: el backend (doGet) NO normaliza Kinder; si algun dia lo hace, hay que
+   sacar GRADE_MAP de aca para no aplicar el corrimiento dos veces. */
+const GRADE_MAP={
+  QToddlers:'QK1',QPK:'QK2',QK1:'QK3',QK2:'QK4',QK3:'QK5',
+  NToddlers:'NK1',NPK:'NK2',NK1:'NK3',NK2:'NK4',NK3:'NK5'
+};
+function normGrade(g){
+  g=String(g||'').trim().replace(/\s+/g,'');
+  if(GRADE_MAP[g])return GRADE_MAP[g];
+  return g.replace(/^([QN])Y(\d)$/,'$1P$2').replace(/^([QN])S(\d)$/,'$1C$2');
+}
+function gradeLevel(g){
+  const m=String(g).match(/^[QN]([KPC])/);
+  return m?(m[1]==='K'?'kinder':m[1]==='P'?'prep':'college'):null;
+}
+/* Agrupa filas de funnelGrade por grado ya normalizado, sumando los contadores. */
+function aggFunnelGrade(rows){
+  const by={},out=[];
+  rows.forEach(r=>{
+    const g=normGrade(r.grade);
+    if(!by[g]){by[g]={grade:g,campus:r.campus,inquiries:0,visit:0,application:0,won:0};out.push(by[g]);}
+    const o=by[g];
+    o.inquiries+=num(r.inquiries);o.visit+=num(r.visit);
+    o.application+=num(r.application);o.won+=num(r.won);
+  });
+  return out;
+}
+
 /* ============================== EXECUTIVE SUMMARY ============================== */
 function buildResumen(){
   const wrap=document.createElement('div');
@@ -1498,7 +1531,7 @@ function buildKpiTable(){
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
   const sc=(stu,cap)=>fN(stu)+' / '+(cap!=null?fN(cap):'&mdash;');
   // Won 2026 by grade (from funnelGrade WON counts)
-  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026)wonMap[r.grade]=(wonMap[r.grade]||0)+num(r.won);});
+  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026){const g=normGrade(r.grade);wonMap[g]=(wonMap[g]||0)+num(r.won);}});
   const gWon=g=>campus==='q'?num(wonMap['Q'+g]):campus==='n'?num(wonMap['N'+g]):num(wonMap['Q'+g])+num(wonMap['N'+g]);
   let h='<table><thead><tr><th>'+t('col_level')+'</th><th class="r">'+t('col_grade')+'</th><th class="r">'+t('col_studcap')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
   let gtCap=0,gtStu=0;
@@ -1594,21 +1627,21 @@ function buildConvFunnel(){
   // Expandable breakdown by Year Group (when funnelGrade is available)
   if(D.funnelGrade&&D.funnelGrade.length){
     const campName=campus==='q'?'Quilmes':campus==='n'?'North':null;
-    const rows=D.funnelGrade.filter(r=>num(r.yr)===yr&&(campName?r.campus===campName:true));
+    const rows=aggFunnelGrade(D.funnelGrade.filter(r=>num(r.yr)===yr&&(campName?r.campus===campName:true)));
     if(rows.length){
-      const levelOf=g=>{const m=String(g).match(/^[QN]([KPC])/);return m?(m[1]==='K'?'kinder':m[1]==='P'?'prep':'college'):'college';};
-      const groups={kinder:[],prep:[],college:[]};
-      rows.forEach(r=>{groups[levelOf(r.grade)].push(r);});
+      const groups={kinder:[],prep:[],college:[],other:[]};
+      rows.forEach(r=>{groups[gradeLevel(r.grade)||'other'].push(r);});
       const tw=document.createElement('div');tw.className='tw';
       let h='<table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_inquiries')+'</th><th class="r">'+t('col_visit_n')+'</th><th class="r">'+t('col_appl_n')+'</th><th class="r">'+t('col_yield_n')+'</th></tr></thead><tbody>';
       let TI=0,TV=0,TA=0,TW=0;
-      ['kinder','prep','college'].forEach(lv=>{
+      ['kinder','prep','college','other'].forEach(lv=>{
         const list=groups[lv];if(!list.length)return;
+        const lvLbl=lv==='other'?(lang==='en'?'Unassigned':'Sin asignar'):t(lv);
         list.sort((a,b)=>String(a.grade).localeCompare(String(b.grade)));
         let li=0,lvv=0,la=0,lw=0;list.forEach(r=>{li+=num(r.inquiries);lvv+=num(r.visit);la+=num(r.application);lw+=num(r.won);});
         TI+=li;TV+=lvv;TA+=la;TW+=lw;
         const gid='fg-'+lv;
-        h+='<tr class="grp grp-k gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+t(lv)+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
+        h+='<tr class="grp grp-k gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+lvLbl+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
         list.forEach(r=>{h+='<tr class="salon-row '+gid+'" style="display:none"><td>'+escHtml(r.grade)+'</td><td class="r">'+fN(r.inquiries)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.won)+'</td></tr>';});
       });
       h+='<tr class="tot won-row"><td>'+t('total_lbl')+'</td><td class="r"><strong>'+fN(TI)+'</strong></td><td class="r">'+fN(TV)+'</td><td class="r">'+fN(TA)+'</td><td class="r"><strong>'+fN(TW)+'</strong></td></tr>';
@@ -1701,7 +1734,7 @@ function buildOccupancy(){
       const fcArr='<span class="fc-arrow">&#10142;</span>';
       const cmpHead=build?('<th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th>'):'';
       // Won (agosto): desde funnelGrade, ya filtrado por lógica May+ para 2026
-      const wonFC={};(D.funnelGrade||[]).filter(r=>num(r.yr)===fcYear).forEach(r=>{const g=String(r.grade);const lv=g.match(/^[QN]K/)?'Kinder':g.match(/^[QN]P/)?'Prep':'College';const ck=r.campus+'|'+lv;wonFC[ck]=(wonFC[ck]||0)+num(r.won);});
+      const wonFC={};(D.funnelGrade||[]).filter(r=>num(r.yr)===fcYear).forEach(r=>{const lvk=gradeLevel(normGrade(r.grade));const lv=lvk==='kinder'?'Kinder':lvk==='prep'?'Prep':lvk==='college'?'College':'';if(!lv)return;const ck=r.campus+'|'+lv;wonFC[ck]=(wonFC[ck]||0)+num(r.won);});
       let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">Won</th>'+cmpHead+'</tr></thead><tbody>';
       rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);const cmpCells=build?('<td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td>'):'';const wonVal=wonFC[r.campus+'|'+r.nivel]||0;h0+='<tr class="'+(build&&sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td><td class="r" style="font-weight:700">'+fN(wonVal)+'</td>'+cmpCells+'</tr>';});
       h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
