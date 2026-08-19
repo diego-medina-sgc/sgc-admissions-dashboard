@@ -223,6 +223,7 @@ tbody tr.grp td{font-weight:700;font-size:.65rem;letter-spacing:.09em;text-trans
 tbody tr.grp-q td{background:var(--red-lt);color:var(--red);}
 tbody tr.grp-n td{background:var(--navy-lt);color:var(--navy);}
 tbody tr.grp-k td{background:var(--ink-lt);color:var(--ink);}
+tbody tr.grp-empty td{opacity:.5;cursor:default;}
 tbody tr.tot td{font-weight:600;background:#F1EDE5;}
 tbody tr.tot td:first-child{text-align:left !important;}
 tbody tr.ctot td{font-weight:700;border-top:2px solid;}
@@ -1647,13 +1648,15 @@ function buildConvFunnel(){
       let h='<table><thead><tr><th>'+t('col_grade')+'</th><th class="r">'+t('col_inquiries')+'</th><th class="r">'+t('col_visit_n')+'</th><th class="r">'+t('col_appl_n')+'</th><th class="r">'+t('col_yield_n')+'</th></tr></thead><tbody>';
       let TI=0,TV=0,TA=0,TW=0;
       ['kinder','prep','college','other'].forEach(lv=>{
-        const list=groups[lv];if(!list.length)return;
+        const list=groups[lv];
+        if(!list.length&&lv==='other')return;   // 'Sin asignar' solo si tiene filas
         const lvLbl=lv==='other'?(lang==='en'?'Unassigned':'Sin asignar'):t(lv);
         list.sort((a,b)=>String(a.grade).localeCompare(String(b.grade)));
         let li=0,lvv=0,la=0,lw=0;list.forEach(r=>{li+=num(r.inquiries);lvv+=num(r.visit);la+=num(r.application);lw+=num(r.won);});
         TI+=li;TV+=lvv;TA+=la;TW+=lw;
         const gid='fg-'+lv;
-        h+='<tr class="grp grp-k gtog" onclick="toggleGroup(\''+gid+'\',this)"><td><span class="gcaret"></span>'+lvLbl+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
+        const mt=!list.length;   // nivel sin ninguna consulta cargada para ese ciclo
+        h+='<tr class="grp grp-k'+(mt?' grp-empty':' gtog')+'"'+(mt?'':' onclick="toggleGroup(\''+gid+'\',this)"')+'><td>'+(mt?'':'<span class="gcaret"></span>')+lvLbl+'</td><td class="r"><strong>'+fN(li)+'</strong></td><td class="r">'+fN(lvv)+'</td><td class="r">'+fN(la)+'</td><td class="r"><strong>'+fN(lw)+'</strong></td></tr>';
         list.forEach(r=>{h+='<tr class="salon-row '+gid+'" style="display:none"><td>'+escHtml(r.grade)+'</td><td class="r">'+fN(r.inquiries)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.won)+'</td></tr>';});
       });
       h+='<tr class="tot won-row"><td>'+t('total_lbl')+'</td><td class="r"><strong>'+fN(TI)+'</strong></td><td class="r">'+fN(TV)+'</td><td class="r">'+fN(TA)+'</td><td class="r"><strong>'+fN(TW)+'</strong></td></tr>';
