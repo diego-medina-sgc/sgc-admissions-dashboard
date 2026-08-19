@@ -1358,11 +1358,23 @@ function gradeLevel(g){
   const m=String(g).match(/^[QN]([KPC])/);
   return m?(m[1]==='K'?'kinder':m[1]==='P'?'prep':'college'):null;
 }
+/* Salas que no existen en ese campus, o que abren recien en cierto ciclo.
+   null = la sala no existe y no esta prevista (Quilmes no tiene Maternal).
+   numero = primer ciclo lectivo en que la sala existe.
+   Las consultas cargadas contra una sala inexistente son error de carga del CRM
+   (ninguna registro jamas una visita) y no se cuentan en el funnel. */
+const GRADE_FROM={QK1:null,QK2:2027};
+function gradeActive(g,yr){
+  if(!(g in GRADE_FROM))return true;
+  const from=GRADE_FROM[g];
+  return from!==null&&num(yr)>=from;
+}
 /* Agrupa filas de funnelGrade por grado ya normalizado, sumando los contadores. */
 function aggFunnelGrade(rows){
   const by={},out=[];
   rows.forEach(r=>{
     const g=normGrade(r.grade);
+    if(!gradeActive(g,r.yr))return;
     if(!by[g]){by[g]={grade:g,campus:r.campus,inquiries:0,visit:0,application:0,won:0};out.push(by[g]);}
     const o=by[g];
     o.inquiries+=num(r.inquiries);o.visit+=num(r.visit);
@@ -1531,7 +1543,7 @@ function buildKpiTable(){
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
   const sc=(stu,cap)=>fN(stu)+' / '+(cap!=null?fN(cap):'&mdash;');
   // Won 2026 by grade (from funnelGrade WON counts)
-  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026){const g=normGrade(r.grade);wonMap[g]=(wonMap[g]||0)+num(r.won);}});
+  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026){const g=normGrade(r.grade);if(!gradeActive(g,r.yr))return;wonMap[g]=(wonMap[g]||0)+num(r.won);}});
   const gWon=g=>campus==='q'?num(wonMap['Q'+g]):campus==='n'?num(wonMap['N'+g]):num(wonMap['Q'+g])+num(wonMap['N'+g]);
   let h='<table><thead><tr><th>'+t('col_level')+'</th><th class="r">'+t('col_grade')+'</th><th class="r">'+t('col_studcap')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
   let gtCap=0,gtStu=0;
@@ -1734,7 +1746,7 @@ function buildOccupancy(){
       const fcArr='<span class="fc-arrow">&#10142;</span>';
       const cmpHead=build?('<th class="r">'+lblNew+'</th><th class="r">'+lblGap+'</th><th class="r">'+t('col_status')+'</th>'):'';
       // Won (agosto): desde funnelGrade, ya filtrado por lógica May+ para 2026
-      const wonFC={};(D.funnelGrade||[]).filter(r=>num(r.yr)===fcYear).forEach(r=>{const lvk=gradeLevel(normGrade(r.grade));const lv=lvk==='kinder'?'Kinder':lvk==='prep'?'Prep':lvk==='college'?'College':'';if(!lv)return;const ck=r.campus+'|'+lv;wonFC[ck]=(wonFC[ck]||0)+num(r.won);});
+      const wonFC={};(D.funnelGrade||[]).filter(r=>num(r.yr)===fcYear).forEach(r=>{const gN=normGrade(r.grade);if(!gradeActive(gN,r.yr))return;const lvk=gradeLevel(gN);const lv=lvk==='kinder'?'Kinder':lvk==='prep'?'Prep':lvk==='college'?'College':'';if(!lv)return;const ck=r.campus+'|'+lv;wonFC[ck]=(wonFC[ck]||0)+num(r.won);});
       let h0='<table><thead><tr>'+(showCamp?'<th>Campus</th>':'')+'<th'+(showCamp?' class="r"':'')+'>'+t('col_level')+'</th><th class="r">'+lblProsp+'</th><th class="r fc-flow">'+fcArr+t('col_visit_n')+'</th><th class="r fc-flow">'+fcArr+t('col_appl_n')+'</th><th class="r fc-flow">'+fcArr+t('col_yield_n')+'</th><th class="r">'+t('col_forecast')+'</th><th class="r">Won</th>'+cmpHead+'</tr></thead><tbody>';
       rows.forEach(r=>{const st=String(r.status||'').toLowerCase();const sem=st.indexOf('green')>-1?'g':st.indexOf('amber')>-1||st.indexOf('yellow')>-1?'y':'r';const gap=num(r.gap);const cmpCells=build?('<td class="r">'+fN(r.newStudents)+'</td><td class="r">'+fSign(gap)+'</td><td class="r"><span class="sem '+sem+'"></span></td>'):'';const wonVal=wonFC[r.campus+'|'+r.nivel]||0;h0+='<tr class="'+(build&&sem==='g'?'won-row':'')+'">'+(showCamp?'<td>'+escHtml(r.campus)+'</td>':'')+'<td style="font-weight:600">'+escHtml(r.nivel)+'</td><td class="r">'+fN(r.prospectos)+'</td><td class="r">'+fN(r.visit)+'</td><td class="r">'+fN(r.application)+'</td><td class="r">'+fN(r.yield)+'</td><td class="r" style="font-weight:700">'+fN(r.forecast)+'</td><td class="r" style="font-weight:700">'+fN(wonVal)+'</td>'+cmpCells+'</tr>';});
       h0+='</tbody></table>';tw0.innerHTML=h0;return tw0;
