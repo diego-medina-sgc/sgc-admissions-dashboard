@@ -839,7 +839,7 @@ const STRINGS={
     forecast_note:'Estimated 2027 intake from the active pipeline, weighting each prospect by the <b>historical conversion rate</b> of its stage (Visit&rarr;Won and Application&rarr;Won) per campus &amp; level. Only prospects past Visit count, so <b>early in the cycle the forecast (and the Gap vs 2026) is naturally low</b> &mdash; it rises as the funnel advances. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;&lt;100% &middot; 🔴 &lt;80%.',
     forecast_note_open:'Current cycle ({y}) &mdash; still open until Aug/Sep. Shows the <b>additional students that can still enter</b> from the active pipeline, weighting each prospect by the <b>historical conversion rate</b> of its stage per campus &amp; level. These are incremental late entries (no prior-year target applies).',
     s_historical_cr:'Historical Conversion Rate',s_historical_cr_meta:'2021&ndash;2026',
-    s_conv_pipeline:'Conversion Pipeline',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
+    s_conv_pipeline:'Conversion Pipeline',s_conv_pipeline_meta:'Funnel 2026',
     s_channel:'Conversion Rate per Channel',s_channel_meta:'Source attribution',
     s_cohort_lifespan:'Cohort Lifespan',s_cohort_lifespan_meta:'Generational loyalty &mdash; ISAMS',
     s_cohort_rates:'Grade-to-Grade Movement',s_cohort_rates_meta:'Transition retention rates',
@@ -971,7 +971,7 @@ const STRINGS={
     forecast_note:'Ingreso 2027 estimado desde el pipeline activo, ponderando cada prospecto por la <b>tasa de conversi&oacute;n hist&oacute;rica</b> de su etapa (Visit&rarr;Won y Application&rarr;Won) por campus y nivel. Solo cuentan los prospectos que pasaron Visit, as&iacute; que <b>al inicio del ciclo el forecast (y el Gap vs 2026) es naturalmente bajo</b> &mdash; sube a medida que avanza el funnel. <b>Status</b>: 🟢 Forecast &ge; New 2026 &middot; 🟡 80&ndash;&lt;100% &middot; 🔴 &lt;80%.',
     forecast_note_open:'Ciclo en curso ({y}) &mdash; abierto hasta ago/sep. Muestra los <b>alumnos adicionales que todav&iacute;a pueden ingresar</b> desde el pipeline activo, ponderando cada prospecto por la <b>tasa de conversi&oacute;n hist&oacute;rica</b> de su etapa por campus y nivel. Son ingresos tard&iacute;os incrementales (no aplica objetivo vs a&ntilde;o previo).',
     s_historical_cr:'Tasa de Conversi&oacute;n Hist&oacute;rica',s_historical_cr_meta:'2021&ndash;2026',
-    s_conv_pipeline:'Embudo de Conversi&oacute;n',s_conv_pipeline_meta:'Funnel 2026 &mdash; One School',
+    s_conv_pipeline:'Embudo de Conversi&oacute;n',s_conv_pipeline_meta:'Funnel 2026',
     s_channel:'Tasa de Conversi&oacute;n por Canal',s_channel_meta:'Atribuci&oacute;n de origen',
     s_cohort_lifespan:'Permanencia de Camadas',s_cohort_lifespan_meta:'Fidelizaci&oacute;n generacional &mdash; ISAMS',
     s_cohort_rates:'Movimiento Grado a Grado',s_cohort_rates_meta:'Tasas de transici&oacute;n',
@@ -1682,7 +1682,8 @@ function buildConvFunnel(){
 function buildConvPipeline(){
   const f=getFunnel(2026)||getFunnel(num(funnelYear));
   const sct=document.createElement('div');sct.className='sec';
-  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_conv_pipeline')+'</span><span class="sec-meta">'+t('s_conv_pipeline_meta')+'</span></div>';
+  const cpName=campus==='os'?'One School':campus==='q'?'Quilmes':'North';
+  sct.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_conv_pipeline')+'</span><span class="sec-meta">'+t('s_conv_pipeline_meta')+' &mdash; '+cpName+'</span></div>';
   if(!f){sct.appendChild(emptyState(t('coming_soon'),''));return sct;}
   const stages=[
     {lbl:t('col_inquiries'),n:f.inquiries,won:false},
