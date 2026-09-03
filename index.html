@@ -977,6 +977,11 @@ const STRINGS={
     s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
     fidu_loyalty:'Weekly Loyalty',fidu_loyalty_f:'Weekly recurrence',fidu_open:'Real Open Rate',fidu_open_f:'Viewed vs audience',
+    fidu_peak:'Weekly Peak',fidu_peak_f:'Highest week of the month',fidu_posts:'Posts',fidu_posts_f:'Published this month',
+    fidu_audience:'Audience',fidu_audience_f:'Total reach of posts',fidu_views:'Views',fidu_views_f:'Total posts opened',
+    fidu_nodata:'No data loaded for this month',fidu_nodata_sub:'Run the monthly import in the Sheet (SGC &middot; Fidu menu)',
+    s_fidu_evol:'Monthly Evolution',s_fidu_evol_meta:'Interactions by module',
+    fidu_evol_title:'App usage by month',fidu_evol_sub:'Total interactions per module',
     col_module:'Module',col_interactions:'Interactions',col_pct:'% of total',col_month:'Month',col_inbox:'Inbox Messages',
     col_source:'Source',col_channel_yr:'Year',col_appl:'Application Rate',col_yield:'Yield Rate',col_lost:'Lost',
     s_proj_headline:'Projection Scenarios',s_proj_headline_meta:'2027',
@@ -1109,6 +1114,11 @@ const STRINGS={
     s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
     fidu_loyalty:'Fidelidad Semanal',fidu_loyalty_f:'Recurrencia semanal',fidu_open:'Tasa de Apertura Real',fidu_open_f:'Vistos vs audiencia',
+    fidu_peak:'Pico Semanal',fidu_peak_f:'Semana m&aacute;s alta del mes',fidu_posts:'Publicaciones',fidu_posts_f:'Publicadas en el mes',
+    fidu_audience:'Audiencia',fidu_audience_f:'Alcance total de las publicaciones',fidu_views:'Vistos',fidu_views_f:'Aperturas totales',
+    fidu_nodata:'Sin datos cargados para este mes',fidu_nodata_sub:'Correr la importaci&oacute;n mensual en el Sheet (men&uacute; SGC &middot; Fidu)',
+    s_fidu_evol:'Evoluci&oacute;n Mensual',s_fidu_evol_meta:'Interacciones por m&oacute;dulo',
+    fidu_evol_title:'Uso de la app por mes',fidu_evol_sub:'Interacciones totales por m&oacute;dulo',
     col_module:'M&oacute;dulo',col_interactions:'Interacciones',col_pct:'% del total',col_month:'Mes',col_inbox:'Mensajes Inbox',
     col_source:'Origen',col_channel_yr:'A&ntilde;o',col_appl:'Application Rate',col_yield:'Yield Rate',col_lost:'Perdidos',
     s_proj_headline:'Escenarios de Proyecci&oacute;n',s_proj_headline_meta:'2027',
@@ -1209,7 +1219,7 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
-let adsMonth=null,adsSort='clicks',mkView='app';
+let adsMonth=null,adsSort='clicks',mkView='app',mkMonth=null;
 let alView='community';
 let satCommentFilter={lunch:'all',nps:'all'};
 let satSection='all'; // 'all' | 'Kinder' | 'Prep School' | 'College' — filtro de sección en Family Satisfaction
@@ -2016,27 +2026,81 @@ function buildMarketing(){
   else wrap.appendChild(buildMkWeb());
   return wrap;
 }
+/* Pills de mes para la SGC App (serie mensual de fidu) */
+function mkMonthPills(months){
+  return '<div class="cycle-pills" style="margin-left:auto;flex-wrap:wrap">'+months.map(m=>'<button class="cycle-pill'+(mkMonth===m?' active':'')+'" onclick="mkMonth=\''+m+'\';render()">'+monthLabel(m)+'</button>').join('')+'</div>';
+}
+/* Elige por defecto el ultimo mes que tenga KPIs cargados (no solo interacciones) */
+function mkDefaultMonth(mk,months){
+  for(let i=months.length-1;i>=0;i--){const b=mk.byMonth[months[i]];if(b&&(b.activeUsers!=null||b.openRate!=null))return months[i];}
+  return months[months.length-1];
+}
 function buildMkApp(){
   const out=document.createElement('div');
   const mk=D.marketing&&D.marketing.fidu;
   out.appendChild(groupHeader(t('s_app_kpis'),t('s_app_kpis_meta'),true,'var(--teal)'));
-  if(mk){
-    out.appendChild(sec(t('headline'),'',statStrip([
-      {lbl:t('fidu_adoption'),val:fP(mk.adoption),foot:t('fidu_adoption_f')},
-      {lbl:t('fidu_active'),val:fN(mk.activeUsers),foot:t('fidu_active_f')},
-      {lbl:t('fidu_loyalty'),val:fP(mk.loyalty),foot:t('fidu_loyalty_f')},
-      {lbl:t('fidu_open'),val:fP(mk.openRate),foot:t('fidu_open_f')},
+  if(!mk){out.appendChild(sec(t('headline'),'',emptyState(t('coming_soon'),t('cs_fidu'))));return out;}
+
+  const months=(mk.months||[]).slice();
+  const V=(v,f)=>(v==null||v===''?'&mdash;':f(v));
+
+  if(months.length){
+    // ── Serie mensual: KPIs del mes seleccionado ──
+    if(!mkMonth||months.indexOf(mkMonth)<0)mkMonth=mkDefaultMonth(mk,months);
+    const b=mk.byMonth[mkMonth]||{};
+    const hd=document.createElement('div');hd.className='sec';
+    hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('headline')+'</span><span class="sec-meta">'+escHtml(b.label||monthLabel(mkMonth))+'</span>'+mkMonthPills(months)+'</div>';
+    hd.appendChild(statStrip([
+      {lbl:t('fidu_adoption'),val:V(b.adoption,fP),foot:t('fidu_adoption_f')},
+      {lbl:t('fidu_active'),val:V(b.activeUsers,fN),foot:t('fidu_active_f')},
+      {lbl:t('fidu_loyalty'),val:V(b.loyalty,fP),foot:t('fidu_loyalty_f')},
+      {lbl:t('fidu_open'),val:V(b.openRate,fP),foot:t('fidu_open_f')},
+    ]));
+    if(b.peakUsers!=null||b.posts!=null){
+      hd.appendChild(statStrip([
+        {lbl:t('fidu_peak'),val:V(b.peakUsers,fN),foot:t('fidu_peak_f')},
+        {lbl:t('fidu_posts'),val:V(b.posts,fN),foot:t('fidu_posts_f')},
+        {lbl:t('fidu_audience'),val:V(b.audience,fN),foot:t('fidu_audience_f')},
+        {lbl:t('fidu_views'),val:V(b.views,fN),foot:t('fidu_views_f')},
+      ]));
+    }
+    out.appendChild(hd);
+
+    // ── Modulos del mes seleccionado ──
+    const mods=b.modules||[];
+    if(mods.length){
+      let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
+      mods.forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(trModule(m.name))+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
+      h1+='</tbody></table></div>';
+      out.appendChild(sec(t('s_modules'),escHtml(b.label||monthLabel(mkMonth)),elFromHTML(h1).firstChild));
+    }else{
+      out.appendChild(sec(t('s_modules'),escHtml(b.label||monthLabel(mkMonth)),emptyState(t('fidu_nodata'),t('fidu_nodata_sub'))));
+    }
+
+    // ── Evolucion mensual (grafico apilado por modulo) ──
+    if(months.length>1){
+      out.appendChild(sec(t('s_fidu_evol'),t('s_fidu_evol_meta'),alChartCard('chart-fidu-evol',t('fidu_evol_title'),t('fidu_evol_sub'),320)));
+    }
+  }else{
+    // ── Fallback: doGet sin serie mensual (layout viejo de OUT_marketing) ──
+    out.appendChild(sec(t('headline'),mk.lastPeriod?escHtml(mk.lastPeriod):'',statStrip([
+      {lbl:t('fidu_adoption'),val:V(mk.adoption,fP),foot:t('fidu_adoption_f')},
+      {lbl:t('fidu_active'),val:V(mk.activeUsers,fN),foot:t('fidu_active_f')},
+      {lbl:t('fidu_loyalty'),val:V(mk.loyalty,fP),foot:t('fidu_loyalty_f')},
+      {lbl:t('fidu_open'),val:V(mk.openRate,fP),foot:t('fidu_open_f')},
     ])));
     let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
     (mk.modules||[]).forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(trModule(m.name))+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
     h1+='</tbody></table></div>';
+    out.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
+  }
+
+  // ── Termometro de demanda: Inbox por mes (siempre) ──
+  if((mk.inboxByMonth||[]).length){
     let h2='<div class="tw"><table><thead><tr><th>'+t('col_month')+'</th><th class="r">'+t('col_inbox')+'</th></tr></thead><tbody>';
     (mk.inboxByMonth||[]).forEach(m=>{h2+='<tr><td style="font-weight:600">'+escHtml(trMonth(m.month))+'</td><td class="r">'+fN(m.inbox)+'</td></tr>';});
     h2+='</tbody></table></div>';
-    out.appendChild(sec(t('s_modules'),t('s_modules_meta'),elFromHTML(h1).firstChild));
     out.appendChild(sec(t('s_inbox'),t('s_inbox_meta'),elFromHTML(h2).firstChild));
-  }else{
-    out.appendChild(sec(t('headline'),'',emptyState(t('coming_soon'),t('cs_fidu'))));
   }
   return out;
 }
@@ -2886,6 +2950,23 @@ function drawCharts(){
       {label:t('web_bounce'),data:tr.map(r=>parseFloat((r.bounceRate*100).toFixed(1))),borderColor:kRed,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kRed,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y'},
       {label:t('web_duration'),data:tr.map(r=>parseFloat((r.avgDuration/60).toFixed(2))),borderColor:kTeal,backgroundColor:'transparent',tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:kTeal,pointBorderColor:PBC,pointBorderWidth:2,yAxisID:'y1'},
     ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.datasetIndex===0?ctx.raw+'%':ctx.raw+'m')}}},scales:{y:{position:'left',grid:GRD,ticks:{...TCK,callback:v=>v+'%'},border:{display:false}},y1:{position:'right',grid:{display:false},ticks:{...TCK,callback:v=>v+'m'},border:{display:false}},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  // SGC App (fidu) — interacciones por modulo y por mes (barras apiladas)
+  const fe=document.getElementById('chart-fidu-evol');
+  const fmk=D.marketing&&D.marketing.fidu;
+  if(fe&&fmk&&fmk.months&&fmk.months.length){
+    const ms=fmk.months;
+    const MODC=[['Inbox (Mensajes)',kTeal],['Behavior (Rewards & Conduct)',kViolet],['Newsfeed (Novedades)',kCel],['Groups (Grupos)',kNavy],['Events (Eventos)',kRed],['Subjects (Materias)',kGray]];
+    const val=(m,name)=>{const b=fmk.byMonth[m];if(!b||!b.modules)return 0;const f=b.modules.filter(x=>x.name===name)[0];return f?num(f.interactions):0;};
+    const ds=MODC.map(([name,col],i)=>{
+      const data=ms.map(m=>val(m,name));
+      if(!data.some(v=>v>0))return null;
+      return {label:trModule(name),data:data,backgroundColor:ms.map(m=>m===mkMonth?col:hexA(col,DK?0.42:0.48)),stack:'s',borderSkipped:false,borderRadius:i===0?{topLeft:6,topRight:6}:0};
+    }).filter(Boolean);
+    if(ds.length){
+      ds.reverse();
+      charts['fidu-evol']=new Chart(fe,{type:'bar',data:{labels:ms.map(m=>monthLabel(m)),datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{stacked:true,grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    }
   }
 }
 
