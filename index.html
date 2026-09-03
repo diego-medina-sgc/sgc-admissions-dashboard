@@ -984,6 +984,8 @@ const STRINGS={
     s_modules:'Modules',s_modules_meta:'Attention distribution',
     s_inbox:'Messaging &mdash; Inbox by month',s_inbox_meta:'Demand thermometer',
     fidu_adoption:'Adoption Rate',fidu_adoption_f:'Families with access',fidu_active:'Weekly Active Users',fidu_active_f:'Active parents',
+    fidu_wk_avg:'avg of',fidu_wk_weeks:'weeks',fidu_wk_week:'week',fidu_wk_partial:'Not enough weeks in the report',
+    fidu_wk_note:'Weekly figures average the weeks the fidu report actually contains. Months with fewer than 3 are not shown, because a single week is not representative of the month.',
     fidu_loyalty:'Weekly Loyalty',fidu_loyalty_f:'Weekly recurrence',fidu_open:'Real Open Rate',fidu_open_f:'Viewed vs audience',
     fidu_peak:'Weekly Peak',fidu_peak_f:'Highest week of the month',fidu_posts:'Posts',fidu_posts_f:'Published this month',
     fidu_audience:'Audience',fidu_audience_f:'Total reach of posts',fidu_views:'Views',fidu_views_f:'Total posts opened',
@@ -1121,6 +1123,8 @@ const STRINGS={
     s_modules:'M&oacute;dulos',s_modules_meta:'Distribuci&oacute;n de la atenci&oacute;n',
     s_inbox:'Mensajer&iacute;a &mdash; Inbox por mes',s_inbox_meta:'Term&oacute;metro de demanda',
     fidu_adoption:'Tasa de Adopci&oacute;n',fidu_adoption_f:'Familias con acceso',fidu_active:'Usuarios Activos',fidu_active_f:'Padres activos semanales',
+    fidu_wk_avg:'prom. de',fidu_wk_weeks:'semanas',fidu_wk_week:'semana',fidu_wk_partial:'Semanas insuficientes en el reporte',
+    fidu_wk_note:'Los valores semanales promedian las semanas que el reporte de fidu efectivamente trae. Los meses con menos de 3 no se muestran, porque una sola semana no representa al mes.',
     fidu_loyalty:'Fidelidad Semanal',fidu_loyalty_f:'Recurrencia semanal',fidu_open:'Tasa de Apertura Real',fidu_open_f:'Vistos vs audiencia',
     fidu_peak:'Pico Semanal',fidu_peak_f:'Semana m&aacute;s alta del mes',fidu_posts:'Publicaciones',fidu_posts_f:'Publicadas en el mes',
     fidu_audience:'Audiencia',fidu_audience_f:'Alcance total de las publicaciones',fidu_views:'Vistos',fidu_views_f:'Aperturas totales',
@@ -2058,20 +2062,39 @@ function buildMkApp(){
     const b=mk.byMonth[mkMonth]||{};
     const hd=document.createElement('div');hd.className='sec';
     hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('headline')+'</span><span class="sec-meta">'+escHtml(monthLabel(mkMonth))+'</span>'+mkMonthPills(months)+'</div>';
+    /* El reporte de fidu tiene meses con semanas faltantes (marzo y abril 2026 traen
+       una sola). Promediar una semana y publicarla como el mes es enganioso, asi que
+       por debajo de 3 semanas los KPIs semanales quedan en blanco y se dice por que.
+       Los que no salen de esa tabla (apertura, publicaciones, modulos) no se tocan. */
+    const wk=b.weeks==null?null:num(b.weeks);
+    const flaco=wk!==null&&wk<3;
+    const wkTxt=wk===null?'':t('fidu_wk_avg')+' '+wk+' '+(wk===1?t('fidu_wk_week'):t('fidu_wk_weeks'));
+    const wkSolo=wk===null?'':wk+' '+(wk===1?t('fidu_wk_week'):t('fidu_wk_weeks'));
+    const semanal=(val,foot)=>flaco?{val:'&mdash;',foot:t('fidu_wk_partial')+(wk?' ('+wkSolo+')':'')}
+                                   :{val:val,foot:foot+(wkTxt?' &middot; '+wkTxt:'')};
+    const kAct=semanal(V(b.activeUsers,fN),t('fidu_active_f'));
+    const kLoy=semanal(V(b.loyalty,fP),t('fidu_loyalty_f'));
     const kpis=[
       {lbl:t('fidu_adoption'),val:V(b.adoption,fP),foot:t('fidu_adoption_f')},
-      {lbl:t('fidu_active'),val:V(b.activeUsers,fN),foot:t('fidu_active_f')},
-      {lbl:t('fidu_loyalty'),val:V(b.loyalty,fP),foot:t('fidu_loyalty_f')},
+      {lbl:t('fidu_active'),val:kAct.val,foot:kAct.foot},
+      {lbl:t('fidu_loyalty'),val:kLoy.val,foot:kLoy.foot},
       {lbl:t('fidu_open'),val:V(b.openRate,fP),foot:t('fidu_open_f')},
     ];
     if(b.peakUsers!=null||b.posts!=null){
+      const kPk=semanal(V(b.peakUsers,fN),t('fidu_peak_f'));
       kpis.push(
-        {lbl:t('fidu_peak'),val:V(b.peakUsers,fN),foot:t('fidu_peak_f')},
+        {lbl:t('fidu_peak'),val:kPk.val,foot:kPk.foot},
         {lbl:t('fidu_posts'),val:V(b.posts,fN),foot:t('fidu_posts_f')},
         {lbl:t('fidu_audience'),val:V(b.audience,fN),foot:t('fidu_audience_f')},
         {lbl:t('fidu_views'),val:V(b.views,fN),foot:t('fidu_views_f')});
     }
     hd.appendChild(statStrip(kpis,4));
+    if(months.some(m=>{const w=(mk.byMonth[m]||{}).weeks;return w!=null&&num(w)<3;})){
+      const nota=document.createElement('div');
+      nota.className='al-coverage';nota.style.marginTop='12px';
+      nota.innerHTML='<strong>'+t('fidu_wk_partial')+'.</strong> '+t('fidu_wk_note');
+      hd.appendChild(nota);
+    }
     out.appendChild(hd);
 
     // ── Modulos del mes seleccionado ──
