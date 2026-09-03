@@ -217,6 +217,9 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .si{flex:1 1 130px;padding:22px 18px 20px;border-right:1px solid rgba(255,255,255,.1);transition:background .14s;position:relative;text-align:center;z-index:1;}
 .si-lbl,.si-val,.si-foot{text-align:center;}
 .si:last-child{border-right:none;}
+.stat-strip.sc4 .si{flex:1 1 25%;max-width:25%;}
+.stat-strip.sc4 .si:nth-child(4n){border-right:none;}
+.stat-strip.sc4 .si:nth-child(-n+4):not(:nth-last-child(-n+4)){border-bottom:1px solid rgba(255,255,255,.1);}
 .si:hover{background:rgba(255,255,255,.05);}
 .si-lbl{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;}
 .si-val{font-size:2.2rem;font-weight:700;color:#fff;line-height:.95;letter-spacing:-.05em;font-variant-numeric:tabular-nums;transition:color .2s;}
@@ -725,6 +728,11 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
   /* Key Highlights mobile: 3 per row, trailing items centered */
   .stat-strip{display:flex;flex-wrap:wrap;justify-content:center;}
   .stat-strip .si{flex:1 0 33.33%;max-width:33.33%;padding:14px 6px 12px;border-bottom:1px solid rgba(255,255,255,.1);}
+  /* la rejilla de 4 del desktop es ilegible en 375px: aca van de a 2 */
+  .stat-strip.sc4 .si{flex:1 0 50%;max-width:50%;border-bottom:1px solid rgba(255,255,255,.1);}
+  .stat-strip.sc4 .si:nth-child(2n+1){border-right:1px solid rgba(255,255,255,.1);}
+  .stat-strip.sc4 .si:nth-child(2n){border-right:none;}
+  .stat-strip.sc4 .si:nth-last-child(-n+2){border-bottom:none;}
   .stat-strip .si-val{font-size:1.5rem;}
   .stat-strip .si-lbl{font-size:.52rem;letter-spacing:.06em;margin-bottom:6px;}
   .stat-strip .si-foot{font-size:.58rem;}
@@ -1457,8 +1465,8 @@ function kpiGrid(cards){
   g.innerHTML=cards.map(c=>'<div class="kpi-card'+(c.accent?' accent':'')+'"><div class="kpi-lbl">'+c.lbl+'</div><div class="kpi-val '+(c.cls||'')+'">'+c.val+'</div><div class="kpi-foot">'+(c.foot||'')+'</div></div>').join('');
   return g;
 }
-function statStrip(items){
-  const strip=document.createElement('div');strip.className='stat-strip';
+function statStrip(items,cols){
+  const strip=document.createElement('div');strip.className='stat-strip'+(cols?' sc'+cols:'');
   strip.innerHTML=items.map(s=>'<div class="si'+(s.accent?' si-accent':'')+'"><div class="si-lbl">'+s.lbl+'</div><div class="si-val '+(s.cls||'')+'">'+s.val+'</div><div class="si-foot">'+(s.foot||'')+'</div></div>').join('');
   return strip;
 }
@@ -2049,21 +2057,21 @@ function buildMkApp(){
     if(!mkMonth||months.indexOf(mkMonth)<0)mkMonth=mkDefaultMonth(mk,months);
     const b=mk.byMonth[mkMonth]||{};
     const hd=document.createElement('div');hd.className='sec';
-    hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('headline')+'</span><span class="sec-meta">'+escHtml(b.label||monthLabel(mkMonth))+'</span>'+mkMonthPills(months)+'</div>';
-    hd.appendChild(statStrip([
+    hd.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('headline')+'</span><span class="sec-meta">'+escHtml(monthLabel(mkMonth))+'</span>'+mkMonthPills(months)+'</div>';
+    const kpis=[
       {lbl:t('fidu_adoption'),val:V(b.adoption,fP),foot:t('fidu_adoption_f')},
       {lbl:t('fidu_active'),val:V(b.activeUsers,fN),foot:t('fidu_active_f')},
       {lbl:t('fidu_loyalty'),val:V(b.loyalty,fP),foot:t('fidu_loyalty_f')},
       {lbl:t('fidu_open'),val:V(b.openRate,fP),foot:t('fidu_open_f')},
-    ]));
+    ];
     if(b.peakUsers!=null||b.posts!=null){
-      hd.appendChild(statStrip([
+      kpis.push(
         {lbl:t('fidu_peak'),val:V(b.peakUsers,fN),foot:t('fidu_peak_f')},
         {lbl:t('fidu_posts'),val:V(b.posts,fN),foot:t('fidu_posts_f')},
         {lbl:t('fidu_audience'),val:V(b.audience,fN),foot:t('fidu_audience_f')},
-        {lbl:t('fidu_views'),val:V(b.views,fN),foot:t('fidu_views_f')},
-      ]));
+        {lbl:t('fidu_views'),val:V(b.views,fN),foot:t('fidu_views_f')});
     }
+    hd.appendChild(statStrip(kpis,4));
     out.appendChild(hd);
 
     // ── Modulos del mes seleccionado ──
@@ -2072,9 +2080,9 @@ function buildMkApp(){
       let h1='<div class="tw"><table><thead><tr><th>'+t('col_module')+'</th><th class="r">'+t('col_interactions')+'</th><th class="r">'+t('col_pct')+'</th></tr></thead><tbody>';
       mods.forEach(m=>{h1+='<tr><td style="font-weight:600">'+escHtml(trModule(m.name))+'</td><td class="r">'+fN(m.interactions)+'</td><td class="r">'+fP(m.pct)+'</td></tr>';});
       h1+='</tbody></table></div>';
-      out.appendChild(sec(t('s_modules'),escHtml(b.label||monthLabel(mkMonth)),elFromHTML(h1).firstChild));
+      out.appendChild(sec(t('s_modules'),escHtml(monthLabel(mkMonth)),elFromHTML(h1).firstChild));
     }else{
-      out.appendChild(sec(t('s_modules'),escHtml(b.label||monthLabel(mkMonth)),emptyState(t('fidu_nodata'),t('fidu_nodata_sub'))));
+      out.appendChild(sec(t('s_modules'),escHtml(monthLabel(mkMonth)),emptyState(t('fidu_nodata'),t('fidu_nodata_sub'))));
     }
 
     // ── Evolucion mensual (grafico apilado por modulo) ──
