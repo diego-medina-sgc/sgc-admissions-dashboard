@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>SGC — Marketing &amp; Admissions Dashboard</title>
 <meta name="description" content="St. George's College Marketing &amp; Admissions Dashboard"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com https://va.vercel-scripts.com https://vercel.live https://script.google.com https://script.googleusercontent.com; frame-src https://accounts.google.com https://script.google.com https://script.googleusercontent.com;">
 <link rel="icon" type="image/png" href="favicon.png"/>
-<link rel="apple-touch-icon" href="favicon.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+<link rel="manifest" href="manifest.json"/>
+<!-- PWA / "Add to Home Screen". apple-mobile-web-app-capable saca la barra de Safari;
+     status-bar-style "default" deja la barra de estado opaca y con texto legible sobre
+     el header claro (black-translucent forzaria texto blanco = reloj invisible). -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="SGC Admissions"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="theme-color" id="meta-theme-color" content="#FFFFFF"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Asap+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -26,12 +35,19 @@
   --card-shadow-hover:0 2px 6px rgba(40,33,28,.05),0 12px 30px rgba(40,33,28,.09);
   --r-sm:8px;--r:12px;--r-lg:16px;
   --sidebar-w:248px;--sidebar-collapsed:60px;--header-h:58px;
+  /* Zona que tapan la Dynamic Island / notch y la barra de gestos cuando la app corre
+     agregada a la pantalla de inicio (standalone). En el navegador todas dan 0px. */
+  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px);
+  --hdr-extra:0px;                      /* aire extra bajo la isla, solo en standalone */
+  --header-total:calc(var(--header-h) + var(--safe-top) + var(--hdr-extra));
   --bg:#F1EDE5;--surface:#fff;--surface2:#F5F1EA;
   --border:rgba(14,22,40,.08);--border-strong:rgba(14,22,40,.15);
   --text:var(--ink);--text-muted:#6E6A60;
   --row-hover:#F4F0E9;--row-tot:#F1EDE5;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
 body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-height:100vh;overflow-x:hidden;}
 
 /* ─── LOADING ─── */
@@ -56,7 +72,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 #app{display:none;}
 
 /* ─── HEADER ─── */
-.hdr{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--white);border-bottom:1px solid var(--line);border-top:3px solid var(--red);display:flex;align-items:center;padding:0 16px 0 0;z-index:300;box-shadow:0 2px 8px rgba(33,52,99,.06);}
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--header-total);background:var(--white);border-bottom:1px solid var(--line);border-top:3px solid var(--red);display:flex;align-items:center;padding:calc(var(--safe-top) + var(--hdr-extra)) calc(16px + var(--safe-r)) 0 var(--safe-l);z-index:300;box-shadow:0 2px 8px rgba(33,52,99,.06);}
 .hdr-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:11px;padding:0 16px;flex-shrink:0;transition:width .25s;}
 .hdr-brand.collapsed{width:var(--sidebar-collapsed);}
 .hdr-logo{height:50px;width:auto;flex-shrink:0;}
@@ -84,7 +100,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
 
 /* ─── SIDEBAR ─── */
-.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);transition:width .25s,transform .25s ease;overflow:hidden;}
+.sidebar{position:fixed;top:var(--header-total);left:0;bottom:0;width:var(--sidebar-w);background:var(--white);display:flex;flex-direction:column;z-index:200;border-right:1px solid var(--line);box-shadow:2px 0 14px rgba(40,33,28,.05);transition:width .25s,transform .25s ease;overflow:hidden;}
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
 .sb-nav{flex:1;padding:14px 10px;overflow-y:auto;overflow-x:hidden;}
 .sb-nav::-webkit-scrollbar{width:3px;}
@@ -104,7 +120,7 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .sidebar.collapsed .sb-update{display:none;}.sidebar.collapsed .sb-switches{display:none !important;}
 
 /* ─── CONTENT ─── */
-.content{margin-top:var(--header-h);margin-left:var(--sidebar-w);transition:margin-left .25s;min-height:calc(100vh - var(--header-h));}
+.content{margin-top:var(--header-total);margin-left:var(--sidebar-w);transition:margin-left .25s;min-height:calc(100vh - var(--header-total));}
 .content.collapsed{margin-left:var(--sidebar-collapsed);}
 .panel{display:none;padding:28px 32px;max-width:1520px;}
 .panel.active{display:block;animation:panelIn .34s cubic-bezier(.22,.61,.36,1);}
@@ -432,7 +448,7 @@ th.pd-hsep{border-left:2px solid rgba(255,255,255,.35);}
 .adm-btn svg{vertical-align:middle;margin-right:6px;}
 
 /* ─── FOOTER ─── */
-footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;border-top:1px solid var(--line);}
+footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var(--safe-bot)) calc(32px + var(--safe-l));font-size:.61rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.05em;border-top:1px solid var(--line);}
 
 /* ─── SIDEBAR SWITCHES ─── */
 .sb-switches{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;}
@@ -608,7 +624,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
 @media(max-width:1024px){:root{--sidebar-w:220px;}}
 @media(max-width:768px){
   :root{--sidebar-w:0px;--sidebar-collapsed:0px;--header-h:96px;}
-  .hdr{height:var(--header-h);flex-wrap:wrap;align-content:flex-start;padding:0;}
+  .hdr{height:var(--header-total);flex-wrap:wrap;align-content:flex-start;padding:calc(var(--safe-top) + var(--hdr-extra)) var(--safe-r) 0 var(--safe-l);}
   .hdr-logo{height:38px;}
   .hdr-brand{order:1;width:auto;flex:1;padding:8px 14px;border-bottom:none;}
   .hdr-mid{order:3;width:100%;padding:6px 14px 8px;border-top:1px solid rgba(14,22,40,.1);border-bottom:2px solid var(--line);background:var(--white);flex:none;}
@@ -618,7 +634,8 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   #btn-sb-toggle{display:flex !important;padding:8px;background:var(--surface2,#f0f2f8);border-radius:8px;color:var(--text,var(--ink));}
   .campus-group{gap:5px;width:100%;}
   .campus-btn{flex:1;text-align:center;padding:5px 8px;font-size:.68rem;border-radius:16px;}
-  .sidebar{transform:translateX(-100%);width:280px;top:0;z-index:500;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+  .sidebar{transform:translateX(-100%);width:280px;top:0;z-index:500;transition:transform .28s cubic-bezier(.4,0,.2,1);
+    padding-top:calc(var(--safe-top) + var(--hdr-extra));padding-bottom:var(--safe-bot);}
   .sidebar.mobile-open{transform:translateX(0);box-shadow:6px 0 32px rgba(0,0,0,.5);}
   #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .28s;z-index:499;}
   #mob-overlay.active{opacity:1;pointer-events:auto !important;}
@@ -626,7 +643,7 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   thead th:first-child,tbody td:first-child{position:sticky;left:0;z-index:2;}
   tbody td:first-child{background:var(--surface);box-shadow:1px 0 0 var(--line);}
   thead th:first-child{z-index:3;}
-  .panel{padding:36px 14px 16px;}
+  .panel{padding:36px calc(14px + var(--safe-r)) 16px calc(14px + var(--safe-l));}
   /* compact tables so they fit the viewport width on mobile */
   table{font-size:.72rem;}
   thead th{padding:8px 5px;font-size:.55rem;letter-spacing:.04em;}
@@ -646,9 +663,19 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .f-lbl{min-width:120px;font-size:.73rem;}
   .f-nums{min-width:110px;font-size:.65rem;}
   .insight-strip{display:none;}
+  /* Las pills (años del funnel, meses, vistas) van con margin-left:auto inline y sin
+     wrap: con 8 años la fila medía mas que la pantalla, ensanchaba el viewport y por eso
+     "se iba todo a la izquierda". Ahora ocupan una fila propia, se achican y, si aun asi
+     no entran, scrollean en horizontal en vez de desbordar. */
+  .cycle-pills{margin-left:0 !important;width:100%;max-width:100%;gap:3px;
+    justify-content:flex-start;overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .cycle-pills::-webkit-scrollbar{display:none;}
+  .cycle-pill{flex:0 0 auto;padding:4px 7px;font-size:.64rem;}
+  .sec-hd{gap:8px 10px;}
   .sim-controls{flex-wrap:wrap;gap:5px;}
   .sim-btn{flex:1;min-width:0;font-size:.68rem;padding:5px 9px;justify-content:center;white-space:nowrap;}
-  footer{font-size:.5rem;letter-spacing:.01em;padding:10px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  footer{font-size:.5rem;letter-spacing:.01em;padding:10px calc(12px + var(--safe-r)) calc(10px + var(--safe-bot)) calc(12px + var(--safe-l));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .sb-switches{display:flex;}
   .sidebar.collapsed{width:280px;}
   .sidebar.collapsed .nav-item span{display:initial;}
@@ -661,6 +688,13 @@ footer{text-align:center;padding:14px 32px;font-size:.61rem;color:var(--gray);fo
   .stat-strip .si-val{font-size:1.3rem;}
   .kpi-grid,.kpi-grid.kpi6,.kpi-grid.kpi7{grid-template-columns:repeat(2,1fr);}
   .comm-grid,.comm-grid.c3,.comm-grid.c4{grid-template-columns:repeat(2,1fr);}
+}
+/* ─── STANDALONE (app agregada a la pantalla de inicio) ─── */
+/* Sin la barra de Safari el header queda pegado a la Dynamic Island: este respiro
+   extra no aplica cuando se abre desde el navegador. */
+@media (display-mode:standalone),(display-mode:fullscreen){
+  :root{--hdr-extra:8px;}
+  body{overscroll-behavior-y:none;}   /* mata el rebote/pull-to-refresh dentro de la app */
 }
 @media print{
   .sidebar,.hdr,#admin-overlay,#admin-drawer,footer{display:none !important;}
@@ -1113,6 +1147,9 @@ function applyTheme(th){
   else if(th==='light'){root.setAttribute('data-theme','light');isDark=false;}
   else{isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;root.setAttribute('data-theme',isDark?'dark':'light');}
   const logo=document.getElementById('hdr-logo-img');if(logo)logo.src=isDark?'logo-h-white.png':'logo-h.png';
+  /* el header es blanco en claro y --surface (#1C1C2C) en oscuro: que la barra de estado
+     del modo standalone acompañe */
+  const mt=document.getElementById('meta-theme-color');if(mt)mt.setAttribute('content',isDark?'#1C1C2C':'#FFFFFF');
 }
 function setTheme(th){currentTheme=th;localStorage.setItem('sgc-theme',th);applyTheme(th);buildSidebarNav();if(D&&D.headline)drawCharts();}
 applyTheme(currentTheme);
@@ -1262,7 +1299,7 @@ async function fetchData(force){
 function showErrorBanner(){
   hideLoad();const existing=document.getElementById('err-banner');if(existing)existing.remove();
   const banner=document.createElement('div');banner.id='err-banner';
-  banner.style.cssText='position:fixed;top:var(--header-h);left:50%;transform:translateX(-50%);background:#b91c1c;color:#fff;padding:12px 20px;border-radius:0 0 10px 10px;font-size:.82rem;font-family:Asap,sans-serif;z-index:600;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.35);white-space:nowrap;';
+  banner.style.cssText='position:fixed;top:var(--header-total);left:50%;transform:translateX(-50%);background:#b91c1c;color:#fff;padding:12px 20px;border-radius:0 0 10px 10px;font-size:.82rem;font-family:Asap,sans-serif;z-index:600;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.35);white-space:nowrap;';
   banner.innerHTML='&#9888; Could not load data. <button onclick="document.getElementById(\'err-banner\').remove();fetchData();" style="background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 12px;border-radius:5px;cursor:pointer;font-family:Asap,sans-serif;font-size:.78rem;font-weight:600;">Retry</button>';
   document.body.appendChild(banner);setTimeout(()=>{if(banner.parentNode)banner.remove();},12000);
 }
