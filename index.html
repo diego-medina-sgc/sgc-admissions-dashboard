@@ -1208,7 +1208,11 @@ const STRINGS={
   }
 };
 let lang='en';
-const t=k=>STRINGS[lang][k]||STRINGS.en[k]||k;
+/* OJO con el || : una cadena vacia es falsy, asi que un texto definido a proposito
+   como '' (secciones que no llevan subtitulo) se saltaba los dos idiomas y terminaba
+   imprimiendo el nombre de la clave en pantalla ('headline_meta', 'community_meta').
+   Hay que distinguir "no existe" de "existe y es vacio". */
+const t=k=>{const v=STRINGS[lang][k];if(v!==undefined)return v;const e=STRINGS.en[k];return e!==undefined?e:k;};
 
 /* ============================== TABS ============================== */
 const TABS=[
