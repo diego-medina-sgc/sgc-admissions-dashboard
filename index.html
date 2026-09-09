@@ -317,7 +317,7 @@ tbody tr.won-row td{background:#f0fdf4;font-weight:600;}
 tbody tr.proj-row td{background:#FFFBEB;}
 tbody tr.salon-row td{background:var(--surface2);font-size:.74rem;}
 tbody tr.salon-row td:first-child{padding-left:34px;font-weight:500;color:var(--gray);}
-tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:#F4F0E9;}
+tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row):not(.bd-live-row){background:#F4F0E9;}
 td{padding:9px 14px;}
 td:first-child{text-align:left !important;font-weight:500;}
 td.r{text-align:center;font-family:'Asap Condensed',sans-serif;font-size:.77rem;font-variant-numeric:tabular-nums;}
@@ -413,6 +413,15 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .cycle-pills{display:inline-flex;gap:4px;background:var(--cream);padding:3px;border-radius:20px;border:1px solid var(--line);}
 .cycle-pill{padding:4px 13px;border-radius:16px;border:none;background:transparent;font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;color:var(--gray);cursor:pointer;transition:all .15s;}
 .cycle-pill.active{background:var(--ink);color:#fff;box-shadow:0 1px 3px rgba(40,33,28,.18);}
+/* Selector de anio de la serie historica de boarding — <select> nativo, no pills (81 anios) */
+.bd-yr-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;}
+.bd-yr-lbl{font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gray);}
+.bd-yr-sel{font-family:'Asap',sans-serif;font-size:.82rem;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:104px;cursor:pointer;}
+.bd-yr-sel:focus{outline:2px solid var(--teal);outline-offset:1px;}
+/* Fila del anio vigente en la tabla historica — tinte teal + chip, para destacarlo del historico */
+tbody tr.bd-live-row td{background:#E6F7F9;font-weight:600;}
+tbody tr.bd-live-row td:first-child{box-shadow:inset 3px 0 0 var(--teal);}
+.bd-live-tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:10px;background:var(--teal);color:#fff;font-family:'Asap',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;}
 
 /* ─── MARKETING GROUP HEADER (separa St George's App / Pauta Digital) ─── */
 .mkt-group{display:flex;align-items:center;gap:13px;margin:38px 0 18px;padding-top:26px;border-top:2px solid var(--border-strong);}
@@ -583,7 +592,7 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
 [data-theme="dark"] .comm-card,[data-theme="dark"] .f-row,[data-theme="dark"] .insight,
 [data-theme="dark"] .tw table,[data-theme="dark"] .empty-state{background:var(--surface);}
 [data-theme="dark"] .tw{border-color:var(--border);}
-[data-theme="dark"] tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row){background:var(--row-hover);}
+[data-theme="dark"] tbody tr:hover:not(.grp):not(.grp-q):not(.grp-n):not(.grp-k):not(.tot):not(.ctot):not(.ctot-q):not(.ctot-n):not(.ctot-os):not(.won-row):not(.proj-row):not(.bd-live-row){background:var(--row-hover);}
 [data-theme="dark"] tbody tr.tot td{background:var(--row-tot);}
 [data-theme="dark"] tbody tr.salon-row td{background:var(--surface2);}
 [data-theme="dark"] tbody tr{border-color:var(--border);}
@@ -646,6 +655,9 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
 [data-theme="dark"] .cycle-pills{background:var(--surface2);border-color:var(--border);}
 [data-theme="dark"] .cycle-pill{color:var(--text-muted);}
 [data-theme="dark"] .cycle-pill.active{background:#3D4170;color:#fff;}
+[data-theme="dark"] .bd-yr-lbl{color:var(--text-muted);}
+[data-theme="dark"] .bd-yr-sel{background:var(--surface2);border-color:var(--border);color:var(--text);}
+[data-theme="dark"] tbody tr.bd-live-row td{background:rgba(16,154,169,.16);}
 [data-theme="dark"] .val-pos{color:#4ade80;}
 [data-theme="dark"] .val-neg{color:#f87171;}
 [data-theme="dark"] .val-usd{color:#5eead4;}
@@ -951,6 +963,10 @@ const STRINGS={
     s_enrolment:'Enrolment',s_enrolment_meta:'Status',
     s_breakdown:'Current Students Breakdown',s_breakdown_meta:'2026',col_studcap:'Students / Capacity',col_won26:'Won 2026',
     s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Weekly Boarders',bd_full:'Full Boarders',bd_boys:'Boys',bd_girls:'Girls',
+    s_boarding_hist:'Boarding &mdash; Historical Series',bd_chart_yg:'Boarders by Year Group',bd_chart_yg_sub:'Boys and girls in residence, 2026',
+    bd_hist_chart:'Boarders by Year',bd_hist_sub:'Boys and girls in residence &mdash; click a bar to select that year',
+    bd_year:'Year',bd_total_boarders:'Total Boarders',bd_pick_year:'Show year',bd_vs_prev:'Change',bd_peak:'Peak',
+    bd_live:'Current',bd_live_src:'Current year &mdash; live from iSAMS',
     evol:'Enrolment Evolution',evol_meta:'Historical 2021&ndash;2026 + 2027 projection',
     s_active_pipeline:'Active Pipeline',s_active_pipeline_meta:'Current snapshot &mdash; Insightly',
     s_conv_funnel:'Conversion Funnel',s_conv_funnel_meta:'2021&ndash;2028',
@@ -1090,6 +1106,10 @@ const STRINGS={
     s_enrolment:'Matr&iacute;cula',s_enrolment_meta:'Estado',
     s_breakdown:'Detalle de Alumnos Actuales',s_breakdown_meta:'2026',col_studcap:'Alumnos / Capacidad',col_won26:'Won 2026',
     s_boarding:'Boarding Quilmes',s_boarding_meta:'2026',col_yeargroup:'Year Group',bd_weekly:'Weekly Boarders',bd_full:'Full Boarders',bd_boys:'Boys',bd_girls:'Girls',
+    s_boarding_hist:'Boarding &mdash; Serie Hist&oacute;rica',bd_chart_yg:'Pupilos por Year Group',bd_chart_yg_sub:'Varones y mujeres en residencia, 2026',
+    bd_hist_chart:'Pupilos por A&ntilde;o',bd_hist_sub:'Varones y mujeres en residencia &mdash; toc&aacute; una barra para elegir ese a&ntilde;o',
+    bd_year:'A&ntilde;o',bd_total_boarders:'Total Pupilos',bd_pick_year:'Ver a&ntilde;o',bd_vs_prev:'Variaci&oacute;n',bd_peak:'M&aacute;ximo',
+    bd_live:'Vigente',bd_live_src:'A&ntilde;o vigente &mdash; en vivo desde iSAMS',
     evol:'Evoluci&oacute;n de Matr&iacute;cula',evol_meta:'Hist&oacute;rico 2021&ndash;2026 + proyecci&oacute;n 2027',
     s_active_pipeline:'Embudo Activo',s_active_pipeline_meta:'Estado actual &mdash; Insightly',
     s_conv_funnel:'Embudo de Conversi&oacute;n',s_conv_funnel_meta:'2021&ndash;2028',
@@ -1235,6 +1255,7 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false;
+let bdView='table',bdHistView='chart',bdHistYear=null; // boarding: vista del detalle 2026, vista de la serie historica y anio elegido
 let adsMonth=null,adsSort='clicks',mkView='app',mkMonth=null;
 let alView='community';
 let satCommentFilter={lunch:'all',nps:'all'};
@@ -1580,8 +1601,11 @@ function buildResumen(){
   // Current Students Breakdown — Students/Capacity by grade
   wrap.appendChild(sec(t('s_breakdown'),t('s_breakdown_meta'),buildKpiTable()));
 
-  // Boarding (Quilmes) — Weekly/Full by gender & Year Group; hidden on North
-  if(campus!=='n'){const bt=buildBoarding();if(bt)wrap.appendChild(sec(t('s_boarding'),t('s_boarding_meta'),bt));}
+  // Boarding (Quilmes) — detalle 2026 (Weekly/Full por genero y Year Group) + serie historica; oculto en North
+  if(campus!=='n'){
+    const bs=buildBoardingSec();if(bs)wrap.appendChild(bs);
+    const bh=buildBoardingHistSec();if(bh)wrap.appendChild(bh);
+  }
 
   // Charts
   if(D.resumen){
@@ -1658,7 +1682,8 @@ function gradeCapacity(g){
   if(campus==='n')return fn?num(fn.capacidad):null;
   const a=fq?num(fq.capacidad):0,b=fn?num(fn.capacidad):0;return(a+b)>0?(a+b):null;
 }
-function buildBoarding(){
+/* Agrega D.boarding por Year Group. Lo usan la tabla y el grafico del detalle 2026. */
+function bdAgg(){
   const src=(D.boarding||[]).filter(r=>campus==='q'?r.campus==='Quilmes':campus==='n'?false:true);
   if(!src.length)return null;
   const order=['K1','K2','K3','K4','K5','P1','P2','P3','P4','P5','P6','C1','C2','C3','C4','C5','C6'];
@@ -1666,6 +1691,110 @@ function buildBoarding(){
   src.forEach(r=>{const k=r.yg;if(!map[k])map[k]={yg:k,wM:0,wF:0,fM:0,fF:0};map[k].wM+=num(r.weeklyM);map[k].wF+=num(r.weeklyF);map[k].fM+=num(r.fullM);map[k].fF+=num(r.fullF);});
   const ygs=Object.keys(map).sort((a,b)=>{const ia=order.indexOf(a),ib=order.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
   if(!ygs.length)return null;
+  return {map:map,ygs:ygs};
+}
+/* Serie de pupilos = historico de IMP_boarding_hist (anios ya cerrados) + el anio VIGENTE, que
+   no sale del sheet historico sino de IMP_students via D.boarding. El vigente se marca live:true
+   y en la UI va destacado.
+   El anio vigente se deriva como (ultimo del historico + 1): cuando se cierre un anio y se pegue
+   en IMP_boarding_hist, el vigente avanza solo y IMP_students ya tiene la cohorte nueva. Por
+   construccion nunca colisiona con un anio del sheet. */
+function bdSeries(){
+  const rows=(D.boardingHist||[]).slice().sort((a,b)=>num(a.yr)-num(b.yr))
+    .map(r=>({yr:num(r.yr),boys:num(r.boys),girls:num(r.girls),total:num(r.total),live:false}));
+  const agg=bdAgg();
+  if(agg){
+    let boys=0,girls=0;
+    agg.ygs.forEach(g=>{boys+=num(agg.map[g].wM)+num(agg.map[g].fM);girls+=num(agg.map[g].wF)+num(agg.map[g].fF);});
+    const yr=rows.length?rows[rows.length-1].yr+1:new Date().getFullYear();
+    rows.push({yr:yr,boys:boys,girls:girls,total:boys+girls,live:true});
+  }
+  return rows;
+}
+/* Pills Tabla/Grafico reutilizables (mismo patron que el toggle de Historical Conversion Rate). */
+function bdPills(cur,setter){
+  return '<div class="cycle-pills" style="margin-left:auto"><button class="cycle-pill'+(cur==='table'?' active':'')+'" onclick="'+setter+'(\'table\')">'+t('view_table')+'</button><button class="cycle-pill'+(cur==='chart'?' active':'')+'" onclick="'+setter+'(\'chart\')">'+t('view_chart')+'</button></div>';
+}
+function setBdView(v){bdView=v;render();}
+function setBdHistView(v){bdHistView=v;render();}
+
+/* Seccion Boarding 2026 — tabla por Year Group o grafico, segun bdView. */
+function buildBoardingSec(){
+  if(!bdAgg())return null;
+  const s=document.createElement('div');s.className='sec';
+  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_boarding')+'</span><span class="sec-meta">'+t('s_boarding_meta')+'</span>'+bdPills(bdView,'setBdView')+'</div>';
+  if(bdView==='table'){
+    const tb=buildBoarding();if(tb)s.appendChild(tb);
+  }else{
+    s.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('bd_chart_yg')+'</div><div class="cc-sub">'+t('bd_chart_yg_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-bd-yg"></canvas></div></div>').firstChild);
+  }
+  return s;
+}
+
+/* Seccion Boarding historico — grafico + selector de anio, o la tabla completa. */
+function buildBoardingHistSec(){
+  // La seccion es sobre el historico: si no hay hoja historica no aparece, aunque haya dato vigente
+  // (ese ya se muestra en la seccion Boarding Quilmes de arriba).
+  if(!(D.boardingHist||[]).length)return null;
+  const rows=bdSeries();
+  if(!rows.length)return null;
+  // Default y saneo: si el anio guardado no esta en la serie, cae al ultimo disponible.
+  if(bdHistYear==null||!rows.some(r=>num(r.yr)===num(bdHistYear)))bdHistYear=num(rows[rows.length-1].yr);
+  const s=document.createElement('div');s.className='sec';
+  const meta=rows[0].yr+'&ndash;'+rows[rows.length-1].yr;
+  s.innerHTML='<div class="sec-hd"><span class="sec-title">'+t('s_boarding_hist')+'</span><span class="sec-meta">'+meta+'</span>'+bdPills(bdHistView,'setBdHistView')+'</div>';
+  if(bdHistView==='table'){
+    s.appendChild(bdHistTable(rows));
+  }else{
+    s.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('bd_hist_chart')+'</div><div class="cc-sub">'+t('bd_hist_sub')+'</div></div></div><div class="chart-wrap" style="height:300px"><canvas id="chart-bd-hist"></canvas></div></div>').firstChild);
+    s.appendChild(bdYearPicker(rows));
+  }
+  return s;
+}
+
+/* Selector de anio + detalle del anio elegido. Es un <select> y no pills: son 81 anios y una
+   fila de pills desborda el viewport en mobile (mismo problema que las pills del funnel). */
+function bdYearPicker(rows){
+  const wrap=document.createElement('div');wrap.style.cssText='margin-top:14px';
+  const i=rows.findIndex(r=>num(r.yr)===num(bdHistYear));
+  const cur=rows[i]||rows[rows.length-1],prev=i>0?rows[i-1]:null;
+  const opts=rows.slice().reverse().map(r=>'<option value="'+r.yr+'"'+(num(r.yr)===num(bdHistYear)?' selected':'')+'>'+r.yr+(r.live?' · '+t('bd_live'):'')+'</option>').join('');
+  const bar=elFromHTML('<div class="bd-yr-bar"><label class="bd-yr-lbl" for="bd-yr-sel">'+t('bd_pick_year')+'</label><select id="bd-yr-sel" class="bd-yr-sel">'+opts+'</select></div>').firstChild;
+  bar.querySelector('#bd-yr-sel').onchange=function(ev){bdHistYear=parseInt(ev.target.value,10);render();};
+  wrap.appendChild(bar);
+  const d=prev?num(cur.total)-num(prev.total):null;
+  const peak=rows.reduce((a,r)=>num(r.total)>num(a.total)?r:a,rows[0]);
+  // El anio vigente lleva su propia etiqueta y aclara que sale del import de iSAMS, no del historico
+  const yrFoot=cur.live?String(cur.yr)+' &middot; '+t('bd_live'):String(cur.yr);
+  wrap.appendChild(statStrip([
+    {lbl:t('bd_boys'),val:fN(cur.boys),foot:yrFoot},
+    {lbl:t('bd_girls'),val:fN(cur.girls),foot:yrFoot},
+    {lbl:t('bd_total_boarders'),val:fN(cur.total),foot:cur.live?t('bd_live_src'):String(cur.yr),accent:true},
+    {lbl:t('bd_vs_prev'),val:d==null?'&mdash;':fSign(d),foot:prev?prev.yr+' &rarr; '+cur.yr:'',cls:d==null?'':(d<0?'neg':d>0?'pos':'')},
+    {lbl:t('bd_peak'),val:fN(peak.total),foot:String(peak.yr)},
+  ]));
+  return wrap;
+}
+
+/* Tabla completa de la serie historica, del anio mas reciente al mas viejo. */
+function bdHistTable(rows){
+  const tw=document.createElement('div');tw.className='tw';
+  let h='<table><thead><tr><th>'+t('bd_year')+'</th><th class="r">'+t('bd_boys')+'</th><th class="r">'+t('bd_girls')+'</th><th class="r">'+t('bd_total_boarders')+'</th><th class="r">'+t('bd_vs_prev')+'</th></tr></thead><tbody>';
+  const desc=rows.slice().reverse();
+  desc.forEach(function(r,i){
+    const prev=desc[i+1]; // en orden descendente, el siguiente es el anio anterior
+    const d=prev?num(r.total)-num(prev.total):null;
+    const cls=d==null?'':(d<0?'val-neg':d>0?'val-pos':'');
+    const yrCell=r.yr+(r.live?' <span class="bd-live-tag">'+t('bd_live')+'</span>':'');
+    h+='<tr'+(r.live?' class="bd-live-row"':'')+'><td style="font-weight:700">'+yrCell+'</td><td class="r">'+fN(r.boys)+'</td><td class="r">'+fN(r.girls)+'</td><td class="r"><strong>'+fN(r.total)+'</strong></td><td class="r">'+(d==null?'&mdash;':'<span class="'+cls+'">'+fSign(d)+'</span>')+'</td></tr>';
+  });
+  h+='</tbody></table>';tw.innerHTML=h;return tw;
+}
+
+function buildBoarding(){
+  const agg=bdAgg();
+  if(!agg)return null;
+  const map=agg.map,ygs=agg.ygs;
   const tw=document.createElement('div');tw.className='tw';
   let h='<table><thead><tr><th></th><th class="r">'+t('bd_weekly')+'</th><th class="r">'+t('bd_full')+'</th><th class="r">'+t('total_lbl')+'</th></tr></thead><tbody>';
   let gWk=0,gFl=0;
@@ -2927,6 +3056,48 @@ function drawCharts(){
     }
   }
   // Conversion rate dual-axis
+  // Boarding 2026 — barras apiladas por Year Group (varones / mujeres)
+  const bygc=document.getElementById('chart-bd-yg');
+  if(bygc){
+    const agg=bdAgg();
+    if(agg){
+      const ygs=agg.ygs,map=agg.map;
+      const boys=ygs.map(g=>num(map[g].wM)+num(map[g].fM));
+      const girls=ygs.map(g=>num(map[g].wF)+num(map[g].fF));
+      charts['bd-yg']=new Chart(bygc,{type:'bar',data:{labels:ygs,datasets:[
+        {label:t('bd_boys'),data:boys,backgroundColor:kNavy,stack:'s',borderSkipped:false},
+        {label:t('bd_girls'),data:girls,backgroundColor:kRed,stack:'s',borderSkipped:false,borderRadius:{topLeft:4,topRight:4}},
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+        plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},
+        scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{stacked:true,grid:{display:false},ticks:TCK,border:{display:false}}}}});
+    }
+  }
+
+  // Boarding historico — serie completa apilada. El anio elegido va a color pleno y el resto
+  // atenuado; el anio VIGENTE nunca se atenua y lleva contorno teal, para que se lea por encima
+  // del historico incluso cuando estas mirando otro anio.
+  const bhc=document.getElementById('chart-bd-hist');
+  if(bhc&&(D.boardingHist||[]).length){
+    const rows=bdSeries();
+    const hi=r=>num(r.yr)===num(bdHistYear);
+    const mk=(key,col,lbl,rd)=>({label:lbl,data:rows.map(r=>num(r[key])),
+      backgroundColor:rows.map(r=>(r.live||hi(r))?col:hexA(col,DK?0.42:0.48)),stack:'s',borderSkipped:false,
+      borderColor:rows.map(r=>r.live?kTeal:'transparent'),
+      borderWidth:rows.map(r=>r.live?{top:2,left:2,right:2,bottom:0}:0),
+      borderRadius:rd?{topLeft:3,topRight:3}:0});
+    charts['bd-hist']=new Chart(bhc,{type:'bar',data:{labels:rows.map(r=>String(r.yr)+(r.live?' ▸':'')),datasets:[
+      mk('boys',kNavy,t('bd_boys'),false),
+      mk('girls',kRed,t('bd_girls'),true),
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      onClick:(ev,els)=>{if(els&&els.length){const r=rows[els[0].index];if(r){bdHistYear=num(r.yr);render();}}},
+      plugins:{legend:LEG(),tooltip:{callbacks:{
+        label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw),
+        footer:items=>{const r=rows[items[0].dataIndex];return r?t('bd_total_boarders')+': '+fN(r.total)+(r.live?'  ('+t('bd_live')+')':''):'';}}}},
+      scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},
+              x:{stacked:true,grid:{display:false},border:{display:false},
+                 ticks:Object.assign({},TCK,{autoSkip:true,maxRotation:0,autoSkipPadding:14})}}}});
+  }
+
   const wrc=document.getElementById('chart-wr');
   if(wrc&&D.winrate){
     const labels=D.winrate.map(r=>String(r.yr));const F=D.winrate.map(r=>getWRF(r));
