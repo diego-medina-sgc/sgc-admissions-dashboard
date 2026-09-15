@@ -900,6 +900,10 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
         <div id="sec-toggles"></div>
       </div>
       <div class="adm-section">
+        <div class="adm-section-title">Projection views</div>
+        <div id="pv-toggle-wrap"></div>
+      </div>
+      <div class="adm-section">
         <div class="adm-section-title">Data configuration</div>
         <div id="fact-toggle-wrap"></div>
       </div>
@@ -1262,6 +1266,14 @@ let satCommentFilter={lunch:'all',nps:'all'};
 let satSection='all'; // 'all' | 'Kinder' | 'Prep School' | 'College' — filtro de sección en Family Satisfaction
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
+let pvVis={billing:true,cohort:true}; // vistas de Projection visibles — admin, persistido en el backend
+function applyConfig(){
+  const c=D&&D.config;if(!c)return;
+  const on=x=>x===true||x==='true'||x===1||x==='1';
+  if(typeof c.showFact!=='undefined')showFact=on(c.showFact);
+  if(typeof c.pvBilling!=='undefined')pvVis.billing=on(c.pvBilling);
+  if(typeof c.pvCohort!=='undefined')pvVis.cohort=on(c.pvCohort);
+}
 const MONTH_NUM_EN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTH_NUM_ES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function monthLabel(ym){const p=String(ym||'').split('-');if(p.length<2)return ym;const m=parseInt(p[1])||0;const nm=(lang==='es'?MONTH_NUM_ES:MONTH_NUM_EN)[m]||p[1];return nm+' '+p[0];}
@@ -1401,7 +1413,7 @@ async function fetchData(force){
     const now=D.lastUpdate||new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     document.getElementById('h-update').textContent='Updated: '+now;
     document.getElementById('f-time').textContent=now;
-    if(D.config&&typeof D.config.showFact!=='undefined')showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
+    applyConfig();
     try{localStorage.setItem('sgc_data',JSON.stringify(data));localStorage.setItem('sgc_data_t',String(Date.now()));}catch(e){}
     updateAdminInfo();initSimAdj();render();
     delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
@@ -2410,10 +2422,15 @@ function buildProyeccion(){
   const wrap=document.createElement('div');
   wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
   // View toggle: Billing by Year Group | Cohort/Teachers Projection
-  const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]];
-  const pvBar=document.createElement('div');pvBar.style.cssText='display:flex;justify-content:flex-start;margin:-6px 0 16px;';
-  pvBar.innerHTML='<div class="cycle-pills" style="flex-wrap:wrap">'+views.map(v=>'<button class="cycle-pill'+(projView===v[0]?' active':'')+'" onclick="projView=\''+v[0]+'\';render()">'+v[1]+'</button>').join('')+'</div>';
-  wrap.appendChild(pvBar);
+  // Las vistas apagadas desde el Admin Panel no se muestran; con una sola visible no hace falta el toggle
+  const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]].filter(v=>pvVis[v[0]]);
+  if(!views.length){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
+  if(!views.some(v=>v[0]===projView))projView=views[0][0];
+  if(views.length>1){
+    const pvBar=document.createElement('div');pvBar.style.cssText='display:flex;justify-content:flex-start;margin:-6px 0 16px;';
+    pvBar.innerHTML='<div class="cycle-pills" style="flex-wrap:wrap">'+views.map(v=>'<button class="cycle-pill'+(projView===v[0]?' active':'')+'" onclick="projView=\''+v[0]+'\';render()">'+v[1]+'</button>').join('')+'</div>';
+    wrap.appendChild(pvBar);
+  }
   if(projView==='cohort'){buildTeachersProj(wrap);return wrap;}
   const py=D.proyeccion;
   if(!py){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
@@ -3264,7 +3281,7 @@ document.getElementById('mob-overlay').addEventListener('click',()=>{document.ge
 function buildAdmin(){
   const ctr=document.getElementById('sec-toggles');ctr.innerHTML='';
   TABS.forEach(function(tab){
-    const p=document.createElement('div');p.className='pill active';
+    const p=document.createElement('div');p.className='pill'+(sVis[tab.id]?' active':'');
     p.innerHTML='<span class="dot"></span>'+tab.label;
     p.onclick=function(){
       sVis[tab.id]=!sVis[tab.id];p.classList.toggle('active',sVis[tab.id]);
@@ -3289,6 +3306,21 @@ function buildAdmin(){
   cp.innerHTML='<span class="dot"></span>'+(lang==='en'?'Show Classroom Breakdown':'Mostrar Desglose por Sal&oacute;n');
   cp.onclick=()=>{showClassroom=!showClassroom;cp.classList.toggle('active',showClassroom);render();};
   fw.appendChild(cp);
+  // Projection views — se guardan en el backend, aplican a todos los usuarios
+  const pw=document.getElementById('pv-toggle-wrap');pw.innerHTML='';
+  [['billing',t('pv_billing')],['cohort',t('pv_cohort')]].forEach(function(item){
+    const key=item[0];
+    const pp=document.createElement('div');pp.className='pill teal-pill'+(pvVis[key]?' active':'');
+    pp.innerHTML='<span class="dot"></span>'+item[1];
+    pp.onclick=()=>{
+      pvVis[key]=!pvVis[key];pp.classList.toggle('active',pvVis[key]);
+      if(D&&D.config){D.config[key==='billing'?'pvBilling':'pvCohort']=pvVis[key];try{localStorage.setItem('sgc_data',JSON.stringify(D));}catch(e){}}
+      const _s=document.createElement('script');_s.src=API_URL+'?setPv='+key+'&val='+(pvVis[key]?'1':'0')+'&tok='+encodeURIComponent(accessToken)+'&callback=_noop';
+      window._noop=()=>{};document.head.appendChild(_s);setTimeout(()=>_s.remove(),3000);
+      render();
+    };
+    pw.appendChild(pp);
+  });
 }
 function updateAdminInfo(){
   const el=document.getElementById('adm-info');if(!el)return;
@@ -3323,7 +3355,7 @@ function tryRenderCache(){
     const c=localStorage.getItem('sgc_data');if(!c)return false;
     const d=JSON.parse(c);if(!d||!d.headline)return false;
     D=d;
-    if(D.config&&typeof D.config.showFact!=='undefined')showFact=D.config.showFact===true||D.config.showFact==='true'||D.config.showFact===1;
+    applyConfig();
     const now=D.lastUpdate||'';
     const hu=document.getElementById('h-update');if(hu)hu.textContent='Updated: '+now;
     const ft=document.getElementById('f-time');if(ft)ft.textContent=now;
