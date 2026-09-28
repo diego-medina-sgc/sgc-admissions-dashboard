@@ -1114,6 +1114,8 @@ const STRINGS={
     fg_rate_tip:'% of the previous stage',fg_level_total:'Total',
     ads_default_note:'Opens on the latest complete month &mdash; {m} is still in progress.',ads_partial:'in progress',
     web_period:'Period',web_last_vs:'{a} vs {b}',
+    ads_cpa:'Cost per Student Won',ads_cpa_f:'{n} won via Ads &middot; by close month',ads_cpa_none:'No Ads-sourced wins closed',
+    ads_cpa_cum:'<strong>Since {m}:</strong> {v} per student won &mdash; {n} won via Ads (Google {g} &middot; Meta {mt}) for {s} invested.',
     chart_live:'in progress',chart_proj:'projection',
     col_occ:'Occupancy',col_vac:'Vacancies',col_reth:'Retention',col_newh:'New',col_withh:'Withdrawals',col_prosph:'Prospects',
     s_kpis:'KPIs by Section',s_kpis_meta:'Enrolment &mdash; Occupancy &mdash; Retention',
@@ -1264,6 +1266,8 @@ const STRINGS={
     fg_rate_tip:'% de la etapa anterior',fg_level_total:'Total',
     ads_default_note:'Abre en el &uacute;ltimo mes completo &mdash; {m} todav&iacute;a est&aacute; en curso.',ads_partial:'en curso',
     web_period:'Per&iacute;odo',web_last_vs:'{a} vs {b}',
+    ads_cpa:'Costo por Alumno Ganado',ads_cpa_f:'{n} ganados por Ads &middot; por mes de cierre',ads_cpa_none:'Sin cierres por Ads',
+    ads_cpa_cum:'<strong>Desde {m}:</strong> {v} por alumno ganado &mdash; {n} ganados por Ads (Google {g} &middot; Meta {mt}) sobre {s} invertidos.',
     chart_live:'en curso',chart_proj:'proyección',
     col_occ:'Ocupaci&oacute;n',col_vac:'Vacantes',col_reth:'Retenci&oacute;n',col_newh:'Nuevos',col_withh:'Bajas',col_prosph:'Prospectos',
     s_kpis:'KPIs por Secci&oacute;n',s_kpis_meta:'Matr&iacute;cula &mdash; Ocupaci&oacute;n &mdash; Retenci&oacute;n',
@@ -2585,12 +2589,28 @@ function buildDigitalAds(){
   const pIdx=months.indexOf(adsMonth)-1,pM=(pIdx>=0&&adsMonth!==liveM)?ads.byMonth[months[pIdx]]:null,pLbl=pIdx>=0?monthShort(months[pIdx]):'';
   const pSp=pM?num(pM.spend):null,pIm=pM?num(pM.impressions):null,pCl=pM?num(pM.clicks):null;
   const pCtr=pM&&pIm>0?pCl/pIm:null,pCpc=pM&&pCl>0?pSp/pCl:null;
+  // Costo por alumno ganado: inversión del mes / WON con Source Google Ads o Meta Ads cerrados ese mes
+  // (doGet: byMonth[m].won). Backend viejo sin 'won' -> no se muestra.
+  const hasWon=!!(M&&M.won);
+  const cpaOf=mo=>(mo&&mo.won&&num(mo.won.total)>0)?num(mo.spend)/num(mo.won.total):null;
+  function cpaItem(){
+    if(!hasWon)return[];
+    const n=num(M.won.total),v=cpaOf(M),pv=pM?cpaOf(pM):null;
+    return[{lbl:t('ads_cpa')+qHelp('hlp_cpa'),val:v===null?'&mdash;':fUSD(v),nf:v===null?null:{v:v,f:'usd'},
+      foot:n>0?t('ads_cpa_f').replace('{n}',fN(n)):t('ads_cpa_none'),
+      chip:(pM&&v!==null&&pv!==null)?kpiChip(v,pv,{mode:'pct',good:'down',ref:pLbl}):null}];
+  }
   ex.appendChild(statStrip([
     {lbl:t('ads_spend'),val:fUSD(tSpend),nf:{v:tSpend,f:'usd'},foot:'USD',chip:pM?kpiChip(tSpend,pSp,{mode:'pct',good:'none',ref:pLbl}):null},
     {lbl:t('ads_clicks'),val:fN(tClicks),nf:{v:tClicks,f:'int'},foot:'',chip:pM?kpiChip(tClicks,pCl,{mode:'pct',ref:pLbl}):null},
     {lbl:t('ads_ctr'),val:fP(wctr),nf:{v:wctr,f:'pct'},foot:'',chip:pM?kpiChip(wctr,pCtr,{mode:'pp',ref:pLbl}):null},
     {lbl:t('ads_cpc'),val:fUSDd(wcpc),nf:{v:wcpc,f:'usd2'},foot:'USD/click',chip:pM?kpiChip(wcpc,pCpc,{mode:'pct',good:'down',ref:pLbl}):null},
-  ]));
+  ].concat(cpaItem())));
+  if(hasWon){
+    let cS=0,cG=0,cM=0;months.forEach(m=>{const o=ads.byMonth[m]||{};cS+=num(o.spend);if(o.won){cG+=num(o.won.google);cM+=num(o.won.meta);}});
+    const cN=cG+cM;
+    if(cN>0)ex.appendChild(elFromHTML('<div class="kpi-note">'+t('ads_cpa_cum').replace('{m}',escHtml(monthLabel(months[0]))).replace('{v}',fUSD(cS/cN)).replace('{n}',fN(cN)).replace('{g}',fN(cG)).replace('{mt}',fN(cM)).replace('{s}',fUSD(cS))+'</div>').firstChild);
+  }
   if(liveM&&adsMonth!==liveM&&months.length>=2){
     ex.appendChild(elFromHTML('<div class="kpi-note">'+t('ads_default_note').replace('{m}',escHtml(monthLabel(liveM)))+'</div>').firstChild);
   }
@@ -3021,6 +3041,8 @@ Object.assign(SAT_QUESTIONS,{
                  es:'Seg&uacute;n la tasa de visita: En l&iacute;nea &ge; 30% &middot; En riesgo 15&ndash;30% &middot; Fuera de meta &lt; 15%.'},
   hlp_ads_status:{en:'Compared with the month&rsquo;s weighted average. Efficient = CPC at or below average AND CTR at or above average. Inefficient = CPC above AND CTR below. Mixed = only one of the two.',
                   es:'Comparado con el promedio ponderado del mes. Eficiente = CPC igual o menor al promedio Y CTR igual o mayor. Ineficiente = CPC mayor Y CTR menor. Mixta = solo una de las dos.'},
+  hlp_cpa:{en:'Month&rsquo;s Ads spend &divide; families WON with Source = Google Ads or Meta Ads (Insightly), counted by their close date. A campaign rarely closes in the same month it runs &mdash; read the month-to-month figure with care and rely on the cumulative line below.',
+           es:'Inversi&oacute;n en Ads del mes &divide; familias WON con Source = Google Ads o Meta Ads (Insightly), contadas por su fecha de cierre. Una campa&ntilde;a rara vez cierra en el mismo mes en que corre: el dato mes a mes es orientativo, el acumulado de abajo es el m&aacute;s confiable.'},
   hlp_wr:{en:'Colour guide: green &ge; 15% &middot; red &lt; 8% &middot; no colour in between.',
           es:'Gu&iacute;a de colores: verde &ge; 15% &middot; rojo &lt; 8% &middot; sin color en el medio.'},
 });
