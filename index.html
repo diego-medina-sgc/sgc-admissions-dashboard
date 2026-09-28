@@ -1378,6 +1378,8 @@ const fSign=v=>{if(isNil(v))return'&mdash;';const n=parseFloat(v);if(isNaN(n))re
 const fCrp=v=>{if(isNil(v))return'&mdash;';const n=parseFloat(v)*100;if(isNaN(n))return'&mdash;';const s=fDec(Math.abs(n),1)+'%';return n<0?'<span class="val-neg">&#9660; '+s+'</span>':'<span class="val-pos">&#9650; '+s+'</span>';};
 /* Valor crudo o null (a diferencia de num(), que convierte "sin dato" en 0). */
 const numOrNull=v=>isNil(v)?null:(isNaN(parseFloat(v))?null:parseFloat(v));
+/* Suma que respeta "sin dato": null + null = null; null + 5 = 5. */
+const sumNull=(a,b)=>{const x=numOrNull(a),y=numOrNull(b);return(x===null&&y===null)?null:num(x)+num(y);};
 
 /* ── KPI: chip de variación + sparkline ──
    kpiChip(cur, prev, {mode:'pct'|'pp'|'abs', good:'up'|'down', ref:'2025'}) -> {html}
@@ -1453,7 +1455,7 @@ function trSource(s){return lang==='es'?(SOURCE_ES[s]||s):s;}
 function mergeSection(a,b){
   a=a||{};b=b||{};const out={};
   const keys=new Set([...Object.keys(a),...Object.keys(b)]);
-  keys.forEach(k=>{const av=a[k]||{},bv=b[k]||{};out[k]={matricula:num(av.matricula)+num(bv.matricula),ocupacion:null,vacantes:num(av.vacantes)+num(bv.vacantes),retencion:null,new_students:num(av.new_students)+num(bv.new_students),withdrawals:num(av.withdrawals)+num(bv.withdrawals),prospectos:num(av.prospectos)+num(bv.prospectos),prospectos_2026:num(av.prospectos_2026)+num(bv.prospectos_2026)};});
+  keys.forEach(k=>{const av=a[k]||{},bv=b[k]||{};out[k]={matricula:num(av.matricula)+num(bv.matricula),ocupacion:null,vacantes:num(av.vacantes)+num(bv.vacantes),retencion:null,new_students:sumNull(av.new_students,bv.new_students),withdrawals:num(av.withdrawals)+num(bv.withdrawals),prospectos:num(av.prospectos)+num(bv.prospectos),prospectos_2026:num(av.prospectos_2026)+num(bv.prospectos_2026)};});
   return out;
 }
 function getCampusData(){
@@ -2006,14 +2008,13 @@ function buildKpiTable(){
   const grpCls=campus==='q'?'grp-q':campus==='n'?'grp-n':'grp-k';
   const ctotCls=campus==='q'?'ctot-q':campus==='n'?'ctot-n':'ctot-os';
   const sc=(stu,cap)=>fN(stu)+' / '+(cap!=null?fN(cap):'&mdash;');
-  // Won 2026 by grade (from funnelGrade WON counts). Grado sin filas en funnelGrade -> "sin dato" (guion), no 0.
-  const wonMap={};(D.funnelGrade||[]).forEach(r=>{if(num(r.yr)===2026){const g=normGrade(r.grade);if(!gradeActive(g,r.yr))return;wonMap[g]=(wonMap[g]||0)+num(r.won);}});
-  const has=k=>Object.prototype.hasOwnProperty.call(wonMap,k);
+  // Won 2026 por grado: new_students del grado (doGet, WON 2026 de IMP_new_students por grado),
+  // misma definición que el total del nivel. NO usar funnelGrade: para 2026 solo cuenta cierres
+  // desde mayo y daba 0 en los grados contra 50 del nivel. Backend viejo (null) -> guion.
   const gWon=g=>{
-    if(campus==='q')return has('Q'+g)?wonMap['Q'+g]:null;
-    if(campus==='n')return has('N'+g)?wonMap['N'+g]:null;
-    if(!has('Q'+g)&&!has('N'+g))return null;
-    return num(wonMap['Q'+g])+num(wonMap['N'+g]);
+    const pick=o=>{const x=o&&o[g];return x?numOrNull(x.new_students):null;};
+    let lv=null;lvls.forEach(l=>{if(l.grades.indexOf(g)>-1)lv=l;});
+    return lv?pick(lv.obj):null;
   };
   let h='<table><thead><tr><th>'+t('col_level')+'</th><th class="r">'+t('col_grade')+'</th><th class="r">'+t('col_studcap')+'</th><th class="r occ-th">'+t('col_occ')+qHelp('hlp_occ')+'</th><th class="r">'+t('col_won26')+'</th></tr></thead><tbody>';
   let gtCap=0,gtStu=0;
