@@ -221,6 +221,9 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 .si:last-child{border-right:none;}
 .stat-strip.sc4 .si{flex:1 1 25%;max-width:25%;}
 .stat-strip.sc4 .si:nth-child(4n){border-right:none;}
+.stat-strip.sc3 .si{flex:1 1 33.33%;max-width:33.33%;}
+.stat-strip.sc3 .si:nth-child(3n){border-right:none;}
+.stat-strip.sc3 .si:nth-child(-n+3){border-bottom:1px solid rgba(255,255,255,.1);}
 .stat-strip.sc4 .si:nth-child(-n+4):not(:nth-last-child(-n+4)){border-bottom:1px solid rgba(255,255,255,.1);}
 .si:hover{background:rgba(255,255,255,.05);}
 .si-lbl{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;font-family:'Asap Condensed',sans-serif;}
@@ -459,6 +462,46 @@ td:has(.adj-wrap){text-align:center !important;padding:5px 8px !important;}
 .bd-yr-sel:focus{outline:2px solid var(--teal);outline-offset:1px;}
 /* Fila del anio vigente en la tabla historica — tinte teal + chip, para destacarlo del historico */
 tbody tr.bd-live-row td{background:#E6F7F9;font-weight:600;}
+/* ─── Confirmed 2027 ─── */
+.c27-note{display:flex;align-items:flex-start;gap:10px;background:rgba(16,154,169,.10);border:1px solid rgba(16,154,169,.30);border-left:4px solid var(--teal);border-radius:9px;padding:11px 15px;margin:0 0 18px;font-size:.8rem;color:var(--text-muted);font-family:'Asap Condensed',sans-serif;line-height:1.4;}
+.c27-note span{flex:1;min-width:0;}
+.c27-note.warn{background:var(--amber-lt);border-color:rgba(180,83,9,.3);border-left-color:var(--amber);color:var(--amber);}
+.c27-btn{flex-shrink:0;font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;color:var(--teal);background:transparent;border:1px solid var(--teal);border-radius:14px;padding:3px 11px;cursor:pointer;}
+.c27-prog{background:var(--surface);border-radius:var(--r);box-shadow:var(--card-shadow);padding:16px 18px;margin-bottom:12px;}
+.c27-prog-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:9px;font-family:'Asap',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);}
+.c27-prog-hd small{font-weight:500;color:var(--gray);font-size:.74rem;}
+.c27-bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--hairline);}
+.c27-bar span{display:block;height:100%;}
+.c27-leg{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-family:'Asap Condensed',sans-serif;font-size:.76rem;color:var(--gray);}
+.c27-leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+.c27-leg b{color:var(--text);font-weight:700;}
+.c27-chip{display:inline-block;padding:2px 8px;border-radius:10px;font-family:'Asap',sans-serif;font-size:.64rem;font-weight:700;letter-spacing:.03em;white-space:nowrap;}
+.c27-chip.re{background:var(--green-lt);color:var(--green);}
+.c27-chip.pend{background:var(--hairline);color:var(--gray);}
+.c27-chip.ret{background:var(--red-lt);color:var(--red);}
+.c27-chip.unb{background:var(--amber-lt);color:var(--amber);}
+.c27-chip.wd{background:var(--ink-lt);color:var(--ink);}
+.c27-chip.new{background:rgba(16,154,169,.14);color:var(--teal);}
+.c27-chip.rev{background:var(--amber-lt);color:var(--amber);}
+.c27-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 12px;}
+.c27-tools .cycle-pills{flex-wrap:wrap;max-width:100%;}
+.c27-cnt{display:inline-block;min-width:16px;margin-left:4px;padding:0 5px;border-radius:8px;background:rgba(0,0,0,.08);font-size:.62rem;}
+.cycle-pill.active .c27-cnt{background:rgba(255,255,255,.22);}
+.c27-search{font-family:'Asap',sans-serif;font-size:16px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:220px;max-width:100%;}
+.c27-search:focus,.c27-sel:focus{outline:2px solid var(--teal);outline-offset:1px;}
+.c27-sel{font-family:'Asap',sans-serif;font-size:.8rem;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;}
+.c27-sub{color:var(--gray);font-size:.7rem;margin-left:6px;}
+.c27-zero{color:var(--gray);opacity:.55;}
+[data-theme="dark"] .c27-note{background:rgba(38,198,214,.10);border-color:rgba(38,198,214,.28);}
+[data-theme="dark"] .c27-note.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#F59E0B;}
+[data-theme="dark"] .c27-bar{background:rgba(255,255,255,.08);}
+[data-theme="dark"] .c27-chip.re{background:rgba(21,128,61,.2);color:#4ADE80;}
+[data-theme="dark"] .c27-chip.pend{background:rgba(255,255,255,.08);color:var(--text-muted);}
+[data-theme="dark"] .c27-chip.ret{background:rgba(255,99,113,.16);color:#FF6371;}
+[data-theme="dark"] .c27-chip.unb,[data-theme="dark"] .c27-chip.rev{background:rgba(245,158,11,.14);color:#F59E0B;}
+[data-theme="dark"] .c27-chip.wd{background:rgba(194,204,222,.14);color:#C2CCDE;}
+[data-theme="dark"] .c27-chip.new{background:rgba(38,198,214,.14);color:#26C6D6;}
+[data-theme="dark"] .c27-cnt{background:rgba(255,255,255,.12);}
 tbody tr.bd-live-row td:first-child{box-shadow:inset 3px 0 0 var(--teal);}
 .bd-live-tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:10px;background:var(--teal);color:#fff;font-family:'Asap',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;}
 
@@ -996,7 +1039,25 @@ const STRINGS={
     ph_retention:'Retention &amp; Community',ph_retention_sub:'Loyalty, cohorts &amp; community profile',
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
-    pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',
+    pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',pv_confirmed:'Confirmed 2027',
+    c27_note:'<b>Real count &mdash; not a forecast.</b> Base: students enrolled in 2026 (iSAMS), excluding C6 (graduating), frozen on {since}. A student who leaves in iSAMS counts as <b>Withdrawn</b>. Updated {upd}.',
+    c27_loading:'Loading re-enrolment data&hellip;',c27_denied:'Your session expired or you have no access to this view. Sign out and sign in again.',
+    c27_error:'Could not load re-enrolment data.',c27_retry:'Retry',c27_refresh:'Refresh',
+    c27_isams_warn:'iSAMS data looks incomplete today &mdash; withdrawals are not counted until it is back.',
+    c27_k_conf:'Confirmed 2027',c27_k_conf_f:'Re-enrolled + new &middot; vs {n} in 2026',c27_k_re:'Re-enrolled',c27_k_re_f:'{p} of {b} eligible',
+    c27_k_pend:'Pending',c27_k_pend_f:'No answer yet',c27_k_ret:'Retained',c27_k_ret_f:'Enrolment withheld',
+    c27_k_wd:'Withdrawn',c27_k_wd_f:'Left in iSAMS',c27_k_new:'New',c27_k_new_f:'Won &middot; 2027 pipeline',
+    c27_s_progress:'Re-enrolment progress',c27_s_progress_meta:'Share of eligible students',
+    c27_pace_ttl:'Cumulative re-enrolment',c27_pace_sub:'% of eligible students who re-enrolled, by response date',c27_pace_empty:'No responses yet.',
+    c27_s_grades:'By Year Group 2027',c27_s_grades_meta:'Year group they will attend in 2027',
+    c27_grades_note:'<b>Eligible</b> = 2026 students moving up into that year group. <b>Confirmed</b> = re-enrolled + new. <b>2026 today</b> = students in that same year group now.',
+    c27_c_yg:'Year Group',c27_c_base:'Eligible',c27_c_re:'Re-enrolled',c27_c_pct:'%',c27_c_ret:'Retained',c27_c_wd:'Withdrawn',c27_c_pend:'Pending',c27_c_new:'New',c27_c_conf:'Confirmed',c27_c_cur:'2026 today',
+    c27_s_list:'Follow-up',c27_s_list_meta:'Students by status',c27_all_grades:'All year groups',c27_search:'Search name',
+    c27_l_name:'Student',c27_l_grade:'2026 &rarr; 2027',c27_l_status:'Status',c27_l_date:'Date',c27_l_campus:'Campus',c27_l_source:'Source',
+    c27_st_re:'Re-enrolled',c27_st_pend:'Pending',c27_st_ret:'Retained',c27_st_unb:'Retained &middot; not blocked',c27_st_wd:'Withdrawn',c27_st_new:'New',c27_st_rev:'To review',
+    c27_rev_note:'Form answers and retained students that could not be matched to an iSAMS student (name typed differently, or ambiguous). Check them by hand.',
+    c27_rev_form:'Form',c27_rev_ret:'Retained list',c27_rev_manual:'Paper',c27_empty_list:'No students in this list.',c27_late:'joined later',c27_more:'Showing {n} of {t}',
+    c27_s_board:'Boarding 2027 &mdash; Quilmes',c27_s_board_meta:'As declared in the re-enrolment form',c27_b_day:'Day',c27_b_weekly:'Weekly boarding',c27_b_full:'Full boarding',
     pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. In <b>College</b> there are no fixed classes &mdash; students rotate across subject sets &mdash; so Teachers and Ratio are tracked on the <b>College total</b>; per-grade Teachers start empty for what-if testing. &#9888; marks classes projected above capacity.',
     pd_pending:'Cohort/Teachers data pending in CALC_projection_detail',
     pd_college_total:'College (total)',
@@ -1148,7 +1209,25 @@ const STRINGS={
     ph_retention:'Retenci&oacute;n y Comunidad',ph_retention_sub:'Fidelizaci&oacute;n, camadas y comunidad',
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
-    pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',
+    pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',pv_confirmed:'Confirmed 2027',
+    c27_note:'<b>Recuento real &mdash; no es un pron&oacute;stico.</b> Base: alumnos 2026 en iSAMS, sin C6 (egresan), congelada el {since}. Un alumno que se da de baja en iSAMS cuenta como <b>Baja</b>. Actualizado {upd}.',
+    c27_loading:'Cargando la rematriculaci&oacute;n&hellip;',c27_denied:'La sesi&oacute;n venci&oacute; o no ten&eacute;s acceso a esta vista. Cerr&aacute; sesi&oacute;n y volv&eacute; a entrar.',
+    c27_error:'No se pudo cargar la rematriculaci&oacute;n.',c27_retry:'Reintentar',c27_refresh:'Actualizar',
+    c27_isams_warn:'Los datos de iSAMS parecen incompletos hoy &mdash; las bajas no se cuentan hasta que vuelvan.',
+    c27_k_conf:'Confirmados 2027',c27_k_conf_f:'Rematriculados + nuevos &middot; vs {n} en 2026',c27_k_re:'Rematriculados',c27_k_re_f:'{p} de {b} habilitados',
+    c27_k_pend:'Pendientes',c27_k_pend_f:'Todav&iacute;a sin respuesta',c27_k_ret:'Retenidos',c27_k_ret_f:'Matr&iacute;cula retenida',
+    c27_k_wd:'Bajas',c27_k_wd_f:'Registradas en iSAMS',c27_k_new:'Nuevos',c27_k_new_f:'Won &middot; pipeline 2027',
+    c27_s_progress:'Avance de la rematriculaci&oacute;n',c27_s_progress_meta:'Sobre los alumnos habilitados',
+    c27_pace_ttl:'Rematriculaci&oacute;n acumulada',c27_pace_sub:'% de habilitados que se rematricularon, por fecha de respuesta',c27_pace_empty:'Todav&iacute;a no hay respuestas.',
+    c27_s_grades:'Por Year Group 2027',c27_s_grades_meta:'Curso al que van en 2027',
+    c27_grades_note:'<b>Habilitados</b> = alumnos 2026 que pasan a ese curso. <b>Confirmados</b> = rematriculados + nuevos. <b>Hoy 2026</b> = alumnos que hoy cursan ese mismo grado.',
+    c27_c_yg:'Year Group',c27_c_base:'Habilitados',c27_c_re:'Rematric.',c27_c_pct:'%',c27_c_ret:'Retenidos',c27_c_wd:'Bajas',c27_c_pend:'Pendientes',c27_c_new:'Nuevos',c27_c_conf:'Confirmados',c27_c_cur:'Hoy 2026',
+    c27_s_list:'Seguimiento',c27_s_list_meta:'Alumnos por estado',c27_all_grades:'Todos los cursos',c27_search:'Buscar nombre',
+    c27_l_name:'Alumno',c27_l_grade:'2026 &rarr; 2027',c27_l_status:'Estado',c27_l_date:'Fecha',c27_l_campus:'Campus',c27_l_source:'Origen',
+    c27_st_re:'Rematriculado',c27_st_pend:'Pendiente',c27_st_ret:'Retenido',c27_st_unb:'Retenido &middot; sin bloquear',c27_st_wd:'Baja',c27_st_new:'Nuevo',c27_st_rev:'A revisar',
+    c27_rev_note:'Respuestas del formulario y alumnos retenidos que no se pudieron cruzar con un alumno de iSAMS (nombre escrito distinto, o ambiguo). Revisalos a mano.',
+    c27_rev_form:'Formulario',c27_rev_ret:'Lista de retenidos',c27_rev_manual:'Papel',c27_empty_list:'No hay alumnos en esta lista.',c27_late:'alta posterior',c27_more:'Mostrando {n} de {t}',
+    c27_s_board:'Boarding 2027 &mdash; Quilmes',c27_s_board_meta:'Seg&uacute;n lo declarado en el formulario',c27_b_day:'Diarios',c27_b_weekly:'Residentes semanales',c27_b_full:'Residentes completos',
     pd_note:'Proyecci&oacute;n de cohortes 2027 por sal&oacute;n. Ajust&aacute; <b>Proyectado</b>, <b>Capacidad</b> y <b>Teachers</b> por sal&oacute;n (los valores por defecto vienen pre-cargados del sheet) para probar el <b>ratio alumnos/docente</b> resultante y la <b>&Delta; vs 2026 por sal&oacute;n</b>. Los totales por grado se recalculan como la <b>suma de sus salones</b>. En <b>College</b> no hay salones fijos &mdash; los alumnos rotan por materias y niveles (sets) &mdash; por eso Teachers y Ratio se calculan sobre el <b>total de College</b>. &#9888; marca salones proyectados por encima de la capacidad.',
     pd_pending:'Datos de Cohortes/Teachers pendientes en CALC_projection_detail',
     pd_college_total:'College (total)',
@@ -1328,6 +1407,9 @@ let satSection='all'; // 'all' | 'Kinder' | 'Prep School' | 'College' — filtro
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
 let pvVis={billing:true,cohort:true}; // vistas de Projection visibles — admin, persistido en el backend
+// Confirmed 2027: recuento real de rematriculación + nuevos. Solo ADMIN_EMAIL; los datos (con nombres)
+// vienen de un endpoint aparte que valida el token (?confirmed=1&tok=…), nunca del payload público.
+let C27=null,c27Busy=false,c27F={st:'pend',g:'all',q:''};
 function applyConfig(){
   const c=D&&D.config;if(!c)return;
   const on=x=>x===true||x==='true'||x===1||x==='1';
@@ -2706,6 +2788,8 @@ function buildProyeccion(){
   // View toggle: Billing by Year Group | Cohort/Teachers Projection
   // Las vistas apagadas desde el Admin Panel no se muestran; con una sola visible no hace falta el toggle
   const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]].filter(v=>pvVis[v[0]]);
+  // Confirmed 2027: por ahora solo la ve el admin (no depende de los switches de Admin → Projection views)
+  if(userEmail===ADMIN_EMAIL)views.push(['confirmed',t('pv_confirmed')]);
   if(!views.length){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
   if(!views.some(v=>v[0]===projView))projView=views[0][0];
   if(views.length>1){
@@ -2714,6 +2798,7 @@ function buildProyeccion(){
     wrap.appendChild(pvBar);
   }
   if(projView==='cohort'){buildTeachersProj(wrap);return wrap;}
+  if(projView==='confirmed'){buildConfirmed(wrap);return wrap;}
   const py=D.proyeccion;
   if(!py){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
   const qT=calcSimTotal('q'),nT=calcSimTotal('n');
@@ -2741,6 +2826,181 @@ function buildProyeccion(){
     wrap.appendChild(sec(t('s_proj_detail'),t('s_proj_detail_meta'),cwrap));
   }
   return wrap;
+}
+/* ── Confirmed 2027 — recuento real de rematriculación + nuevos (Won 2027) ── */
+const C27_GR=GR_K.concat(GR_P,GR_C);
+const c27Ord=g=>{const i=C27_GR.indexOf(g);return i<0?99:i;};
+function fetchC27(force){
+  if(c27Busy)return;c27Busy=true;
+  const cb='c27Cb_'+Date.now(),s=document.createElement('script');
+  let done=false;
+  const fin=d=>{
+    if(done)return;done=true;c27Busy=false;clearTimeout(guard);
+    C27=d||{ok:false,error:'empty'};window[cb]=function(){};s.remove();
+    if(activeTab==='proyeccion'&&projView==='confirmed')render();
+  };
+  window[cb]=fin;
+  const guard=setTimeout(()=>fin({ok:false,error:'timeout'}),60000);
+  s.onerror=()=>fin({ok:false,error:'network'});
+  s.src=API_URL+'?confirmed=1&tok='+encodeURIComponent(accessToken||'')+'&callback='+cb+(force?'&nocache=1':'')+'&t='+Date.now();
+  document.head.appendChild(s);
+}
+function c27Refresh(){C27=null;fetchC27(true);render();}
+function c27Scope(){return campus==='os'?['q','n']:[campus];}
+function c27Fill(tpl,o){return String(tpl).replace(/\{(\w+)\}/g,(m,k)=>o[k]!==undefined?o[k]:m);}
+function c27Stats(c){
+  const S=C27.students.filter(s=>s.c===c);
+  const n=st=>S.filter(s=>s.st===st).length;
+  const cur=Object.values((C27.current||{})[c]||{}).reduce((a,b)=>a+b,0);
+  const won=(C27.won||[]).filter(w=>w.c===c).length;
+  const re=n('re');
+  return {base:S.length,re:re,ret:n('ret'),wd:n('wd'),pend:n('pend'),won:won,conf:re+won,cur:cur};
+}
+function c27Sum(list){const o={};list.forEach(x=>Object.keys(x).forEach(k=>o[k]=(o[k]||0)+x[k]));return o;}
+function c27Date(d){if(!d)return'';const p=String(d).split('-');return p.length===3?p[2]+'/'+p[1]:d;}
+function c27Chip(st){return'<span class="c27-chip '+st+'">'+t('c27_st_'+st)+'</span>';}
+function buildConfirmed(wrap){
+  if(!C27){
+    if(!c27Busy)fetchC27(false);
+    wrap.appendChild(emptyState(t('c27_loading'),''));return;
+  }
+  if(!C27.ok){
+    const e=emptyState(C27.denied?t('c27_denied'):t('c27_error'),C27.error?escHtml(C27.error):'');
+    if(!C27.denied)e.querySelector('.empty-state').insertAdjacentHTML('beforeend','<button class="c27-btn" style="margin-top:12px" onclick="c27Refresh()">'+t('c27_retry')+'</button>');
+    wrap.appendChild(e);return;
+  }
+  const sc=c27Scope(),st=c27Sum(sc.map(c27Stats));
+  wrap.appendChild(elFromHTML('<div class="c27-note"><svg style="flex-shrink:0;margin-top:2px" width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+c27Fill(t('c27_note'),{since:c27Date(C27.baseSince)+(C27.baseSince?'/'+String(C27.baseSince).slice(0,4):''),upd:escHtml(C27.generated||'')})+'</span><button class="c27-btn" onclick="c27Refresh()">'+t('c27_refresh')+'</button></div>').firstChild);
+  if(C27.isamsSuspect)wrap.appendChild(elFromHTML('<div class="c27-note warn"><span>&#9888; '+t('c27_isams_warn')+'</span></div>').firstChild);
+
+  const pct=(a,b)=>b>0?fD1(a/b*100)+'%':'&ndash;';
+  const dConf=st.conf-st.cur;
+  wrap.appendChild(statStrip([
+    {lbl:t('c27_k_conf'),val:fN(st.conf),accent:true,foot:c27Fill(t('c27_k_conf_f'),{n:fN(st.cur)})+' <span class="'+(dConf<0?'val-neg':'val-pos')+'">'+(dConf>=0?'+':'')+fN(dConf)+'</span>'},
+    {lbl:t('c27_k_re'),val:fN(st.re),foot:c27Fill(t('c27_k_re_f'),{p:pct(st.re,st.base),b:fN(st.base)})},
+    {lbl:t('c27_k_new'),val:fN(st.won),foot:t('c27_k_new_f')},
+    {lbl:t('c27_k_pend'),val:fN(st.pend),foot:t('c27_k_pend_f')},
+    {lbl:t('c27_k_ret'),val:fN(st.ret),foot:t('c27_k_ret_f')},
+    {lbl:t('c27_k_wd'),val:fN(st.wd),foot:t('c27_k_wd_f')}
+  ],3));
+
+  // Avance: barra apilada por campus
+  const prog=document.createElement('div');
+  const segs=[['re','var(--green)'],['ret','var(--red)'],['wd','var(--ink)'],['pend','var(--line)']];
+  prog.innerHTML=sc.map(c=>{
+    const s=c27Stats(c),nm=c==='q'?'Quilmes':'North';
+    const bar=segs.map(([k,col])=>s.base>0&&s[k]>0?'<span style="width:'+(s[k]/s.base*100)+'%;background:'+col+'" title="'+t('c27_st_'+k).replace(/<[^>]+>/g,'')+': '+s[k]+'"></span>':'').join('');
+    const leg=segs.map(([k,col])=>'<span><i style="background:'+col+'"></i>'+t('c27_st_'+k)+' <b>'+fN(s[k])+'</b> &middot; '+pct(s[k],s.base)+'</span>').join('');
+    return'<div class="c27-prog"><div class="c27-prog-hd"><span style="color:'+(c==='q'?'var(--red)':'var(--navy)')+'">'+nm+'</span><small>'+fN(s.base)+' '+t('c27_c_base').toLowerCase()+'</small></div><div class="c27-bar">'+bar+'</div><div class="c27-leg">'+leg+'</div></div>';
+  }).join('');
+  const hasResp=C27.students.some(s=>s.st==='re'&&s.d&&sc.includes(s.c));
+  prog.appendChild(elFromHTML('<div class="cc"><div class="cc-hd"><div><div class="cc-ttl">'+t('c27_pace_ttl')+'</div><div class="cc-sub">'+t('c27_pace_sub')+'</div></div></div>'+(hasResp?'<div class="chart-wrap" style="height:260px"><canvas id="chart-c27-pace"></canvas></div>':'<div class="empty-sub" style="padding:24px 0;text-align:center;color:var(--gray)">'+t('c27_pace_empty')+'</div>')+'</div>').firstChild);
+  wrap.appendChild(sec(t('c27_s_progress'),t('c27_s_progress_meta'),prog));
+
+  // Tabla por Year Group 2027
+  const tw=document.createElement('div');
+  tw.innerHTML='<div class="c27-note" style="margin-bottom:14px"><span>'+t('c27_grades_note')+'</span></div>'+sc.map(c=>c27GradeTable(c)).join('');
+  wrap.appendChild(sec(t('c27_s_grades'),t('c27_s_grades_meta'),tw));
+
+  // Boarding declarado (solo Quilmes)
+  if(sc.includes('q')){
+    const reQ=C27.students.filter(s=>s.c==='q'&&s.st==='re');
+    const bc=k=>reQ.filter(s=>s.cat===k).length;
+    if(bc('weekly')+bc('full')>0){
+      wrap.appendChild(sec(t('c27_s_board'),t('c27_s_board_meta'),kpiGrid([
+        {lbl:t('c27_b_day'),val:fN(bc('day'))},{lbl:t('c27_b_weekly'),val:fN(bc('weekly')),accent:true},{lbl:t('c27_b_full'),val:fN(bc('full')),accent:true}])));
+    }
+  }
+
+  // Seguimiento: lista por estado
+  const lw=document.createElement('div');
+  lw.innerHTML='<div class="c27-tools" id="c27-tools"></div><div id="c27-list"></div>';
+  wrap.appendChild(sec(t('c27_s_list'),t('c27_s_list_meta'),lw));
+  setTimeout(()=>{c27Tools();c27RenderList();},0);
+}
+function c27GradeTable(c){
+  const color=c==='q'?'var(--red)':'var(--navy)',nm=c==='q'?'Quilmes':'North';
+  const S=C27.students.filter(s=>s.c===c),W=(C27.won||[]).filter(w=>w.c===c),cur=(C27.current||{})[c]||{};
+  const gs={};S.forEach(s=>{if(s.g27)gs[s.g27]=1;});W.forEach(w=>{if(w.g27)gs[w.g27]=1;});Object.keys(cur).forEach(g=>{gs[g]=1;});
+  const grades=Object.keys(gs).sort((a,b)=>c27Ord(a)-c27Ord(b));
+  const z=v=>v?fN(v):'<span class="c27-zero">0</span>';
+  const tot={base:0,re:0,ret:0,wd:0,pend:0,won:0,cur:0};
+  let rows='';
+  grades.forEach(g=>{
+    const G=S.filter(s=>s.g27===g),n=k=>G.filter(s=>s.st===k).length;
+    const r={base:G.length,re:n('re'),ret:n('ret'),wd:n('wd'),pend:n('pend'),won:W.filter(w=>w.g27===g).length,cur:cur[g]||0};
+    Object.keys(tot).forEach(k=>tot[k]+=r[k]);
+    rows+=c27Row(g,r,z,color,false);
+  });
+  const noG=W.filter(w=>!w.g27).length;
+  if(noG){tot.won+=noG;rows+=c27Row('&mdash;',{base:0,re:0,ret:0,wd:0,pend:0,won:noG,cur:0},z,color,false);}
+  rows+=c27Row(t('total_lbl'),tot,z,color,true);
+  return'<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+nm+'</div><div class="tw"><table><thead><tr><th class="th-'+c+'">'+t('c27_c_yg')+'</th><th class="r th-'+c+'">'+t('c27_c_base')+'</th><th class="r th-'+c+'">'+t('c27_c_re')+'</th><th class="r th-'+c+'">'+t('c27_c_pct')+'</th><th class="r th-'+c+'">'+t('c27_c_ret')+'</th><th class="r th-'+c+'">'+t('c27_c_wd')+'</th><th class="r th-'+c+'">'+t('c27_c_pend')+'</th><th class="r th-'+c+'">'+t('c27_c_new')+'</th><th class="r th-'+c+'">'+t('c27_c_conf')+'</th><th class="r th-'+c+'">'+t('c27_c_cur')+'</th><th class="r th-'+c+'">&Delta;</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+function c27Row(g,r,z,color,isTot){
+  const conf=r.re+r.won,d=conf-r.cur;
+  const pc=r.base>0?fD1(r.re/r.base*100)+'%':'&ndash;';
+  return'<tr'+(isTot?' class="tot"':'')+'><td style="font-weight:700">'+g+'</td><td class="r">'+z(r.base)+'</td><td class="r" style="color:var(--green);font-weight:600">'+z(r.re)+'</td><td class="r">'+pc+'</td><td class="r">'+z(r.ret)+'</td><td class="r">'+z(r.wd)+'</td><td class="r">'+z(r.pend)+'</td><td class="r">'+z(r.won)+'</td><td class="r" style="font-weight:700;color:'+color+'">'+fN(conf)+'</td><td class="r">'+z(r.cur)+'</td><td class="r '+(d<0?'val-neg':'val-pos')+'">'+(d>=0?'+':'')+fN(d)+'</td></tr>';
+}
+function c27Items(st){
+  const sc=c27Scope();
+  if(st==='new')return(C27.won||[]).filter(w=>sc.includes(w.c)).map(w=>({c:w.c,n:w.n,g26:'',g27:w.g27,st:'new',d:w.d}));
+  if(st==='rev'){
+    const a=(C27.unmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.n,g26:'',g27:u.g,st:'rev',d:u.d,src:u.manual?t('c27_rev_manual'):t('c27_rev_form')}));
+    const b=(C27.retUnmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.txt+(u.fam?' <span class="c27-sub">('+escHtml(u.fam)+')</span>':''),raw:true,g26:'',g27:'',st:'rev',d:'',src:t('c27_rev_ret')}));
+    return a.concat(b);
+  }
+  return C27.students.filter(s=>sc.includes(s.c)&&s.st===st);
+}
+function c27Tools(){
+  const el=document.getElementById('c27-tools');if(!el)return;
+  const sts=['pend','ret','re','wd','new','rev'];
+  const pills='<div class="cycle-pills">'+sts.map(k=>'<button class="cycle-pill'+(c27F.st===k?' active':'')+'" onclick="c27F.st=\''+k+'\';c27Tools();c27RenderList()">'+t('c27_st_'+k)+'<span class="c27-cnt">'+c27Items(k).length+'</span></button>').join('')+'</div>';
+  const opts='<option value="all">'+t('c27_all_grades')+'</option>'+C27_GR.map(g=>'<option value="'+g+'"'+(c27F.g===g?' selected':'')+'>'+g+'</option>').join('');
+  el.innerHTML=pills+'<select class="c27-sel" onchange="c27F.g=this.value;c27RenderList()">'+opts+'</select><input class="c27-search" type="search" placeholder="'+t('c27_search').replace(/"/g,'')+'" value="'+escHtml(c27F.q)+'" oninput="c27F.q=this.value;c27RenderList()">';
+}
+function c27RenderList(){
+  const el=document.getElementById('c27-list');if(!el||!C27||!C27.ok)return;
+  // Búsqueda por palabras sueltas, sin tildes ni puntuación: "perez juan" encuentra "Pérez, Juan Ignacio"
+  const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const qt=norm(c27F.q).split(' ').filter(Boolean);
+  let items=c27Items(c27F.st);
+  if(c27F.g!=='all')items=items.filter(x=>x.g27===c27F.g);
+  if(qt.length)items=items.filter(x=>{const h=' '+norm(x.raw?String(x.n).replace(/<[^>]+>/g,''):x.n)+' ';return qt.every(w=>h.includes(' '+w));});
+  items.sort((a,b)=>c27Ord(a.g27)-c27Ord(b.g27)||String(a.n).localeCompare(String(b.n)));
+  const os=campus==='os',rev=c27F.st==='rev',total=items.length,MAX=500;
+  if(!total){el.innerHTML='<div class="empty-sub" style="padding:18px 0;color:var(--gray)">'+t('c27_empty_list')+'</div>';return;}
+  const rows=items.slice(0,MAX).map(x=>{
+    const chip=x.st==='ret'&&x.rs==='unb'?c27Chip('unb'):c27Chip(x.st);
+    const gr=x.g26?x.g26+' &rarr; '+(x.g27||'&mdash;'):(x.g27||'&mdash;');
+    const nm=(x.raw?x.n:escHtml(x.n))+(x.late?' <span class="c27-sub">'+t('c27_late')+'</span>':'');
+    return'<tr><td style="text-align:left">'+nm+'</td>'+(os?'<td>'+(x.c==='q'?'Quilmes':'North')+'</td>':'')+'<td>'+gr+'</td>'+(rev?'<td>'+escHtml(x.src||'')+'</td>':'<td>'+chip+'</td>')+'<td class="r">'+c27Date(x.d)+'</td></tr>';
+  }).join('');
+  el.innerHTML=(rev?'<div class="c27-note warn"><span>'+t('c27_rev_note')+'</span></div>':'')+'<div class="tw scroll-y" style="max-height:520px"><table><thead><tr><th>'+t('c27_l_name')+'</th>'+(os?'<th>'+t('c27_l_campus')+'</th>':'')+'<th>'+t('c27_l_grade')+'</th><th>'+(rev?t('c27_l_source'):t('c27_l_status'))+'</th><th class="r">'+t('c27_l_date')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+(total>MAX?'<div class="c27-sub" style="margin:8px 0 0">'+c27Fill(t('c27_more'),{n:MAX,t:fN(total)})+'</div>':'');
+}
+function drawC27Pace(){
+  const el=document.getElementById('chart-c27-pace');if(!el||!C27||!C27.ok)return;
+  const DK=isDarkMode(),sc=c27Scope();
+  const kRed=DK?'#FF6371':'#DC1E33',kNavy=DK?'#7C9AE0':'#213463',kInk=DK?'#C2CCDE':'#1A1F35';
+  const PBC=DK?'#1C1C2C':'#fff';
+  const GRD=DK?{color:'rgba(255,255,255,.09)'}:{color:'rgba(232,227,218,.7)'};
+  const TCK=DK?{font:{family:'Asap Condensed',size:11},color:'#9A9AB8'}:{font:{family:'Asap Condensed',size:11},color:'#8C857A'};
+  const ds=C27.students.filter(s=>s.st==='re'&&s.d).map(s=>s.d).sort();
+  if(!ds.length)return;
+  const days=[],d0=new Date(ds[0]+'T12:00:00'),dl=new Date(ds[ds.length-1]+'T12:00:00'),d1=new Date()>dl?new Date():dl;
+  for(let d=new Date(d0);d<=d1&&days.length<400;d.setDate(d.getDate()+1))days.push(d.toISOString().slice(0,10));
+  const series=c=>{
+    const base=C27.students.filter(s=>s.c===c).length;
+    const per={};C27.students.forEach(s=>{if(s.c===c&&s.st==='re'&&s.d)per[s.d]=(per[s.d]||0)+1;});
+    let acc=0;return days.map(d=>{acc+=per[d]||0;return base>0?+(acc/base*100).toFixed(1):0;});
+  };
+  const mk=(lbl,data,col)=>({label:lbl,data:data,borderColor:col,backgroundColor:hexA(col,.08),fill:sc.length===1,tension:.3,borderWidth:3,pointRadius:0,pointHoverRadius:6,pointBackgroundColor:col,pointBorderColor:PBC,pointBorderWidth:2});
+  const sets=sc.map(c=>mk(c==='q'?'Quilmes':'North',series(c),c==='q'?kRed:kNavy));
+  if(sc.length>1){
+    const bq=C27.students.filter(s=>s.c==='q').length,bn=C27.students.filter(s=>s.c==='n').length,q=series('q'),n=series('n');
+    sets.unshift(mk('One School',q.map((v,i)=>bq+bn>0?+((v*bq+n[i]*bn)/(bq+bn)).toFixed(1):0),kInk));
+  }
+  charts['c27-pace']=new Chart(el,{type:'line',data:{labels:days.map(c27Date),datasets:sets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{font:{family:'Asap Condensed',size:11},color:DK?'#9A9AB8':'#6E6A60',padding:14,usePointStyle:true,pointStyle:'circle'}},tooltip:Object.assign({},TTP,{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fD1(ctx.raw)+'%'}})},scales:{y:{grid:GRD,ticks:Object.assign({},TCK,{callback:v=>v+'%'}),border:{display:false},beginAtZero:true,suggestedMax:100},x:{grid:{display:false},ticks:Object.assign({},TCK,{maxTicksLimit:10}),border:{display:false}}}}});
 }
 function mkAdjTable(title,ck,rows,color){
   if(!rows||!rows.length)return'';
@@ -3502,6 +3762,7 @@ function drawCharts(){
       charts['fidu-evol']=new Chart(fe,{type:'bar',data:{labels:ms.map(m=>monthLabel(m)),datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{stacked:true,grid:{display:false},ticks:TCK,border:{display:false}}}}});
     }
   }
+  try{drawC27Pace();}catch(e){console.warn('c27 pace',e);}
 }
 
 /* ============================== SIDEBAR NAV ============================== */
