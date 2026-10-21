@@ -594,6 +594,36 @@ th.pd-hsep{border-left:2px solid rgba(255,255,255,.35);}
 .pill.active{background:var(--ink);border-color:var(--ink);color:#fff;}
 .pill.teal-pill.active{background:var(--teal);border-color:var(--teal);color:#fff;}
 .pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;}
+/* Admin → People & permissions */
+.acc-note{font-size:.68rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;line-height:1.35;margin:0 0 10px;}
+.acc-add{display:flex;gap:6px;margin-bottom:10px;}
+.acc-add input{flex:1;min-width:0;font-family:'Asap',sans-serif;font-size:16px;padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--white);color:var(--text);}
+.acc-add input:focus{outline:2px solid var(--teal);outline-offset:1px;}
+.acc-btn{font-family:'Asap',sans-serif;font-size:.7rem;font-weight:600;border-radius:7px;padding:5px 11px;cursor:pointer;border:1px solid var(--teal);background:transparent;color:var(--teal);white-space:nowrap;}
+.acc-btn.primary{background:var(--teal);color:#fff;}
+.acc-btn:disabled{opacity:.45;cursor:default;}
+.acc-list{max-height:340px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;}
+.acc-row{border-bottom:1px solid var(--line);}
+.acc-row:last-child{border-bottom:none;}
+.acc-head{display:flex;align-items:center;gap:6px;padding:7px 9px;cursor:pointer;font-size:.72rem;font-family:'Asap',sans-serif;}
+.acc-head .acc-mail{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);font-weight:600;}
+.acc-cnt{font-family:'Asap Condensed',sans-serif;font-size:.64rem;color:var(--gray);background:var(--paper);border-radius:8px;padding:1px 6px;white-space:nowrap;}
+.acc-cnt.adm{background:var(--teal);color:#fff;}
+.acc-chev{color:var(--gray);font-size:.7rem;transition:transform .15s;}
+.acc-row.open .acc-chev{transform:rotate(90deg);}
+.acc-perms{display:none;padding:2px 9px 10px;}
+.acc-row.open .acc-perms{display:block;}
+.acc-perms .acc-grp{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin:6px 0 4px;font-family:'Asap Condensed',sans-serif;}
+.acc-perms .pill{margin-bottom:4px;display:inline-flex;margin-right:4px;}
+.acc-del{background:none;border:none;color:var(--red);font-size:.66rem;font-family:'Asap',sans-serif;cursor:pointer;padding:4px 0 0;}
+.acc-foot{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.acc-status{font-size:.66rem;font-family:'Asap Condensed',sans-serif;color:var(--gray);flex:1;}
+.acc-status.err{color:var(--red);}
+.acc-status.ok{color:var(--green);}
+[data-theme="dark"] .acc-add input{background:var(--surface2);border-color:var(--border);}
+[data-theme="dark"] .acc-list,[data-theme="dark"] .acc-row{border-color:var(--border);}
+[data-theme="dark"] .acc-cnt{background:var(--surface2);color:var(--text-muted);}
+[data-theme="dark"] .acc-cnt.adm{background:var(--teal);color:#fff;}
 .adm-info{background:var(--paper);border-radius:8px;padding:12px 14px;}
 .adm-info-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;margin-bottom:6px;}
 .adm-info-row:last-child{margin-bottom:0;}
@@ -982,6 +1012,10 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
     </div>
     <div class="adm-body">
       <div class="adm-section">
+        <div class="adm-section-title" id="acc-title">People &amp; permissions</div>
+        <div id="acc-wrap"></div>
+      </div>
+      <div class="adm-section">
         <div class="adm-section-title">Visible sections</div>
         <div id="sec-toggles"></div>
       </div>
@@ -1040,6 +1074,13 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',pv_confirmed:'Confirmed 2027',
+    acc_title:'People &amp; permissions',acc_note:'Who can open the dashboard and which sections each person sees. Hidden sections are not sent to their browser.',
+    acc_add:'Add',acc_add_ph:'name@stgeorges.edu.ar',acc_save:'Save changes',acc_saving:'Saving&hellip;',acc_saved:'Saved',acc_dirty:'Unsaved changes',acc_err:'Could not save',
+    acc_remove:'Remove access',acc_admin:'Admin &middot; sees everything',acc_grp_tabs:'Sections',acc_grp_proj:'Projection 2027',acc_invalid:'Invalid email',acc_dup:'Already in the list',
+    acc_old:'The server is still on the previous version. Deploy the new Apps Script version to edit permissions here.',
+    acc_legacy:'The &ldquo;Acceso&rdquo; sheet is still in the old format (emails only): everyone sees everything except Confirmed 2027. It switches to the new format the first time you save.',
+    acc_new_default:'New people start with Executive Summary only.',
+    acc_none:'No sections assigned yet',acc_none_sub:'Ask the dashboard admin to give you access.',
     c27_note:'<b>Real count &mdash; not a forecast.</b> Base: students enrolled in 2026 (iSAMS), excluding C6 (graduating), frozen on {since}. A student who leaves in iSAMS counts as <b>Withdrawn</b>. Updated {upd}.',
     c27_loading:'Loading re-enrolment data&hellip;',c27_denied:'Your session expired or you have no access to this view. Sign out and sign in again.',
     c27_error:'Could not load re-enrolment data.',c27_retry:'Retry',c27_refresh:'Refresh',
@@ -1210,6 +1251,13 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
     pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',pv_confirmed:'Confirmed 2027',
+    acc_title:'Personas y permisos',acc_note:'Qui&eacute;n puede entrar al dashboard y qu&eacute; secciones ve cada persona. Lo que no ve no llega a su navegador.',
+    acc_add:'Agregar',acc_add_ph:'nombre@stgeorges.edu.ar',acc_save:'Guardar cambios',acc_saving:'Guardando&hellip;',acc_saved:'Guardado',acc_dirty:'Cambios sin guardar',acc_err:'No se pudo guardar',
+    acc_remove:'Quitar acceso',acc_admin:'Admin &middot; ve todo',acc_grp_tabs:'Secciones',acc_grp_proj:'Projection 2027',acc_invalid:'Mail inv&aacute;lido',acc_dup:'Ya est&aacute; en la lista',
+    acc_old:'El servidor todav&iacute;a est&aacute; en la versi&oacute;n anterior. Implement&aacute; la nueva versi&oacute;n del Apps Script para editar los permisos desde ac&aacute;.',
+    acc_legacy:'La hoja &ldquo;Acceso&rdquo; sigue en el formato viejo (solo mails): todos ven todo menos Confirmed 2027. Pasa al formato nuevo la primera vez que guard&aacute;s.',
+    acc_new_default:'Las personas nuevas arrancan solo con Executive Summary.',
+    acc_none:'Todav&iacute;a no ten&eacute;s secciones asignadas',acc_none_sub:'Pedile acceso al administrador del dashboard.',
     c27_note:'<b>Recuento real &mdash; no es un pron&oacute;stico.</b> Base: alumnos 2026 en iSAMS, sin C6 (egresan), congelada el {since}. Un alumno que se da de baja en iSAMS cuenta como <b>Baja</b>. Actualizado {upd}.',
     c27_loading:'Cargando la rematriculaci&oacute;n&hellip;',c27_denied:'La sesi&oacute;n venci&oacute; o no ten&eacute;s acceso a esta vista. Cerr&aacute; sesi&oacute;n y volv&eacute; a entrar.',
     c27_error:'No se pudo cargar la rematriculaci&oacute;n.',c27_retry:'Reintentar',c27_refresh:'Actualizar',
@@ -1410,6 +1458,15 @@ let pvVis={billing:true,cohort:true}; // vistas de Projection visibles — admin
 // Confirmed 2027: recuento real de rematriculación + nuevos. Solo ADMIN_EMAIL; los datos (con nombres)
 // vienen de un endpoint aparte que valida el token (?confirmed=1&tok=…), nunca del payload público.
 let C27=null,c27Busy=false,c27F={st:'pend',g:'all',q:''};
+// Permisos por persona: los manda el backend en D.me.perms (hoja "Acceso", ver acceso.js).
+// Si el backend todavía no los manda (versión vieja), se ve todo como antes y Confirmed 2027 solo el admin.
+const ACC_KEYS=['resumen','admissions','retention','pv_billing','pv_cohort','pv_confirmed','marketing','alumni','satisfaction'];
+function can(k){
+  if(D&&D.me&&D.me.perms)return !!D.me.perms[k];
+  return k==='pv_confirmed'?userEmail===ADMIN_EMAIL:true;
+}
+function tabAllowed(id){return id==='proyeccion'?(can('pv_billing')||can('pv_cohort')||can('pv_confirmed')):can(id);}
+function tabShown(id){return !!sVis[id]&&tabAllowed(id);}
 function applyConfig(){
   const c=D&&D.config;if(!c)return;
   const on=x=>x===true||x==='true'||x===1||x==='1';
@@ -1602,9 +1659,19 @@ async function fetchData(force){
   if(appVisible){hideLoad();if(force||!(D&&D.headline))showSkeleton();}else{showLoad('Syncing data...');}
   const old=document.getElementById('_jp');if(old)old.remove();
   const cb='sgcCb_'+Date.now();
-  const url=API_URL+'?callback='+cb+'&t='+Date.now()+(force?'&nocache=1':'');
+  const url=API_URL+'?callback='+cb+'&tok='+encodeURIComponent(accessToken||'')+'&t='+Date.now()+(force?'&nocache=1':'');
   const onSuccess=data=>{
-    _fetchRetry=0;D=data;
+    _fetchRetry=0;
+    // El backend valida el login: 'denied' = no está en la hoja Acceso; 'auth' = token vencido o inválido
+    if(data&&data.ok===false){
+      hideLoad();
+      try{localStorage.removeItem('sgc_data');}catch(e){}
+      if(data.auth==='denied'){showAccessDenied();return;}
+      // Token vencido: se limpia la sesión y se recarga, así aparece el login de Google limpio
+      clearSession();location.reload();
+      return;
+    }
+    D=data;
     if(D.allowed_emails&&Array.isArray(D.allowed_emails)&&D.allowed_emails.length>0){
       const allowed=D.allowed_emails.map(e=>(e||'').toLowerCase().trim());
       if(!allowed.includes(userEmail)){showAccessDenied();return;}
@@ -1655,16 +1722,19 @@ function syncCampusUI(){
 }
 function render(){
   if(typeof hideHelpQ==='function')hideHelpQ(); // evita que quede un tooltip huérfano tras rebuild del panel
+  // Si el tab activo no está habilitado para esta persona, se va al primero que sí
+  if(!tabShown(activeTab)){const f=TABS.find(x=>tabShown(x.id));if(f)activeTab=f.id;}
   if(activeTab==='marketing')campus='os';
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
   const main=document.getElementById('main');main.innerHTML='';main.className='campus-'+campus;
   TABS.forEach(function(tab){
-    if(!sVis[tab.id])return;
+    if(!tabShown(tab.id))return;
     const panel=document.createElement('div');
     panel.className='panel'+(tab.id===activeTab?' active':'');panel.id='panel-'+tab.id;
     const content=buildPanel(tab.id);if(content)panel.appendChild(content);
     main.appendChild(panel);
   });
+  if(!main.children.length){const p=document.createElement('div');p.className='panel active';p.appendChild(emptyState(t('acc_none'),t('acc_none_sub')));main.appendChild(p);}
   animateFunnels();
   buildSidebarNav();drawCharts();applyDensity();applyHeaderStrings();syncCampusUI();hideLoad();
   flowNumbers();
@@ -2787,9 +2857,9 @@ function buildProyeccion(){
   wrap.appendChild(pageHeader(t('ph_proyeccion'),t('ph_proyeccion_sub')));
   // View toggle: Billing by Year Group | Cohort/Teachers Projection
   // Las vistas apagadas desde el Admin Panel no se muestran; con una sola visible no hace falta el toggle
-  const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]].filter(v=>pvVis[v[0]]);
-  // Confirmed 2027: por ahora solo la ve el admin (no depende de los switches de Admin → Projection views)
-  if(userEmail===ADMIN_EMAIL)views.push(['confirmed',t('pv_confirmed')]);
+  // Cada vista exige el permiso de la persona (hoja Acceso) y, Billing/Cohort, además el switch global de Admin
+  const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]].filter(v=>pvVis[v[0]]&&can('pv_'+v[0]));
+  if(can('pv_confirmed'))views.push(['confirmed',t('pv_confirmed')]);
   if(!views.length){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
   if(!views.some(v=>v[0]===projView))projView=views[0][0];
   if(views.length>1){
@@ -3771,7 +3841,7 @@ function buildSidebarNav(){
   while(nav.firstChild)nav.removeChild(nav.firstChild);
   const lbl=document.createElement('div');lbl.className='sb-lbl';lbl.innerHTML=t('nav_label');nav.appendChild(lbl);
   TABS.forEach(function(tab){
-    if(!sVis[tab.id])return;
+    if(!tabShown(tab.id))return;
     const btn=document.createElement('button');
     btn.className='nav-item'+(tab.id===activeTab?' active':'');
     btn.innerHTML=tab.icon+'<span>'+tab.label+'</span>';
@@ -3850,7 +3920,65 @@ document.getElementById('btn-sb-toggle').addEventListener('click',()=>{if(isMobi
 document.getElementById('mob-overlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('mob-overlay').classList.remove('active');});
 
 /* ============================== ADMIN ============================== */
+/* ── Admin → Personas y permisos (se guarda en la hoja "Acceso" vía ?setAccess, solo admin) ── */
+let accDraft=null,accOpen={},accDirty=false,accStatus={txt:'',cls:''},accBusy=false;
+function accLabel(k){return k.indexOf('pv_')===0?t(k):t('tab_'+k);}
+function accSetStatus(txt,cls){accStatus={txt:txt,cls:cls||''};const el=document.getElementById('acc-status');if(el){el.innerHTML=txt;el.className='acc-status '+(cls||'');}}
+function buildAccess(){
+  const w=document.getElementById('acc-wrap');if(!w)return;
+  document.getElementById('acc-title').innerHTML=t('acc_title');
+  if(!D||!D.access){w.innerHTML='<div class="acc-note">'+t('acc_old')+'</div>';return;}
+  if(!accDraft){
+    accDraft=D.access.users.map(u=>({email:u.email,perms:Object.assign({},u.perms)}))
+      .sort((a,b)=>(b.email===ADMIN_EMAIL)-(a.email===ADMIN_EMAIL)||a.email.localeCompare(b.email));
+    accDirty=false;
+  }
+  const pill=(u,i,k)=>'<div class="pill teal-pill'+(u.perms[k]?' active':'')+'" onclick="accToggle('+i+',\''+k+'\')"><span class="dot"></span>'+accLabel(k)+'</div>';
+  const rows=accDraft.map((u,i)=>{
+    const isAdm=u.email===ADMIN_EMAIL,n=ACC_KEYS.filter(k=>u.perms[k]).length;
+    const cnt=isAdm?'<span class="acc-cnt adm">'+t('acc_admin')+'</span>':'<span class="acc-cnt">'+n+'/'+ACC_KEYS.length+'</span>';
+    const body=isAdm?'':'<div class="acc-perms"><div class="acc-grp">'+t('acc_grp_tabs')+'</div>'+['resumen','admissions','retention','marketing','alumni','satisfaction'].map(k=>pill(u,i,k)).join('')+'<div class="acc-grp">'+t('acc_grp_proj')+'</div>'+['pv_billing','pv_cohort','pv_confirmed'].map(k=>pill(u,i,k)).join('')+'<div><button class="acc-del" onclick="accRemove('+i+')">'+t('acc_remove')+'</button></div></div>';
+    return'<div class="acc-row'+(accOpen[u.email]&&!isAdm?' open':'')+'"><div class="acc-head"'+(isAdm?'':' onclick="accToggleOpen('+i+')"')+'><span class="acc-mail" title="'+escHtml(u.email)+'">'+escHtml(u.email)+'</span>'+cnt+(isAdm?'':'<span class="acc-chev">&#9656;</span>')+'</div>'+body+'</div>';
+  }).join('');
+  w.innerHTML='<div class="acc-note">'+t('acc_note')+' '+t('acc_new_default')+'</div>'+(D.access.legacy?'<div class="acc-note" style="color:var(--amber)">'+t('acc_legacy')+'</div>':'')
+    +'<div class="acc-add"><input id="acc-new" type="email" autocomplete="off" placeholder="'+t('acc_add_ph')+'" onkeydown="if(event.key===\'Enter\')accAdd()"><button class="acc-btn" onclick="accAdd()">'+t('acc_add')+'</button></div>'
+    +'<div class="acc-list">'+rows+'</div>'
+    +'<div class="acc-foot"><span id="acc-status" class="acc-status '+accStatus.cls+'">'+(accDirty&&!accStatus.txt?t('acc_dirty'):accStatus.txt)+'</span><button class="acc-btn primary" onclick="accSave()"'+(accDirty&&!accBusy?'':' disabled')+'>'+t('acc_save')+'</button></div>';
+}
+function accMark(){accDirty=true;accStatus={txt:t('acc_dirty'),cls:''};buildAccess();}
+function accToggle(i,k){const u=accDraft[i];if(!u)return;u.perms[k]=!u.perms[k];accOpen[u.email]=true;accMark();}
+function accToggleOpen(i){const u=accDraft[i];if(!u)return;accOpen[u.email]=!accOpen[u.email];buildAccess();}
+function accRemove(i){accDraft.splice(i,1);accMark();}
+function accAdd(){
+  const inp=document.getElementById('acc-new');if(!inp)return;
+  const em=String(inp.value||'').toLowerCase().trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){accSetStatus(t('acc_invalid'),'err');return;}
+  if(accDraft.some(u=>u.email===em)){accSetStatus(t('acc_dup'),'err');return;}
+  const perms={};ACC_KEYS.forEach(k=>perms[k]=(k==='resumen')); // default: solo Executive Summary
+  const at=accDraft.length&&accDraft[0].email===ADMIN_EMAIL?1:0;
+  accDraft.splice(at,0,{email:em,perms:perms});accOpen[em]=true;accMark();
+}
+function accSave(){
+  if(accBusy||!accDraft)return;accBusy=true;accSetStatus(t('acc_saving'),'');
+  const users=accDraft.map(u=>u.email+'~'+ACC_KEYS.map(k=>(u.email===ADMIN_EMAIL||u.perms[k])?'1':'0').join('')).join('|');
+  const cb='accCb_'+Date.now(),s=document.createElement('script');let done=false;
+  const fin=r=>{
+    if(done)return;done=true;accBusy=false;clearTimeout(g);window[cb]=function(){};s.remove();
+    if(r&&r.ok){
+      D.access.users=r.users;D.access.legacy=r.legacy;accDraft=null;accDirty=false;accStatus={txt:t('acc_saved'),cls:'ok'};
+      try{localStorage.setItem('sgc_data',JSON.stringify(D));}catch(e){}
+    }else{accStatus={txt:t('acc_err')+(r&&r.error?': '+escHtml(r.error):''),cls:'err'};}
+    buildAccess();
+  };
+  window[cb]=fin;
+  const g=setTimeout(()=>fin({ok:false,error:'timeout'}),30000);
+  s.onerror=()=>fin({ok:false,error:'network'});
+  s.src=API_URL+'?setAccess=1&users='+encodeURIComponent(users)+'&tok='+encodeURIComponent(accessToken||'')+'&callback='+cb;
+  document.head.appendChild(s);buildAccess();
+}
 function buildAdmin(){
+  if(!accDirty){accDraft=null;accStatus={txt:'',cls:''};} // al abrir, partir de lo último que mandó el servidor
+  buildAccess();
   const ctr=document.getElementById('sec-toggles');ctr.innerHTML='';
   TABS.forEach(function(tab){
     const p=document.createElement('div');p.className='pill'+(sVis[tab.id]?' active':'');
