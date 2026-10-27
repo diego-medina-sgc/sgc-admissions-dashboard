@@ -1074,6 +1074,31 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Channels, app &amp; paid media',
     ph_proyeccion:'Projection 2027',ph_proyeccion_sub:'Scenario simulator by year group',
     pv_billing:'Billing by Year Group',pv_cohort:'Cohort / Teachers Projection',pv_confirmed:'Confirmed 2027',
+    pv_forecast:'Enrolment Forecast 2027&ndash;2029',
+    fc_note:'<b>Model, not data.</b> Enrolment is carried forward year by year from the 2026 roll using the cohort progression rates the school already uses for 2027. The only year with a real intake figure is 2027 &mdash; 2028 and 2029 rest on the assumptions below. Billing is deliberately excluded.',
+    fc_scen:'Scenario',fc_floor:'Floor',fc_central:'Central',fc_ceiling:'Ceiling',
+    fc_floor_d:'Pure retention &mdash; no lateral intake',fc_central_d:'Retention + half the historical lateral intake',fc_ceiling_d:'Current rates in full, births held flat',
+    fc_k_tot:'Total 2029',fc_k_tot_f:'Band {lo} &ndash; {hi}',
+    fc_k_delta:'Change 2026&rarr;2029',fc_k_delta_f:'From {base} students',
+    fc_k_kinder:'Kinder 2029',fc_k_kinder_f:'Where the drop enters',
+    fc_k_q:'Quilmes 2029',fc_k_n:'North 2029',
+    fc_s_tot:'One School trajectory',fc_s_tot_meta:'Central scenario, shaded band floor&ndash;ceiling',
+    fc_s_sec:'By school section',fc_s_sec_meta:'Kinder &middot; Prep &middot; College',
+    fc_s_grid:'Year Group detail',fc_s_grid_meta:'2026 roll &rarr; 2029, with capacity',
+    fc_s_asum:'Assumptions',fc_s_asum_meta:'Change them here &mdash; nothing is written back to the sheet',
+    fc_s_cap:'Capacity',fc_s_cap_meta:'Where the model hits the ceiling, and where the seats go unused',
+    fc_col_grade:'Year Group',fc_col_delta:'Change',fc_col_pct:'%',fc_col_cap:'Capacity',fc_col_occ:'Occupancy 2029',
+    fc_lat:'Lateral intake applied',fc_lat_f:'Share of historical above-100% progression kept (0 = pure retention)',
+    fc_seed:'Entry intake 2027',fc_seed_f:'New students in {g} &mdash; the sheet projection for 2027',
+    fc_nat:'Apply birth-rate decline',fc_nat_f:'Argentine births, cohort = entry year &minus; {lag}',
+    fc_cap:'Apply capacity ceiling',fc_cap_f:'Cap each Year Group at its stated capacity',
+    fc_reset:'Reset assumptions',fc_on:'On',fc_off:'Off',
+    fc_births:'Births used (Argentina, INDEC / Ministry of Health): 2023 and 2024 actual; 2025&ndash;2028 estimated at &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
+    fc_cap_hit:'At capacity',fc_cap_free:'Spare seats',fc_cap_none:'No Year Group reaches its ceiling in this scenario.',
+    fc_chk:'2027 check',
+    fc_chk_ok:'With full rates the model reproduces the sheet&rsquo;s 2027 projection exactly ({n} students), so the mechanics are sound. This scenario shows {m} for 2027 &mdash; the difference is the assumptions below, not an error.',
+    fc_chk_bad:'With full rates the model gives {a} for 2027 but the sheet projects {b}. The progression rates need checking before this forecast is used.',
+    fc_no_data:'The projection block has not arrived yet, so the forecast cannot be built.',
     acc_title:'People &amp; permissions',acc_note:'Who can open the dashboard and which sections each person sees. Hidden sections are not sent to their browser.',
     acc_add:'Add',acc_add_ph:'name@stgeorges.edu.ar',acc_save:'Save changes',acc_saving:'Saving&hellip;',acc_saved:'Saved',acc_dirty:'Unsaved changes',acc_err:'Could not save',
     acc_remove:'Remove access',acc_admin:'Admin &middot; sees everything',acc_grp_tabs:'Sections',acc_grp_proj:'Projection 2027',acc_invalid:'Invalid email',acc_dup:'Already in the list',
@@ -1251,6 +1276,31 @@ const STRINGS={
     ph_marketing:'Marketing',ph_marketing_sub:'Canales, app y pauta',
     ph_proyeccion:'Proyecci&oacute;n 2027',ph_proyeccion_sub:'Simulador de escenarios por grado',
     pv_billing:'Facturaci&oacute;n por Year Group',pv_cohort:'Proyecci&oacute;n Cohortes / Teachers',pv_confirmed:'Confirmed 2027',
+    pv_forecast:'Proyecci&oacute;n de Matr&iacute;cula 2027&ndash;2029',
+    fc_note:'<b>Es un modelo, no un dato.</b> La matr&iacute;cula se arrastra a&ntilde;o a a&ntilde;o desde el padr&oacute;n 2026 con las mismas tasas de progresi&oacute;n que el colegio ya usa para 2027. El &uacute;nico a&ntilde;o con ingreso real es 2027 &mdash; 2028 y 2029 se apoyan en los supuestos de abajo. La facturaci&oacute;n queda deliberadamente afuera.',
+    fc_scen:'Escenario',fc_floor:'Piso',fc_central:'Central',fc_ceiling:'Techo',
+    fc_floor_d:'Retenci&oacute;n pura &mdash; sin altas laterales',fc_central_d:'Retenci&oacute;n + la mitad de las altas laterales hist&oacute;ricas',fc_ceiling_d:'Tasas actuales completas, natalidad plana',
+    fc_k_tot:'Total 2029',fc_k_tot_f:'Banda {lo} &ndash; {hi}',
+    fc_k_delta:'Variaci&oacute;n 2026&rarr;2029',fc_k_delta_f:'Desde {base} alumnos',
+    fc_k_kinder:'Kinder 2029',fc_k_kinder_f:'Por donde entra la ca&iacute;da',
+    fc_k_q:'Quilmes 2029',fc_k_n:'North 2029',
+    fc_s_tot:'Trayectoria One School',fc_s_tot_meta:'Escenario central, banda sombreada piso&ndash;techo',
+    fc_s_sec:'Por secci&oacute;n',fc_s_sec_meta:'Kinder &middot; Prep &middot; College',
+    fc_s_grid:'Detalle por Year Group',fc_s_grid_meta:'Padr&oacute;n 2026 &rarr; 2029, con capacidad',
+    fc_s_asum:'Supuestos',fc_s_asum_meta:'Se cambian ac&aacute; &mdash; no se escribe nada en la planilla',
+    fc_s_cap:'Capacidad',fc_s_cap_meta:'D&oacute;nde el modelo pega el techo y d&oacute;nde quedan vacantes sin usar',
+    fc_col_grade:'Year Group',fc_col_delta:'Var.',fc_col_pct:'%',fc_col_cap:'Capacidad',fc_col_occ:'Ocupaci&oacute;n 2029',
+    fc_lat:'Altas laterales aplicadas',fc_lat_f:'Porci&oacute;n de la progresi&oacute;n hist&oacute;rica por encima de 100% que se conserva (0 = retenci&oacute;n pura)',
+    fc_seed:'Ingreso 2027',fc_seed_f:'Alumnos nuevos en {g} &mdash; la proyecci&oacute;n 2027 de la planilla',
+    fc_nat:'Aplicar ca&iacute;da de natalidad',fc_nat_f:'Nacimientos en Argentina, cohorte = a&ntilde;o de ingreso &minus; {lag}',
+    fc_cap:'Aplicar tope de capacidad',fc_cap_f:'Limitar cada Year Group a su capacidad declarada',
+    fc_reset:'Volver a los supuestos',fc_on:'S&iacute;',fc_off:'No',
+    fc_births:'Nacimientos usados (Argentina, INDEC / Min. Salud): 2023 y 2024 son datos; 2025&ndash;2028 estimados en &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
+    fc_cap_hit:'En capacidad',fc_cap_free:'Vacantes libres',fc_cap_none:'Ning&uacute;n Year Group llega al techo en este escenario.',
+    fc_chk:'Control 2027',
+    fc_chk_ok:'Con tasas completas el modelo reproduce exacto la proyecci&oacute;n 2027 de la planilla ({n} alumnos), as&iacute; que la mec&aacute;nica cierra. Este escenario da {m} para 2027 &mdash; la diferencia son los supuestos de abajo, no un error.',
+    fc_chk_bad:'Con tasas completas el modelo da {a} para 2027 y la planilla proyecta {b}. Hay que revisar las tasas de progresi&oacute;n antes de usar este forecast.',
+    fc_no_data:'Todav&iacute;a no lleg&oacute; el bloque de proyecci&oacute;n, as&iacute; que no se puede armar el forecast.',
     acc_title:'Personas y permisos',acc_note:'Qui&eacute;n puede entrar al dashboard y qu&eacute; secciones ve cada persona. Lo que no ve no llega a su navegador.',
     acc_add:'Agregar',acc_add_ph:'nombre@stgeorges.edu.ar',acc_save:'Guardar cambios',acc_saving:'Guardando&hellip;',acc_saved:'Guardado',acc_dirty:'Cambios sin guardar',acc_err:'No se pudo guardar',
     acc_remove:'Quitar acceso',acc_admin:'Admin &middot; ve todo',acc_grp_tabs:'Secciones',acc_grp_proj:'Projection 2027',acc_invalid:'Mail inv&aacute;lido',acc_dup:'Ya est&aacute; en la lista',
@@ -1454,18 +1504,23 @@ let satCommentFilter={lunch:'all',nps:'all'};
 let satSection='all'; // 'all' | 'Kinder' | 'Prep School' | 'College' — filtro de sección en Family Satisfaction
 let fcYear=null;
 let projView='billing',pdAdj={},pdColl={};
+// Enrolment Forecast 2027-2029: escenario activo y supuestos editados en pantalla (nunca van al sheet)
+let fcScen='central',fcAdj={};
 let pvVis={billing:true,cohort:true}; // vistas de Projection visibles — admin, persistido en el backend
 // Confirmed 2027: recuento real de rematriculación + nuevos. Solo ADMIN_EMAIL; los datos (con nombres)
 // vienen de un endpoint aparte que valida el token (?confirmed=1&tok=…), nunca del payload público.
 let C27=null,c27Busy=false,c27F={st:'pend',g:'all',q:''};
 // Permisos por persona: los manda el backend en D.me.perms (hoja "Acceso", ver acceso.js).
 // Si el backend todavía no los manda (versión vieja), se ve todo como antes y Confirmed 2027 solo el admin.
-const ACC_KEYS=['resumen','admissions','retention','pv_billing','pv_cohort','pv_confirmed','marketing','alumni','satisfaction'];
+// El orden importa: accSave_ manda un 0/1 por permiso en el orden de esta lista (debe
+// coincidir con ACC.KEYS de acceso.js). Las claves nuevas van al final.
+const ACC_KEYS=['resumen','admissions','retention','pv_billing','pv_cohort','pv_confirmed','pv_forecast','marketing','alumni','satisfaction'];
 function can(k){
   if(D&&D.me&&D.me.perms)return !!D.me.perms[k];
-  return k==='pv_confirmed'?userEmail===ADMIN_EMAIL:true;
+  // Sin permisos del backend (versión vieja), Confirmed 2027 y el Forecast quedan solo para el admin
+  return(k==='pv_confirmed'||k==='pv_forecast')?userEmail===ADMIN_EMAIL:true;
 }
-function tabAllowed(id){return id==='proyeccion'?(can('pv_billing')||can('pv_cohort')||can('pv_confirmed')):can(id);}
+function tabAllowed(id){return id==='proyeccion'?(can('pv_billing')||can('pv_cohort')||can('pv_forecast')||can('pv_confirmed')):can(id);}
 function tabShown(id){return !!sVis[id]&&tabAllowed(id);}
 function applyConfig(){
   const c=D&&D.config;if(!c)return;
@@ -2859,6 +2914,10 @@ function buildProyeccion(){
   // Las vistas apagadas desde el Admin Panel no se muestran; con una sola visible no hace falta el toggle
   // Cada vista exige el permiso de la persona (hoja Acceso) y, Billing/Cohort, además el switch global de Admin
   const views=[['billing',t('pv_billing')],['cohort',t('pv_cohort')]].filter(v=>pvVis[v[0]]&&can('pv_'+v[0]));
+  // Forecast 2027-2029: permiso propio (columna "Projection: Enrolment Forecast" de la hoja
+  // Acceso, se tilda desde el Admin Panel). Arranca apagado para todos salvo el admin, y a
+  // diferencia de Billing/Cohort no depende del switch global pvVis.
+  if(can('pv_forecast'))views.push(['forecast',t('pv_forecast')]);
   if(can('pv_confirmed'))views.push(['confirmed',t('pv_confirmed')]);
   if(!views.length){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
   if(!views.some(v=>v[0]===projView))projView=views[0][0];
@@ -2868,6 +2927,7 @@ function buildProyeccion(){
     wrap.appendChild(pvBar);
   }
   if(projView==='cohort'){buildTeachersProj(wrap);return wrap;}
+  if(projView==='forecast'){buildForecast(wrap);return wrap;}
   if(projView==='confirmed'){buildConfirmed(wrap);return wrap;}
   const py=D.proyeccion;
   if(!py){wrap.appendChild(emptyState(t('proy_not_avail'),''));return wrap;}
@@ -2896,6 +2956,255 @@ function buildProyeccion(){
     wrap.appendChild(sec(t('s_proj_detail'),t('s_proj_detail_meta'),cwrap));
   }
   return wrap;
+}
+/* ── Enrolment Forecast 2027-2029 ─────────────────────────────────────────────
+   Modelo cohort-survival por Year Group. Reglas acordadas el 27/10/2026:
+   · la tasa de entrada a cada grado se DERIVA del propio sheet:
+       tasa(g) = proyD(g) / base2026(g-1)
+     Así el año 2027 del modelo empata por construcción con la vista Billing;
+     si no se puede derivar, cae a la hoja "Tasas Cohorte" (columna Usar).
+   · altas laterales (tasa > 1) ponderadas: piso 0% · central 50% · techo 100%.
+     NUNCA componer tasas >100% año sobre año sin ese filtro: ese bug dio
+     crecimiento falso en el ejercicio 2026-2030 y no es real en un mercado
+     que se achica.
+   · semilla del grado de ingreso: 2027 = proyD del sheet (dato, ya incorpora
+     pipeline); 2028-29 = semilla anterior x índice de natalidad de la cohorte.
+     El lag es por campus: Quilmes ingresa en K3 (sala de 3), North en K1.
+   · tope de capacidad por grado, activable.
+   · C6 egresa: nadie recibe de C6, y eso es parte de la caída.
+   La facturación queda afuera a propósito: exige supuestos de arancel. */
+const FC_YRS=[2027,2028,2029];
+// Nacimientos Argentina (INDEC / Min. Salud). 2023-24 datos reales; 2025-28 estimados -8/-6/-5/-4%.
+const FC_BIRTHS={2023:460902,2024:413135,2025:380084,2026:357279,2027:339415,2028:325838};
+const FC_LAG={q:3,n:1};
+const FC_SCEN={floor:{lat:0,nat:1},central:{lat:.5,nat:1},ceiling:{lat:1,nat:0}};
+const FC_CK={q:'quilmes',n:'north'};
+function fcFill(tpl,o){return String(tpl).replace(/\{(\w+)\}/g,(m,k)=>o[k]!==undefined?o[k]:m);}
+function fcRows(ck){return((D.proyeccion||{})[FC_CK[ck]])||[];}
+function fcGet(k,def){const v=fcAdj[k];return(v===undefined||v===null||v==='')?def:v;}
+function fcSet(k,val){
+  const n=parseFloat(val);
+  if(val===''||isNaN(n))delete fcAdj[k];else fcAdj[k]=n;
+  render();
+}
+// Config efectiva: el escenario elegido, con lo que el usuario haya pisado a mano.
+function fcCfg(){
+  const s=FC_SCEN[fcScen]||FC_SCEN.central;
+  return{lat:fcGet('lat',s.lat),nat:fcGet('nat',s.nat),cap:fcGet('cap',1)};
+}
+// Config de un escenario puro, para dibujar la banda (respeta el tope elegido).
+function fcPure(which){const s=FC_SCEN[which];return{lat:s.lat,nat:s.nat,cap:fcGet('cap',1)};}
+function fcCohortRate(ck,grado){
+  const list=((D.cohortRates||{})[FC_CK[ck]])||[];
+  for(let i=0;i<list.length;i++){
+    const m=String(list[i].transicion||'').toUpperCase().match(/[KPC]\d/g);
+    if(m&&m.length>=2&&m[m.length-1]===String(grado).toUpperCase()){
+      const v=!isNil(list[i].usar)?list[i].usar:list[i].promedio;
+      if(!isNil(v))return num(v);
+    }
+  }
+  return null;
+}
+// Proyección 2027 del sheet para un grado. "proy" (col H) primero porque es la que suma
+// el total que publica el dashboard; proyD (col D, sin ajuste manual) es el respaldo.
+function fcProj27(r){return !isNil(r.proy)?num(r.proy):(!isNil(r.proyD)?num(r.proyD):null);}
+function fcRates(ck){
+  const rows=fcRows(ck);
+  return rows.map((r,i)=>{
+    if(i===0)return null;                       // grado de ingreso: se siembra, no progresa
+    const prev=num(rows[i-1].base2026),p=fcProj27(r);
+    if(prev>0&&p!=null)return p/prev;
+    const cr=fcCohortRate(ck,r.grado);          // respaldo: hoja "Tasas Cohorte"
+    return cr==null?1:cr;
+  });
+}
+// Factor de natalidad del grado de ingreso para el año yr, contra el año anterior.
+function fcNat(ck,yr){
+  const lag=FC_LAG[ck]||3,a=FC_BIRTHS[yr-lag],b=FC_BIRTHS[yr-1-lag];
+  return(a&&b)?a/b:1;
+}
+function fcSeedBase(ck){
+  const rows=fcRows(ck);if(!rows.length)return 0;
+  const p=fcProj27(rows[0]);
+  return p==null?num(rows[0].base2026):p;
+}
+// Corre el modelo para un campus. Devuelve grados, capacidad, matriz por año y totales.
+function fcRun(ck,cfg){
+  const rows=fcRows(ck);if(!rows.length)return null;
+  const c=cfg||fcCfg(),rates=fcRates(ck),cap=rows.map(r=>num(r.capacidad));
+  const adj=r=>r==null?0:(r>1?1+(r-1)*c.lat:r);
+  let cur=rows.map(r=>num(r.base2026)),seed=fcGet('seed_'+ck,fcSeedBase(ck));
+  const out={grades:rows.map(r=>r.grado),cap:cap,base:cur.slice(),years:{},tot:{},seed:{}};
+  out.tot[2026]=cur.reduce((a,b)=>a+b,0);
+  FC_YRS.forEach((yr,k)=>{
+    if(k>0&&c.nat)seed=seed*fcNat(ck,yr);
+    const next=rows.map((r,i)=>{
+      let v=i===0?seed:cur[i-1]*adj(rates[i]);
+      if(c.cap&&cap[i]>0)v=Math.min(v,cap[i]);
+      return v;
+    });
+    out.seed[yr]=seed;
+    out.years[yr]=next.map(v=>Math.round(v));
+    out.tot[yr]=out.years[yr].reduce((a,b)=>a+b,0);
+    cur=next;                                   // encadena sin redondear
+  });
+  return out;
+}
+function fcScope(){return campus==='q'?['q']:campus==='n'?['n']:['q','n'];}
+function fcAll(cfg){const o={};fcScope().forEach(c=>{const r=fcRun(c,cfg);if(r)o[c]=r;});return o;}
+// Totales del scope por año (2026 real + los tres proyectados).
+function fcTotals(cfg){
+  const all=fcAll(cfg),o={};
+  [2026].concat(FC_YRS).forEach(y=>{o[y]=Object.keys(all).reduce((a,c)=>a+num(all[c].tot[y]),0);});
+  return o;
+}
+function fcSecOf(g){return GR_K.indexOf(g)>-1?'kinder':GR_P.indexOf(g)>-1?'prep':'college';}
+// Totales por sección y año, sumando el scope activo.
+function fcBySec(cfg){
+  const all=fcAll(cfg),o={kinder:{},prep:{},college:{}};
+  ['kinder','prep','college'].forEach(s=>{[2026].concat(FC_YRS).forEach(y=>{o[s][y]=0;});});
+  Object.keys(all).forEach(c=>{
+    const r=all[c];
+    r.grades.forEach((g,i)=>{
+      const s=fcSecOf(g);
+      o[s][2026]+=num(r.base[i]);
+      FC_YRS.forEach(y=>{o[s][y]+=num(r.years[y][i]);});
+    });
+  });
+  return o;
+}
+function fcDeltaHTML(d,pct){
+  const cls=d<0?'val-neg':d>0?'val-pos':'';
+  const sign=d>0?'+':'';
+  return'<span class="'+cls+'">'+sign+fN(d)+(pct==null?'':' ('+sign+fD1(pct)+'%)')+'</span>';
+}
+function fcReset(){fcAdj={};render();}
+function fcSetScen(s){fcScen=s;render();}
+function buildForecast(wrap){
+  if(!D.proyeccion||!(fcRows('q').length||fcRows('n').length)){
+    wrap.appendChild(emptyState(t('fc_no_data'),''));return;
+  }
+  wrap.appendChild(elFromHTML('<div class="info-note"><svg style="flex-shrink:0;margin-top:2px" width="15" height="15" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M12 12v4"/></svg><span>'+t('fc_note')+'</span></div>').firstChild);
+
+  // Escenario
+  const scens=[['floor',t('fc_floor'),t('fc_floor_d')],['central',t('fc_central'),t('fc_central_d')],['ceiling',t('fc_ceiling'),t('fc_ceiling_d')]];
+  const sb=document.createElement('div');sb.style.cssText='margin:0 0 6px';
+  sb.innerHTML='<div class="cycle-pills" style="flex-wrap:wrap">'+scens.map(s=>'<button class="cycle-pill'+(fcScen===s[0]?' active':'')+'" title="'+s[2]+'" onclick="fcSetScen(\''+s[0]+'\')">'+s[1]+'</button>').join('')+'</div>';
+  wrap.appendChild(sb);
+  const sd=(scens.filter(s=>s[0]===fcScen)[0]||scens[1])[2];
+  wrap.appendChild(elFromHTML('<div style="font-size:.72rem;color:var(--gray);font-family:Asap Condensed,sans-serif;margin:0 0 16px">'+sd+'</div>').firstChild);
+
+  // OJO: nunca llamar a esta variable "sec" — pisaría la función global sec() que se usa abajo
+  const tot=fcTotals(),lo=fcTotals(fcPure('floor')),hi=fcTotals(fcPure('ceiling')),bySec=fcBySec();
+  const b26=num(tot[2026]),f29=num(tot[2029]),d29=f29-b26;
+  const pc=(a,b)=>b>0?(a-b)/b*100:null;
+  const items=[
+    {lbl:t('fc_k_tot'),val:fN(f29),accent:true,foot:fcFill(t('fc_k_tot_f'),{lo:fN(lo[2029]),hi:fN(hi[2029])})},
+    {lbl:t('fc_k_delta'),val:(d29>0?'+':'')+fN(d29),cls:d29<0?'val-neg':'val-pos',foot:fcFill(t('fc_k_delta_f'),{base:fN(b26)})+' &middot; '+fcDeltaHTML(d29,pc(f29,b26))},
+    {lbl:t('fc_k_kinder'),val:fN(bySec.kinder[2029]),foot:t('fc_k_kinder_f')+' &middot; '+fcDeltaHTML(bySec.kinder[2029]-bySec.kinder[2026],pc(bySec.kinder[2029],bySec.kinder[2026]))}
+  ];
+  fcScope().forEach(ck=>{
+    const r=fcRun(ck);if(!r)return;
+    items.push({lbl:t('fc_k_'+ck),val:fN(r.tot[2029]),foot:fcDeltaHTML(r.tot[2029]-r.tot[2026],pc(r.tot[2029],r.tot[2026]))});
+  });
+  wrap.appendChild(statStrip(items,3));
+
+  // Control de consistencia: el 2027 del modelo contra la proyección del sheet
+  const shv=fcScope().reduce((a,ck)=>{const T=ck==='q'?D.proyeccion.quilmesTotal:D.proyeccion.northTotal;return a+num((T||{}).alumnos);},0);
+  if(shv>0){
+    // La mecánica se valida contra el sheet con tasas COMPLETAS y sin tope: ahí el modelo
+    // tiene que dar el mismo 2027. El escenario activo diverge a propósito (altas laterales
+    // ponderadas, natalidad), así que compararlo contra el sheet sería un falso error.
+    const raw=fcTotals({lat:1,nat:0,cap:0}),mdl=num(raw[2027]),ok=Math.abs(mdl-shv)<=Math.max(2,shv*0.01);
+    // .c27-note es la nota teal ya estilada (con variante .warn); reusarla evita CSS nuevo
+    wrap.appendChild(elFromHTML('<div class="c27-note'+(ok?'':' warn')+'"><span><b>'+t('fc_chk')+':</b> '+(ok?fcFill(t('fc_chk_ok'),{n:fN(mdl),m:fN(tot[2027])}):fcFill(t('fc_chk_bad'),{a:fN(mdl),b:fN(shv)}))+'</span></div>').firstChild);
+  }
+
+  // Trayectoria + secciones
+  wrap.appendChild(fcChartSec(t('fc_s_tot'),t('fc_s_tot_meta'),'chart-fc-tot',300));
+  wrap.appendChild(fcChartSec(t('fc_s_sec'),t('fc_s_sec_meta'),'chart-fc-sec',280));
+
+  // Matriz por Year Group
+  const grid=document.createElement('div');
+  fcScope().forEach(ck=>{grid.insertAdjacentHTML('beforeend',fcTable(ck));});
+  wrap.appendChild(sec(t('fc_s_grid'),t('fc_s_grid_meta'),grid));
+
+  // Capacidad
+  wrap.appendChild(sec(t('fc_s_cap'),t('fc_s_cap_meta'),fcCapPanel()));
+
+  // Supuestos
+  wrap.appendChild(sec(t('fc_s_asum'),t('fc_s_asum_meta'),fcAsumPanel()));
+}
+// Tarjeta con canvas, para los dos gráficos del forecast (.cc es la tarjeta de chart del dashboard).
+function fcChartSec(title,meta,canvasId,h){
+  const box=elFromHTML('<div class="cc"><div class="chart-wrap" style="height:'+h+'px"><canvas id="'+canvasId+'"></canvas></div></div>').firstChild;
+  return sec(title,meta,box);
+}
+function fcTable(ck){
+  const r=fcRun(ck);if(!r)return'';
+  const color=ck==='q'?'#DC1E33':'#213463';
+  const name=ck==='q'?'Quilmes':'North';
+  const secLbl={kinder:t('kinder'),prep:t('prep'),college:t('college')};
+  let h='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+name+'</div><div class="tw"><table><thead><tr><th>'+t('fc_col_grade')+'</th><th class="r">2026</th><th class="r">2027</th><th class="r">2028</th><th class="r">2029</th><th class="r">'+t('fc_col_delta')+'</th><th class="r">'+t('fc_col_cap')+'</th><th class="r">'+t('fc_col_occ')+'</th></tr></thead><tbody>';
+  const totals={2026:0,2027:0,2028:0,2029:0},capTot=r.cap.reduce((a,b)=>a+b,0);
+  let cs=null,st=null;
+  const flush=()=>{
+    if(!cs)return;
+    const d=st[2029]-st[2026];
+    h+='<tr style="background:var(--surface2);font-weight:700"><td>'+secLbl[cs]+'</td><td class="r">'+fN(st[2026])+'</td><td class="r">'+fN(st[2027])+'</td><td class="r">'+fN(st[2028])+'</td><td class="r">'+fN(st[2029])+'</td><td class="r">'+fcDeltaHTML(d,st[2026]>0?d/st[2026]*100:null)+'</td><td class="r">'+fN(st.cap)+'</td><td class="r">'+(st.cap>0?fD1(st[2029]/st.cap*100)+'%':'&mdash;')+'</td></tr>';
+  };
+  r.grades.forEach((g,i)=>{
+    const s=fcSecOf(g);
+    if(s!==cs){flush();cs=s;st={2026:0,2027:0,2028:0,2029:0,cap:0};}
+    const v26=num(r.base[i]),v29=num(r.years[2029][i]),d=v29-v26,cap=num(r.cap[i]);
+    st[2026]+=v26;st[2027]+=num(r.years[2027][i]);st[2028]+=num(r.years[2028][i]);st[2029]+=v29;st.cap+=cap;
+    totals[2026]+=v26;totals[2027]+=num(r.years[2027][i]);totals[2028]+=num(r.years[2028][i]);totals[2029]+=v29;
+    const occ=cap>0?v29/cap*100:null;
+    const full=cap>0&&v29>=cap;
+    h+='<tr><td style="font-weight:700;padding-left:18px">'+g+'</td><td class="r">'+fN(v26)+'</td><td class="r">'+fN(r.years[2027][i])+'</td><td class="r">'+fN(r.years[2028][i])+'</td><td class="r" style="font-weight:700;color:'+color+'">'+fN(v29)+'</td><td class="r">'+fcDeltaHTML(d,v26>0?d/v26*100:null)+'</td><td class="r">'+(cap>0?fN(cap):'&mdash;')+'</td><td class="r"'+(full?' style="font-weight:700"':'')+'>'+(occ==null?'&mdash;':fD1(occ)+'%')+'</td></tr>';
+  });
+  flush();
+  const dT=totals[2029]-totals[2026];
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(totals[2026])+'</td><td class="r">'+fN(totals[2027])+'</td><td class="r">'+fN(totals[2028])+'</td><td class="r" style="color:'+color+'">'+fN(totals[2029])+'</td><td class="r">'+fcDeltaHTML(dT,totals[2026]>0?dT/totals[2026]*100:null)+'</td><td class="r"><strong>'+fN(capTot)+'</strong></td><td class="r">'+(capTot>0?fD1(totals[2029]/capTot*100)+'%':'&mdash;')+'</td></tr>';
+  h+='</tbody></table></div></div>';return h;
+}
+function fcCapPanel(){
+  const box=document.createElement('div');
+  const hit=[],free=[];
+  fcScope().forEach(ck=>{
+    const r=fcRun(ck);if(!r)return;
+    const name=ck==='q'?'Quilmes':'North';
+    r.grades.forEach((g,i)=>{
+      const cap=num(r.cap[i]),v=num(r.years[2029][i]);
+      if(cap<=0)return;
+      if(v>=cap)hit.push(name+' '+g+' &middot; '+fN(v)+'/'+fN(cap));
+      else if((cap-v)/cap>=0.25)free.push(name+' '+g+' &middot; '+fN(cap-v)+' ('+fD1((cap-v)/cap*100)+'%)');
+    });
+  });
+  const list=(ttl,arr,col)=>'<div style="margin-bottom:12px"><div style="font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:'+col+';font-family:Asap Condensed,sans-serif;margin-bottom:6px">'+ttl+' ('+arr.length+')</div><div style="font-size:.78rem;color:var(--text);line-height:1.7;font-family:Asap Condensed,sans-serif">'+(arr.length?arr.join(' &nbsp;&middot;&nbsp; '):'&mdash;')+'</div></div>';
+  box.innerHTML='<div class="cc" style="padding:16px 18px">'+(hit.length?list(t('fc_cap_hit'),hit,'var(--red)'):'<div style="font-size:.78rem;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-bottom:12px">'+t('fc_cap_none')+'</div>')+list(t('fc_cap_free'),free,'var(--teal)')+'</div>';
+  return box;
+}
+function fcAsumPanel(){
+  const box=document.createElement('div');
+  const cfg=fcCfg();
+  const row=(lbl,foot,ctrl)=>'<div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--hairline)"><div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:var(--text);font-family:Asap Condensed,sans-serif">'+lbl+'</div><div style="font-size:.7rem;color:var(--gray);line-height:1.5;font-family:Asap Condensed,sans-serif;margin-top:2px">'+foot+'</div></div><div style="flex-shrink:0;display:flex;align-items:center;gap:6px">'+ctrl+'</div></div>';
+  const inp=(k,v,w,step)=>'<input class="adj-input" style="width:'+(w||64)+'px" type="number" step="'+(step||1)+'" min="0" value="'+v+'" onchange="fcSet(\''+k+'\',this.value)"/>';
+  const sw=(k,on)=>'<button class="sim-btn'+(on?' primary':'')+'" onclick="fcSet(\''+k+'\','+(on?0:1)+')">'+(on?t('fc_on'):t('fc_off'))+'</button>';
+  let h='<div class="cc" style="padding:4px 18px 16px">';
+  h+=row(t('fc_lat'),t('fc_lat_f'),inp('lat',Math.round(cfg.lat*100)/100,64,.05));
+  fcScope().forEach(ck=>{
+    const rows=fcRows(ck);if(!rows.length)return;
+    const nm=ck==='q'?'Quilmes':'North';
+    h+=row(t('fc_seed')+' &middot; '+nm,fcFill(t('fc_seed_f'),{g:rows[0].grado}),inp('seed_'+ck,Math.round(fcGet('seed_'+ck,fcSeedBase(ck))),64,1));
+  });
+  const lags=fcScope().map(c=>FC_LAG[c]).join(' / ');
+  h+=row(t('fc_nat'),fcFill(t('fc_nat_f'),{lag:lags}),sw('nat',!!cfg.nat));
+  h+=row(t('fc_cap'),t('fc_cap_f'),sw('cap',!!cfg.cap));
+  h+='<div style="font-size:.68rem;color:var(--gray);line-height:1.6;font-family:Asap Condensed,sans-serif;padding:12px 0 0">'+t('fc_births')+'</div>';
+  h+='<div style="padding-top:10px"><button class="sim-btn" onclick="fcReset()">'+t('fc_reset')+'</button></div>';
+  h+='</div>';
+  box.innerHTML=h;return box;
 }
 /* ── Confirmed 2027 — recuento real de rematriculación + nuevos (Won 2027) ── */
 const C27_GR=GR_K.concat(GR_P,GR_C);
@@ -3832,6 +4141,27 @@ function drawCharts(){
       charts['fidu-evol']=new Chart(fe,{type:'bar',data:{labels:ms.map(m=>monthLabel(m)),datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{stacked:true,grid:GRD,ticks:TCK,border:{display:false},beginAtZero:true},x:{stacked:true,grid:{display:false},ticks:TCK,border:{display:false}}}}});
     }
   }
+  // Enrolment Forecast 2027-2029 — trayectoria con banda piso/techo + series por sección
+  const fct=document.getElementById('chart-fc-tot');
+  if(fct&&D.proyeccion){
+    const yrs=[2026].concat(FC_YRS);
+    const c=fcTotals(),lo=fcTotals(fcPure('floor')),hi=fcTotals(fcPure('ceiling'));
+    const arr=o=>yrs.map(y=>num(o[y]));
+    // Orden techo → piso para que el relleno del piso cierre la banda contra el techo
+    charts['fc-tot']=new Chart(fct,{type:'line',data:{labels:yrs.map(y=>String(y)+(y===2026?'':' p')),datasets:[
+      {label:t('fc_ceiling'),data:arr(hi),borderColor:hexA(Cmain,.28),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false,tension:.35},
+      {label:t('fc_floor'),data:arr(lo),borderColor:hexA(Cmain,.28),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:'-1',backgroundColor:'rgba('+Crgb+',.13)',tension:.35},
+      {label:t('fc_central'),data:arr(c),borderColor:Cmain,backgroundColor:'transparent',borderWidth:3,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:Cmain,pointBorderColor:PBC,pointBorderWidth:2,fill:false,tension:.35}
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:false},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
+  const fcs=document.getElementById('chart-fc-sec');
+  if(fcs&&D.proyeccion){
+    const yrs=[2026].concat(FC_YRS),bs=fcBySec();
+    const mk=(key,lbl,col)=>({label:lbl,data:yrs.map(y=>num(bs[key][y])),borderColor:col,backgroundColor:'transparent',borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:col,pointBorderColor:PBC,pointBorderWidth:2,fill:false,tension:.35});
+    charts['fc-sec']=new Chart(fcs,{type:'line',data:{labels:yrs.map(y=>String(y)+(y===2026?'':' p')),datasets:[
+      mk('kinder',t('kinder'),kCel),mk('prep',t('prep'),kViolet),mk('college',t('college'),kNavy)
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:LEG(),tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},scales:{y:{grid:GRD,ticks:TCK,border:{display:false},beginAtZero:false},x:{grid:{display:false},ticks:TCK,border:{display:false}}}}});
+  }
   try{drawC27Pace();}catch(e){console.warn('c27 pace',e);}
 }
 
@@ -3923,6 +4253,11 @@ document.getElementById('mob-overlay').addEventListener('click',()=>{document.ge
 /* ── Admin → Personas y permisos (se guarda en la hoja "Acceso" vía ?setAccess, solo admin) ── */
 let accDraft=null,accOpen={},accDirty=false,accStatus={txt:'',cls:''},accBusy=false;
 function accLabel(k){return k.indexOf('pv_')===0?t(k):t('tab_'+k);}
+/* Orden de permisos AUTORITATIVO: el que declara el backend (D.access.keys).
+   accSave manda un 0/1 por permiso en ese orden, así que usar la lista local contra un
+   backend viejo correría los bits y le daría a la gente permisos que nadie le dio.
+   Con backend viejo se guardan solo las claves que él conoce; las nuevas no se muestran. */
+function accKeys(){const k=D&&D.access&&D.access.keys;return(k&&k.length)?k:ACC_KEYS;}
 function accSetStatus(txt,cls){accStatus={txt:txt,cls:cls||''};const el=document.getElementById('acc-status');if(el){el.innerHTML=txt;el.className='acc-status '+(cls||'');}}
 function buildAccess(){
   const w=document.getElementById('acc-wrap');if(!w)return;
@@ -3935,9 +4270,9 @@ function buildAccess(){
   }
   const pill=(u,i,k)=>'<div class="pill teal-pill'+(u.perms[k]?' active':'')+'" onclick="accToggle('+i+',\''+k+'\')"><span class="dot"></span>'+accLabel(k)+'</div>';
   const rows=accDraft.map((u,i)=>{
-    const isAdm=u.email===ADMIN_EMAIL,n=ACC_KEYS.filter(k=>u.perms[k]).length;
-    const cnt=isAdm?'<span class="acc-cnt adm">'+t('acc_admin')+'</span>':'<span class="acc-cnt">'+n+'/'+ACC_KEYS.length+'</span>';
-    const body=isAdm?'':'<div class="acc-perms"><div class="acc-grp">'+t('acc_grp_tabs')+'</div>'+['resumen','admissions','retention','marketing','alumni','satisfaction'].map(k=>pill(u,i,k)).join('')+'<div class="acc-grp">'+t('acc_grp_proj')+'</div>'+['pv_billing','pv_cohort','pv_confirmed'].map(k=>pill(u,i,k)).join('')+'<div><button class="acc-del" onclick="accRemove('+i+')">'+t('acc_remove')+'</button></div></div>';
+    const isAdm=u.email===ADMIN_EMAIL,n=accKeys().filter(k=>u.perms[k]).length;
+    const cnt=isAdm?'<span class="acc-cnt adm">'+t('acc_admin')+'</span>':'<span class="acc-cnt">'+n+'/'+accKeys().length+'</span>';
+    const body=isAdm?'':'<div class="acc-perms"><div class="acc-grp">'+t('acc_grp_tabs')+'</div>'+['resumen','admissions','retention','marketing','alumni','satisfaction'].map(k=>pill(u,i,k)).join('')+'<div class="acc-grp">'+t('acc_grp_proj')+'</div>'+['pv_billing','pv_cohort','pv_forecast','pv_confirmed'].filter(k=>accKeys().indexOf(k)>-1).map(k=>pill(u,i,k)).join('')+'<div><button class="acc-del" onclick="accRemove('+i+')">'+t('acc_remove')+'</button></div></div>';
     return'<div class="acc-row'+(accOpen[u.email]&&!isAdm?' open':'')+'"><div class="acc-head"'+(isAdm?'':' onclick="accToggleOpen('+i+')"')+'><span class="acc-mail" title="'+escHtml(u.email)+'">'+escHtml(u.email)+'</span>'+cnt+(isAdm?'':'<span class="acc-chev">&#9656;</span>')+'</div>'+body+'</div>';
   }).join('');
   w.innerHTML='<div class="acc-note">'+t('acc_note')+' '+t('acc_new_default')+'</div>'+(D.access.legacy?'<div class="acc-note" style="color:var(--amber)">'+t('acc_legacy')+'</div>':'')
@@ -3954,13 +4289,13 @@ function accAdd(){
   const em=String(inp.value||'').toLowerCase().trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){accSetStatus(t('acc_invalid'),'err');return;}
   if(accDraft.some(u=>u.email===em)){accSetStatus(t('acc_dup'),'err');return;}
-  const perms={};ACC_KEYS.forEach(k=>perms[k]=(k==='resumen')); // default: solo Executive Summary
+  const perms={};accKeys().forEach(k=>perms[k]=(k==='resumen')); // default: solo Executive Summary
   const at=accDraft.length&&accDraft[0].email===ADMIN_EMAIL?1:0;
   accDraft.splice(at,0,{email:em,perms:perms});accOpen[em]=true;accMark();
 }
 function accSave(){
   if(accBusy||!accDraft)return;accBusy=true;accSetStatus(t('acc_saving'),'');
-  const users=accDraft.map(u=>u.email+'~'+ACC_KEYS.map(k=>(u.email===ADMIN_EMAIL||u.perms[k])?'1':'0').join('')).join('|');
+  const users=accDraft.map(u=>u.email+'~'+accKeys().map(k=>(u.email===ADMIN_EMAIL||u.perms[k])?'1':'0').join('')).join('|');
   const cb='accCb_'+Date.now(),s=document.createElement('script');let done=false;
   const fin=r=>{
     if(done)return;done=true;accBusy=false;clearTimeout(g);window[cb]=function(){};s.remove();
