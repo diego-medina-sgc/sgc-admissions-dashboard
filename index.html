@@ -194,6 +194,13 @@ body{font-family:'Asap',sans-serif;background:#F6F5F1;color:var(--ink);min-heigh
 
 /* ─── SECTION ─── */
 .sec{margin-bottom:36px;}
+/* El strip de KPIs no trae margen propio y .sec solo tiene margin-bottom: cuando una seccion
+   sigue directo a un strip (Confirmed 2027, Enrolment Forecast) el titulo quedaba pegado al
+   bloque oscuro. Va aca y no en .stat-strip para no meter aire donde el strip cierra un panel. */
+.stat-strip + .sec,.stat-strip + .cc,.stat-strip + .c27-note{margin-top:32px;}
+/* Chip del grado que abre a futuro (K2 Quilmes 2027): no tiene 2026 contra qué variar */
+.fc-new-tag{display:inline-block;padding:1px 7px;border-radius:20px;background:rgba(16,154,169,.12);border:1px solid rgba(16,154,169,.32);color:var(--teal);font-size:.64rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;}
+[data-theme="dark"] .fc-new-tag{background:rgba(38,198,214,.14);border-color:rgba(38,198,214,.3);}
 .sec-hd{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid transparent;background-image:linear-gradient(90deg,var(--campus-color,var(--ink)) 0%,transparent 100%);background-repeat:no-repeat;background-size:100% 1px;background-position:bottom;}
 .sec-title{font-size:1.16rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;flex:0 0 auto;white-space:nowrap;}
 .sec-meta{font-size:.65rem;color:var(--gray);font-family:'Asap Condensed',sans-serif;letter-spacing:.07em;font-weight:600;}
@@ -1090,6 +1097,8 @@ const STRINGS={
     fc_col_grade:'Year Group',fc_col_delta:'Change',fc_col_pct:'%',fc_col_cap:'Capacity',fc_col_occ:'Occupancy 2029',
     fc_lat:'Lateral intake applied',fc_lat_f:'Share of historical above-100% progression kept (0 = pure retention)',
     fc_seed:'Entry intake 2027',fc_seed_f:'New students in {g} &mdash; the sheet projection for 2027',
+    fc_seed_new:'Opening intake',fc_seed_new_f:'{g} opens in {y} and is not in the sheet yet. It is added here only, and carried forward on the births of its own cohort (entry year &minus; {lag}). The year group above keeps its own intake and also receives whoever moves up.',
+    fc_opens:'opens {y}',
     fc_nat:'Apply birth-rate decline',fc_nat_f:'Argentine births, cohort = entry year &minus; {lag}',
     fc_cap:'Apply capacity ceiling',fc_cap_f:'Cap each Year Group at its stated capacity',
     fc_reset:'Reset assumptions',fc_on:'On',fc_off:'Off',
@@ -1292,6 +1301,8 @@ const STRINGS={
     fc_col_grade:'Year Group',fc_col_delta:'Var.',fc_col_pct:'%',fc_col_cap:'Capacidad',fc_col_occ:'Ocupaci&oacute;n 2029',
     fc_lat:'Altas laterales aplicadas',fc_lat_f:'Porci&oacute;n de la progresi&oacute;n hist&oacute;rica por encima de 100% que se conserva (0 = retenci&oacute;n pura)',
     fc_seed:'Ingreso 2027',fc_seed_f:'Alumnos nuevos en {g} &mdash; la proyecci&oacute;n 2027 de la planilla',
+    fc_seed_new:'Ingreso de apertura',fc_seed_new_f:'{g} abre en {y} y todav&iacute;a no est&aacute; en la planilla. Se suma solo ac&aacute;, y se arrastra con la natalidad de su propia cohorte (a&ntilde;o de ingreso &minus; {lag}). El grado de arriba conserva su ingreso y adem&aacute;s recibe lo que sube.',
+    fc_opens:'abre {y}',
     fc_nat:'Aplicar ca&iacute;da de natalidad',fc_nat_f:'Nacimientos en Argentina, cohorte = a&ntilde;o de ingreso &minus; {lag}',
     fc_cap:'Aplicar tope de capacidad',fc_cap_f:'Limitar cada Year Group a su capacidad declarada',
     fc_reset:'Volver a los supuestos',fc_on:'S&iacute;',fc_off:'No',
@@ -2976,11 +2987,34 @@ function buildProyeccion(){
 const FC_YRS=[2027,2028,2029];
 // Nacimientos Argentina (INDEC / Min. Salud). 2023-24 datos reales; 2025-28 estimados -8/-6/-5/-4%.
 const FC_BIRTHS={2023:460902,2024:413135,2025:380084,2026:357279,2027:339415,2028:325838};
-const FC_LAG={q:3,n:1};
+/* Lag de natalidad POR GRADO, no por campus: en ISAMS el número de Kinder es la edad de la
+   sala, así que K1 = sala de 1 → cohorte de hace 1 año, K3 = sala de 3 → hace 3. Sirve para
+   Quilmes (entra en K3), North (entra en K1) y para K2 cuando abra. */
+function fcLag(g){const m=/^K(\d)$/.exec(String(g||''));return m?parseInt(m[1],10):3;}
+/* Grados que NO existen en el padrón 2026 y abren en un año futuro. Se inyectan solo en el
+   forecast: el sheet no los tiene y agregarlos ahí correría las filas que el doGet lee por
+   posición (CALC_projection: Quilmes 6-20, North 26-42), rompiendo Billing y Executive Summary.
+   `seed` es el ingreso del primer año; de ahí en más se arrastra con la natalidad. */
+const FC_NEW=[{ck:'q',grado:'K2',from:2027,seed:12,cap:12,before:'K3'}];
 const FC_SCEN={floor:{lat:0,nat:1},central:{lat:.5,nat:1},ceiling:{lat:1,nat:0}};
 const FC_CK={q:'quilmes',n:'north'};
 function fcFill(tpl,o){return String(tpl).replace(/\{(\w+)\}/g,(m,k)=>o[k]!==undefined?o[k]:m);}
-function fcRows(ck){return((D.proyeccion||{})[FC_CK[ck]])||[];}
+// Filas del sheet + los grados que abren a futuro, en el orden correcto.
+function fcRows(ck){
+  const base=((D.proyeccion||{})[FC_CK[ck]])||[];
+  if(!base.length)return base;
+  const add=FC_NEW.filter(n=>n.ck===ck&&!base.some(r=>r.grado===n.grado));
+  if(!add.length)return base;
+  const out=base.slice();
+  add.forEach(n=>{
+    const at=out.findIndex(r=>r.grado===n.before);
+    // base2026 null (no existía, no es un cero medido) y sin facturación: solo alumnos
+    const row={grado:n.grado,base2026:null,proy:null,proyD:null,capacidad:n.cap,isNew:true,from:n.from};
+    out.splice(at<0?0:at,0,row);
+  });
+  return out;
+}
+function fcNewOf(ck,g){return FC_NEW.filter(n=>n.ck===ck&&n.grado===g)[0]||null;}
 function fcGet(k,def){const v=fcAdj[k];return(v===undefined||v===null||v==='')?def:v;}
 function fcSet(k,val){
   const n=parseFloat(val);
@@ -3008,42 +3042,71 @@ function fcCohortRate(ck,grado){
 // Proyección 2027 del sheet para un grado. "proy" (col H) primero porque es la que suma
 // el total que publica el dashboard; proyD (col D, sin ajuste manual) es el respaldo.
 function fcProj27(r){return !isNil(r.proy)?num(r.proy):(!isNil(r.proyD)?num(r.proyD):null);}
-function fcRates(ck){
-  const rows=fcRows(ck);
+// Filas tal cual vienen del sheet, sin los grados que abren a futuro.
+function fcRowsBase(ck){return((D.proyeccion||{})[FC_CK[ck]])||[];}
+// Grado por el que entra hoy el campus (Quilmes K3, North K1): tiene ingreso propio.
+function fcEntryGrade(ck){const b=fcRowsBase(ck);return b.length?b[0].grado:null;}
+/* Permanencia dentro de Kinder, usada para K2->K3: ese salto no tiene histórico porque la
+   sala todavía no existe. Se toma la tasa del primer salto real del campus y se capa a 1,
+   para no regalarle altas laterales a un grado que recién abre. */
+function fcKinderKeep(ck){
+  const b=fcRowsBase(ck);if(b.length<2)return 1;
+  const prev=num(b[0].base2026),p=fcProj27(b[1]);
+  return Math.min((prev>0&&p!=null)?p/prev:1,1);
+}
+function fcRates(ck,rows){
+  rows=rows||fcRows(ck);
+  const entry=fcEntryGrade(ck);
   return rows.map((r,i)=>{
-    if(i===0)return null;                       // grado de ingreso: se siembra, no progresa
-    const prev=num(rows[i-1].base2026),p=fcProj27(r);
-    if(prev>0&&p!=null)return p/prev;
+    if(r.isNew)return null;                     // grado que abre: se siembra, no recibe de nadie
+    if(r.grado===entry)return fcKinderKeep(ck); // ingreso propio + lo que sube del grado nuevo
+    const prev=rows[i-1],p=fcProj27(r);
+    if(prev&&!prev.isNew&&num(prev.base2026)>0&&p!=null)return p/num(prev.base2026);
     const cr=fcCohortRate(ck,r.grado);          // respaldo: hoja "Tasas Cohorte"
     return cr==null?1:cr;
   });
 }
 // Factor de natalidad del grado de ingreso para el año yr, contra el año anterior.
-function fcNat(ck,yr){
-  const lag=FC_LAG[ck]||3,a=FC_BIRTHS[yr-lag],b=FC_BIRTHS[yr-1-lag];
+function fcNat(g,yr){
+  const lag=fcLag(g),a=FC_BIRTHS[yr-lag],b=FC_BIRTHS[yr-1-lag];
   return(a&&b)?a/b:1;
 }
 function fcSeedBase(ck){
-  const rows=fcRows(ck);if(!rows.length)return 0;
+  const rows=fcRowsBase(ck);if(!rows.length)return 0;
   const p=fcProj27(rows[0]);
   return p==null?num(rows[0].base2026):p;
 }
 // Corre el modelo para un campus. Devuelve grados, capacidad, matriz por año y totales.
 function fcRun(ck,cfg){
-  const rows=fcRows(ck);if(!rows.length)return null;
-  const c=cfg||fcCfg(),rates=fcRates(ck),cap=rows.map(r=>num(r.capacidad));
+  const c=cfg||fcCfg();
+  // c.noNew: corre solo con los grados del sheet. Lo usa el control de consistencia, que
+  // tiene que dar el mismo 2027 que la planilla — y la planilla todavía no conoce K2.
+  const rows=c.noNew?fcRowsBase(ck):fcRows(ck);
+  if(!rows.length)return null;
+  const rates=fcRates(ck,rows),cap=rows.map(r=>num(r.capacidad));
   const adj=r=>r==null?0:(r>1?1+(r-1)*c.lat:r);
-  let cur=rows.map(r=>num(r.base2026)),seed=fcGet('seed_'+ck,fcSeedBase(ck));
-  const out={grades:rows.map(r=>r.grado),cap:cap,base:cur.slice(),years:{},tot:{},seed:{}};
+  const entry=fcEntryGrade(ck);
+  // Ingreso propio por grado: el del campus (K3 / K1) y cada grado que abre a futuro.
+  const seeds={};
+  rows.forEach(r=>{
+    if(r.grado===entry)seeds[r.grado]=fcGet('seed_'+ck,fcSeedBase(ck));
+    else if(r.isNew)seeds[r.grado]=fcGet('seed_'+ck+'_'+r.grado,(fcNewOf(ck,r.grado)||{}).seed||0);
+  });
+  let cur=rows.map(r=>isNil(r.base2026)?0:num(r.base2026));
+  const out={grades:rows.map(r=>r.grado),cap:cap,isNew:rows.map(r=>!!r.isNew),from:rows.map(r=>r.from||null),
+             base:rows.map(r=>isNil(r.base2026)?null:num(r.base2026)),years:{},tot:{},seed:{},seeds:{}};
   out.tot[2026]=cur.reduce((a,b)=>a+b,0);
   FC_YRS.forEach((yr,k)=>{
-    if(k>0&&c.nat)seed=seed*fcNat(ck,yr);
+    // cada ingreso se arrastra con la natalidad de SU cohorte (K2 mira 2 años atrás, K3 tres)
+    if(k>0&&c.nat)Object.keys(seeds).forEach(g=>{seeds[g]=seeds[g]*fcNat(g,yr);});
     const next=rows.map((r,i)=>{
-      let v=i===0?seed:cur[i-1]*adj(rates[i]);
+      let v=(i>0)?cur[i-1]*adj(rates[i]):0;
+      if(seeds[r.grado]!==undefined&&(!r.isNew||yr>=num(r.from)))v+=seeds[r.grado];
       if(c.cap&&cap[i]>0)v=Math.min(v,cap[i]);
       return v;
     });
-    out.seed[yr]=seed;
+    out.seeds[yr]=Object.assign({},seeds);
+    out.seed[yr]=seeds[entry];
     out.years[yr]=next.map(v=>Math.round(v));
     out.tot[yr]=out.years[yr].reduce((a,b)=>a+b,0);
     cur=next;                                   // encadena sin redondear
@@ -3115,7 +3178,7 @@ function buildForecast(wrap){
     // La mecánica se valida contra el sheet con tasas COMPLETAS y sin tope: ahí el modelo
     // tiene que dar el mismo 2027. El escenario activo diverge a propósito (altas laterales
     // ponderadas, natalidad), así que compararlo contra el sheet sería un falso error.
-    const raw=fcTotals({lat:1,nat:0,cap:0}),mdl=num(raw[2027]),ok=Math.abs(mdl-shv)<=Math.max(2,shv*0.01);
+    const raw=fcTotals({lat:1,nat:0,cap:0,noNew:1}),mdl=num(raw[2027]),ok=Math.abs(mdl-shv)<=Math.max(2,shv*0.01);
     // .c27-note es la nota teal ya estilada (con variante .warn); reusarla evita CSS nuevo
     wrap.appendChild(elFromHTML('<div class="c27-note'+(ok?'':' warn')+'"><span><b>'+t('fc_chk')+':</b> '+(ok?fcFill(t('fc_chk_ok'),{n:fN(mdl),m:fN(tot[2027])}):fcFill(t('fc_chk_bad'),{a:fN(mdl),b:fN(shv)}))+'</span></div>').firstChild);
   }
@@ -3147,25 +3210,36 @@ function fcTable(ck){
   const secLbl={kinder:t('kinder'),prep:t('prep'),college:t('college')};
   let h='<div style="margin-bottom:24px"><div style="font-size:1rem;font-weight:700;color:'+color+';margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+name+'</div><div class="tw"><table><thead><tr><th>'+t('fc_col_grade')+'</th><th class="r">2026</th><th class="r">2027</th><th class="r">2028</th><th class="r">2029</th><th class="r">'+t('fc_col_delta')+'</th><th class="r">'+t('fc_col_cap')+'</th><th class="r">'+t('fc_col_occ')+'</th></tr></thead><tbody>';
   const totals={2026:0,2027:0,2028:0,2029:0},capTot=r.cap.reduce((a,b)=>a+b,0);
+  // La ocupación agregada solo tiene sentido si TODOS los grados del grupo declaran capacidad.
+  // Con capacidades parciales se comparan los alumnos de toda la sección contra la capacidad de
+  // unos pocos grados y sale un porcentaje disparatado (1.341% en una corrida de prueba).
+  const capFullAll=r.cap.every(c=>num(c)>0);
   let cs=null,st=null;
   const flush=()=>{
     if(!cs)return;
     const d=st[2029]-st[2026];
-    h+='<tr style="background:var(--surface2);font-weight:700"><td>'+secLbl[cs]+'</td><td class="r">'+fN(st[2026])+'</td><td class="r">'+fN(st[2027])+'</td><td class="r">'+fN(st[2028])+'</td><td class="r">'+fN(st[2029])+'</td><td class="r">'+fcDeltaHTML(d,st[2026]>0?d/st[2026]*100:null)+'</td><td class="r">'+fN(st.cap)+'</td><td class="r">'+(st.cap>0?fD1(st[2029]/st.cap*100)+'%':'&mdash;')+'</td></tr>';
+    const occ=st.capFull&&st.cap>0?fD1(st[2029]/st.cap*100)+'%':'&mdash;';
+    h+='<tr style="background:var(--surface2);font-weight:700"><td>'+secLbl[cs]+'</td><td class="r">'+fN(st[2026])+'</td><td class="r">'+fN(st[2027])+'</td><td class="r">'+fN(st[2028])+'</td><td class="r">'+fN(st[2029])+'</td><td class="r">'+fcDeltaHTML(d,st[2026]>0?d/st[2026]*100:null)+'</td><td class="r">'+(st.capFull&&st.cap>0?fN(st.cap):'&mdash;')+'</td><td class="r">'+occ+'</td></tr>';
   };
   r.grades.forEach((g,i)=>{
     const s=fcSecOf(g);
-    if(s!==cs){flush();cs=s;st={2026:0,2027:0,2028:0,2029:0,cap:0};}
+    if(s!==cs){flush();cs=s;st={2026:0,2027:0,2028:0,2029:0,cap:0,capFull:true};}
+    const isNew=!!r.isNew[i];
     const v26=num(r.base[i]),v29=num(r.years[2029][i]),d=v29-v26,cap=num(r.cap[i]);
     st[2026]+=v26;st[2027]+=num(r.years[2027][i]);st[2028]+=num(r.years[2028][i]);st[2029]+=v29;st.cap+=cap;
+    if(cap<=0)st.capFull=false;
     totals[2026]+=v26;totals[2027]+=num(r.years[2027][i]);totals[2028]+=num(r.years[2028][i]);totals[2029]+=v29;
     const occ=cap>0?v29/cap*100:null;
     const full=cap>0&&v29>=cap;
-    h+='<tr><td style="font-weight:700;padding-left:18px">'+g+'</td><td class="r">'+fN(v26)+'</td><td class="r">'+fN(r.years[2027][i])+'</td><td class="r">'+fN(r.years[2028][i])+'</td><td class="r" style="font-weight:700;color:'+color+'">'+fN(v29)+'</td><td class="r">'+fcDeltaHTML(d,v26>0?d/v26*100:null)+'</td><td class="r">'+(cap>0?fN(cap):'&mdash;')+'</td><td class="r"'+(full?' style="font-weight:700"':'')+'>'+(occ==null?'&mdash;':fD1(occ)+'%')+'</td></tr>';
+    // Un grado que abre a futuro no tuvo padrón 2026: va "—", no un cero, y no tiene variación
+    const c26=isNew?'&mdash;':fN(v26);
+    // el año va crudo: fN() lo imprimiría como "2.027"
+    const dCell=isNew?'<span class="fc-new-tag">'+fcFill(t('fc_opens'),{y:r.from[i]})+'</span>':fcDeltaHTML(d,v26>0?d/v26*100:null);
+    h+='<tr><td style="font-weight:700;padding-left:18px">'+g+'</td><td class="r">'+c26+'</td><td class="r">'+fN(r.years[2027][i])+'</td><td class="r">'+fN(r.years[2028][i])+'</td><td class="r" style="font-weight:700;color:'+color+'">'+fN(v29)+'</td><td class="r">'+dCell+'</td><td class="r">'+(cap>0?fN(cap):'&mdash;')+'</td><td class="r"'+(full?' style="font-weight:700"':'')+'>'+(occ==null?'&mdash;':fD1(occ)+'%')+'</td></tr>';
   });
   flush();
   const dT=totals[2029]-totals[2026];
-  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(totals[2026])+'</td><td class="r">'+fN(totals[2027])+'</td><td class="r">'+fN(totals[2028])+'</td><td class="r" style="color:'+color+'">'+fN(totals[2029])+'</td><td class="r">'+fcDeltaHTML(dT,totals[2026]>0?dT/totals[2026]*100:null)+'</td><td class="r"><strong>'+fN(capTot)+'</strong></td><td class="r">'+(capTot>0?fD1(totals[2029]/capTot*100)+'%':'&mdash;')+'</td></tr>';
+  h+='<tr class="tot"><td>'+t('total_lbl')+'</td><td class="r">'+fN(totals[2026])+'</td><td class="r">'+fN(totals[2027])+'</td><td class="r">'+fN(totals[2028])+'</td><td class="r" style="color:'+color+'">'+fN(totals[2029])+'</td><td class="r">'+fcDeltaHTML(dT,totals[2026]>0?dT/totals[2026]*100:null)+'</td><td class="r"><strong>'+(capFullAll&&capTot>0?fN(capTot):'&mdash;')+'</strong></td><td class="r">'+(capFullAll&&capTot>0?fD1(totals[2029]/capTot*100)+'%':'&mdash;')+'</td></tr>';
   h+='</tbody></table></div></div>';return h;
 }
 function fcCapPanel(){
@@ -3194,11 +3268,15 @@ function fcAsumPanel(){
   let h='<div class="cc" style="padding:4px 18px 16px">';
   h+=row(t('fc_lat'),t('fc_lat_f'),inp('lat',Math.round(cfg.lat*100)/100,64,.05));
   fcScope().forEach(ck=>{
-    const rows=fcRows(ck);if(!rows.length)return;
+    const rows=fcRowsBase(ck);if(!rows.length)return;
     const nm=ck==='q'?'Quilmes':'North';
     h+=row(t('fc_seed')+' &middot; '+nm,fcFill(t('fc_seed_f'),{g:rows[0].grado}),inp('seed_'+ck,Math.round(fcGet('seed_'+ck,fcSeedBase(ck))),64,1));
+    // grados que abren a futuro: su ingreso del primer año también se edita acá
+    FC_NEW.filter(n=>n.ck===ck).forEach(n=>{
+      h+=row(t('fc_seed_new')+' &middot; '+nm+' '+n.grado,fcFill(t('fc_seed_new_f'),{g:n.grado,y:n.from,lag:fcLag(n.grado)}),inp('seed_'+ck+'_'+n.grado,Math.round(fcGet('seed_'+ck+'_'+n.grado,n.seed)),64,1));
+    });
   });
-  const lags=fcScope().map(c=>FC_LAG[c]).join(' / ');
+  const lags=fcScope().map(c=>fcLag(fcEntryGrade(c))).join(' / ');
   h+=row(t('fc_nat'),fcFill(t('fc_nat_f'),{lag:lags}),sw('nat',!!cfg.nat));
   h+=row(t('fc_cap'),t('fc_cap_f'),sw('cap',!!cfg.cap));
   h+='<div style="font-size:.68rem;color:var(--gray);line-height:1.6;font-family:Asap Condensed,sans-serif;padding:12px 0 0">'+t('fc_births')+'</div>';
