@@ -1520,7 +1520,7 @@ let fcScen='central',fcAdj={};
 let pvVis={billing:true,cohort:true}; // vistas de Projection visibles — admin, persistido en el backend
 // Confirmed 2027: recuento real de rematriculación + nuevos. Solo ADMIN_EMAIL; los datos (con nombres)
 // vienen de un endpoint aparte que valida el token (?confirmed=1&tok=…), nunca del payload público.
-let C27=null,c27Busy=false,c27F={st:'pend',g:'all',q:''};
+let C27=null,c27At=0,c27Busy=false,c27F={st:'pend',g:'all',q:''};
 // Permisos por persona: los manda el backend en D.me.perms (hoja "Acceso", ver acceso.js).
 // Si el backend todavía no los manda (versión vieja), se ve todo como antes y Confirmed 2027 solo el admin.
 // El orden importa: accSave_ manda un 0/1 por permiso en el orden de esta lista (debe
@@ -3298,7 +3298,7 @@ function fetchC27(force){
   let done=false;
   const fin=d=>{
     if(done)return;done=true;c27Busy=false;clearTimeout(guard);
-    C27=d||{ok:false,error:'empty'};window[cb]=function(){};s.remove();
+    C27=d||{ok:false,error:'empty'};c27At=Date.now();window[cb]=function(){};s.remove();
     if(activeTab==='proyeccion'&&projView==='confirmed')render();
   };
   window[cb]=fin;
@@ -3322,6 +3322,9 @@ function c27Sum(list){const o={};list.forEach(x=>Object.keys(x).forEach(k=>o[k]=
 function c27Date(d){if(!d)return'';const p=String(d).split('-');return p.length===3?p[2]+'/'+p[1]:d;}
 function c27Chip(st){return'<span class="c27-chip '+st+'">'+t('c27_st_'+st)+'</span>';}
 function buildConfirmed(wrap){
+  // Si los datos tienen más de 3 minutos, se piden de nuevo en segundo plano (sin cache del server);
+  // mientras tanto se muestran los que hay. Antes la vista quedaba con los datos de cuando se abrió.
+  if(C27&&C27.ok&&!c27Busy&&Date.now()-c27At>3*60*1000)fetchC27(true);
   if(!C27){
     if(!c27Busy)fetchC27(false);
     wrap.appendChild(emptyState(t('c27_loading'),''));return;
