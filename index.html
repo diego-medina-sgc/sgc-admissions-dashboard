@@ -962,7 +962,7 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
       <div style="font-size:.82rem;color:#64748B;line-height:1.6">The account <strong id="denied-email" style="color:#DC1E33"></strong><br>does not have permission to access this dashboard.</div>
     </div>
     <div style="font-size:.75rem;color:#94A3B8;line-height:1.6">If you think this is an error,<br>contact the system administrator.</div>
-    <button class="btn-google" onclick="google.accounts.oauth2.revoke(accessToken,function(){accessToken=null;userEmail='';document.getElementById('access-denied').style.display='none';document.getElementById('login-screen').style.display='flex';})">
+    <button class="btn-google" onclick="doSignOut()">
       Back to sign in
     </button>
   </div>
@@ -1501,7 +1501,7 @@ TABS.forEach(tab=>Object.defineProperty(tab,'label',{get:()=>t('tab_'+tab.id)}))
 
 /* ============================== GLOBALS ============================== */
 const _savedTab=localStorage.getItem('sgc-tab'),_savedCampus=localStorage.getItem('sgc-campus');
-let tokenClient,accessToken,userEmail='',D={},
+let tokenClient,accessToken,googleToken=null,userEmail='',D={},
     campus=(_savedCampus==='q'||_savedCampus==='n'||_savedCampus==='os')?_savedCampus:'os',
     activeTab=(_savedTab&&TABS.some(t=>t.id===_savedTab))?_savedTab:'resumen';
 let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
@@ -1698,7 +1698,7 @@ function initAuth(){
     client_id:CLIENT_ID,scope:'openid email profile',
     callback:async r=>{
       if(r.error){alert('Authentication error: '+r.error);return;}
-      accessToken=r.access_token;
+      accessToken=r.access_token;googleToken=r.access_token;
       try{const res=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}});const info=await res.json();userEmail=(info.email||'').toLowerCase().trim();}catch(ex){console.warn('userinfo error',ex);}
       if(userEmail===ADMIN_EMAIL)document.getElementById('btn-admin').style.display='flex';
       saveSession();showApp();tryRenderCache();fetchData();
@@ -1707,15 +1707,18 @@ function initAuth(){
   hideLoad();
 }
 document.getElementById('btn-login').addEventListener('click',()=>tokenClient.requestAccessToken({prompt:'select_account'}));
-document.getElementById('btn-out').addEventListener('click',()=>{
+// Sign out: borra la sesión de 7 días y los datos guardados, revoca el token de Google si está a mano
+// y recarga (así la librería de Google queda cargada para el próximo login). Antes llamaba a
+// google.accounts.oauth2.revoke directo y, si se había entrado con la sesión guardada, la librería
+// no estaba cargada y el botón no hacía nada.
+function doSignOut(){
   clearSession();
-  google.accounts.oauth2.revoke(accessToken,()=>{
-    accessToken=null;userEmail='';
-    document.getElementById('app').style.display='none';
-    document.getElementById('btn-admin').style.display='none';
-    document.getElementById('login-screen').style.display='flex';
-  });
-});
+  try{localStorage.removeItem('sgc_data');}catch(e){}
+  try{if(googleToken&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(googleToken,()=>{});}catch(e){}
+  accessToken=null;googleToken=null;userEmail='';
+  setTimeout(()=>location.reload(),150);
+}
+document.getElementById('btn-out').addEventListener('click',doSignOut);
 
 /* ============================== DATA ============================== */
 let _fetchRetry=0;
@@ -1738,6 +1741,8 @@ async function fetchData(force){
       return;
     }
     D=data;
+    // Sesión de 7 días: el server la manda cuando se entró con el token de Google (ver acceso.js)
+    if(D.me&&D.me.session&&D.me.session.tok){accessToken=D.me.session.tok;saveSession(D.me.session.exp);delete D.me.session;}
     if(D.allowed_emails&&Array.isArray(D.allowed_emails)&&D.allowed_emails.length>0){
       const allowed=D.allowed_emails.map(e=>(e||'').toLowerCase().trim());
       if(!allowed.includes(userEmail)){showAccessDenied();return;}
@@ -4462,9 +4467,16 @@ function updateClock(){const now=new Date();const tt=now.toLocaleTimeString('es-
 setInterval(updateClock,30000);
 
 /* ============================== SESSION ============================== */
-function saveSession(){try{sessionStorage.setItem('sgc_token',accessToken);localStorage.setItem('sgc_email',userEmail);localStorage.setItem('sgc_exp',String(Date.now()+55*60*1000));}catch(e){}}
-function loadSession(){try{const tok=sessionStorage.getItem('sgc_token');const exp=parseInt(localStorage.getItem('sgc_exp')||'0');const em=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();if(tok&&exp>Date.now()&&em){accessToken=tok;userEmail=em;return true;}}catch(e){}return false;}
-function clearSession(){try{sessionStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}}
+// Sesión: la llave propia del servidor (s1.…) vive 7 días en localStorage y sobrevive a cerrar la
+// pestaña (aprobado por Diego, 28/10/2026). El token de Google crudo dura 1 hora y queda solo en la pestaña.
+function saveSession(exp){try{
+  localStorage.setItem('sgc_email',userEmail);
+  if(String(accessToken||'').indexOf('s1.')===0){localStorage.setItem('sgc_sess',accessToken);localStorage.setItem('sgc_exp',String(exp||Date.now()+7*864e5));sessionStorage.removeItem('sgc_token');}
+  else{sessionStorage.setItem('sgc_token',accessToken);localStorage.setItem('sgc_exp',String(Date.now()+55*60*1000));}
+}catch(e){}}
+function loadSession(){try{const ss=localStorage.getItem('sgc_sess'),sx=parseInt(localStorage.getItem('sgc_exp')||'0'),se=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();if(ss&&sx>Date.now()&&se){accessToken=ss;userEmail=se;return true;}}catch(e){}
+  try{const tok=sessionStorage.getItem('sgc_token');const exp=parseInt(localStorage.getItem('sgc_exp')||'0');const em=(localStorage.getItem('sgc_email')||'').toLowerCase().trim();if(tok&&exp>Date.now()&&em){accessToken=tok;userEmail=em;return true;}}catch(e){}return false;}
+function clearSession(){try{localStorage.removeItem('sgc_sess');sessionStorage.removeItem('sgc_token');localStorage.removeItem('sgc_email');localStorage.removeItem('sgc_exp');}catch(e){}}
 // Instant render from the last cached payload (so reloads feel immediate); fresh data refreshes in the background.
 function tryRenderCache(){
   try{
