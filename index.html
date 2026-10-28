@@ -1115,13 +1115,13 @@ const STRINGS={
     acc_legacy:'The &ldquo;Acceso&rdquo; sheet is still in the old format (emails only): everyone sees everything except Confirmed 2027. It switches to the new format the first time you save.',
     acc_new_default:'New people start with Executive Summary only.',
     acc_none:'No sections assigned yet',acc_none_sub:'Ask the dashboard admin to give you access.',
-    c27_note:'<b>Real count &mdash; not a forecast.</b> Base: students enrolled in 2026 (iSAMS), excluding C6 (graduating), frozen on {since}. A student who leaves in iSAMS counts as <b>Withdrawn</b>. Updated {upd}.',
+    c27_note:'<b>Real count &mdash; not a forecast.</b> Base: students enrolled in 2026 (iSAMS), excluding C6 (graduating), frozen on {since}. <b>Withdrawn</b> = announced they are not continuing in 2027 (&ldquo;Bajas&rdquo; sheet of each re-enrolment spreadsheet). Updated {upd}.',
     c27_loading:'Loading re-enrolment data&hellip;',c27_denied:'Your session expired or you have no access to this view. Sign out and sign in again.',
     c27_error:'Could not load re-enrolment data.',c27_retry:'Retry',c27_refresh:'Refresh',
     c27_isams_warn:'iSAMS data looks incomplete today &mdash; withdrawals are not counted until it is back.',
     c27_k_conf:'Confirmed 2027',c27_k_conf_f:'Re-enrolled + new &middot; vs {n} in 2026',c27_k_re:'Re-enrolled',c27_k_re_f:'{p} of {b} eligible',
     c27_k_pend:'Pending',c27_k_pend_f:'No answer yet',c27_k_ret:'Retained',c27_k_ret_f:'Enrolment withheld',
-    c27_k_wd:'Withdrawn',c27_k_wd_f:'Left in iSAMS',c27_k_new:'New',c27_k_new_f:'Won &middot; 2027 pipeline',
+    c27_k_wd:'Withdrawn',c27_k_wd_f:'Announced for 2027',c27_k_new:'New',c27_k_new_f:'Won &middot; 2027 pipeline',
     c27_s_progress:'Re-enrolment progress',c27_s_progress_meta:'Share of eligible students',
     c27_pace_ttl:'Cumulative re-enrolment',c27_pace_sub:'% of eligible students who re-enrolled, by response date',c27_pace_empty:'No responses yet.',
     c27_s_grades:'By Year Group 2027',c27_s_grades_meta:'Year group they will attend in 2027',
@@ -1130,8 +1130,8 @@ const STRINGS={
     c27_s_list:'Follow-up',c27_s_list_meta:'Students by status',c27_all_grades:'All year groups',c27_search:'Search name',
     c27_l_name:'Student',c27_l_grade:'2026 &rarr; 2027',c27_l_status:'Status',c27_l_date:'Date',c27_l_campus:'Campus',c27_l_source:'Source',
     c27_st_re:'Re-enrolled',c27_st_pend:'Pending',c27_st_ret:'Retained',c27_st_unb:'Retained &middot; not blocked',c27_st_wd:'Withdrawn',c27_st_new:'New',c27_st_rev:'To review',
-    c27_rev_note:'Form answers and retained students that could not be matched to an iSAMS student (name typed differently, or ambiguous). Check them by hand.',
-    c27_rev_form:'Form',c27_rev_ret:'Retained list',c27_rev_manual:'Paper',c27_empty_list:'No students in this list.',c27_late:'joined later',c27_more:'Showing {n} of {t}',
+    c27_rev_note:'Form answers, retained students and withdrawals that could not be matched to an iSAMS student (name typed differently, or ambiguous), plus students listed both in Bajas and in the form (they count as Withdrawn). Check them by hand.',
+    c27_rev_form:'Form',c27_rev_ret:'Retained list',c27_rev_wd:'Bajas sheet',c27_rev_conf:'In Bajas and in the form',c27_rev_manual:'Paper',c27_empty_list:'No students in this list.',c27_late:'joined later',c27_more:'Showing {n} of {t}',
     c27_s_board:'Boarding 2027 &mdash; Quilmes',c27_s_board_meta:'As declared in the re-enrolment form',c27_b_day:'Day',c27_b_weekly:'Weekly boarding',c27_b_full:'Full boarding',
     pd_note:'2027 cohort projection by class. Adjust <b>Projected</b>, <b>Capacity</b> and <b>Teachers</b> per class (defaults pre-loaded from the sheet) to test the resulting <b>student/teacher ratio</b> and the <b>&Delta; vs 2026 per class</b>. Year-group totals are recomputed as the <b>sum of their classes</b>. In <b>College</b> there are no fixed classes &mdash; students rotate across subject sets &mdash; so Teachers and Ratio are tracked on the <b>College total</b>; per-grade Teachers start empty for what-if testing. &#9888; marks classes projected above capacity.',
     pd_pending:'Cohort/Teachers data pending in CALC_projection_detail',
@@ -1319,13 +1319,13 @@ const STRINGS={
     acc_legacy:'La hoja &ldquo;Acceso&rdquo; sigue en el formato viejo (solo mails): todos ven todo menos Confirmed 2027. Pasa al formato nuevo la primera vez que guard&aacute;s.',
     acc_new_default:'Las personas nuevas arrancan solo con Executive Summary.',
     acc_none:'Todav&iacute;a no ten&eacute;s secciones asignadas',acc_none_sub:'Pedile acceso al administrador del dashboard.',
-    c27_note:'<b>Recuento real &mdash; no es un pron&oacute;stico.</b> Base: alumnos 2026 en iSAMS, sin C6 (egresan), congelada el {since}. Un alumno que se da de baja en iSAMS cuenta como <b>Baja</b>. Actualizado {upd}.',
+    c27_note:'<b>Recuento real &mdash; no es un pron&oacute;stico.</b> Base: alumnos 2026 en iSAMS, sin C6 (egresan), congelada el {since}. <b>Baja</b> = anunci&oacute; que no sigue en 2027 (hoja &ldquo;Bajas&rdquo; de cada planilla de rematriculaci&oacute;n). Actualizado {upd}.',
     c27_loading:'Cargando la rematriculaci&oacute;n&hellip;',c27_denied:'La sesi&oacute;n venci&oacute; o no ten&eacute;s acceso a esta vista. Cerr&aacute; sesi&oacute;n y volv&eacute; a entrar.',
     c27_error:'No se pudo cargar la rematriculaci&oacute;n.',c27_retry:'Reintentar',c27_refresh:'Actualizar',
     c27_isams_warn:'Los datos de iSAMS parecen incompletos hoy &mdash; las bajas no se cuentan hasta que vuelvan.',
     c27_k_conf:'Confirmados 2027',c27_k_conf_f:'Rematriculados + nuevos &middot; vs {n} en 2026',c27_k_re:'Rematriculados',c27_k_re_f:'{p} de {b} habilitados',
     c27_k_pend:'Pendientes',c27_k_pend_f:'Todav&iacute;a sin respuesta',c27_k_ret:'Retenidos',c27_k_ret_f:'Matr&iacute;cula retenida',
-    c27_k_wd:'Bajas',c27_k_wd_f:'Registradas en iSAMS',c27_k_new:'Nuevos',c27_k_new_f:'Won &middot; pipeline 2027',
+    c27_k_wd:'Bajas',c27_k_wd_f:'Anunciadas para 2027',c27_k_new:'Nuevos',c27_k_new_f:'Won &middot; pipeline 2027',
     c27_s_progress:'Avance de la rematriculaci&oacute;n',c27_s_progress_meta:'Sobre los alumnos habilitados',
     c27_pace_ttl:'Rematriculaci&oacute;n acumulada',c27_pace_sub:'% de habilitados que se rematricularon, por fecha de respuesta',c27_pace_empty:'Todav&iacute;a no hay respuestas.',
     c27_s_grades:'Por Year Group 2027',c27_s_grades_meta:'Curso al que van en 2027',
@@ -1334,8 +1334,8 @@ const STRINGS={
     c27_s_list:'Seguimiento',c27_s_list_meta:'Alumnos por estado',c27_all_grades:'Todos los cursos',c27_search:'Buscar nombre',
     c27_l_name:'Alumno',c27_l_grade:'2026 &rarr; 2027',c27_l_status:'Estado',c27_l_date:'Fecha',c27_l_campus:'Campus',c27_l_source:'Origen',
     c27_st_re:'Rematriculado',c27_st_pend:'Pendiente',c27_st_ret:'Retenido',c27_st_unb:'Retenido &middot; sin bloquear',c27_st_wd:'Baja',c27_st_new:'Nuevo',c27_st_rev:'A revisar',
-    c27_rev_note:'Respuestas del formulario y alumnos retenidos que no se pudieron cruzar con un alumno de iSAMS (nombre escrito distinto, o ambiguo). Revisalos a mano.',
-    c27_rev_form:'Formulario',c27_rev_ret:'Lista de retenidos',c27_rev_manual:'Papel',c27_empty_list:'No hay alumnos en esta lista.',c27_late:'alta posterior',c27_more:'Mostrando {n} de {t}',
+    c27_rev_note:'Respuestas del formulario, retenidos y bajas que no se pudieron cruzar con un alumno de iSAMS (nombre escrito distinto, o ambiguo), m&aacute;s los alumnos que figuran en Bajas y en el formulario (cuentan como Baja). Revisalos a mano.',
+    c27_rev_form:'Formulario',c27_rev_ret:'Lista de retenidos',c27_rev_wd:'Hoja Bajas',c27_rev_conf:'En Bajas y en el formulario',c27_rev_manual:'Papel',c27_empty_list:'No hay alumnos en esta lista.',c27_late:'alta posterior',c27_more:'Mostrando {n} de {t}',
     c27_s_board:'Boarding 2027 &mdash; Quilmes',c27_s_board_meta:'Seg&uacute;n lo declarado en el formulario',c27_b_day:'Diarios',c27_b_weekly:'Residentes semanales',c27_b_full:'Residentes completos',
     pd_note:'Proyecci&oacute;n de cohortes 2027 por sal&oacute;n. Ajust&aacute; <b>Proyectado</b>, <b>Capacidad</b> y <b>Teachers</b> por sal&oacute;n (los valores por defecto vienen pre-cargados del sheet) para probar el <b>ratio alumnos/docente</b> resultante y la <b>&Delta; vs 2026 por sal&oacute;n</b>. Los totales por grado se recalculan como la <b>suma de sus salones</b>. En <b>College</b> no hay salones fijos &mdash; los alumnos rotan por materias y niveles (sets) &mdash; por eso Teachers y Ratio se calculan sobre el <b>total de College</b>. &#9888; marca salones proyectados por encima de la capacidad.',
     pd_pending:'Datos de Cohortes/Teachers pendientes en CALC_projection_detail',
@@ -3404,8 +3404,11 @@ function c27Items(st){
   if(st==='new')return(C27.won||[]).filter(w=>sc.includes(w.c)).map(w=>({c:w.c,n:w.n,g26:'',g27:w.g27,st:'new',d:w.d}));
   if(st==='rev'){
     const a=(C27.unmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.n,g26:'',g27:u.g,st:'rev',d:u.d,src:u.manual?t('c27_rev_manual'):t('c27_rev_form')}));
-    const b=(C27.retUnmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.txt+(u.fam?' <span class="c27-sub">('+escHtml(u.fam)+')</span>':''),raw:true,g26:'',g27:'',st:'rev',d:'',src:t('c27_rev_ret')}));
-    return a.concat(b);
+    const b=(C27.retUnmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:escHtml(u.txt)+(u.fam?' <span class="c27-sub">('+escHtml(u.fam)+')</span>':''),raw:true,g26:'',g27:'',st:'rev',d:'',src:t('c27_rev_ret')}));
+    // Hoja "Bajas": los que no se pudieron cruzar con iSAMS, y los que figuran en Bajas Y en el formulario
+    const w=(C27.wdUnmatched||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.n,g26:'',g27:u.g,st:'rev',d:u.d,src:t('c27_rev_wd')}));
+    const x=(C27.conflicts||[]).filter(u=>sc.includes(u.c)).map(u=>({c:u.c,n:u.n,g26:'',g27:u.g,st:'rev',d:u.d,src:t('c27_rev_conf')}));
+    return a.concat(b,w,x);
   }
   return C27.students.filter(s=>sc.includes(s.c)&&s.st===st);
 }
