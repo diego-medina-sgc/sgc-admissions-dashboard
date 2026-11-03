@@ -1104,9 +1104,9 @@ const STRINGS={
     fc_reset:'Reset assumptions',fc_on:'On',fc_off:'Off',
     fc_births:'Births used (Argentina, INDEC / Ministry of Health): 2023 and 2024 actual; 2025&ndash;2028 estimated at &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
     fc_cap_hit:'At capacity',fc_cap_free:'Spare seats',fc_cap_none:'No Year Group reaches its ceiling in this scenario.',
-    fc_chk:'2027 check',
-    fc_chk_ok:'With full rates the model reproduces the sheet&rsquo;s 2027 projection exactly ({n} students), so the mechanics are sound. This scenario shows {m} for 2027 &mdash; the difference is the assumptions below, not an error.',
-    fc_chk_bad:'With full rates the model gives {a} for 2027 but the sheet projects {b}. The progression rates need checking before this forecast is used.',
+    fc_chk:'2026 check',
+    fc_chk_ok:'The 2026 roll here matches Executive Summary exactly ({n} students), so the series starts from the right number.',
+    fc_chk_bad:'The 2026 roll here ({a}) does not match Executive Summary ({b}). Do not use this forecast until that is resolved &mdash; every later year is carried forward from 2026.',
     fc_no_data:'The projection block has not arrived yet, so the forecast cannot be built.',
     acc_title:'People &amp; permissions',acc_note:'Who can open the dashboard and which sections each person sees. Hidden sections are not sent to their browser.',
     acc_add:'Add',acc_add_ph:'name@stgeorges.edu.ar',acc_save:'Save changes',acc_saving:'Saving&hellip;',acc_saved:'Saved',acc_dirty:'Unsaved changes',acc_err:'Could not save',
@@ -1308,9 +1308,9 @@ const STRINGS={
     fc_reset:'Volver a los supuestos',fc_on:'S&iacute;',fc_off:'No',
     fc_births:'Nacimientos usados (Argentina, INDEC / Min. Salud): 2023 y 2024 son datos; 2025&ndash;2028 estimados en &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
     fc_cap_hit:'En capacidad',fc_cap_free:'Vacantes libres',fc_cap_none:'Ning&uacute;n Year Group llega al techo en este escenario.',
-    fc_chk:'Control 2027',
-    fc_chk_ok:'Con tasas completas el modelo reproduce exacto la proyecci&oacute;n 2027 de la planilla ({n} alumnos), as&iacute; que la mec&aacute;nica cierra. Este escenario da {m} para 2027 &mdash; la diferencia son los supuestos de abajo, no un error.',
-    fc_chk_bad:'Con tasas completas el modelo da {a} para 2027 y la planilla proyecta {b}. Hay que revisar las tasas de progresi&oacute;n antes de usar este forecast.',
+    fc_chk:'Control 2026',
+    fc_chk_ok:'El padr&oacute;n 2026 de ac&aacute; coincide exacto con el Resumen Ejecutivo ({n} alumnos), as&iacute; que la serie arranca del n&uacute;mero correcto.',
+    fc_chk_bad:'El 2026 de ac&aacute; ({a}) no coincide con el Resumen Ejecutivo ({b}). No usar este forecast hasta resolverlo &mdash; todos los a&ntilde;os siguientes se arrastran desde 2026.',
     fc_no_data:'Todav&iacute;a no lleg&oacute; el bloque de proyecci&oacute;n, as&iacute; que no se puede armar el forecast.',
     acc_title:'Personas y permisos',acc_note:'Qui&eacute;n puede entrar al dashboard y qu&eacute; secciones ve cada persona. Lo que no ve no llega a su navegador.',
     acc_add:'Agregar',acc_add_ph:'nombre@stgeorges.edu.ar',acc_save:'Guardar cambios',acc_saving:'Guardando&hellip;',acc_saved:'Guardado',acc_dirty:'Cambios sin guardar',acc_err:'No se pudo guardar',
@@ -3049,6 +3049,24 @@ function fcCohortRate(ck,grado){
 function fcProj27(r){return !isNil(r.proy)?num(r.proy):(!isNil(r.proyD)?num(r.proyD):null);}
 // Filas tal cual vienen del sheet, sin los grados que abren a futuro.
 function fcRowsBase(ck){return((D.proyeccion||{})[FC_CK[ck]])||[];}
+/* Matrícula 2026 por grado, del MISMO padrón que muestra Executive Summary (iSAMS).
+   No se usa base2026 para esto: esa columna de CALC_projection no es la matrícula del
+   grado sino la del grado ANTERIOR — la cohorte que va a ocuparlo en 2027. Verificado
+   contra la planilla el 03/11/2026 con ?diag=proj: 30 de 30 filas, cero excepciones. */
+function fcPadron(ck){
+  const sec=(ck==='q'?D.quilmes:D.north)||{},out={};
+  ['kinder','prep','college'].forEach(lvl=>{
+    const o=sec[lvl]||{};
+    Object.keys(o).forEach(g=>{
+      if(g==='total')return;
+      let v=o[g];
+      if(v&&typeof v==='object')v=v.matricula;
+      const n=parseFloat(v);
+      if(!isNaN(n))out[g]=n;
+    });
+  });
+  return out;
+}
 // Grado por el que entra hoy el campus (Quilmes K3, North K1): tiene ingreso propio.
 function fcEntryGrade(ck){const b=fcRowsBase(ck);return b.length?b[0].grado:null;}
 /* Permanencia dentro de Kinder, usada para K2->K3: ese salto no tiene histórico porque la
@@ -3056,8 +3074,8 @@ function fcEntryGrade(ck){const b=fcRowsBase(ck);return b.length?b[0].grado:null
    para no regalarle altas laterales a un grado que recién abre. */
 function fcKinderKeep(ck){
   const b=fcRowsBase(ck);if(b.length<2)return 1;
-  const prev=num(b[0].base2026),p=fcProj27(b[1]);
-  return Math.min((prev>0&&p!=null)?p/prev:1,1);
+  const orig=num(b[1].base2026),p=fcProj27(b[1]);   // misma fila: base2026 ya es la cohorte de origen
+  return Math.min((orig>0&&p!=null)?p/orig:1,1);
 }
 function fcRates(ck,rows){
   rows=rows||fcRows(ck);
@@ -3065,8 +3083,10 @@ function fcRates(ck,rows){
   return rows.map((r,i)=>{
     if(r.isNew)return null;                     // grado que abre: se siembra, no recibe de nadie
     if(r.grado===entry)return fcKinderKeep(ck); // ingreso propio + lo que sube del grado nuevo
-    const prev=rows[i-1],p=fcProj27(r);
-    if(prev&&!prev.isNew&&num(prev.base2026)>0&&p!=null)return p/num(prev.base2026);
+    // base2026 de ESTA fila ya es la matrícula 2026 del grado anterior, así que el cociente
+    // sale de una sola fila. Tomarlo de la fila previa corría el denominador un lugar.
+    const orig=num(r.base2026),p=fcProj27(r);
+    if(orig>0&&p!=null)return p/orig;
     const cr=fcCohortRate(ck,r.grado);          // respaldo: hoja "Tasas Cohorte"
     return cr==null?1:cr;
   });
@@ -3097,9 +3117,12 @@ function fcRun(ck,cfg){
     if(r.grado===entry)seeds[r.grado]=fcGet('seed_'+ck,fcSeedBase(ck));
     else if(r.isNew)seeds[r.grado]=fcGet('seed_'+ck+'_'+r.grado,(fcNewOf(ck,r.grado)||{}).seed||0);
   });
-  let cur=rows.map(r=>isNil(r.base2026)?0:num(r.base2026));
+  // El 2026 sale del padrón de iSAMS (lo mismo que muestra Executive Summary), NO de base2026:
+  // esa columna es la matrícula del grado anterior y arrancar de ahí corría toda la serie.
+  const pad=fcPadron(ck);
+  let cur=rows.map(r=>r.isNew?0:num(pad[r.grado]));
   const out={grades:rows.map(r=>r.grado),cap:cap,isNew:rows.map(r=>!!r.isNew),from:rows.map(r=>r.from||null),
-             base:rows.map(r=>isNil(r.base2026)?null:num(r.base2026)),years:{},tot:{},seed:{},seeds:{}};
+             base:rows.map(r=>r.isNew?null:(isNil(pad[r.grado])?null:num(pad[r.grado]))),years:{},tot:{},seed:{},seeds:{}};
   out.tot[2026]=cur.reduce((a,b)=>a+b,0);
   FC_YRS.forEach((yr,k)=>{
     // cada ingreso se arrastra con la natalidad de SU cohorte (K2 mira 2 años atrás, K3 tres)
@@ -3178,14 +3201,20 @@ function buildForecast(wrap){
   wrap.appendChild(statStrip(items,3));
 
   // Control de consistencia: el 2027 del modelo contra la proyección del sheet
-  const shv=fcScope().reduce((a,ck)=>{const T=ck==='q'?D.proyeccion.quilmesTotal:D.proyeccion.northTotal;return a+num((T||{}).alumnos);},0);
-  if(shv>0){
-    // La mecánica se valida contra el sheet con tasas COMPLETAS y sin tope: ahí el modelo
-    // tiene que dar el mismo 2027. El escenario activo diverge a propósito (altas laterales
-    // ponderadas, natalidad), así que compararlo contra el sheet sería un falso error.
-    const raw=fcTotals({lat:1,nat:0,cap:0,noNew:1}),mdl=num(raw[2027]),ok=Math.abs(mdl-shv)<=Math.max(2,shv*0.01);
+  /* Control de consistencia: el 2026 del forecast tiene que ser EXACTAMENTE el padrón que
+     muestra Executive Summary. Es el único control independiente que hay.
+     El control anterior (2027 contra el total de la planilla) era una tautología: el modelo
+     hacía grado(i) = base2026(i-1) x [proy(i)/base2026(i-1)], el denominador se cancelaba y
+     2027 daba el total del sheet aunque la hoja estuviera leída al revés — que es justo lo
+     que pasaba. No volver a validar el modelo contra una cuenta que lo contiene. */
+  const esTot=fcScope().reduce((a,ck)=>{
+    const sec=(ck==='q'?D.quilmes:D.north)||{},tt=sec.total;
+    return a+num(tt&&typeof tt==='object'?tt.matricula:tt);
+  },0);
+  if(esTot>0){
+    const m26=num(tot[2026]),ok=Math.abs(m26-esTot)<=Math.max(1,esTot*0.005);
     // .c27-note es la nota teal ya estilada (con variante .warn); reusarla evita CSS nuevo
-    wrap.appendChild(elFromHTML('<div class="c27-note'+(ok?'':' warn')+'"><span><b>'+t('fc_chk')+':</b> '+(ok?fcFill(t('fc_chk_ok'),{n:fN(mdl),m:fN(tot[2027])}):fcFill(t('fc_chk_bad'),{a:fN(mdl),b:fN(shv)}))+'</span></div>').firstChild);
+    wrap.appendChild(elFromHTML('<div class="c27-note'+(ok?'':' warn')+'"><span><b>'+t('fc_chk')+':</b> '+(ok?fcFill(t('fc_chk_ok'),{n:fN(m26)}):fcFill(t('fc_chk_bad'),{a:fN(m26),b:fN(esTot)}))+'</span></div>').firstChild);
   }
 
   // Trayectoria + secciones
