@@ -1120,7 +1120,7 @@ const STRINGS={
     c27_error:'Could not load re-enrolment data.',c27_retry:'Retry',c27_refresh:'Refresh',
     c27_isams_warn:'iSAMS data looks incomplete today &mdash; withdrawals are not counted until it is back.',
     c27_k_conf:'Confirmed 2027',c27_k_conf_f:'Re-enrolled + new &middot; vs {n} in 2026',c27_k_re:'Re-enrolled',c27_k_re_f:'{p} of {b} eligible',
-    c27_k_pend:'Pending',c27_k_pend_f:'No answer yet',c27_k_ret:'Retained',c27_k_ret_f:'Enrolment withheld',
+    c27_k_pend:'Pending',c27_k_pend_f:'No answer yet',c27_k_ret:'Retained',c27_k_ret_f:'Enrolment withheld',c27_rr_sheet:'{n} in the sheet',c27_rr_c6:'{n} graduating (C6)',c27_rr_wd:'{n} in Bajas',c27_rr_re:'{n} re-enrolled',c27_rr_un:'{n} to review',
     c27_k_wd:'Withdrawn',c27_k_wd_f:'Announced for 2027',c27_k_new:'New',c27_k_new_f:'Won &middot; 2027 pipeline',
     c27_s_progress:'Re-enrolment progress',c27_s_progress_meta:'Share of eligible students',
     c27_pace_ttl:'Cumulative re-enrolment',c27_pace_sub:'% of eligible students who re-enrolled, by response date',c27_pace_empty:'No responses yet.',
@@ -1324,7 +1324,7 @@ const STRINGS={
     c27_error:'No se pudo cargar la rematriculaci&oacute;n.',c27_retry:'Reintentar',c27_refresh:'Actualizar',
     c27_isams_warn:'Los datos de iSAMS parecen incompletos hoy &mdash; las bajas no se cuentan hasta que vuelvan.',
     c27_k_conf:'Confirmados 2027',c27_k_conf_f:'Rematriculados + nuevos &middot; vs {n} en 2026',c27_k_re:'Rematriculados',c27_k_re_f:'{p} de {b} habilitados',
-    c27_k_pend:'Pendientes',c27_k_pend_f:'Todav&iacute;a sin respuesta',c27_k_ret:'Retenidos',c27_k_ret_f:'Matr&iacute;cula retenida',
+    c27_k_pend:'Pendientes',c27_k_pend_f:'Todav&iacute;a sin respuesta',c27_k_ret:'Retenidos',c27_k_ret_f:'Matr&iacute;cula retenida',c27_rr_sheet:'{n} en la planilla',c27_rr_c6:'{n} egresan (C6)',c27_rr_wd:'{n} en Bajas',c27_rr_re:'{n} rematric.',c27_rr_un:'{n} a revisar',
     c27_k_wd:'Bajas',c27_k_wd_f:'Anunciadas para 2027',c27_k_new:'Nuevos',c27_k_new_f:'Won &middot; pipeline 2027',
     c27_s_progress:'Avance de la rematriculaci&oacute;n',c27_s_progress_meta:'Sobre los alumnos habilitados',
     c27_pace_ttl:'Rematriculaci&oacute;n acumulada',c27_pace_sub:'% de habilitados que se rematricularon, por fecha de respuesta',c27_pace_empty:'Todav&iacute;a no hay respuestas.',
@@ -3349,6 +3349,16 @@ function c27Stats(c){
 }
 function c27Sum(list){const o={};list.forEach(x=>Object.keys(x).forEach(k=>o[k]=(o[k]||0)+x[k]));return o;}
 function c27Date(d){if(!d)return'';const p=String(d).split('-');return p.length===3?p[2]+'/'+p[1]:d;}
+// Pie del KPI Retenidos: cuadra el número con el filtro de la planilla (rojos), descontando
+// los que egresan, los que ya están en Bajas o rematriculados y los que no cruzan.
+function c27RetFoot(sc){
+  const rr=C27.retRecon;if(!rr)return t('c27_k_ret_f');
+  const a={sheet:0,c6:0,wd:0,re:0,unmatched:0};
+  sc.forEach(c=>{const o=rr[c]||{};Object.keys(a).forEach(k=>a[k]+=num(o[k]));});
+  const parts=[c27Fill(t('c27_rr_sheet'),{n:fN(a.sheet)})];
+  [['c6','c27_rr_c6'],['wd','c27_rr_wd'],['re','c27_rr_re'],['unmatched','c27_rr_un']].forEach(([k,key])=>{if(a[k])parts.push('&minus;'+c27Fill(t(key),{n:fN(a[k])}));});
+  return parts.join(' &middot; ');
+}
 function c27Chip(st){return'<span class="c27-chip '+st+'">'+t('c27_st_'+st)+'</span>';}
 function buildConfirmed(wrap){
   // Si los datos tienen más de 3 minutos, se piden de nuevo en segundo plano (sin cache del server);
@@ -3374,7 +3384,7 @@ function buildConfirmed(wrap){
     {lbl:t('c27_k_re'),val:fN(st.re),foot:c27Fill(t('c27_k_re_f'),{p:pct(st.re,st.base),b:fN(st.base)})},
     {lbl:t('c27_k_new'),val:fN(st.won),foot:t('c27_k_new_f')},
     {lbl:t('c27_k_pend'),val:fN(st.pend),foot:t('c27_k_pend_f')},
-    {lbl:t('c27_k_ret'),val:fN(st.ret),foot:t('c27_k_ret_f')},
+    {lbl:t('c27_k_ret'),val:fN(st.ret),foot:c27RetFoot(sc)},
     {lbl:t('c27_k_wd'),val:fN(st.wd),foot:t('c27_k_wd_f')}
   ],3));
 
