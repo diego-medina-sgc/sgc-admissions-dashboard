@@ -1248,7 +1248,7 @@ const STRINGS={
     prospectos_26:'Active Prospects 2026',prospectos_27:'Active Prospects 2027',won_2026:'Won 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'OG Parents Rate',
     foreign:'International Students',priority:'Priority Community',actionable_with:'Actionable Withdrawals 2026',
-    s_families:'Families',s_families_meta:'Enrolled families &middot; iSAMS',fam_total:'Families',fam_foot:'with children enrolled',students_lbl_low:'students',
+    s_families:'Families',s_families_meta:'Enrolled families &middot; iSAMS',fam_total:'Families',fam_foot:'with children enrolled',students_lbl_low:'students',fam_avg_short:'children per family',
     fam_avg:'Children per Family',fam_multi:'Families with 2+ Children',fam_both:'Families in Both Campuses',fam_both_foot:'children in Quilmes and North',
     fam_dist:'Families by Number of Children',fam_kids1:'1 child',fam_kidsN:' children',fam_kids4:'4+ children',
     fam_sec:'Families by Section',fam_sec_note:'A family with children in more than one section counts in each.',
@@ -1457,7 +1457,7 @@ const STRINGS={
     prospectos_26:'Prospectos Activos 2026',prospectos_27:'Prospectos Activos 2027',won_2026:'Ganados 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'Tasa Padres OG',
     foreign:'Estudiantes Extranjeros',priority:'Comunidad Prioritaria',actionable_with:'Bajas Accionables 2026',
-    s_families:'Familias',s_families_meta:'Familias matriculadas &middot; iSAMS',fam_total:'Familias',fam_foot:'con hijos matriculados',students_lbl_low:'alumnos',
+    s_families:'Familias',s_families_meta:'Familias matriculadas &middot; iSAMS',fam_total:'Familias',fam_foot:'con hijos matriculados',students_lbl_low:'alumnos',fam_avg_short:'hijos por familia',
     fam_avg:'Hijos por Familia',fam_multi:'Familias con 2+ Hijos',fam_both:'Familias en Ambos Campus',fam_both_foot:'hijos en Quilmes y en North',
     fam_dist:'Familias seg&uacute;n Cantidad de Hijos',fam_kids1:'1 hijo',fam_kidsN:' hijos',fam_kids4:'4+ hijos',
     fam_sec:'Familias por Secci&oacute;n',fam_sec_note:'Una familia con hijos en m&aacute;s de una secci&oacute;n cuenta en cada una.',
@@ -2011,7 +2011,12 @@ function buildResumen(){
   if(campus!=='n')items.push({lbl:t('ret_quilmes'),val:fP(h.retencion_quilmes),nf:{v:h.retencion_quilmes,f:'pct'},foot:t('os_foot'),cls:'c-red'});
   if(campus!=='q')items.push({lbl:t('ret_north'),val:fP(h.retencion_north),nf:{v:h.retencion_north,f:'pct'},foot:t('os_foot'),cls:'c-navy'});
   items.push({lbl:t('prospectos_27'),val:fN(prosp),nf:{v:prosp,f:'int'},foot:'2027'});
-  wrap.appendChild(sec(t('headline'),t('headline_meta'),statStrip(items)));
+  // Familias: bloque chico familiesSummary (llega a todos); con backend viejo cae al bloque completo
+  const FS=D.familiesSummary||(D.families?{total:D.families.total,avgKids:D.families.avgKids}:null);
+  const famN=FS?num(cv(FS.total)):0;
+  if(famN){const avg=num(cv(FS.avgKids));
+    items.splice(1,0,{lbl:t('fam_total'),val:fN(famN),nf:{v:famN,f:'int'},foot:avg.toLocaleString(lang==='es'?'es-AR':'en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+t('fam_avg_short')});}
+  wrap.appendChild(sec(t('headline'),t('headline_meta'),statStrip(items,items.length===8?4:undefined)));
 
   // Community indicators — card set depends on campus
   if(D.community){
@@ -2557,10 +2562,6 @@ function buildRetention(){
     {lbl:t('actionable_with'),val:fN(actWith),nf:{v:actWith,f:'int'},foot:'2026',cls:'c-red'},
   ])));
 
-  // Families (iSAMS FamilyId) — null si el import todavia no trae la columna
-  const famSec=buildFamilies();
-  if(famSec)wrap.appendChild(sec(t('s_families'),t('s_families_meta'),famSec));
-
   // Grade-to-Grade Movement (right after headline) — CALC_retention 2026
   if(D.retentionGrades){
     const cr=document.createElement('div');cr.className=(campus==='os')?'two':'';
@@ -2571,6 +2572,10 @@ function buildRetention(){
 
   // Withdrawals
   wrap.appendChild(sec(t('s_withdrawals'),t('s_withdrawals_meta'),buildWithdrawals()));
+
+  // Perfil de comunidad, al final y juntos: familias (con localidades y barrios) + nacionalidades
+  const famSec=buildFamilies();   // null si el import todavia no trae FamilyId
+  if(famSec)wrap.appendChild(sec(t('s_families'),t('s_families_meta'),famSec));
 
   // International Students — Nationalities (HTML bars with flag images, excludes Argentine)
   wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),buildNationalities()));
