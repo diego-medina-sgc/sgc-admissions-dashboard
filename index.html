@@ -2576,7 +2576,6 @@ function buildFamilies(){
     {lbl:t('fam_total'),val:fN(tot),nf:{v:tot,f:'int'},foot:(campus==='n'?'North':campus==='q'?'Quilmes':'One School')+' &middot; '+t('fam_foot'),cls:campus==='n'?'c-navy':'c-red'},
     {lbl:t('fam_avg'),val:avg.toLocaleString(loc,{minimumFractionDigits:2,maximumFractionDigits:2}),foot:fN(cv(F.students))+' '+t('students_lbl_low')},
     {lbl:t('fam_multi'),val:fP(multi),nf:{v:multi,f:'pct'},foot:fN(tot-num(dist[0]))+' '+t('fam_total').toLowerCase()},
-    {lbl:t('fam_both'),val:fN(F.both),nf:{v:num(F.both),f:'int'},foot:t('fam_both_foot')},
   ]));
   const bars=(rows)=>{
     const max=Math.max.apply(null,rows.map(r=>r.v).concat([1]));
