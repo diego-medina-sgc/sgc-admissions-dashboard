@@ -2587,11 +2587,11 @@ function buildFamilies(){
   const sRows=[['kinder','Kinder'],['prep','Prep School'],['college','College']].map(x=>({l:x[1],v:num(cv(S[x[0]]))}));
   const two=document.createElement('div');two.className='two';two.style.marginTop='14px';
   two.innerHTML='<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_dist')+'</div>'+bars(dRows)+'</div>'+
-    '<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_sec')+'</div>'+bars(sRows)+'<div class="si-foot" style="margin-top:6px">'+t('fam_sec_note')+'</div></div>';
+    '<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_sec')+'</div>'+bars(sRows)+'<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_sec_note')+'</div></div>';
   box.appendChild(two);
   const cov=F.coverage;
   if(cov&&cov.active&&cov.withId<cov.active){
-    const n=document.createElement('div');n.className='si-foot';n.style.marginTop='8px';
+    const n=document.createElement('div');n.style.cssText='margin-top:8px;font-size:.74rem;color:var(--text-muted)';
     n.innerHTML=fN(cov.withId)+t('fam_cov').replace('{a}',fN(cov.active));
     box.appendChild(n);
   }
