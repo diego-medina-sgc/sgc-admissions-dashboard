@@ -1235,6 +1235,11 @@ const STRINGS={
     prospectos_26:'Active Prospects 2026',prospectos_27:'Active Prospects 2027',won_2026:'Won 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'OG Parents Rate',
     foreign:'International Students',priority:'Priority Community',actionable_with:'Actionable Withdrawals 2026',
+    s_families:'Families',s_families_meta:'Enrolled families &middot; iSAMS',fam_total:'Families',fam_foot:'with children enrolled',students_lbl_low:'students',
+    fam_avg:'Children per Family',fam_multi:'Families with 2+ Children',fam_both:'Families in Both Campuses',fam_both_foot:'children in Quilmes and North',
+    fam_dist:'Families by Number of Children',fam_kids1:'1 child',fam_kidsN:' children',fam_kids4:'4+ children',
+    fam_sec:'Families by Section',fam_sec_note:'A family with children in more than one section counts in each.',
+    fam_cov:' of {a} active students have a family ID in iSAMS.',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Intl.',
     col_year:'Year',col_section:'Section',col_level:'Level',col_enrol:'Enrolment',col_grade:'Year Group',
     col_2025:'Students 2025',col_2026:'Students 2026',col_var:'Var',col_prosp26:'Prospects 2026',col_prosp27:'Prospects 2027',
@@ -1439,6 +1444,11 @@ const STRINGS={
     prospectos_26:'Prospectos Activos 2026',prospectos_27:'Prospectos Activos 2027',won_2026:'Ganados 2026',
     og_quilmes:'OG Parent Quilmes',og_north:'OG Parent North',og_rate:'Tasa Padres OG',
     foreign:'Estudiantes Extranjeros',priority:'Comunidad Prioritaria',actionable_with:'Bajas Accionables 2026',
+    s_families:'Familias',s_families_meta:'Familias matriculadas &middot; iSAMS',fam_total:'Familias',fam_foot:'con hijos matriculados',students_lbl_low:'alumnos',
+    fam_avg:'Hijos por Familia',fam_multi:'Familias con 2+ Hijos',fam_both:'Familias en Ambos Campus',fam_both_foot:'hijos en Quilmes y en North',
+    fam_dist:'Familias seg&uacute;n Cantidad de Hijos',fam_kids1:'1 hijo',fam_kidsN:' hijos',fam_kids4:'4+ hijos',
+    fam_sec:'Familias por Secci&oacute;n',fam_sec_note:'Una familia con hijos en m&aacute;s de una secci&oacute;n cuenta en cada una.',
+    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Extranj.',
     col_year:'A&ntilde;o',col_section:'Secci&oacute;n',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_grade:'Grado',
     col_2025:'Alumnos 2025',col_2026:'Alumnos 2026',col_var:'Var',col_prosp26:'Prospectos 2026',col_prosp27:'Prospectos 2027',
@@ -2533,6 +2543,10 @@ function buildRetention(){
     {lbl:t('actionable_with'),val:fN(actWith),nf:{v:actWith,f:'int'},foot:'2026',cls:'c-red'},
   ])));
 
+  // Families (iSAMS FamilyId) — null si el import todavia no trae la columna
+  const famSec=buildFamilies();
+  if(famSec)wrap.appendChild(sec(t('s_families'),t('s_families_meta'),famSec));
+
   // Grade-to-Grade Movement (right after headline) — CALC_retention 2026
   if(D.retentionGrades){
     const cr=document.createElement('div');cr.className=(campus==='os')?'two':'';
@@ -2547,6 +2561,41 @@ function buildRetention(){
   // International Students — Nationalities (HTML bars with flag images, excludes Argentine)
   wrap.appendChild(sec(t('s_intl_nationalities'),t('s_intl_nationalities_meta'),buildNationalities()));
   return wrap;
+}
+function buildFamilies(){
+  const F=D.families;
+  if(!F||!F.total)return null;
+  const tot=num(cv(F.total));
+  if(!tot)return null;
+  const dist=(campus==='q'?F.dist.q:campus==='n'?F.dist.n:F.dist.os)||[0,0,0,0];
+  const multi=tot?(tot-num(dist[0]))/tot:0;
+  const avg=num(cv(F.avgKids));
+  const loc=lang==='es'?'es-AR':'en-GB';
+  const box=document.createElement('div');
+  box.appendChild(statStrip([
+    {lbl:t('fam_total'),val:fN(tot),nf:{v:tot,f:'int'},foot:(campus==='n'?'North':campus==='q'?'Quilmes':'One School')+' &middot; '+t('fam_foot'),cls:campus==='n'?'c-navy':'c-red'},
+    {lbl:t('fam_avg'),val:avg.toLocaleString(loc,{minimumFractionDigits:2,maximumFractionDigits:2}),foot:fN(cv(F.students))+' '+t('students_lbl_low')},
+    {lbl:t('fam_multi'),val:fP(multi),nf:{v:multi,f:'pct'},foot:fN(tot-num(dist[0]))+' '+t('fam_total').toLowerCase()},
+    {lbl:t('fam_both'),val:fN(F.both),nf:{v:num(F.both),f:'int'},foot:t('fam_both_foot')},
+  ]));
+  const bars=(rows)=>{
+    const max=Math.max.apply(null,rows.map(r=>r.v).concat([1]));
+    return '<div class="natbars">'+rows.map(r=>'<div class="natbar-row"><div class="natbar-lbl">'+r.l+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(r.v/max*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(r.v)+(r.p!=null?' <span style="opacity:.7">&middot; '+fP(r.p)+'</span>':'')+'</div></div>').join('')+'</div>';
+  };
+  const dRows=[t('fam_kids1'),'2'+t('fam_kidsN'),'3'+t('fam_kidsN'),t('fam_kids4')].map((l,i)=>({l:l,v:num(dist[i]),p:tot?num(dist[i])/tot:0}));
+  const S=F.bySection||{};
+  const sRows=[['kinder','Kinder'],['prep','Prep School'],['college','College']].map(x=>({l:x[1],v:num(cv(S[x[0]]))}));
+  const two=document.createElement('div');two.className='two';two.style.marginTop='14px';
+  two.innerHTML='<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_dist')+'</div>'+bars(dRows)+'</div>'+
+    '<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_sec')+'</div>'+bars(sRows)+'<div class="si-foot" style="margin-top:6px">'+t('fam_sec_note')+'</div></div>';
+  box.appendChild(two);
+  const cov=F.coverage;
+  if(cov&&cov.active&&cov.withId<cov.active){
+    const n=document.createElement('div');n.className='si-foot';n.style.marginTop='8px';
+    n.innerHTML=fN(cov.withId)+t('fam_cov').replace('{a}',fN(cov.active));
+    box.appendChild(n);
+  }
+  return box;
 }
 function buildNationalities(){
   const nats=(D.nationalities||[]).filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina';});
