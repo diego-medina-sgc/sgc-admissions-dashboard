@@ -1252,7 +1252,7 @@ const STRINGS={
     fam_avg:'Children per Family',fam_multi:'Families with 2+ Children',fam_both:'Families in Both Campuses',fam_both_foot:'children in Quilmes and North',
     fam_dist:'Families by Number of Children',fam_kids1:'1 child',fam_kidsN:' children',fam_kids4:'4+ children',
     fam_sec:'Families by Section',fam_sec_note:'A family with children in more than one section counts in each.',
-    fam_cov:' of {a} active students have a family ID in iSAMS.',fam_town:'Families by Locality',view_map:'Map',fam_none_hint:'Families whose home locality is missing in iSAMS:',fam_map_note:'Each dot sits at the centre of its locality, never at a home. Localities without coordinates are not shown.',fam_caba_only:'CABA (no neighbourhood)',fam_town_other:'Other localities',fam_town_none:'No locality on record',fam_town_note:'Home locality from iSAMS contacts. Localities with fewer than {m} families are grouped under Other. Percentages are over families with a locality on record.',
+    fam_cov:' of {a} active students have a family ID in iSAMS.',fam_town:'Families by Locality',view_map:'Map',view_gated:'Gated communities',fam_gated_unknown:'Gated, not identified',fam_gated_note:'Families in gated communities or country clubs, classified from the iSAMS home address (only the community name is stored). Percentages are over families in a gated community. Not included: {no} families in a house or flat elsewhere and {none} with no address on record.',fam_none_hint:'Families whose home locality is missing in iSAMS:',fam_map_note:'Each dot sits at the centre of its locality, never at a home. Localities without coordinates are not shown.',fam_caba_only:'CABA (no neighbourhood)',fam_town_other:'Other localities',fam_town_none:'No locality on record',fam_town_note:'Home locality from iSAMS contacts. Localities with fewer than {m} families are grouped under Other. Percentages are over families with a locality on record.',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Intl.',
     col_year:'Year',col_section:'Section',col_level:'Level',col_enrol:'Enrolment',col_grade:'Year Group',
     col_2025:'Students 2025',col_2026:'Students 2026',col_var:'Var',col_prosp26:'Prospects 2026',col_prosp27:'Prospects 2027',
@@ -1461,7 +1461,7 @@ const STRINGS={
     fam_avg:'Hijos por Familia',fam_multi:'Familias con 2+ Hijos',fam_both:'Familias en Ambos Campus',fam_both_foot:'hijos en Quilmes y en North',
     fam_dist:'Familias seg&uacute;n Cantidad de Hijos',fam_kids1:'1 hijo',fam_kidsN:' hijos',fam_kids4:'4+ hijos',
     fam_sec:'Familias por Secci&oacute;n',fam_sec_note:'Una familia con hijos en m&aacute;s de una secci&oacute;n cuenta en cada una.',
-    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',fam_town:'Familias por Localidad',view_map:'Mapa',fam_none_hint:'Familias sin localidad del hogar cargada en iSAMS:',fam_map_note:'Cada punto va en el centro de la localidad, nunca en un domicilio. Las localidades sin coordenadas no se muestran.',fam_caba_only:'CABA (sin barrio)',fam_town_other:'Otras localidades',fam_town_none:'Sin localidad cargada',fam_town_note:'Localidad del hogar seg&uacute;n los contactos de iSAMS. Las localidades con menos de {m} familias se agrupan en Otras. Los % se calculan sobre las familias con localidad cargada.',
+    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',fam_town:'Familias por Localidad',view_map:'Mapa',view_gated:'Barrios cerrados',fam_gated_unknown:'Barrio cerrado sin identificar',fam_gated_note:'Familias en barrios cerrados o clubes de campo, clasificadas desde la direcci&oacute;n del hogar en iSAMS (s&oacute;lo se guarda el nombre del barrio). Los % se calculan sobre las familias en barrio cerrado. No se incluyen: {no} familias en casa o departamento fuera de un barrio cerrado y {none} sin direcci&oacute;n cargada.',fam_none_hint:'Familias sin localidad del hogar cargada en iSAMS:',fam_map_note:'Cada punto va en el centro de la localidad, nunca en un domicilio. Las localidades sin coordenadas no se muestran.',fam_caba_only:'CABA (sin barrio)',fam_town_other:'Otras localidades',fam_town_none:'Sin localidad cargada',fam_town_note:'Localidad del hogar seg&uacute;n los contactos de iSAMS. Las localidades con menos de {m} familias se agrupan en Otras. Los % se calculan sobre las familias con localidad cargada.',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Extranj.',
     col_year:'A&ntilde;o',col_section:'Secci&oacute;n',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_grade:'Grado',
     col_2025:'Alumnos 2025',col_2026:'Alumnos 2026',col_var:'Var',col_prosp26:'Prospectos 2026',col_prosp27:'Prospectos 2027',
@@ -2626,10 +2626,21 @@ function famTownData(TW){
 }
 function buildFamTowns(TW){
   const d=famTownData(TW);
-  if(!d.main.length&&!d.other.length&&!d.miss.length)return null;
+  if(!d.main.length&&!d.other.length&&!d.miss.length&&!(D.families&&D.families.gated))return null;
   const wrap=document.createElement('div');wrap.style.marginTop='14px';
-  const pills='<div class="cycle-pills" style="margin-left:auto"><button class="cycle-pill'+(famTownView==='chart'?' active':'')+'" onclick="setFamTownView(\'chart\')">'+t('view_chart')+'</button><button class="cycle-pill'+(famTownView==='map'?' active':'')+'" onclick="setFamTownView(\'map\')">'+t('view_map')+'</button></div>';
+  const pb=(v,l)=>'<button class="cycle-pill'+(famTownView===v?' active':'')+'" onclick="setFamTownView(\''+v+'\')">'+l+'</button>';
+  const pills='<div class="cycle-pills" style="margin-left:auto">'+pb('chart',t('view_chart'))+pb('map',t('view_map'))+(D.families&&D.families.gated?pb('gated',t('view_gated')):'')+'</div>';
   let h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="sec-meta">'+t('fam_town')+'</span>'+pills+'</div>';
+  if(famTownView==='gated'&&D.families&&D.families.gated){
+    const G=D.families.gated;
+    const rows=G.rows.map(r=>({l:escHtml(r.name),v:num(cv(r))})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
+    const unk=num(cv(G.unknown));
+    if(unk)rows.push({l:'<span style="color:var(--text-muted)">'+t('fam_gated_unknown')+'</span>',v:unk});
+    const tot=rows.reduce((x,r)=>x+r.v,0),gmx=Math.max.apply(null,rows.map(r=>r.v).concat([1]));
+    h+='<div class="natbars">'+rows.map(r=>'<div class="natbar-row"><div class="natbar-lbl">'+r.l+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(r.v/gmx*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(r.v)+(tot?' <span style="opacity:.7">&middot; '+fP(r.v/tot)+'</span>':'')+'</div></div>').join('')+'</div>'+
+      '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_gated_note').replace('{no}',fN(cv(G.no))).replace('{none}',fN(cv(G.none)))+'</div>';
+    wrap.innerHTML=h;return wrap;
+  }
   if(famTownView==='map'){
     h+='<div id="fam-map" class="fam-map"></div><div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_map_note')+'</div>';
     wrap.innerHTML=h;return wrap;
