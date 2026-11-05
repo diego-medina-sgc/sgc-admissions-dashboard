@@ -1239,7 +1239,7 @@ const STRINGS={
     fam_avg:'Children per Family',fam_multi:'Families with 2+ Children',fam_both:'Families in Both Campuses',fam_both_foot:'children in Quilmes and North',
     fam_dist:'Families by Number of Children',fam_kids1:'1 child',fam_kidsN:' children',fam_kids4:'4+ children',
     fam_sec:'Families by Section',fam_sec_note:'A family with children in more than one section counts in each.',
-    fam_cov:' of {a} active students have a family ID in iSAMS.',
+    fam_cov:' of {a} active students have a family ID in iSAMS.',fam_town:'Families by Locality',fam_town_other:'Other localities',fam_town_none:'No locality on record',fam_town_note:'Home locality from iSAMS contacts. Localities with fewer than {m} families are grouped under Other. Percentages are over families with a locality on record.',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Intl.',
     col_year:'Year',col_section:'Section',col_level:'Level',col_enrol:'Enrolment',col_grade:'Year Group',
     col_2025:'Students 2025',col_2026:'Students 2026',col_var:'Var',col_prosp26:'Prospects 2026',col_prosp27:'Prospects 2027',
@@ -1448,7 +1448,7 @@ const STRINGS={
     fam_avg:'Hijos por Familia',fam_multi:'Familias con 2+ Hijos',fam_both:'Familias en Ambos Campus',fam_both_foot:'hijos en Quilmes y en North',
     fam_dist:'Familias seg&uacute;n Cantidad de Hijos',fam_kids1:'1 hijo',fam_kidsN:' hijos',fam_kids4:'4+ hijos',
     fam_sec:'Familias por Secci&oacute;n',fam_sec_note:'Una familia con hijos en m&aacute;s de una secci&oacute;n cuenta en cada una.',
-    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',
+    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',fam_town:'Familias por Localidad',fam_town_other:'Otras localidades',fam_town_none:'Sin localidad cargada',fam_town_note:'Localidad del hogar seg&uacute;n los contactos de iSAMS. Las localidades con menos de {m} familias se agrupan en Otras. Los % se calculan sobre las familias con localidad cargada.',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Extranj.',
     col_year:'A&ntilde;o',col_section:'Secci&oacute;n',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_grade:'Grado',
     col_2025:'Alumnos 2025',col_2026:'Alumnos 2026',col_var:'Var',col_prosp26:'Prospectos 2026',col_prosp27:'Prospectos 2027',
@@ -2588,6 +2588,21 @@ function buildFamilies(){
   two.innerHTML='<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_dist')+'</div>'+bars(dRows)+'</div>'+
     '<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_sec')+'</div>'+bars(sRows)+'<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_sec_note')+'</div></div>';
   box.appendChild(two);
+  const TW=F.towns;
+  if(TW&&TW.rows){
+    const tRows=TW.rows.map(r=>({l:escHtml(r.name),v:num(cv(r))})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
+    const oth=num(cv(TW.otras)),none=num(cv(TW.sinDato));
+    if(oth)tRows.push({l:'<em>'+t('fam_town_other')+'</em>',v:oth});
+    if(tRows.length){
+      const known=tRows.reduce((a,r)=>a+r.v,0);
+      tRows.forEach(r=>{r.p=known?r.v/known:0;});
+      if(none)tRows.push({l:'<span style="color:var(--text-muted)">'+t('fam_town_none')+'</span>',v:none,p:null});
+      const tw=document.createElement('div');tw.style.marginTop='14px';
+      tw.innerHTML='<div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_town')+'</div>'+bars(tRows)+
+        '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_town_note').replace('{m}',TW.min||5)+'</div>';
+      box.appendChild(tw);
+    }
+  }
   const cov=F.coverage;
   if(cov&&cov.active&&cov.withId<cov.active){
     const n=document.createElement('div');n.style.cssText='margin-top:8px;font-size:.74rem;color:var(--text-muted)';
