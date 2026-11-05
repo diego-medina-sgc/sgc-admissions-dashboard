@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Asap+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
 <!-- NumberFlow (vanilla): registra <number-flow>. Si no carga, los KPIs quedan como texto estático. -->
 <script type="module">import 'https://cdn.jsdelivr.net/npm/number-flow@0.6.2/+esm';</script>
@@ -571,6 +573,17 @@ th.pd-hsep{border-left:2px solid rgba(255,255,255,.35);}
 /* ─── NATIONALITY BARS ─── */
 .natbars{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);padding:16px 18px;box-shadow:var(--card-shadow);}
 .natbar-row{display:flex;align-items:center;gap:12px;}
+.fam-dd>summary{list-style:none;cursor:pointer;}.fam-dd>summary::-webkit-details-marker{display:none;}
+.fam-dd>summary .natbar-lbl::before{content:'\25B8';display:inline-block;width:14px;color:var(--text-muted);transition:transform .2s;}
+.fam-dd[open]>summary .natbar-lbl::before{transform:rotate(90deg);}
+.fam-dd-body{margin:6px 0 4px 14px;padding:8px 10px;border-left:2px solid var(--hairline);display:flex;flex-direction:column;gap:6px;}
+.fam-dd-body .natbar-lbl{font-size:.76rem;min-width:136px;}
+.fam-miss{max-height:360px;overflow:auto;}
+.fam-miss table{width:100%;font-size:.76rem;border-collapse:collapse;}
+.fam-miss td{padding:4px 6px;border-bottom:1px solid var(--hairline);vertical-align:top;color:var(--text);}
+[data-theme="dark"] .fam-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9);}
+.fam-map{height:460px;border-radius:var(--r);border:1px solid var(--hairline);overflow:hidden;}
+.fam-dot{display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font:600 11px 'Asap Condensed',sans-serif;border:2px solid rgba(255,255,255,.85);box-shadow:0 1px 4px rgba(0,0,0,.35);}
 .natbar-lbl{min-width:150px;font-size:.8rem;font-weight:500;color:var(--text);display:flex;align-items:center;}
 .natbar-track{flex:1;height:11px;background:var(--paper);border-radius:6px;overflow:hidden;}
 .natbar-fill{height:100%;border-radius:6px;background:var(--campus-color,var(--teal));transition:width .8s cubic-bezier(.4,0,.2,1);}
@@ -1239,7 +1252,7 @@ const STRINGS={
     fam_avg:'Children per Family',fam_multi:'Families with 2+ Children',fam_both:'Families in Both Campuses',fam_both_foot:'children in Quilmes and North',
     fam_dist:'Families by Number of Children',fam_kids1:'1 child',fam_kidsN:' children',fam_kids4:'4+ children',
     fam_sec:'Families by Section',fam_sec_note:'A family with children in more than one section counts in each.',
-    fam_cov:' of {a} active students have a family ID in iSAMS.',fam_town:'Families by Locality',fam_town_other:'Other localities',fam_town_none:'No locality on record',fam_town_note:'Home locality from iSAMS contacts. Localities with fewer than {m} families are grouped under Other. Percentages are over families with a locality on record.',
+    fam_cov:' of {a} active students have a family ID in iSAMS.',fam_town:'Families by Locality',view_map:'Map',fam_none_hint:'Families whose home locality is missing in iSAMS:',fam_map_note:'Each dot sits at the centre of its locality, never at a home. Localities without coordinates are not shown.',fam_caba_only:'CABA (no neighbourhood)',fam_town_other:'Other localities',fam_town_none:'No locality on record',fam_town_note:'Home locality from iSAMS contacts. Localities with fewer than {m} families are grouped under Other. Percentages are over families with a locality on record.',
     og_foot:'Old Georgian Parents',os_foot:'One School',og_plus:'OG + Intl.',
     col_year:'Year',col_section:'Section',col_level:'Level',col_enrol:'Enrolment',col_grade:'Year Group',
     col_2025:'Students 2025',col_2026:'Students 2026',col_var:'Var',col_prosp26:'Prospects 2026',col_prosp27:'Prospects 2027',
@@ -1448,7 +1461,7 @@ const STRINGS={
     fam_avg:'Hijos por Familia',fam_multi:'Familias con 2+ Hijos',fam_both:'Familias en Ambos Campus',fam_both_foot:'hijos en Quilmes y en North',
     fam_dist:'Familias seg&uacute;n Cantidad de Hijos',fam_kids1:'1 hijo',fam_kidsN:' hijos',fam_kids4:'4+ hijos',
     fam_sec:'Familias por Secci&oacute;n',fam_sec_note:'Una familia con hijos en m&aacute;s de una secci&oacute;n cuenta en cada una.',
-    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',fam_town:'Familias por Localidad',fam_town_other:'Otras localidades',fam_town_none:'Sin localidad cargada',fam_town_note:'Localidad del hogar seg&uacute;n los contactos de iSAMS. Las localidades con menos de {m} familias se agrupan en Otras. Los % se calculan sobre las familias con localidad cargada.',
+    fam_cov:' de {a} alumnos activos tienen ID de familia en iSAMS.',fam_town:'Familias por Localidad',view_map:'Mapa',fam_none_hint:'Familias sin localidad del hogar cargada en iSAMS:',fam_map_note:'Cada punto va en el centro de la localidad, nunca en un domicilio. Las localidades sin coordenadas no se muestran.',fam_caba_only:'CABA (sin barrio)',fam_town_other:'Otras localidades',fam_town_none:'Sin localidad cargada',fam_town_note:'Localidad del hogar seg&uacute;n los contactos de iSAMS. Las localidades con menos de {m} familias se agrupan en Otras. Los % se calculan sobre las familias con localidad cargada.',
     og_foot:'Padres Old Georgian',os_foot:'One School',og_plus:'OG + Extranj.',
     col_year:'A&ntilde;o',col_section:'Secci&oacute;n',col_level:'Nivel',col_enrol:'Matr&iacute;cula',col_grade:'Grado',
     col_2025:'Alumnos 2025',col_2026:'Alumnos 2026',col_var:'Var',col_prosp26:'Prospectos 2026',col_prosp27:'Prospectos 2027',
@@ -1518,6 +1531,7 @@ let sVis=Object.fromEntries(TABS.map(tab=>[tab.id,true]));
 let charts={},simAdj={},showFact=true,sidebarCollapsed=false;
 let pipelineCycle='2027';
 let funnelYear=2027,channelYear=2026,histView='chart',showClassroom=false,fgView='table';
+let famTownView='chart'; // familias por localidad: 'chart' | 'map'
 let bdView='table',bdHistView='chart',bdHistYear=null; // boarding: vista del detalle 2026, vista de la serie historica y anio elegido
 let adsMonth=null,adsSort='clicks',mkView='app',mkMonth=null;
 let alView='community';
@@ -2588,21 +2602,7 @@ function buildFamilies(){
   two.innerHTML='<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_dist')+'</div>'+bars(dRows)+'</div>'+
     '<div><div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_sec')+'</div>'+bars(sRows)+'<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_sec_note')+'</div></div>';
   box.appendChild(two);
-  const TW=F.towns;
-  if(TW&&TW.rows){
-    const tRows=TW.rows.map(r=>({l:escHtml(r.name),v:num(cv(r))})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
-    const oth=num(cv(TW.otras)),none=num(cv(TW.sinDato));
-    if(oth)tRows.push({l:'<em>'+t('fam_town_other')+'</em>',v:oth});
-    if(tRows.length){
-      const known=tRows.reduce((a,r)=>a+r.v,0);
-      tRows.forEach(r=>{r.p=known?r.v/known:0;});
-      if(none)tRows.push({l:'<span style="color:var(--text-muted)">'+t('fam_town_none')+'</span>',v:none,p:null});
-      const tw=document.createElement('div');tw.style.marginTop='14px';
-      tw.innerHTML='<div class="sec-meta" style="display:block;margin-bottom:6px">'+t('fam_town')+'</div>'+bars(tRows)+
-        '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_town_note').replace('{m}',TW.min||5)+'</div>';
-      box.appendChild(tw);
-    }
-  }
+  if(F.towns&&F.towns.rows){const ft=buildFamTowns(F.towns);if(ft)box.appendChild(ft);}
   const cov=F.coverage;
   if(cov&&cov.active&&cov.withId<cov.active){
     const n=document.createElement('div');n.style.cssText='margin-top:8px;font-size:.74rem;color:var(--text-muted)';
@@ -2610,6 +2610,67 @@ function buildFamilies(){
     box.appendChild(n);
   }
   return box;
+}
+const FAM_GEO={"28 De Noviembre":[-51.5775,-72.2135],"3 De Febrero":[-34.5719,-58.4252],"Acasusso":[-34.4787,-58.5046],"Adrogu\u00e9":[-34.7974,-58.3886],"Ameghino":[-34.8452,-62.4668],"Asunci\u00f3n":[-34.6308,-58.6235],"Avellaneda":[-34.6648,-58.3628],"Barcelona":[-34.6603,-58.4384],"Bella Vista":[-34.5684,-58.6895],"Benav\u00eddez":[-34.4093,-58.6846],"Berazategui":[-34.7633,-58.2117],"Berlin":[-34.8615,-58.4049],"Bernal":[-34.7175,-58.3001],"Boulogne":[-34.509,-58.5649],"CABA":[-34.6096,-58.3888],"Caballito":[-34.6206,-58.4414],"Caleta Olivia":[-46.4328,-67.5269],"California":[-34.5536,-58.526],"Campana":[-34.1637,-58.9587],"Canning":[-34.599,-58.4397],"Carmen De Patagones":[-40.7981,-62.9803],"Casablanca":[-34.5037,-58.8876],"Ca\u00f1uelas":[-35.054,-58.7617],"City Bell":[-34.8657,-58.0421],"Claypole":[-34.8043,-58.3441],"Colonia Caroya":[-31.0221,-64.0617],"Coronel Brandsen":[-35.168,-58.232],"Coronel Pringles":[-37.9633,-61.369],"Coronel Su\u00e1rez":[-37.4586,-61.9329],"Del Viso":[-34.4535,-58.7966],"Derqui":[-34.6611,-58.4734],"Dique Luj\u00e1n":[-34.3606,-58.6858],"Don Bosco":[-34.7016,-58.2964],"Don Torcuato":[-34.4887,-58.6266],"Dundas":[43.2662,-79.9546],"Ekaterinburg":[56.8382,60.6008],"El Calafate":[-50.3418,-72.2641],"El Pato":[-34.8951,-58.1815],"Ensenada":[-34.8575,-57.9077],"Entre R\u00edos":[-34.6227,-58.3914],"Escobar":[-34.3453,-58.7951],"Eustis":[28.8528,-81.6854],"Ezpeleta":[-34.7518,-58.2342],"Florencio Varela":[-34.8044,-58.2783],"Fort Worth":[32.7532,-97.3327],"Funes":[-32.915,-60.7962],"Gar\u00edn":[-34.4216,-58.7367],"General L\u00f3pez":[-34.3029,-61.2991],"General Pacheco":[-34.4537,-58.6351],"General Pico":[-34.7201,-58.363],"General Roca":[-38.0143,-57.5521],"General Rodr\u00edguez":[-34.6082,-58.9522],"General San Mart\u00edn":[-34.595,-58.3779],"General Villegas":[-35.0326,-63.0148],"Gobernador Ingeniero Valentin Virasoro":[-28.0539,-56.0327],"Grand Bourg":[-34.4885,-58.7265],"Guti\u00e9rrez":[-34.7542,-58.2741],"Hudson":[-34.7911,-58.1554],"Hurlingham":[-34.5933,-58.6378],"Ijui Rs":[-28.3879,-53.9202],"Ingeniero Maschwitz":[-34.383,-58.7364],"Intendente Alvear":[-34.5867,-58.3912],"Ituzaing\u00f3":[-34.6583,-58.6671],"Jos\u00e9 C. Paz":[-34.5119,-58.7777],"Kampala":[0.3177,32.5814],"La Lonja":[-34.4508,-58.8395],"La Lucila":[-34.4982,-58.487],"La Paz":[-16.4955,-68.1336],"La Plata":[-34.9207,-57.9538],"Lima":[-34.6091,-58.3826],"Lincoln":[-34.8684,-61.5296],"Loma Verde":[-34.3306,-58.8445],"Lomas De Zamora":[-34.7573,-58.4027],"Londres":[-34.5814,-58.4798],"Los Cardales":[-34.3309,-58.9874],"Los Polvorines":[-34.5106,-58.6991],"Los \u00c1ngeles":[-34.456,-60.179],"Louisville":[38.2542,-85.7594],"Luj\u00e1n De Cuyo":[-34.5014,-58.7437],"Malvinas Argentinas":[-34.8187,-58.424],"Manuel Alberti":[-34.4628,-58.7756],"Manzanares":[-34.4522,-59.0067],"Mariano Acosta":[-34.7236,-58.7923],"Mart\u00ednez":[-34.494,-58.5104],"Matheu":[-34.3828,-58.8298],"Mersin-10":[54.1286,16.2078],"Miami":[-34.7402,-58.5117],"Miraflores":[-34.6444,-58.4388],"Mosman":[-33.8284,151.2477],"Nagoya-Shi":[35.1851,136.8998],"Necochea":[-38.5545,-58.7393],"Nordelta":[-34.4144,-58.6495],"N\u00fa\u00f1ez":[-34.5485,-58.4627],"Olivos":[-34.5111,-58.4901],"Pablo Nogu\u00e9s":[-34.4793,-58.6989],"Palermo":[-34.5803,-58.4245],"Pedro Luro":[-39.5016,-62.6803],"Pehuajo":[-35.8105,-61.8991],"Pereyra":[-34.8366,-58.0946],"Phuket":[-34.6241,-58.4276],"Pilar":[-34.4571,-58.9142],"Platanos":[-34.7823,-58.1708],"Pozuelo De Alarcon":[40.4347,-3.8148],"Puerto Madero":[-34.6104,-58.3622],"Puerto San Julian":[-34.4831,-58.8434],"Quemu-Quemu":[-36.1497,-63.8465],"Quilmes":[-34.7257,-58.2631],"Quilmes Oeste":[-34.7461,-58.2878],"Rada Tilly":[-45.9239,-67.5558],"Rafael Perazza":[-34.5238,-56.797],"Ranelagh":[-34.7894,-58.2032],"Recoleta":[-34.5874,-58.3916],"Rio De Janeiro":[-34.6152,-58.4295],"Salto":[-34.2935,-60.2552],"San Carlos De Bariloche":[-41.1405,-71.2764],"San Fernando":[-34.4472,-58.5702],"San Isidro":[-34.474,-58.5265],"San Lorenzo":[-37.5823,-59.1396],"San Martin De Los Andes":[-34.3645,-58.7412],"San Mart\u00edn":[-34.5772,-58.5377],"San Miguel":[-34.543,-58.712],"Sandys":[32.3005,-64.8697],"Santa Cruz":[-17.7834,-63.1821],"Santiago Y Villarrica":[-33.4901,-70.7456],"Santo Tom\u00e9":[-34.6084,-58.4932],"Thornleigh":[-33.7237,151.0809],"Tigre":[-34.4235,-58.5818],"Tortuguitas":[-34.4705,-58.7587],"Venado Tuerto":[-33.7478,-61.9437],"Vicente L\u00f3pez":[-34.5258,-58.4749],"Victoria":[-34.4541,-58.5407],"Viedma":[-38.7278,-62.2922],"Villa De Mayo":[-34.5029,-58.6802],"Villa Elisa":[-34.8511,-58.0873],"Villa La \u00d1ata":[-34.3669,-58.6842],"Villa Maip\u00fa":[-34.5683,-58.5222],"Villa Rosa":[-34.4163,-58.8721],"Villanueva":[-34.5832,-58.7652],"Wilde":[-34.6984,-58.3146],"Woodinville":[47.7546,-122.1589],"Zarate":[-34.0955,-59.0245]};
+function setFamTownView(v){famTownView=v;render();}
+/* Agrupa las localidades segun el campus visible: CABA (barrios) y Otras (< min) con desplegable. */
+function famTownData(TW){
+  const min=TW.min||5,caba=[],main=[],other=[];
+  TW.rows.forEach(r=>{const v=num(cv(r));if(!v)return;const it={name:r.name==='CABA'?t('fam_caba_only'):r.name,raw:r.name,v:v};
+    if(r.caba)caba.push(it);else if(v>=min)main.push(it);else other.push(it);});
+  const sum=a=>a.reduce((x,r)=>x+r.v,0);
+  if(caba.length)main.push(caba.length===1&&caba[0].raw==='CABA'?{name:'CABA',raw:'CABA',v:caba[0].v}:{name:'CABA',raw:'CABA',v:sum(caba),kids:caba.sort((a,b)=>b.v-a.v)});
+  main.sort((a,b)=>b.v-a.v);
+  const miss=(TW.missing||[]).filter(m=>campus==='os'||m.c===campus||m.c==='os');
+  return {main:main,other:other.sort((a,b)=>b.v-a.v||a.name.localeCompare(b.name)),miss:miss,known:sum(main)+sum(other)};
+}
+function buildFamTowns(TW){
+  const d=famTownData(TW);
+  if(!d.main.length&&!d.other.length&&!d.miss.length)return null;
+  const wrap=document.createElement('div');wrap.style.marginTop='14px';
+  const pills='<div class="cycle-pills" style="margin-left:auto"><button class="cycle-pill'+(famTownView==='chart'?' active':'')+'" onclick="setFamTownView(\'chart\')">'+t('view_chart')+'</button><button class="cycle-pill'+(famTownView==='map'?' active':'')+'" onclick="setFamTownView(\'map\')">'+t('view_map')+'</button></div>';
+  let h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="sec-meta">'+t('fam_town')+'</span>'+pills+'</div>';
+  if(famTownView==='map'){
+    h+='<div id="fam-map" class="fam-map"></div><div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_map_note')+'</div>';
+    wrap.innerHTML=h;return wrap;
+  }
+  const max=Math.max.apply(null,d.main.map(r=>r.v).concat([d.other.reduce((x,r)=>x+r.v,0),1]));
+  const pct=v=>d.known?' <span style="opacity:.7">&middot; '+fP(v/d.known)+'</span>':'';
+  const row=(lbl,v,mx,showPct)=>'<div class="natbar-row"><div class="natbar-lbl">'+lbl+'</div><div class="natbar-track"><div class="natbar-fill" style="width:'+(v/mx*100).toFixed(1)+'%"></div></div><div class="natbar-val">'+fN(v)+(showPct?pct(v):'')+'</div></div>';
+  const kidsMax=a=>Math.max.apply(null,a.map(r=>r.v).concat([1]));
+  const dd=(lbl,v,body,showPct)=>'<details class="fam-dd"><summary>'+row(lbl,v,max,showPct)+'</summary><div class="fam-dd-body">'+body+'</div></details>';
+  let list='';
+  d.main.forEach(r=>{
+    if(r.kids){const km=kidsMax(r.kids);list+=dd(escHtml(r.name),r.v,r.kids.map(k=>row(escHtml(k.name),k.v,km,true)).join(''),true);}
+    else list+=row(escHtml(r.name),r.v,max,true);
+  });
+  if(d.other.length){const ov=d.other.reduce((x,r)=>x+r.v,0),km=kidsMax(d.other);
+    list+=dd('<em>'+t('fam_town_other')+'</em>',ov,d.other.map(k=>row(escHtml(k.name),k.v,km,false)).join(''),true);}
+  if(d.miss.length){
+    const tb='<div style="font-size:.74rem;color:var(--text-muted);margin-bottom:4px">'+t('fam_none_hint')+'</div><div class="fam-miss"><table><tbody>'+
+      d.miss.map(m=>'<tr><td style="font-weight:600;white-space:nowrap">'+(m.fam?escHtml(m.fam):'&mdash;')+'</td><td>'+m.kids.filter(k=>campus==='os'||k.c===campus).map(k=>escHtml(k.n)+' <span style="color:var(--text-muted)">'+escHtml(k.f)+'</span>').join(' &middot; ')+'</td></tr>').join('')+'</tbody></table></div>';
+    list+=dd('<span style="color:var(--text-muted)">'+t('fam_town_none')+'</span>',d.miss.length,tb,false);
+  }
+  h+='<div class="natbars">'+list+'</div><div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">'+t('fam_town_note').replace('{m}',TW.min||5)+'</div>';
+  wrap.innerHTML=h;return wrap;
+}
+let famMap=null;
+function drawFamMap(){
+  const el=document.getElementById('fam-map');
+  if(famMap){famMap.remove();famMap=null;}
+  if(!el||typeof L==='undefined'||!D.families||!D.families.towns||!el.offsetWidth)return;
+  const d=famTownData(D.families.towns);
+  const pts=d.main.flatMap(r=>r.kids?r.kids:[r]).concat(d.other).map(r=>({name:r.name,v:r.v,g:FAM_GEO[r.raw]})).filter(p=>p.g);
+  famMap=L.map(el,{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap',maxZoom:18}).addTo(famMap);
+  const col=campus==='n'?'#213469':campus==='q'?'#DC1E33':'#109AA9';
+  const mx=Math.max.apply(null,pts.map(p=>p.v).concat([1]));
+  pts.forEach(p=>{const sz=Math.round(20+28*Math.sqrt(p.v/mx));
+    L.marker(p.g,{icon:L.divIcon({className:'',html:'<div class="fam-dot" style="width:'+sz+'px;height:'+sz+'px;background:'+col+'">'+p.v+'</div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})})
+     .bindTooltip(escHtml(p.name)+': '+fN(p.v)).addTo(famMap);});
+  // Encuadre en el Gran Buenos Aires; las localidades del interior o del exterior quedan a un zoom de distancia
+  const near=pts.filter(p=>p.g[0]>-35.6&&p.g[0]<-33.8&&p.g[1]>-59.6&&p.g[1]<-57.7);
+  if(near.length)famMap.fitBounds(L.latLngBounds(near.map(p=>p.g)).pad(0.15));else famMap.setView([-34.6,-58.45],9);
 }
 function buildNationalities(){
   const nats=(D.nationalities||[]).filter(r=>{const nm=String(r.name||'').toLowerCase();return nm!=='argentine'&&nm!=='argentina';});
@@ -4156,6 +4217,7 @@ function yrTip(rows){
     return String(y)+(y===CUR_YR?' · '+t('chart_live'):(y>CUR_YR?' · '+t('chart_proj'):''));}}});
 }
 function drawCharts(){
+  try{drawFamMap();}catch(e){}
   Chart.defaults.font.family='Asap Condensed';Chart.defaults.color='#8C857A';
   Chart.defaults.locale=LOC();   // tooltips y ejes con el mismo separador que el resto del dashboard
   Object.keys(charts).forEach(k=>{try{if(charts[k])charts[k].destroy();}catch(e){}});charts={};
