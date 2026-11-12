@@ -1116,7 +1116,8 @@ const STRINGS={
     fc_cap:'Apply capacity ceiling',fc_cap_f:'Cap each Year Group at its stated capacity',
     fc_reset:'Reset assumptions',fc_on:'On',fc_off:'Off',
     fc_births:'Births used (Argentina, INDEC / Ministry of Health): 2023 and 2024 actual; 2025&ndash;2028 estimated at &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
-    fc_cap_hit:'At capacity',fc_cap_free:'Spare seats',fc_cap_none:'No Year Group reaches its ceiling in this scenario.',
+    fc_cap_hit:'At or above the stated room',fc_cap_free:'Spare seats',fc_cap_none:'No Year Group reaches its ceiling in this scenario.',
+    fc_cap_note:'A Year Group can sit above its stated room: when a group was allowed to exceed the maximum, that capacity follows it as it moves up. The ceiling caps new intake, not a group already enrolled.',
     fc_audit:'Rate check',
     fc_audit_ok:'All {n} progression rates in the sheet match the cohort history within 8 points.',
     fc_audit_bad:'{n} progression rate(s) in the sheet are not backed by the cohort history. The forecast uses the sheet, so these numbers carry straight through &mdash; check the rate before taking this to a meeting.',
@@ -1329,7 +1330,8 @@ const STRINGS={
     fc_cap:'Aplicar tope de capacidad',fc_cap_f:'Limitar cada Year Group a su capacidad declarada',
     fc_reset:'Volver a los supuestos',fc_on:'S&iacute;',fc_off:'No',
     fc_births:'Nacimientos usados (Argentina, INDEC / Min. Salud): 2023 y 2024 son datos; 2025&ndash;2028 estimados en &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
-    fc_cap_hit:'En capacidad',fc_cap_free:'Vacantes libres',fc_cap_none:'Ning&uacute;n Year Group llega al techo en este escenario.',
+    fc_cap_hit:'En el aula declarada o por encima',fc_cap_free:'Vacantes libres',fc_cap_none:'Ning&uacute;n Year Group llega al techo en este escenario.',
+    fc_cap_note:'Un Year Group puede estar por encima de su aula declarada: cuando a un grupo se le permiti&oacute; superar el m&aacute;ximo, esa capacidad lo acompa&ntilde;a al pasar de a&ntilde;o. El tope limita el ingreso nuevo, no a un grupo que ya est&aacute; adentro.',
     fc_audit:'Control de tasas',
     fc_audit_ok:'Las {n} tasas de progresi&oacute;n de la planilla coinciden con el hist&oacute;rico de cohortes dentro de 8 puntos.',
     fc_audit_bad:'{n} tasa(s) de progresi&oacute;n de la planilla no tienen respaldo en el hist&oacute;rico de cohortes. El forecast usa la planilla, as&iacute; que esos n&uacute;meros pasan derecho &mdash; revis&aacute; la tasa antes de llevar esto a una reuni&oacute;n.',
@@ -3221,7 +3223,20 @@ function fcCohortRate(ck,grado){
 }
 // Proyección 2027 del sheet para un grado. "proy" (col H) primero porque es la que suma
 // el total que publica el dashboard; proyD (col D, sin ajuste manual) es el respaldo.
-function fcProj27(r){return !isNil(r.proy)?num(r.proy):(!isNil(r.proyD)?num(r.proyD):null);}
+/* Proyección 2027 del sheet ANTES del tope de capacidad.
+   `proy` (col H) es `=MIN(F,G)`: en los grados que llegan al techo no es una proyección sino
+   la capacidad disfrazada. Dividirla por la base da un número que parece una tasa y no lo es
+   — North C5 daba 0,820 cuando la tasa real de la planilla es 1,021 (12/11/2026) — y, peor,
+   componerla año a año aplica el tope una vez por año.
+   `proyD` (col D) = base × tasa, antes del ajuste y del tope; el ajuste (col E) se reaplica
+   acá para llegar a lo mismo que la columna F del sheet. El tope lo pone el motor, una sola vez. */
+function fcProj27(r){
+  if(!isNil(r.proyD)){
+    const d=num(r.proyD),aj=isNil(r.ajuste)?0:num(r.ajuste);
+    return d*(1+aj);
+  }
+  return !isNil(r.proy)?num(r.proy):null;   // backend viejo: sin proyD no queda otra
+}
 // Filas tal cual vienen del sheet, sin los grados que abren a futuro.
 function fcRowsBase(ck){return((D.proyeccion||{})[FC_CK[ck]])||[];}
 /* Matrícula 2026 por grado, del MISMO padrón que muestra Executive Summary (iSAMS).
@@ -3303,9 +3318,18 @@ function fcRun(ck,cfg){
     // cada ingreso se arrastra con la natalidad de SU cohorte (K2 mira 2 años atrás, K3 tres)
     if(k>0&&c.nat)Object.keys(seeds).forEach(g=>{seeds[g]=seeds[g]*fcNat(g,yr);});
     const next=rows.map((r,i)=>{
-      let v=(i>0)?cur[i-1]*adj(rates[i]):0;
+      /* La capacidad LIMITA EL INGRESO NUEVO, no a un grupo que ya está adentro (regla de
+         SGC, confirmada por Diego el 12/11/2026): cuando a un grupo se le permitió superar
+         el máximo poniéndolo en un aula más grande, esa capacidad lo acompaña al pasar de
+         año. El aula de destino no lo puede achicar. Hoy North C4 tiene 61 con un aula
+         declarada de 50: esos 61 pasan a C5 aunque C5 figure con 50.
+         Entonces el arrastre (la cohorte que sube, retención) nunca se topea; lo que se
+         topea son las altas laterales y el ingreso del grado de entrada. */
+      const rt=(i>0)?adj(rates[i]):0;
+      const arrastre=(i>0)?cur[i-1]*Math.min(rt,1):0;
+      let v=(i>0)?cur[i-1]*rt:0;
       if(seeds[r.grado]!==undefined&&(!r.isNew||yr>=num(r.from)))v+=seeds[r.grado];
-      if(c.cap&&cap[i]>0)v=Math.min(v,cap[i]);
+      if(c.cap&&cap[i]>0)v=Math.min(v,Math.max(cap[i],arrastre));
       return v;
     });
     out.seeds[yr]=Object.assign({},seeds);
@@ -3507,7 +3531,8 @@ function fcCapPanel(){
     });
   });
   const list=(ttl,arr,col)=>'<div style="margin-bottom:12px"><div style="font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:'+col+';font-family:Asap Condensed,sans-serif;margin-bottom:6px">'+ttl+' ('+arr.length+')</div><div style="font-size:.78rem;color:var(--text);line-height:1.7;font-family:Asap Condensed,sans-serif">'+(arr.length?arr.join(' &nbsp;&middot;&nbsp; '):'&mdash;')+'</div></div>';
-  box.innerHTML='<div class="cc" style="padding:16px 18px">'+(hit.length?list(t('fc_cap_hit'),hit,'var(--red)'):'<div style="font-size:.78rem;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-bottom:12px">'+t('fc_cap_none')+'</div>')+list(t('fc_cap_free'),free,'var(--teal)')+'</div>';
+  const nota='<div style="font-size:.7rem;color:var(--gray);line-height:1.5;font-family:Asap Condensed,sans-serif;border-top:1px solid var(--hairline);padding-top:10px;margin-top:4px">'+t('fc_cap_note')+'</div>';
+  box.innerHTML='<div class="cc" style="padding:16px 18px">'+(hit.length?list(t('fc_cap_hit'),hit,'var(--red)'):'<div style="font-size:.78rem;color:var(--gray);font-family:Asap Condensed,sans-serif;margin-bottom:12px">'+t('fc_cap_none')+'</div>')+list(t('fc_cap_free'),free,'var(--teal)')+nota+'</div>';
   return box;
 }
 function fcAsumPanel(){
