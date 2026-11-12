@@ -1117,6 +1117,10 @@ const STRINGS={
     fc_reset:'Reset assumptions',fc_on:'On',fc_off:'Off',
     fc_births:'Births used (Argentina, INDEC / Ministry of Health): 2023 and 2024 actual; 2025&ndash;2028 estimated at &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
     fc_cap_hit:'At capacity',fc_cap_free:'Spare seats',fc_cap_none:'No Year Group reaches its ceiling in this scenario.',
+    fc_audit:'Rate check',
+    fc_audit_ok:'All {n} progression rates in the sheet match the cohort history within 8 points.',
+    fc_audit_bad:'{n} progression rate(s) in the sheet are not backed by the cohort history. The forecast uses the sheet, so these numbers carry straight through &mdash; check the rate before taking this to a meeting.',
+    fc_audit_row:'the sheet projects <b>{s}%</b>, the history shows <b>{h}%</b> &mdash; about <b>{a}</b> students a year',
     fc_chk:'2026 check',
     fc_chk_ok:'The 2026 roll here matches Executive Summary exactly ({n} students), so the series starts from the right number.',
     fc_chk_bad:'The 2026 roll here ({a}) does not match Executive Summary ({b}). Do not use this forecast until that is resolved &mdash; every later year is carried forward from 2026.',
@@ -1326,6 +1330,10 @@ const STRINGS={
     fc_reset:'Volver a los supuestos',fc_on:'S&iacute;',fc_off:'No',
     fc_births:'Nacimientos usados (Argentina, INDEC / Min. Salud): 2023 y 2024 son datos; 2025&ndash;2028 estimados en &minus;8 / &minus;6 / &minus;5 / &minus;4%.',
     fc_cap_hit:'En capacidad',fc_cap_free:'Vacantes libres',fc_cap_none:'Ning&uacute;n Year Group llega al techo en este escenario.',
+    fc_audit:'Control de tasas',
+    fc_audit_ok:'Las {n} tasas de progresi&oacute;n de la planilla coinciden con el hist&oacute;rico de cohortes dentro de 8 puntos.',
+    fc_audit_bad:'{n} tasa(s) de progresi&oacute;n de la planilla no tienen respaldo en el hist&oacute;rico de cohortes. El forecast usa la planilla, as&iacute; que esos n&uacute;meros pasan derecho &mdash; revis&aacute; la tasa antes de llevar esto a una reuni&oacute;n.',
+    fc_audit_row:'la planilla proyecta <b>{s}%</b>, el hist&oacute;rico da <b>{h}%</b> &mdash; unos <b>{a}</b> alumnos por a&ntilde;o',
     fc_chk:'Control 2026',
     fc_chk_ok:'El padr&oacute;n 2026 de ac&aacute; coincide exacto con el Resumen Ejecutivo ({n} alumnos), as&iacute; que la serie arranca del n&uacute;mero correcto.',
     fc_chk_bad:'El 2026 de ac&aacute; ({a}) no coincide con el Resumen Ejecutivo ({b}). No usar este forecast hasta resolverlo &mdash; todos los a&ntilde;os siguientes se arrastran desde 2026.',
@@ -3308,6 +3316,33 @@ function fcRun(ck,cfg){
   });
   return out;
 }
+/* Auditoría de tasas: la que usa la planilla contra el histórico realmente observado.
+   Nació del caso North C4→C5 (12/11/2026): CALC_projection proyectaba 0,820 cuando las
+   tres transiciones medidas daban 1,021 — North GANA 2% en ese salto, no pierde 18%. Ese
+   número viajó sin que nadie lo viera a la planilla, al Excel del Board y a este forecast,
+   y restaba 17 alumnos en 2029. Era la única de 30 transiciones desalineada.
+   Si una tasa vuelve a apartarse del histórico, que salte en pantalla y no tres modelos
+   después. Necesita D.cohortRates (permiso retention); sin eso no audita. */
+const FC_AUDIT_TOL=0.08;   // puntos de tasa
+const FC_AUDIT_MIN=3;      // y además tiene que mover al menos esta cantidad de alumnos
+function fcRateAudit(ck){
+  if(!D.cohortRates)return null;
+  const rows=fcRowsBase(ck);if(!rows.length)return null;
+  const rates=fcRates(ck,rows),out={desvios:[],ok:0};
+  rows.forEach((r,i)=>{
+    if(i===0)return;                              // grado de ingreso: no es una transición
+    const sheet=rates[i],hist=fcCohortRate(ck,r.grado);
+    if(sheet==null||hist==null)return;
+    const d=sheet-hist,base=num(r.base2026),alum=Math.abs(d)*base;
+    /* Los dos filtros son necesarios. Sin el de alumnos, North K1→K2 salta siempre: con 3 a 6
+       chicos en la sala, 12 puntos de tasa es menos de un alumno y la alerta se vuelve ruido
+       que después nadie mira. Con él, sólo salta lo que mueve el número de verdad. */
+    if(Math.abs(d)>=FC_AUDIT_TOL&&alum>=FC_AUDIT_MIN)
+      out.desvios.push({ck:ck,from:rows[i-1].grado,to:r.grado,sheet:sheet,hist:hist,d:d,alum:alum});
+    else out.ok++;
+  });
+  return out;
+}
 function fcScope(){return campus==='q'?['q']:campus==='n'?['n']:['q','n'];}
 function fcAll(cfg){const o={};fcScope().forEach(c=>{const r=fcRun(c,cfg);if(r)o[c]=r;});return o;}
 // Totales del scope por año (2026 real + los tres proyectados).
@@ -3382,6 +3417,21 @@ function buildForecast(wrap){
     const m26=num(tot[2026]),ok=Math.abs(m26-esTot)<=Math.max(1,esTot*0.005);
     // .c27-note es la nota teal ya estilada (con variante .warn); reusarla evita CSS nuevo
     wrap.appendChild(elFromHTML('<div class="c27-note'+(ok?'':' warn')+'"><span><b>'+t('fc_chk')+':</b> '+(ok?fcFill(t('fc_chk_ok'),{n:fN(m26)}):fcFill(t('fc_chk_bad'),{a:fN(m26),b:fN(esTot)}))+'</span></div>').firstChild);
+  }
+
+  // Auditoría de tasas contra el histórico (ver fcRateAudit)
+  const aud=fcScope().map(ck=>fcRateAudit(ck)).filter(Boolean);
+  if(aud.length){
+    const desv=aud.reduce((a,x)=>a.concat(x.desvios),[]),nOk=aud.reduce((a,x)=>a+x.ok,0);
+    if(desv.length){
+      const li=desv.map(x=>'<li><b>'+(x.ck==='q'?'Quilmes':'North')+' '+x.from+'&rarr;'+x.to+'</b>: '
+        +fcFill(t('fc_audit_row'),{s:fD1(x.sheet*100),h:fD1(x.hist*100),a:fN(Math.round(x.alum))})+'</li>').join('');
+      wrap.appendChild(elFromHTML('<div class="c27-note warn"><span><b>'+t('fc_audit')+':</b> '
+        +fcFill(t('fc_audit_bad'),{n:desv.length})+'<ul style="margin:6px 0 0;padding-left:18px">'+li+'</ul></span></div>').firstChild);
+    }else{
+      wrap.appendChild(elFromHTML('<div class="c27-note"><span><b>'+t('fc_audit')+':</b> '
+        +fcFill(t('fc_audit_ok'),{n:nOk})+'</span></div>').firstChild);
+    }
   }
 
   // Trayectoria + secciones
