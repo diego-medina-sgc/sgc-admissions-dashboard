@@ -1601,10 +1601,17 @@ function chequearNovedades(){
   const maxId=NOVEDADES[0].id;
   if(vista>=maxId)return;
   const nuevas=NOVEDADES.filter(n=>n.id>vista&&novVisible(n));
-  try{localStorage.setItem('sgc_nov',String(maxId));}catch(e){}   // se marca antes de mostrar
-  if(nuevas.length)verNovedades(nuevas.slice(0,5));
+  // Se marca como vista recien al CERRAR la ventana (19/11: marcarla antes hacia que se
+  // perdiera si la pagina se recargaba o algo la tapaba). Si no hay nada para esta persona, se marca ya.
+  if(!nuevas.length){try{localStorage.setItem('sgc_nov',String(maxId));}catch(e){}return;}
+  _novMarcar=maxId;
+  verNovedades(nuevas.slice(0,6));
 }
-function cerrarNovedades(){const o=document.getElementById('nov-ov');if(o)o.remove();}
+let _novMarcar=0;
+function cerrarNovedades(){
+  const o=document.getElementById('nov-ov');if(o)o.remove();
+  if(_novMarcar){try{localStorage.setItem('sgc_nov',String(_novMarcar));}catch(e){}_novMarcar=0;}
+}
 function verNovedades(lista){
   const lst=lista||NOVEDADES.filter(novVisible).slice(0,6);
   const en=lang==='en';
@@ -1612,12 +1619,13 @@ function verNovedades(lista){
   const ov=document.createElement('div');
   ov.id='nov-ov';
   ov.style.cssText='position:fixed;inset:0;background:rgba(20,22,35,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
-  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  ov.onclick=e=>{if(e.target===ov)cerrarNovedades();};
   let h='<div style="background:var(--surface,#fff);color:var(--ink,#1A1F35);max-width:520px;width:100%;max-height:80vh;overflow:auto;border-radius:12px;padding:22px 24px;box-shadow:0 12px 30px rgba(0,0,0,.18)">'+
     '<div style="display:flex;align-items:center;margin-bottom:10px"><div style="flex:1;font-weight:700;font-size:1.15rem">'+(en?'What&rsquo;s new':'Novedades')+'</div>'+
     '<button onclick="cerrarNovedades()" style="background:none;border:0;font-size:1.1rem;cursor:pointer;color:inherit">&#10005;</button></div>';
   if(!lst.length)h+='<div style="opacity:.7">'+(en?'Nothing new for now.':'Por ahora no hay novedades.')+'</div>';
   lst.forEach(n=>{h+='<div style="padding:10px 0;border-top:1px solid var(--line,#E6E1D6)"><div style="font-size:.72rem;opacity:.6;margin-bottom:3px">'+n.fecha+'</div>'+(en?n.en:n.es)+'</div>';});
+  h+='<div style="text-align:right;margin-top:12px"><button onclick="cerrarNovedades()" style="background:var(--ink,#1A1F35);color:#fff;border:0;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer">'+(en?'Got it':'Entendido')+'</button></div>';
   h+='</div>';
   ov.innerHTML=h;
   document.body.appendChild(ov);
