@@ -1073,7 +1073,7 @@ footer{text-align:center;padding:14px calc(32px + var(--safe-r)) calc(14px + var
     <div id="main" class="campus-os"></div>
   </main>
 
-  <footer>St George's College &middot; Marketing &amp; Admissions Dashboard &middot; Live data &middot; <span id="f-time"></span></footer>
+  <footer>St George's College &middot; Marketing &amp; Admissions Dashboard &middot; Live data &middot; <span id="f-time"></span> &middot; <a href="#" onclick="verNovedades();return false" style="color:inherit">What&rsquo;s new / Novedades</a></footer>
 </div>
 
 <script>
@@ -1565,6 +1565,63 @@ function can(k){
   // Sin permisos del backend (versión vieja), Confirmed 2027 y el Forecast quedan solo para el admin
   return(k==='pv_confirmed'||k==='pv_forecast')?userEmail===ADMIN_EMAIL:true;
 }
+// =============================================================================
+// NOVEDADES / WHAT'S NEW (19/11/2026)
+// Cada entrada lleva el permiso que hace falta para verla (perm, el mismo de can()).
+// perm:null = la ven todos; perm:'admin' = solo ADMIN_EMAIL. Asi nadie se entera de un
+// tab que no tiene. Se muestran una vez por navegador al cargar los datos (lo visto en
+// localStorage 'sgc_nov' = el id mas alto ya mostrado) y desde el pie ("What's new").
+// REGLA: cada cambio visible suma su entrada ARRIBA, con id nuevo, en ES y EN (britanico),
+// en lenguaje de uso, y con el permiso del tab que toca.
+// =============================================================================
+const NOVEDADES=[
+  {id:6,fecha:'19/11/2026',perm:null,
+   es:'<b>Novedades al entrar.</b> Cuando cambie algo que pod&eacute;s ver, te lo contamos ac&aacute;. Tambi&eacute;n en el pie: <b>Novedades</b>.',
+   en:'<b>What&rsquo;s new on sign-in.</b> When something you can see changes, you&rsquo;ll find it here. Also in the footer: <b>What&rsquo;s new</b>.'},
+  {id:5,fecha:'12/11/2026',perm:'pv_forecast',
+   es:'<b>Enrolment Forecast:</b> avisa cuando una tasa de la planilla no tiene respaldo hist&oacute;rico, y la capacidad sigue al grupo.',
+   en:'<b>Enrolment Forecast:</b> flags any rate in the spreadsheet with no historical basis, and capacity now follows each year group.'},
+  {id:4,fecha:'06/11/2026',perm:'retention',
+   es:'<b>Retention &amp; Community:</b> nueva secci&oacute;n Familias (total, hijos por familia, por localidad con mapa y barrios cerrados) y nacionalidades completas de iSAMS con banderas.',
+   en:'<b>Retention &amp; Community:</b> new Families section (total, children per family, by locality with a map and gated communities) and the full list of nationalities from iSAMS, with flags.'},
+  {id:3,fecha:'05/11/2026',perm:'resumen',
+   es:'<b>Executive Summary:</b> nuevo indicador de familias.',
+   en:'<b>Executive Summary:</b> new families KPI.'},
+  {id:2,fecha:'04/11/2026',perm:'pv_confirmed',
+   es:'<b>Confirmed 2027:</b> las bajas salen de las hojas de rematriculaci&oacute;n, hay desglose bajo Retenidos y la vista se actualiza sola.',
+   en:'<b>Confirmed 2027:</b> withdrawals now come from the re-enrolment sheets, Retained has a breakdown, and the view refreshes itself.'},
+  {id:1,fecha:'28/10/2026',perm:null,
+   es:'<b>Sesi&oacute;n de 7 d&iacute;as:</b> ya no hay que volver a entrar cada hora ni en cada pesta&ntilde;a.',
+   en:'<b>7-day session:</b> no more signing in every hour or in every tab.'}
+];
+function novVisible(n){return n.perm===null||(n.perm==='admin'?userEmail===ADMIN_EMAIL:can(n.perm));}
+function chequearNovedades(){
+  if(!D||!D.me||!D.me.perms)return;   // sin permisos del backend no se muestra nada
+  let vista=0;try{vista=parseInt(localStorage.getItem('sgc_nov')||'0',10)||0;}catch(e){}
+  const maxId=NOVEDADES[0].id;
+  if(vista>=maxId)return;
+  const nuevas=NOVEDADES.filter(n=>n.id>vista&&novVisible(n));
+  try{localStorage.setItem('sgc_nov',String(maxId));}catch(e){}   // se marca antes de mostrar
+  if(nuevas.length)verNovedades(nuevas.slice(0,5));
+}
+function cerrarNovedades(){const o=document.getElementById('nov-ov');if(o)o.remove();}
+function verNovedades(lista){
+  const lst=lista||NOVEDADES.filter(novVisible).slice(0,6);
+  const en=lang==='en';
+  const old=document.getElementById('nov-ov');if(old)old.remove();
+  const ov=document.createElement('div');
+  ov.id='nov-ov';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(20,22,35,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  let h='<div style="background:var(--surface,#fff);color:var(--ink,#1A1F35);max-width:520px;width:100%;max-height:80vh;overflow:auto;border-radius:12px;padding:22px 24px;box-shadow:0 12px 30px rgba(0,0,0,.18)">'+
+    '<div style="display:flex;align-items:center;margin-bottom:10px"><div style="flex:1;font-weight:700;font-size:1.15rem">'+(en?'What&rsquo;s new':'Novedades')+'</div>'+
+    '<button onclick="cerrarNovedades()" style="background:none;border:0;font-size:1.1rem;cursor:pointer;color:inherit">&#10005;</button></div>';
+  if(!lst.length)h+='<div style="opacity:.7">'+(en?'Nothing new for now.':'Por ahora no hay novedades.')+'</div>';
+  lst.forEach(n=>{h+='<div style="padding:10px 0;border-top:1px solid var(--line,#E6E1D6)"><div style="font-size:.72rem;opacity:.6;margin-bottom:3px">'+n.fecha+'</div>'+(en?n.en:n.es)+'</div>';});
+  h+='</div>';
+  ov.innerHTML=h;
+  document.body.appendChild(ov);
+}
 function tabAllowed(id){return id==='proyeccion'?(can('pv_billing')||can('pv_cohort')||can('pv_forecast')||can('pv_confirmed')):can(id);}
 function tabShown(id){return !!sVis[id]&&tabAllowed(id);}
 function applyConfig(){
@@ -1787,6 +1844,7 @@ async function fetchData(force){
     applyConfig();
     try{localStorage.setItem('sgc_data',JSON.stringify(data));localStorage.setItem('sgc_data_t',String(Date.now()));}catch(e){}
     updateAdminInfo();initSimAdj();render();
+    setTimeout(chequearNovedades,900);
     delete window[cb];const s=document.getElementById('_jp');if(s)s.remove();
   };
   const onError=()=>{if(_fetchRetry<2){_fetchRetry++;setTimeout(fetchData,3000);}else{_fetchRetry=0;showErrorBanner();}};
